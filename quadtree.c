@@ -1,12 +1,6 @@
 #include "quadtree.h"
 #include <stdio.h>
 
-int main()
-{
-
-    return 0;
-}
-
 static int split_node_(quadtree_t *tree, quadtree_node_t *node);
 
 static int insert_(quadtree_t* tree, quadtree_node_t *root, quadtree_point_t *point);
