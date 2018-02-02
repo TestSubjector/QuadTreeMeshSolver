@@ -1,14 +1,13 @@
 #include "quadtree.h"
 
-#ifndef INFINITY
-  // no infinity defined? high chance we are compiling as c89
-  #include <float.h>
-  #include <math.h>
-  #define INFINITY DBL_MAX
-  #define fmin(a,b) (((a)<(b))?(a):(b))
-  #define fmax(a,b) (((a)>(b))?(a):(b))
+#ifndef INFINITY 
+#include <float.h>
+#include <math.h>
+#define INFINITY DBL_MAX
 #endif
 
+#define fmin(a,b) (((a)<(b))?(a):(b))
+#define fmax(a,b) (((a)>(b))?(a):(b))
 
 
 void
