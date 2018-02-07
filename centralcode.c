@@ -1,6 +1,9 @@
 #include "quadtree.h"
 #include <stdio.h>
+#include <stdlib.h>
 #include <assert.h>
+
+#define MAX 1000
 
 #define test(fn) \
     printf("\x1b[33m" # fn "\x1b[0m "); \
@@ -52,9 +55,37 @@ static void test_tree()
 }
 
 
-int main(int argc, const char *argv[])
+int main(int argc, char *argv[])
 {
     printf("\nquadtree_t: %ld\n", sizeof(quadtree_t));
+
+    char *filename = argv[1];
+
+    char *line = NULL;
+    size_t n = 0;
+
+    FILE *coordFile = fopen(filename, "r");
+
+    coords_t *coords_list = malloc(sizeof(coords_t) * MAX);
+    if(coords_list == NULL)
+    {
+        printf("\n Coord structure has memory problems");
+        exit(0);
+    }
+    int line_count = 0;
+
+    while(getline(&line, &n, coordFile) != -1 && line_count < MAX)
+    {
+        int items = sscanf(line, "%lf %lf", &coords_list[line_count].x, &coords_list[line_count].y);
+        if(items != 2)
+        {
+            printf("\n File sanity check failed");
+            exit(1);
+        }
+        line_count++;
+    }
+
+    fclose(coordFile);
     test(tree);
     return 0;
 }

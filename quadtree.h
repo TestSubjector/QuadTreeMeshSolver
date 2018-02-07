@@ -83,6 +83,11 @@ int quadtree_insert(quadtree_t *tree, double x, double y);
 void quadtree_walk(quadtree_node_t *root, void (*descent)(quadtree_node_t *node),
                     void (*ascent)(quadtree_node_t *node));
 
-
+typedef struct coords 
+{
+    double x; 
+    double y;
+}
+coords_t;
 
 #endif

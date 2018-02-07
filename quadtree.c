@@ -10,8 +10,7 @@ static int node_contains_(quadtree_node_t *outer, quadtree_point_t *it);
 static quadtree_node_t *get_quadrant_(quadtree_node_t *root, quadtree_point_t *point);
 
 /* private implementations */
-static int
-node_contains_(quadtree_node_t *outer, quadtree_point_t *it)
+static int node_contains_(quadtree_node_t *outer, quadtree_point_t *it)
 {
     return outer->bounds != NULL
         && outer->bounds->nw->x <= it->x
