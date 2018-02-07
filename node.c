@@ -25,14 +25,14 @@ int quadtree_node_isleaf(quadtree_node_t *node)
     return node->point != NULL;
 }
 
-void quadtree_node_reset(quadtree_node_t* node) 
+void quadtree_node_reset(quadtree_node_t* node)
 {
     quadtree_point_free(node->point);
 }
 
 
 // Initialize
-quadtree_node_t* quadtree_node_new() 
+quadtree_node_t* quadtree_node_new()
 {
     quadtree_node_t *node;
     if(!(node = malloc(sizeof(*node))))
@@ -49,11 +49,11 @@ quadtree_node_t* quadtree_node_new()
 quadtree_node_t* quadtree_node_with_bounds(double minx, double miny, double maxx, double maxy)
 {
     quadtree_node_t* node;
-    if(!(node = quadtree_node_new())) 
+    if(!(node = quadtree_node_new()))
     {
         return NULL;
     }
-    if(!(node->bounds = quadtree_bounds_new())) 
+    if(!(node->bounds = quadtree_bounds_new()))
     {
         return NULL;
     }
@@ -62,7 +62,7 @@ quadtree_node_t* quadtree_node_with_bounds(double minx, double miny, double maxx
     return node;
 }
 
-void quadtree_node_free(quadtree_node_t* node) 
+void quadtree_node_free(quadtree_node_t* node)
 {
     if(node->nw != NULL) quadtree_node_free(node->nw);
     if(node->ne != NULL) quadtree_node_free(node->ne);

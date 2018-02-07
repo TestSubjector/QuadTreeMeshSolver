@@ -11,7 +11,7 @@ static quadtree_node_t *get_quadrant_(quadtree_node_t *root, quadtree_point_t *p
 
 /* private implementations */
 static int
-node_contains_(quadtree_node_t *outer, quadtree_point_t *it) 
+node_contains_(quadtree_node_t *outer, quadtree_point_t *it)
 {
     return outer->bounds != NULL
         && outer->bounds->nw->x <= it->x
@@ -25,21 +25,21 @@ static void reset_node_(quadtree_t *tree, quadtree_node_t *node)
     quadtree_node_reset(node);
 }
 
-static quadtree_node_t *get_quadrant_(quadtree_node_t *root, quadtree_point_t *point) 
+static quadtree_node_t *get_quadrant_(quadtree_node_t *root, quadtree_point_t *point)
 {
-    if(node_contains_(root->nw, point)) 
+    if(node_contains_(root->nw, point))
     {
         return root->nw;
     }
-    if(node_contains_(root->ne, point)) 
+    if(node_contains_(root->ne, point))
     {
         return root->ne;
     }
-    if(node_contains_(root->sw, point)) 
+    if(node_contains_(root->sw, point))
     {
         return root->sw;
     }
-    if(node_contains_(root->se, point)) 
+    if(node_contains_(root->se, point))
     {
         return root->se;
     }
@@ -78,7 +78,7 @@ static int split_node_(quadtree_t *tree, quadtree_node_t *node)
 }
 
 
-static quadtree_point_t* find_(quadtree_node_t* node, double x, double y) 
+static quadtree_point_t* find_(quadtree_node_t* node, double x, double y)
 {
     if(!node)
     {
@@ -90,7 +90,7 @@ static quadtree_point_t* find_(quadtree_node_t* node, double x, double y)
         {
             return node->point;
         }
-    } 
+    }
     else if(quadtree_node_ispointer(node))
     {
         quadtree_point_t test;
@@ -102,21 +102,21 @@ static quadtree_point_t* find_(quadtree_node_t* node, double x, double y)
 }
 
 
-static int insert_(quadtree_t* tree, quadtree_node_t *root, quadtree_point_t *point) 
+static int insert_(quadtree_t* tree, quadtree_node_t *root, quadtree_point_t *point)
 {
     if(quadtree_node_isempty(root))
     {
         root->point = point;
         return 1; /* normal insertion flag */
-    } 
+    }
     else if(quadtree_node_isleaf(root))
     {
         if(root->point->x == point->x && root->point->y == point->y){
         reset_node_(tree, root);
         root->point = point;
         return 2; /* replace insertion flag */
-    } 
-    else 
+    }
+    else
     {
         if(!split_node_(tree, root))
         {
@@ -124,7 +124,7 @@ static int insert_(quadtree_t* tree, quadtree_node_t *root, quadtree_point_t *po
         }
         return insert_(tree, root, point);
     }
-    } 
+    }
     else if(quadtree_node_ispointer(root))
     {
         quadtree_node_t* quadrant = get_quadrant_(root, point);
@@ -134,7 +134,7 @@ static int insert_(quadtree_t* tree, quadtree_node_t *root, quadtree_point_t *po
 }
 
 
-quadtree_t* quadtree_new(double minx, double miny, double maxx, double maxy) 
+quadtree_t* quadtree_new(double minx, double miny, double maxx, double maxy)
 {
     quadtree_t *tree;
     if(!(tree = malloc(sizeof(*tree))))
@@ -144,7 +144,7 @@ quadtree_t* quadtree_new(double minx, double miny, double maxx, double maxy)
 
     tree->root = quadtree_node_with_bounds(minx, miny, maxx, maxy);
     if(!(tree->root))
-    { 
+    {
         return NULL;
     }
     tree->length = 0;
@@ -152,12 +152,12 @@ quadtree_t* quadtree_new(double minx, double miny, double maxx, double maxy)
 }
 
 
-int quadtree_insert(quadtree_t *tree, double x, double y) 
+int quadtree_insert(quadtree_t *tree, double x, double y)
 {
     quadtree_point_t *point;
     int insert_status;
 
-    if(!(point = quadtree_point_new(x, y))) 
+    if(!(point = quadtree_point_new(x, y)))
     {
         return 0;
     }
@@ -166,47 +166,47 @@ int quadtree_insert(quadtree_t *tree, double x, double y)
         quadtree_point_free(point);
         return 0;
     }
-  
+
     if(!(insert_status = insert_(tree, tree->root, point)))
     {
         quadtree_point_free(point);
         return 0;
     }
-    if (insert_status == 1) 
+    if (insert_status == 1)
     {
         tree->length++;
     }
     return insert_status;
 }
 
-quadtree_point_t* quadtree_search(quadtree_t *tree, double x, double y) 
+quadtree_point_t* quadtree_search(quadtree_t *tree, double x, double y)
 {
     return find_(tree->root, x, y);
 }
 
-void quadtree_free(quadtree_t *tree) 
+void quadtree_free(quadtree_t *tree)
 {
     quadtree_node_free(tree->root);
     free(tree);
 }
 
 void quadtree_walk(quadtree_node_t *root, void (*descent)(quadtree_node_t *node),
-                                     void (*ascent)(quadtree_node_t *node)) 
+                                     void (*ascent)(quadtree_node_t *node))
 {
     (*descent)(root);
-    if(root->nw != NULL) 
+    if(root->nw != NULL)
     {
         quadtree_walk(root->nw, descent, ascent);
     }
-    if(root->ne != NULL) 
+    if(root->ne != NULL)
     {
         quadtree_walk(root->ne, descent, ascent);
     }
-    if(root->sw != NULL) 
+    if(root->sw != NULL)
     {
         quadtree_walk(root->sw, descent, ascent);
     }
-    if(root->se != NULL) 
+    if(root->se != NULL)
     {
         quadtree_walk(root->se, descent, ascent);
     }

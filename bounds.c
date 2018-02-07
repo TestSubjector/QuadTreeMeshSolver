@@ -1,6 +1,6 @@
 #include "quadtree.h"
 
-#ifndef INFINITY 
+#ifndef INFINITY
 #include <float.h>
 #include <math.h>
 #define INFINITY DBL_MAX

@@ -6,12 +6,12 @@
 
 
 // A point information
-typedef struct quadtree_point 
+typedef struct quadtree_point
 {
     double x;
     double y;
     double z; // For 3-D
-} 
+}
 quadtree_point_t;
 
 quadtree_point_t* quadtree_point_new(double x, double y);
@@ -20,13 +20,13 @@ void quadtree_point_free(quadtree_point_t *point);
 
 
 // Bounds
-typedef struct quadtree_bounds 
+typedef struct quadtree_bounds
 {
     double width;
     double height;
     quadtree_point_t *nw;
     quadtree_point_t *se;
-} 
+}
 quadtree_bounds_t;
 
 quadtree_bounds_t* quadtree_bounds_new();
@@ -63,7 +63,7 @@ void quadtree_node_reset(quadtree_node_t* node);
 quadtree_node_t* quadtree_node_with_bounds(double minx, double miny, double maxx, double maxy);
 
 
-// The main quadtree structure 
+// The main quadtree structure
 typedef struct quadtree
 {
     quadtree_node_t *root;

@@ -14,7 +14,7 @@ static void test_tree()
     assert(tree->root->bounds->nw->y == 10.0);
     assert(tree->root->bounds->se->x == 10.0);
     assert(tree->root->bounds->se->y == -10.0);
-    
+
     /*
          ------|x,y|
          --       --
@@ -23,17 +23,17 @@ static void test_tree()
     */
 
     // Specifies that we cant ad points that are out of bound
-    assert(quadtree_insert(tree, 0, 0) == 0);
+    assert(quadtree_insert(tree, -30, -30) == 0);
     assert(quadtree_insert(tree, 110.0, 110.0) == 0);
 
     // Add a point in the rectangle, it becomes the root
-    assert(quadtree_insert(tree, 8.0, 2.0) != 0);
+    assert(quadtree_insert(tree, 0, 0) != 0);
     assert(tree->length == 1);
-    assert(tree->root->point->x == 8.0);
-    assert(tree->root->point->y == 2.0);
+    assert(tree->root->point->x == 0);
+    assert(tree->root->point->y == 0);
 
     // Add amother point, leading to branching
-    assert(quadtree_insert(tree, 0.0, 1.0) == 0); /* failed insertion */
+    assert(quadtree_insert(tree, -30.0, -15.0) == 0); /* failed insertion */
     assert(quadtree_insert(tree, 2.0, 3.0) == 1); /* normal insertion */
     assert(quadtree_insert(tree, 2.0, 3.0) == 2); /* replacement insertion */
     assert(tree->length == 2);
@@ -47,7 +47,7 @@ static void test_tree()
 
     // quadtree_walk(tree->root, ascent, descent);
     // printf("\nquadtree_t1: %ld\n", sizeof(*tree));
-    
+
     quadtree_free(tree);
 }
 
@@ -55,7 +55,7 @@ static void test_tree()
 int main(int argc, const char *argv[])
 {
     printf("\nquadtree_t: %ld\n", sizeof(quadtree_t));
-    test(tree);   
+    test(tree);
     return 0;
 }
 
