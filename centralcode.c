@@ -9,11 +9,18 @@
 
 static void test_tree()
 {
-    quadtree_t *tree = quadtree_new(1, 1, 10, 10);
-    assert(tree->root->bounds->nw->x == 1);
+    quadtree_t *tree = quadtree_new(-10, -10, 10, 10);
+    assert(tree->root->bounds->nw->x == -10.0);
     assert(tree->root->bounds->nw->y == 10.0);
     assert(tree->root->bounds->se->x == 10.0);
-    assert(tree->root->bounds->se->y == 1);
+    assert(tree->root->bounds->se->y == -10.0);
+    
+    /*
+         ------|x,y|
+         --       --
+         --       --
+         |x,y|------
+    */
 
     // Specifies that we cant ad points that are out of bound
     assert(quadtree_insert(tree, 0, 0) == 0);
@@ -37,7 +44,10 @@ static void test_tree()
     assert(tree->length == 3);
     // Search for point
     assert(quadtree_search(tree, 3.0, 1.1)->x == 3.0);
+
     // quadtree_walk(tree->root, ascent, descent);
+    // printf("\nquadtree_t1: %ld\n", sizeof(*tree));
+    
     quadtree_free(tree);
 }
 
@@ -45,7 +55,7 @@ static void test_tree()
 int main(int argc, const char *argv[])
 {
     printf("\nquadtree_t: %ld\n", sizeof(quadtree_t));
-    test(tree);
+    test(tree);   
     return 0;
 }
 

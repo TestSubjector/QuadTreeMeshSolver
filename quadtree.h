@@ -10,7 +10,7 @@ typedef struct quadtree_point
 {
     double x;
     double y;
-    // double z; // For 3-D
+    double z; // For 3-D
 } 
 quadtree_point_t;
 
