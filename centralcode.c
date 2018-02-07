@@ -54,6 +54,22 @@ static void test_tree()
     quadtree_free(tree);
 }
 
+void main_tree(int initial_coord_length, coords_t *coords_list)
+{
+    quadtree_t *tree = quadtree_new(-10, -10, 10, 10);
+    
+    for(int i = 0; i < initial_coord_length; i++)
+    {
+        int success = quadtree_insert(tree, coords_list[i].x, coords_list[i].y);
+        if(success == 0)
+        {
+            // Out of bounds
+            printf("\n Problems with line %d, and points %lf & %lf", i+1, coords_list[i].x, coords_list[i].y);
+        }
+    }
+    printf("\nTree length is %d", tree->length); 
+    quadtree_free(tree);
+}
 
 int main(int argc, char *argv[])
 {
@@ -86,7 +102,8 @@ int main(int argc, char *argv[])
     }
 
     fclose(coordFile);
-    test(tree);
+    main_tree(line_count, coords_list);
+    // test(tree);
     return 0;
 }
 
