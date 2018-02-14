@@ -57,7 +57,7 @@ static void test_tree()
 
 void main_tree(int initial_coord_length, coords_t *coords_list)
 {
-    quadtree_t *tree = quadtree_new(-10, -10, 10, 10);
+    quadtree_t *tree = quadtree_new(-5, -5, 5, 5);
     
     for(int i = 0; i < initial_coord_length; i++)
     {
@@ -68,14 +68,14 @@ void main_tree(int initial_coord_length, coords_t *coords_list)
             printf("\n Problems with line %d, and points %lf & %lf", i+1, coords_list[i].x, coords_list[i].y);
         }
     }
-    printf("\nTree length is %d", tree->length); 
+    quadtree_walk(tree->root, ascent, descent);
     quadtree_free(tree);
 }
 
 int main(int argc, char *argv[])
 {
     printf("\nquadtree_t: %ld\n", sizeof(quadtree_t));
-    /*
+    
     char *filename = argv[1];
 
     char *line = NULL;
@@ -104,15 +104,15 @@ int main(int argc, char *argv[])
 
     fclose(coordFile);
     main_tree(line_count, coords_list);
-    */
+    
     // test(tree);
 
-    quadtree_t *tree = quadtree_new(-10, -10, 10, 10);
-    quadtree_insert(tree, 1, 1);
-    quadtree_insert(tree, 2, -2);
-    quadtree_insert(tree, 5, -9);
-    quadtree_walk(tree->root, ascent, descent);
-    quadtree_free(tree);
+    // quadtree_t *tree = quadtree_new(-10, -10, 10, 10);
+    // quadtree_insert(tree, 1, 1);
+    // quadtree_insert(tree, 2, -2);
+    // quadtree_insert(tree, 5, -9);
+    // quadtree_walk(tree->root, ascent, descent);
+    // quadtree_free(tree);
     printf("\n");
     return 0;
 }

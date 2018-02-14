@@ -216,15 +216,21 @@ void quadtree_walk(quadtree_node_t *root, void (*descent)(quadtree_node_t *node)
 
 void descent(quadtree_node_t *node)
 {
-    if(node->point != NULL && node->bounds != NULL)
+    // if(node->point != NULL)
+    // {
+    //     printf("%lf %lf \n", node->point->x, node->point->y);
+    //     // printf("\n { nw.x:%f, nw.y:%f, se.x:%f, se.y:%f }: ", node->bounds->nw->x, 
+    //     //     node->bounds->nw->y, node->bounds->se->x, node->bounds->se->y);
+    // }
+    if(node->bounds != NULL && quadtree_node_isempty(node))
     {
-        printf("{Point.x: %lf Point.y: %lf}", node->point->x, node->point->y);
-        printf("{ nw.x:%f, nw.y:%f, se.x:%f, se.y:%f }: ", node->bounds->nw->x, 
-            node->bounds->nw->y, node->bounds->se->x, node->bounds->se->y);
+        // printf("\n Centroids Quad : { nw.x:%f, nw.y:%f, se.x:%f, se.y:%f }: ", node->bounds->nw->x, 
+        //     node->bounds->nw->y, node->bounds->se->x, node->bounds->se->y);
+        printf("%f %f\n", (node->bounds->nw->x + node->bounds->se->x)/2, (node->bounds->nw->y + node->bounds->se->y)/2);
     }
 }
 
 void ascent(quadtree_node_t *node)
 {
-    printf("\n");
+    // printf("\n");
 }
