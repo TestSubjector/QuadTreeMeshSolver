@@ -108,21 +108,23 @@ static int insert_(quadtree_t* tree, quadtree_node_t *root, quadtree_point_t *po
         root->point = point;
         return 1; /* normal insertion flag */
     }
+    // The root point is same as new point to be inserted
     else if(quadtree_node_isleaf(root))
     {
-        if(root->point->x == point->x && root->point->y == point->y){
-        reset_node_(tree, root);
-        root->point = point;
-        return 2; /* replace insertion flag */
-    }
-    else
-    {
-        if(!split_node_(tree, root))
+        if(root->point->x == point->x && root->point->y == point->y)
         {
-            return 0; /* failed insertion flag */
+            reset_node_(tree, root);
+            root->point = point;
+            return 2; /* replace insertion flag */
         }
-        return insert_(tree, root, point);
-    }
+        else
+        {
+            if(!split_node_(tree, root))
+            {
+                return 0; /* failed insertion flag */
+            }
+            return insert_(tree, root, point);
+        }
     }
     else if(quadtree_node_ispointer(root))
     {
@@ -210,4 +212,19 @@ void quadtree_walk(quadtree_node_t *root, void (*descent)(quadtree_node_t *node)
         quadtree_walk(root->se, descent, ascent);
     }
     (*ascent)(root);
+}
+
+void descent(quadtree_node_t *node)
+{
+    if(node->point != NULL && node->bounds != NULL)
+    {
+        printf("{Point.x: %lf Point.y: %lf}", node->point->x, node->point->y);
+        printf("{ nw.x:%f, nw.y:%f, se.x:%f, se.y:%f }: ", node->bounds->nw->x, 
+            node->bounds->nw->y, node->bounds->se->x, node->bounds->se->y);
+    }
+}
+
+void ascent(quadtree_node_t *node)
+{
+    printf("\n");
 }

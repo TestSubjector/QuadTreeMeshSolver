@@ -6,6 +6,7 @@
 
 
 // A point information
+// Stores x,y and maybe z later (so we get an octree)!
 typedef struct quadtree_point
 {
     double x;
@@ -19,7 +20,7 @@ quadtree_point_t* quadtree_point_new(double x, double y);
 void quadtree_point_free(quadtree_point_t *point);
 
 
-// Bounds
+// Bounds, useful for detecting whether a point lies in a quadrant or not
 typedef struct quadtree_bounds
 {
     double width;
@@ -82,6 +83,10 @@ int quadtree_insert(quadtree_t *tree, double x, double y);
 
 void quadtree_walk(quadtree_node_t *root, void (*descent)(quadtree_node_t *node),
                     void (*ascent)(quadtree_node_t *node));
+
+int quadtree_print(quadtree_node_t *node);
+void descent(quadtree_node_t *node);
+void ascent(quadtree_node_t *node);
 
 typedef struct coords 
 {

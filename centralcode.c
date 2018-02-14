@@ -10,6 +10,7 @@
     test_##fn(); \
     puts("\x1b[1;32m ✓ \x1b[0m");
 
+
 static void test_tree()
 {
     quadtree_t *tree = quadtree_new(-10, -10, 10, 10);
@@ -19,21 +20,21 @@ static void test_tree()
     assert(tree->root->bounds->se->y == -10.0);
 
     /*
-         ------|x,y|
-         --       --
-         --       --
          |x,y|------
+         --       --
+         --       --
+         ------|x,y|
     */
 
-    // Specifies that we cant ad points that are out of bound
+    // Specifies that we cant add points that are out of bound
     assert(quadtree_insert(tree, -30, -30) == 0);
     assert(quadtree_insert(tree, 110.0, 110.0) == 0);
 
     // Add a point in the rectangle, it becomes the root
-    assert(quadtree_insert(tree, 0, 0) != 0);
+    assert(quadtree_insert(tree, 1, 1) != 0);
     assert(tree->length == 1);
-    assert(tree->root->point->x == 0);
-    assert(tree->root->point->y == 0);
+    assert(tree->root->point->x == 1);
+    assert(tree->root->point->y == 1);
 
     // Add amother point, leading to branching
     assert(quadtree_insert(tree, -30.0, -15.0) == 0); /* failed insertion */
@@ -48,9 +49,9 @@ static void test_tree()
     // Search for point
     assert(quadtree_search(tree, 3.0, 1.1)->x == 3.0);
 
-    // quadtree_walk(tree->root, ascent, descent);
+    quadtree_walk(tree->root, ascent, descent);
     // printf("\nquadtree_t1: %ld\n", sizeof(*tree));
-
+    // quadtree_print(tree->root);
     quadtree_free(tree);
 }
 
@@ -74,7 +75,7 @@ void main_tree(int initial_coord_length, coords_t *coords_list)
 int main(int argc, char *argv[])
 {
     printf("\nquadtree_t: %ld\n", sizeof(quadtree_t));
-
+    /*
     char *filename = argv[1];
 
     char *line = NULL;
@@ -103,7 +104,16 @@ int main(int argc, char *argv[])
 
     fclose(coordFile);
     main_tree(line_count, coords_list);
+    */
     // test(tree);
+
+    quadtree_t *tree = quadtree_new(-10, -10, 10, 10);
+    quadtree_insert(tree, 1, 1);
+    quadtree_insert(tree, 2, -2);
+    quadtree_insert(tree, 5, -9);
+    quadtree_walk(tree->root, ascent, descent);
+    quadtree_free(tree);
+    printf("\n");
     return 0;
 }
 

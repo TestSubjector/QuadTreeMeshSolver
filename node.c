@@ -10,7 +10,7 @@ int quadtree_node_ispointer(quadtree_node_t *node)
     && !quadtree_node_isleaf(node);
 }
 
-// Check if node is empty and not a leaf
+// Check if quadrant is empty
 int quadtree_node_isempty(quadtree_node_t *node)
 {
     return node->nw == NULL
