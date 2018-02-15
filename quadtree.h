@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <math.h>
 
+#define MAX 1000
 
 // A point information
 // Stores x,y and maybe z later (so we get an octree)!
@@ -94,5 +95,7 @@ typedef struct coords
     double y;
 }
 coords_t;
+
+int fileinput(coords_t *coords_list, char *filename);
 
 #endif
