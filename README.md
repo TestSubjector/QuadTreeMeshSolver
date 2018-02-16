@@ -1,7 +1,10 @@
 # QuadTree Mesh Solver
 
 ## To run
-* gcc -o main centralcode.c quadtree.c node.c point.c bounds.c
-* ./main
+* make
+* ./main <INPUT FILE>
+
+## To clean
+* make clean
 
 Acknowledgments - [thejefflarson](https://github.com/thejefflarson) for much of the Quadtree code.
