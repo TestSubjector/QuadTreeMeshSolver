@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 #include <math.h>
+#include "bool.h"
 
 #define MAX 1000
 
@@ -97,5 +98,7 @@ typedef struct coords
 coords_t;
 
 int fileinput(coords_t *coords_list, char *filename);
+void fileoutput(int append, char *filename, double xcord, double ycord);
+void double_to_char(double f,char *buffer);
 
 #endif
