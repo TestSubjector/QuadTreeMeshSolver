@@ -197,7 +197,7 @@ void descent(quadtree_node_t *node) {
     char *filename="output.txt";
     double xcord = (node->bounds->nw->x + node->bounds->se->x) / 2;
     double ycord = (node->bounds->nw->y + node->bounds->se->y) / 2;
-    fileoutput(1,filename,xcord,ycord);
+    fileoutput(0,filename,xcord,ycord);
   }
 }
 
