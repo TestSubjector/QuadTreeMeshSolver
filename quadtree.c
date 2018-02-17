@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <string.h>
 
+int newfile = 1;
+
 static int split_node_(quadtree_t *tree, quadtree_node_t *node);
 
 static int insert_(quadtree_t *tree, quadtree_node_t *root,
@@ -194,10 +196,19 @@ void descent(quadtree_node_t *node) {
     //     node->bounds->nw->y, node->bounds->se->x, node->bounds->se->y);
     printf("%f %f\n", (node->bounds->nw->x + node->bounds->se->x) / 2,
            (node->bounds->nw->y + node->bounds->se->y) / 2);
-    char *filename="output.txt";
+    char *filename = "output.txt";
     double xcord = (node->bounds->nw->x + node->bounds->se->x) / 2;
     double ycord = (node->bounds->nw->y + node->bounds->se->y) / 2;
-    fileoutput(0,filename,xcord,ycord);
+    if(newfile == 1)
+    {
+        fileoutput(0,filename,xcord,ycord);
+        newfile = 0;
+    }
+    else
+    {
+        fileoutput(1,filename,xcord,ycord);
+    }
+    
   }
 }
 
