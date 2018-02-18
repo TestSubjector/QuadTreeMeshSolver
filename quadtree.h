@@ -105,6 +105,8 @@ void quadtree_leafwalk(quadtree_node_t *root, void (*descent_leaf)(quadtree_node
                     void (*ascent)(quadtree_node_t *node), quadtree_node_t *leaf_array);
 void descent_leaf(quadtree_node_t *node, quadtree_node_t *leaf_array);
 
+void quadtree_leafnodes(quadtree_node_t *root, quadtree_node_t *leaf_array);
+
 extern int leaf_iter;
 
 #endif

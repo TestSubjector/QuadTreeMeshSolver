@@ -1,4 +1,6 @@
 #include "quadtree.h"
+#include <stdio.h>
+
 
 // Boolean is integer in C
 int quadtree_node_ispointer(quadtree_node_t *node)
@@ -72,4 +74,21 @@ void quadtree_node_free(quadtree_node_t* node)
     quadtree_bounds_free(node->bounds);
     quadtree_node_reset(node);
     free(node);
+}
+
+void quadtree_leafnodes(quadtree_node_t *root, quadtree_node_t *leaf_array)
+{
+    quadtree_leafwalk(root, descent_leaf, ascent, leaf_array);
+    for(int i = 0; i < leaf_iter; i++)
+    {
+        quadtree_node_t *node = &leaf_array[i];
+        if (node->bounds != NULL && quadtree_node_isempty(node)) {
+            printf("\n %f %f", (node->bounds->nw->x + node->bounds->se->x) / 2,
+                   (node->bounds->nw->y + node->bounds->se->y) / 2);
+        }
+        else if(quadtree_node_isleaf(node))
+        {
+            printf("\n%f %f", node->point->x, node->point->y);
+        }
+    }
 }

@@ -19,19 +19,7 @@ void main_tree(int initial_coord_length, coords_t *coords_list, quadtree_node_t 
         }
     }
     quadtree_walk(tree->root, descent, ascent);
-    quadtree_leafwalk(tree->root, descent_leaf, ascent, leaf_array);
-    for(int i = 0; i < leaf_iter; i++)
-    {
-        quadtree_node_t *node = &leaf_array[i];
-        if (node->bounds != NULL && quadtree_node_isempty(node)) {
-            printf("\n %f %f", (node->bounds->nw->x + node->bounds->se->x) / 2,
-                   (node->bounds->nw->y + node->bounds->se->y) / 2);
-        }
-        else if(quadtree_node_isleaf(node))
-        {
-            printf("\n%f %f", node->point->x, node->point->y);
-        }
-    }
+    quadtree_leafnodes(tree->root, leaf_array);
     quadtree_free(tree);
 }
 
