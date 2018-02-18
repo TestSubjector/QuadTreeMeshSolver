@@ -5,7 +5,7 @@
 #include <math.h>
 #include "bool.h"
 
-#define MAX 1000
+#define MAX 10000
 
 // A point information
 // Stores x,y and maybe z later (so we get an octree)!
@@ -100,5 +100,11 @@ coords_t;
 int fileinput(coords_t *coords_list, char *filename);
 void fileoutput(int append, char *filename, double xcord, double ycord);
 void double_to_char(double f,char *buffer);
+
+void quadtree_leafwalk(quadtree_node_t *root, void (*descent_leaf)(quadtree_node_t *node, quadtree_node_t *leaf_array),
+                    void (*ascent)(quadtree_node_t *node), quadtree_node_t *leaf_array);
+void descent_leaf(quadtree_node_t *node, quadtree_node_t *leaf_array);
+
+extern int leaf_iter;
 
 #endif

@@ -4,6 +4,7 @@
 #include <string.h>
 
 int newfile = 1;
+int leaf_iter = 0;
 
 static int split_node_(quadtree_t *tree, quadtree_node_t *node);
 
@@ -161,6 +162,33 @@ quadtree_point_t *quadtree_search(quadtree_t *tree, double x, double y) {
 void quadtree_free(quadtree_t *tree) {
   quadtree_node_free(tree->root);
   free(tree);
+}
+
+void quadtree_leafwalk(quadtree_node_t *root,
+                   void (*descent_leaf)(quadtree_node_t *node, quadtree_node_t *leaf_array),
+                   void (*ascent)(quadtree_node_t *node), quadtree_node_t *leaf_array) {
+  (*descent_leaf)(root, leaf_array);
+  if (root->nw != NULL) {
+    quadtree_leafwalk(root->nw, descent_leaf, ascent, leaf_array);
+  }
+  if (root->ne != NULL) {
+    quadtree_leafwalk(root->ne, descent_leaf, ascent, leaf_array);
+  }
+  if (root->sw != NULL) {
+    quadtree_leafwalk(root->sw, descent_leaf, ascent, leaf_array);
+  }
+  if (root->se != NULL) {
+    quadtree_leafwalk(root->se, descent_leaf, ascent, leaf_array);
+  }
+  (*ascent)(root);
+}
+
+void descent_leaf(quadtree_node_t *node, quadtree_node_t *leaf_array) {
+  if ((node->bounds != NULL && quadtree_node_isempty(node))|| (quadtree_node_isleaf(node))) {
+    leaf_array[leaf_iter] = *node;
+    leaf_iter++;
+    // printf("%d", leaf_iter);
+  }
 }
 
 void quadtree_walk(quadtree_node_t *root,
