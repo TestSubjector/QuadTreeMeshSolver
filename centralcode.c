@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <assert.h>
 
+int leaf_iter = 0;
+
 void main_tree(int initial_coord_length, coords_t *coords_list, quadtree_node_t *leaf_array)
 {
     quadtree_t *tree = quadtree_new(-5, -5, 5, 5);

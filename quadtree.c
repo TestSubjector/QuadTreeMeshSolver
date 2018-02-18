@@ -4,7 +4,6 @@
 #include <string.h>
 
 int newfile = 1;
-int leaf_iter = 0;
 
 static int split_node_(quadtree_t *tree, quadtree_node_t *node);
 
