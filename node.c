@@ -1,6 +1,8 @@
 #include "quadtree.h"
 #include <stdio.h>
 
+int patharray[20];
+int path_iter = 0;
 
 // Boolean is integer in C
 int quadtree_node_ispointer(quadtree_node_t *node)
@@ -78,7 +80,9 @@ void quadtree_node_free(quadtree_node_t* node)
 
 void quadtree_leafnodes(quadtree_node_t *root, quadtree_node_t *leaf_array)
 {
+    // Get all leaf nodes
     quadtree_leafwalk(root, descent_leaf, ascent, leaf_array);
+    // Print all the leaf nodes at this point
     for(int i = 0; i < leaf_iter; i++)
     {
         quadtree_node_t *node = &leaf_array[i];
@@ -91,4 +95,66 @@ void quadtree_leafnodes(quadtree_node_t *root, quadtree_node_t *leaf_array)
             printf("\n%f %f", node->point->x, node->point->y);
         }
     }
+}
+
+static int node_contains_patharray(quadtree_node_t *outer, double x, double y) {
+  return outer->bounds != NULL && outer->bounds->nw->x <= x &&
+         outer->bounds->nw->y >= y && outer->bounds->se->x >= x &&
+         outer->bounds->se->y <= y;
+}
+
+
+static quadtree_point_t *find_patharray(quadtree_node_t *node, double x, double y) {
+  if (!node) {
+      printf("\nSomething went wrong will finding neighbours\n");
+    return NULL;
+  }
+  else if (quadtree_node_ispointer(node)) {
+    quadtree_point_t test;
+    test.x = x;
+    test.y = y;
+    return find_patharray(get_quadrant_patharray(node, x, y), x , y);
+  }
+  return NULL;
+}
+
+static quadtree_node_t *get_quadrant_patharray(quadtree_node_t *root,
+                                      double x, double y) {
+  if (node_contains_patharray(root->nw, x, y)) {
+    // printf("1");
+    return root->nw;
+  }
+  if (node_contains_patharray(root->ne, x , y)) {
+    // printf("2");
+    return root->ne;
+  }
+  if (node_contains_patharray(root->sw, x , y)) {
+    // printf("3");
+    return root->sw;
+  }
+  if (node_contains_patharray(root->se, x, y)) {
+    // printf("4");
+    return root->se;
+  }
+  return NULL;
+}
+
+int* common_ancestor(quadtree_node_t *root, quadtree_node_t *node)
+{
+    for(int i=0; i<20; i++)
+    {
+        patharray[i] = 0;
+    }
+    // For centroid leafs
+    if(node->point == NULL)
+    {
+        //printf("\nFound centroid node\n");
+        find_patharray(root, (node->bounds->nw->x + node->bounds->se->x) / 2, (node->bounds->nw->y + node->bounds->se->y) / 2);
+    }
+    else if (quadtree_node_isleaf(node)) 
+    {
+        // printf("\n Found boundary point \n");
+        find_patharray(root, node->point->x, node->point->y);
+    }
+    return patharray;
 }
