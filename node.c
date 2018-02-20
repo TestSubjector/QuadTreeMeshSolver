@@ -118,22 +118,31 @@ static quadtree_point_t *find_patharray(quadtree_node_t *node, double x, double 
   return NULL;
 }
 
+// Stores the descent path from root node to node whose neighbours we need to find
 static quadtree_node_t *get_quadrant_patharray(quadtree_node_t *root,
                                       double x, double y) {
   if (node_contains_patharray(root->nw, x, y)) {
     // printf("1");
+    patharray[path_iter] = 1;
+    path_iter++;
     return root->nw;
   }
   if (node_contains_patharray(root->ne, x , y)) {
     // printf("2");
+    patharray[path_iter] = 2;
+    path_iter++;
     return root->ne;
   }
   if (node_contains_patharray(root->sw, x , y)) {
     // printf("3");
+    patharray[path_iter] = 3;
+    path_iter++;
     return root->sw;
   }
   if (node_contains_patharray(root->se, x, y)) {
     // printf("4");
+    patharray[path_iter] = 4;
+    path_iter++;
     return root->se;
   }
   return NULL;

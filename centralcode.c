@@ -23,6 +23,7 @@ void main_tree(int initial_coord_length, coords_t *coords_list, quadtree_node_t 
     for(int i = 0; i< leaf_iter; i++)
     {
         // printf("\n Problems with address %p\n", &leaf_array[i]);
+        // TODO - Use the path array to find neighbours
         common_ancestor(tree->root, &leaf_array[i]);
     }
     quadtree_free(tree);
