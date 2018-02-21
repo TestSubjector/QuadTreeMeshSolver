@@ -3,6 +3,7 @@
 
 int patharray[21];
 int path_iter = 0;
+int neighbourpath[21];
 
 // Boolean is integer in C
 int quadtree_node_ispointer(quadtree_node_t *node)
@@ -105,17 +106,17 @@ static int node_contains_patharray(quadtree_node_t *outer, double x, double y) {
 
 
 static quadtree_point_t *find_patharray(quadtree_node_t *node, double x, double y) {
-  if (!node) {
-      printf("\nSomething went wrong will finding neighbours\n");
+    if (!node) {
+        printf("\nSomething went wrong will finding neighbours\n");
     return NULL;
-  }
-  else if (quadtree_node_ispointer(node)) {
-    quadtree_point_t test;
-    test.x = x;
-    test.y = y;
-    return find_patharray(get_quadrant_patharray(node, x, y), x , y);
-  }
-  return NULL;
+    }
+    else if (quadtree_node_ispointer(node)) {
+        quadtree_point_t test;
+        test.x = x;
+        test.y = y;
+        return find_patharray(get_quadrant_patharray(node, x, y), x , y);
+    }
+    return NULL;
 }
 
 // Stores the descent path from root node to node whose neighbours we need to find
@@ -158,18 +159,67 @@ int* common_ancestor(quadtree_node_t *root, quadtree_node_t *node)
     if(node->point == NULL)
     {
         //printf("\nFound centroid node\n");
+        path_iter = 0;
         find_patharray(root, (node->bounds->nw->x + node->bounds->se->x) / 2, (node->bounds->nw->y + node->bounds->se->y) / 2);
     }
     else if (quadtree_node_isleaf(node)) 
     {
         // printf("\n Found boundary point \n");
+        path_iter = 0;
         find_patharray(root, node->point->x, node->point->y);
     }
     patharray[20] = path_iter;
     return patharray;
 }
 
-void find_neighbours(int patharray[21])
+void find_neighbours(int patharray[21], quadtree_node_t *leaf_array)
 {
+    int path_size = patharray[20];
+    int i = 0;
+    int pathstep = -1;
     
+    for(int i=0; i<21; i++)
+    {
+        neighbourpath[i] = 0;
+    }
+
+    // NW - 1, NE - 2, SW - 3 , SE - 4
+
+    // For eastern neighbour
+    for(i = path_size - 1; i>= 0; i--)
+    {
+        pathstep = patharray[i];
+        if(pathstep == 1)
+        {
+            printf("\n Found common ancestor for Eastern neighbour");
+            neighbourpath[path_size -1 -i] = 2;
+            neighbourpath[20] = path_size -1-i;
+            break;
+        }
+        else if(pathstep == 2)
+        {
+            neighbourpath[path_size -1 -i] = 1;
+        }
+        else if(pathstep == 3)
+        {
+            printf("\n Found common ancestor for Eastern neighbour");
+            neighbourpath[path_size -1 -i] = 4;
+            neighbourpath[20] = path_size -1-i;
+            break;
+        }
+        else if(pathstep == 4)
+        {
+            neighbourpath[path_size -1 -i] = 3;
+        }
+        else if(pathstep == 0)
+        {
+            printf("\n Array iter has problems");
+        }
+        else
+        {
+            printf("\n Some random value corrupted pathaarray");
+            // exit(1);
+        }
+    }
+
 }
