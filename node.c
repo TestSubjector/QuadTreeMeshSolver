@@ -1,7 +1,7 @@
 #include "quadtree.h"
 #include <stdio.h>
 
-int patharray[20];
+int patharray[21];
 int path_iter = 0;
 
 // Boolean is integer in C
@@ -150,7 +150,7 @@ static quadtree_node_t *get_quadrant_patharray(quadtree_node_t *root,
 
 int* common_ancestor(quadtree_node_t *root, quadtree_node_t *node)
 {
-    for(int i=0; i<20; i++)
+    for(int i=0; i<21; i++)
     {
         patharray[i] = 0;
     }
@@ -165,5 +165,11 @@ int* common_ancestor(quadtree_node_t *root, quadtree_node_t *node)
         // printf("\n Found boundary point \n");
         find_patharray(root, node->point->x, node->point->y);
     }
+    patharray[20] = path_iter;
     return patharray;
+}
+
+void find_neighbours(int patharray[21])
+{
+    
 }

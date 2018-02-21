@@ -119,4 +119,6 @@ static quadtree_node_t *get_quadrant_patharray(quadtree_node_t *root,
 
 int* common_ancestor(quadtree_node_t *tree, quadtree_node_t *node);
 
+void find_neighbours(int patharray[21]);
+
 #endif
