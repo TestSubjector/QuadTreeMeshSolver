@@ -3,7 +3,6 @@
 
 int patharray[21];
 int path_iter = 0;
-int neighbourpath[21];
 
 // Boolean is integer in C
 int quadtree_node_ispointer(quadtree_node_t *node)
@@ -172,44 +171,59 @@ int* common_ancestor(quadtree_node_t *root, quadtree_node_t *node)
     return patharray;
 }
 
-void find_neighbours(int patharray[21], quadtree_node_t *leaf_array)
+void balance_neighbour(quadtree_node_t *root, int patharray[21], int neighbour_pos, int direction)
+{
+    // for(int i = 0; i< neighbour_pos; i++)
+    // {
+    //     if (node_contains_(root->nw, point)) {
+    //       return root->nw;
+    //     }
+    //     if (node_contains_(root->ne, point)) {
+    //       return root->ne;
+    //     }
+    //     if (node_contains_(root->sw, point)) {
+    //       return root->sw;
+    //     }
+    //     if (node_contains_(root->se, point)) {
+    //       return root->se;
+    //     }
+    // }
+}
+
+void find_neighbours(quadtree_node_t *root, int patharray[21], quadtree_node_t *leaf_array)
 {
     int path_size = patharray[20];
     int i = 0;
     int pathstep = -1;
-    
-    for(int i=0; i<21; i++)
-    {
-        neighbourpath[i] = 0;
-    }
+    int direction = 0;
+    int neighbour_pos = -1;
 
     // NW - 1, NE - 2, SW - 3 , SE - 4
 
     // For eastern neighbour
+    direction = 1;
     for(i = path_size - 1; i>= 0; i--)
     {
         pathstep = patharray[i];
         if(pathstep == 1)
         {
             printf("\n Found common ancestor for Eastern neighbour");
-            neighbourpath[path_size -1 -i] = 2;
-            neighbourpath[20] = path_size -1-i;
+            neighbour_pos = path_size-1 - i;
             break;
         }
         else if(pathstep == 2)
         {
-            neighbourpath[path_size -1 -i] = 1;
+            continue;
         }
         else if(pathstep == 3)
         {
             printf("\n Found common ancestor for Eastern neighbour");
-            neighbourpath[path_size -1 -i] = 4;
-            neighbourpath[20] = path_size -1-i;
+            neighbour_pos = path_size-1 - i;
             break;
         }
         else if(pathstep == 4)
         {
-            neighbourpath[path_size -1 -i] = 3;
+            continue;
         }
         else if(pathstep == 0)
         {
@@ -221,5 +235,15 @@ void find_neighbours(int patharray[21], quadtree_node_t *leaf_array)
             // exit(1);
         }
     }
-
+    if(neighbour_pos != -1)
+    {
+        // Neighbour exists
+        balance_neighbour(root, patharray, neighbour_pos, direction);
+        neighbour_pos = -1;
+    }
+    else
+    {
+        // printf("\n Easter Neighbour does not exist");
+    }
+    
 }
