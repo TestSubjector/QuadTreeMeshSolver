@@ -8,8 +8,8 @@ int leaf_iter = 0;
 void main_tree(int initial_coord_length, coords_t *coords_list, quadtree_node_t *leaf_array)
 {
     quadtree_t *tree = quadtree_new(-5, -5, 5, 5);
-    
-    for(int i = 0; i < initial_coord_length; i++)
+    int i = 0;
+    for(i = 0; i < initial_coord_length; i++)
     {
         int success = quadtree_insert(tree, coords_list[i].x, coords_list[i].y);
         if(success == 0)
@@ -19,7 +19,7 @@ void main_tree(int initial_coord_length, coords_t *coords_list, quadtree_node_t 
         }
     }
     quadtree_leafnodes(tree->root, leaf_array);
-    for(int i = 0; i< leaf_iter; i++)
+    for(i = 0; i < leaf_iter; i++)
     {
         // printf("\n Problems with address %p\n", &leaf_array[i]);
         // TODO - Use the path array to find neighbours

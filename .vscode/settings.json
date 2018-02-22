@@ -1,5 +1,7 @@
 {
     "files.associations": {
-        "quadtree.h": "c"
+        "quadtree.h": "c",
+        "stdio.h": "c",
+        "assert.h": "c"
     }
 }

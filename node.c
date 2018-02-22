@@ -83,7 +83,8 @@ void quadtree_leafnodes(quadtree_node_t *root, quadtree_node_t *leaf_array)
     // Get all leaf nodes
     quadtree_leafwalk(root, descent_leaf, ascent, leaf_array);
     // Print all the leaf nodes at this point
-    for(int i = 0; i < leaf_iter; i++)
+    int i = 0;
+    for(i = 0; i < leaf_iter; i++)
     {
         quadtree_node_t *node = &leaf_array[i];
         if (node->bounds != NULL && quadtree_node_isempty(node)) {
@@ -150,7 +151,8 @@ static quadtree_node_t *get_quadrant_patharray(quadtree_node_t *root,
 
 int* common_ancestor(quadtree_node_t *root, quadtree_node_t *node)
 {
-    for(int i=0; i<21; i++)
+    int i = 0;
+    for(i=0; i<21; i++)
     {
         patharray[i] = 0;
     }
@@ -178,7 +180,8 @@ void balance_neighbour(quadtree_t *tree, int patharray[21], int neighbour_pos, i
     // East - 1 , West - 2, North -3, South - 4
     quadtree_node_t *root = tree->root;
     int path_step = 0;
-    for(int i = 0; i< neighbour_pos; i++)
+    int i = 0;
+    for(i = 0; i< neighbour_pos; i++)
     {
         path_step = patharray[i];
         if (path_step == 1) 
@@ -208,7 +211,8 @@ void balance_neighbour(quadtree_t *tree, int patharray[21], int neighbour_pos, i
     {
         int did_node_split = 0;
         // printf("\n Finding Eastern Neighbour");
-        for(int i = neighbour_pos; i < patharray[20] - 2; i++)
+        int i = neighbour_pos;
+        for(i = neighbour_pos; i < patharray[20] - 2; i++)
         {
             quadtree_node_t *temp1;
             path_step = patharray[i];
@@ -293,7 +297,8 @@ void balance_neighbour(quadtree_t *tree, int patharray[21], int neighbour_pos, i
     {
         int did_node_split = 0;
         // printf("\n Finding Western Neighbour");
-        for(int i = neighbour_pos; i < patharray[20] - 2; i++)
+        int i = neighbour_pos;
+        for(i = neighbour_pos; i < patharray[20] - 2; i++)
         {
             quadtree_node_t *temp2;
             path_step = patharray[i];
@@ -462,8 +467,9 @@ void balance_neighbour(quadtree_t *tree, int patharray[21], int neighbour_pos, i
     if(direction == 4)
     {
         int did_node_split = 0;
-        // printf("\n Finding Southern Neighbour");
-        for(int i = neighbour_pos; i < patharray[20] - 2; i++)
+        printf("\n Finding Southern Neighbour");
+        int i = neighbour_pos;
+        for(i = neighbour_pos; i < patharray[20] - 2; i++)
         {
             quadtree_node_t *temp4;
             path_step = patharray[i];
