@@ -171,27 +171,123 @@ int* common_ancestor(quadtree_node_t *root, quadtree_node_t *node)
     return patharray;
 }
 
-void balance_neighbour(quadtree_node_t *root, int patharray[21], int neighbour_pos, int direction)
+void balance_neighbour(quadtree_t *tree, int patharray[21], int neighbour_pos, int direction, quadtree_node_t *leaf_array)
 {
-    // for(int i = 0; i< neighbour_pos; i++)
-    // {
-    //     if (node_contains_(root->nw, point)) {
-    //       return root->nw;
-    //     }
-    //     if (node_contains_(root->ne, point)) {
-    //       return root->ne;
-    //     }
-    //     if (node_contains_(root->sw, point)) {
-    //       return root->sw;
-    //     }
-    //     if (node_contains_(root->se, point)) {
-    //       return root->se;
-    //     }
-    // }
+    // Direction
+    // East - 1
+    quadtree_node_t *root = tree->root;
+    int path_step = 0;
+    for(int i = 0; i< neighbour_pos; i++)
+    {
+        path_step = patharray[i];
+        if (path_step == 1) 
+        {
+          root = root->nw;
+        }
+        if (path_step == 2) 
+        {
+          root = root->ne;
+        }
+        if (path_step == 3) 
+        {
+          root = root->sw;
+        }
+        if (path_step == 4) 
+        {
+          root = root->se;
+        }
+    }
+    // Eastern Neighbour
+    if(direction == 1)
+    {
+        int did_node_split = 0;
+        printf("\n Finding Eastern Neighbour");
+        for(int i = neighbour_pos; i < patharray[20] - 2; i++)
+        {
+            quadtree_node_t *temp = NULL;
+            path_step = patharray[i];
+            if((root->bounds != NULL && quadtree_node_isempty(root))|| (quadtree_node_isleaf(root)))
+            {
+                // Analysis - Should give only a few outputs because only some nodes will have
+                // neighbour not at the same level or one level higher
+                printf("\n Neigbour split");
+                split_node_(tree, root);
+                did_node_split = 1;
+                temp = root;
+
+                if (path_step == 1) 
+                {
+                  root = root->ne;
+                }
+                else if(did_node_split == 1)
+                {
+                    printf("\n Created new neighbour node");
+                    leaf_array[leaf_iter] = *(temp->ne);
+                    leaf_iter++;
+                }
+
+                if (path_step == 2) 
+                {
+                  root = root->nw;
+                }
+                else if(did_node_split == 1)
+                {
+                    printf("\n Created new neighbour node");
+                    leaf_array[leaf_iter] = *(temp->nw);
+                    leaf_iter++;
+                }
+
+                if (path_step == 3) 
+                {
+                  root = root->se;
+                }
+                else if(did_node_split == 1)
+                {
+                    printf("\n Created new neighbour node");
+                    leaf_array[leaf_iter] = *(temp->se);
+                    leaf_iter++;
+                }
+
+                if (path_step == 4) 
+                {
+                  root = root->sw;
+                }
+                else if(did_node_split == 1)
+                {
+                    printf("\n Created new neighbour node");
+                    leaf_array[leaf_iter] = *(temp->sw);
+                    leaf_iter++;
+                }
+                did_node_split = 0;
+                break;
+            }
+            if (path_step == 1) 
+            {
+              root = root->ne;
+            }
+
+            if (path_step == 2) 
+            {
+              root = root->nw;
+            }
+
+            if (path_step == 3) 
+            {
+              root = root->se;
+            }
+
+            if (path_step == 4) 
+            {
+              root = root->sw;
+            }
+
+        }
+    }
 }
 
-void find_neighbours(quadtree_node_t *root, int patharray[21], quadtree_node_t *leaf_array)
+void find_neighbours(quadtree_t *tree, int patharray[21], quadtree_node_t *leaf_array)
 {
+    
     int path_size = patharray[20];
     int i = 0;
     int pathstep = -1;
@@ -207,7 +303,8 @@ void find_neighbours(quadtree_node_t *root, int patharray[21], quadtree_node_t *
         pathstep = patharray[i];
         if(pathstep == 1)
         {
-            printf("\n Found common ancestor for Eastern neighbour");
+            // Analysis - Not all leaf nodes should have eastern neighbours (the easternmost nodes)
+            // printf("\n Found common ancestor for Eastern neighbour");
             neighbour_pos = path_size-1 - i;
             break;
         }
@@ -217,7 +314,7 @@ void find_neighbours(quadtree_node_t *root, int patharray[21], quadtree_node_t *
         }
         else if(pathstep == 3)
         {
-            printf("\n Found common ancestor for Eastern neighbour");
+            // printf("\n Found common ancestor for Eastern neighbour");
             neighbour_pos = path_size-1 - i;
             break;
         }
@@ -238,7 +335,7 @@ void find_neighbours(quadtree_node_t *root, int patharray[21], quadtree_node_t *
     if(neighbour_pos != -1)
     {
         // Neighbour exists
-        balance_neighbour(root, patharray, neighbour_pos, direction);
+        balance_neighbour(tree, patharray, neighbour_pos, direction, leaf_array);
         neighbour_pos = -1;
     }
     else

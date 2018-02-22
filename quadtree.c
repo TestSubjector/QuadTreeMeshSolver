@@ -5,8 +5,6 @@
 
 int newfile = 1;
 
-static int split_node_(quadtree_t *tree, quadtree_node_t *node);
-
 static int insert_(quadtree_t *tree, quadtree_node_t *root,
                    quadtree_point_t *point);
 
@@ -43,7 +41,7 @@ static quadtree_node_t *get_quadrant_(quadtree_node_t *root,
   return NULL;
 }
 
-static int split_node_(quadtree_t *tree, quadtree_node_t *node) {
+int split_node_(quadtree_t *tree, quadtree_node_t *node) {
   quadtree_node_t *nw;
   quadtree_node_t *ne;
   quadtree_node_t *sw;

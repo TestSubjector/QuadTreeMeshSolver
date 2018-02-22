@@ -18,14 +18,14 @@ void main_tree(int initial_coord_length, coords_t *coords_list, quadtree_node_t 
             printf("\n Problems with line %d, and points %lf & %lf", i+1, coords_list[i].x, coords_list[i].y);
         }
     }
-    quadtree_walk(tree->root, descent, ascent);
     quadtree_leafnodes(tree->root, leaf_array);
     for(int i = 0; i< leaf_iter; i++)
     {
         // printf("\n Problems with address %p\n", &leaf_array[i]);
         // TODO - Use the path array to find neighbours
-        find_neighbours(tree->root, common_ancestor(tree->root, &leaf_array[i]), leaf_array);
+        find_neighbours(tree, common_ancestor(tree->root, &leaf_array[i]), leaf_array);
     }
+    quadtree_walk(tree->root, descent, ascent);
     quadtree_free(tree);
 }
 

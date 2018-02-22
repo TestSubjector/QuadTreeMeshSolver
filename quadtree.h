@@ -74,6 +74,7 @@ typedef struct quadtree
 }
 quadtree_t;
 
+int split_node_(quadtree_t *tree, quadtree_node_t *node);
 
 quadtree_t* quadtree_new(double minx, double miny, double maxx, double maxy);
 
@@ -119,8 +120,8 @@ static quadtree_node_t *get_quadrant_patharray(quadtree_node_t *root,
 
 int* common_ancestor(quadtree_node_t *tree, quadtree_node_t *node);
 
-void find_neighbours(quadtree_node_t *root, int patharray[21], quadtree_node_t *leaf_array);
+void find_neighbours(quadtree_t *tree, int patharray[21], quadtree_node_t *leaf_array);
 
-void balance_neighbour(quadtree_node_t *root, int patharray[21], int neighbour_pos, int direction);
+void balance_neighbour(quadtree_t *tree, int patharray[21], int neighbour_pos, int direction,  quadtree_node_t *leaf_array);
 
 #endif
