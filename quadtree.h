@@ -13,7 +13,7 @@ typedef struct quadtree_point
 {
     double x;
     double y;
-    double z; // For 3-D
+    // double z; // For 3-D
 }
 quadtree_point_t;
 
@@ -74,8 +74,6 @@ typedef struct quadtree
 }
 quadtree_t;
 
-int split_node_(quadtree_t *tree, quadtree_node_t *node);
-
 quadtree_t* quadtree_new(double minx, double miny, double maxx, double maxy);
 
 void quadtree_free(quadtree_t *tree);
@@ -123,5 +121,10 @@ int* common_ancestor(quadtree_node_t *tree, quadtree_node_t *node);
 void find_neighbours(quadtree_t *tree, int patharray[21], quadtree_node_t *leaf_array);
 
 void balance_neighbour(quadtree_t *tree, int patharray[21], int neighbour_pos, int direction,  quadtree_node_t *leaf_array);
+
+int split_node_newpoints(quadtree_t *tree, quadtree_node_t *node);
+
+int insert_(quadtree_t *tree, quadtree_node_t *root,
+                   quadtree_point_t *point);
 
 #endif

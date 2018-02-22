@@ -5,8 +5,7 @@
 
 int newfile = 1;
 
-static int insert_(quadtree_t *tree, quadtree_node_t *root,
-                   quadtree_point_t *point);
+static int split_node_(quadtree_t *tree, quadtree_node_t *node);
 
 static int node_contains_(quadtree_node_t *outer, quadtree_point_t *it);
 
@@ -41,12 +40,12 @@ static quadtree_node_t *get_quadrant_(quadtree_node_t *root,
   return NULL;
 }
 
-int split_node_(quadtree_t *tree, quadtree_node_t *node) {
-  quadtree_node_t *nw;
-  quadtree_node_t *ne;
-  quadtree_node_t *sw;
-  quadtree_node_t *se;
-  quadtree_point_t *old;
+static int split_node_(quadtree_t *tree, quadtree_node_t *node) {
+  quadtree_node_t *nw = NULL;
+  quadtree_node_t *ne = NULL;
+  quadtree_node_t *sw = NULL;
+  quadtree_node_t *se = NULL;
+  quadtree_point_t *old = NULL;
 
   double x = node->bounds->nw->x;
   double y = node->bounds->nw->y;
@@ -91,7 +90,7 @@ static quadtree_point_t *find_(quadtree_node_t *node, double x, double y) {
   return NULL;
 }
 
-static int insert_(quadtree_t *tree, quadtree_node_t *root,
+int insert_(quadtree_t *tree, quadtree_node_t *root,
                    quadtree_point_t *point) {
   if (quadtree_node_isempty(root)) {
     root->point = point;
@@ -219,7 +218,7 @@ void descent(quadtree_node_t *node) {
     // printf("\n Centroids Quad : { nw.x:%f, nw.y:%f, se.x:%f, se.y:%f }: ",
     // node->bounds->nw->x,
     //     node->bounds->nw->y, node->bounds->se->x, node->bounds->se->y);
-    printf("%f %f\n", (node->bounds->nw->x + node->bounds->se->x) / 2,
+    printf("\n%f %f", (node->bounds->nw->x + node->bounds->se->x) / 2,
            (node->bounds->nw->y + node->bounds->se->y) / 2);
     char *filename = "output.txt";
     double xcord = (node->bounds->nw->x + node->bounds->se->x) / 2;
@@ -233,7 +232,6 @@ void descent(quadtree_node_t *node) {
     {
         fileoutput(1,filename,xcord,ycord);
     }
-    
   }
 }
 
