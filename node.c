@@ -174,7 +174,7 @@ int* common_ancestor(quadtree_node_t *root, quadtree_node_t *node)
 void balance_neighbour(quadtree_t *tree, int patharray[21], int neighbour_pos, int direction, quadtree_node_t *leaf_array)
 {
     // Direction
-    // East - 1
+    // East - 1 , West - 2, North -3, South - 4
     quadtree_node_t *root = tree->root;
     int path_step = 0;
     for(int i = 0; i< neighbour_pos; i++)
@@ -201,7 +201,7 @@ void balance_neighbour(quadtree_t *tree, int patharray[21], int neighbour_pos, i
     if(direction == 1)
     {
         int did_node_split = 0;
-        printf("\n Finding Eastern Neighbour");
+        // printf("\n Finding Eastern Neighbour");
         for(int i = neighbour_pos; i < patharray[20] - 2; i++)
         {
             quadtree_node_t *temp = NULL;
@@ -221,7 +221,7 @@ void balance_neighbour(quadtree_t *tree, int patharray[21], int neighbour_pos, i
                 }
                 else if(did_node_split == 1)
                 {
-                    printf("\n Created new neighbour node");
+                    printf("\n Created new neighbour node : East");
                     leaf_array[leaf_iter] = *(temp->ne);
                     leaf_iter++;
                 }
@@ -232,7 +232,7 @@ void balance_neighbour(quadtree_t *tree, int patharray[21], int neighbour_pos, i
                 }
                 else if(did_node_split == 1)
                 {
-                    printf("\n Created new neighbour node");
+                    printf("\n Created new neighbour node : East");
                     leaf_array[leaf_iter] = *(temp->nw);
                     leaf_iter++;
                 }
@@ -243,7 +243,7 @@ void balance_neighbour(quadtree_t *tree, int patharray[21], int neighbour_pos, i
                 }
                 else if(did_node_split == 1)
                 {
-                    printf("\n Created new neighbour node");
+                    printf("\n Created new neighbour node : East");
                     leaf_array[leaf_iter] = *(temp->se);
                     leaf_iter++;
                 }
@@ -254,7 +254,7 @@ void balance_neighbour(quadtree_t *tree, int patharray[21], int neighbour_pos, i
                 }
                 else if(did_node_split == 1)
                 {
-                    printf("\n Created new neighbour node");
+                    printf("\n Created new neighbour node : East");
                     leaf_array[leaf_iter] = *(temp->sw);
                     leaf_iter++;
                 }
@@ -283,6 +283,262 @@ void balance_neighbour(quadtree_t *tree, int patharray[21], int neighbour_pos, i
 
         }
     }
+
+    if(direction == 2)
+    {
+        int did_node_split = 0;
+        // printf("\n Finding Western Neighbour");
+        for(int i = neighbour_pos; i < patharray[20] - 2; i++)
+        {
+            quadtree_node_t *temp = NULL;
+            path_step = patharray[i];
+            if((root->bounds != NULL && quadtree_node_isempty(root))|| (quadtree_node_isleaf(root)))
+            {
+                // Analysis - Should give only a few outputs because only some nodes will have
+                // neighbour not at the same level or one level higher
+                printf("\n Neigbour split");
+                split_node_(tree, root);
+                did_node_split = 1;
+                temp = root;
+
+                if (path_step == 1) 
+                {
+                  root = root->ne;
+                }
+                else if(did_node_split == 1)
+                {
+                    printf("\n Created new neighbour node : West");
+                    leaf_array[leaf_iter] = *(temp->ne);
+                    leaf_iter++;
+                }
+
+                if (path_step == 2) 
+                {
+                  root = root->nw;
+                }
+                else if(did_node_split == 1)
+                {
+                    printf("\n Created new neighbour node : West");
+                    leaf_array[leaf_iter] = *(temp->nw);
+                    leaf_iter++;
+                }
+
+                if (path_step == 3) 
+                {
+                  root = root->se;
+                }
+                else if(did_node_split == 1)
+                {
+                    printf("\n Created new neighbour node : West");
+                    leaf_array[leaf_iter] = *(temp->se);
+                    leaf_iter++;
+                }
+
+                if (path_step == 4) 
+                {
+                  root = root->sw;
+                }
+                else if(did_node_split == 1)
+                {
+                    printf("\n Created new neighbour node: West");
+                    leaf_array[leaf_iter] = *(temp->sw);
+                    leaf_iter++;
+                }
+                did_node_split = 0;
+                break;
+            }
+            if (path_step == 1) 
+            {
+              root = root->ne;
+            }
+
+            if (path_step == 2) 
+            {
+              root = root->nw;
+            }
+
+            if (path_step == 3) 
+            {
+              root = root->se;
+            }
+
+            if (path_step == 4) 
+            {
+              root = root->sw;
+            }
+        }
+    }
+
+    if(direction == 3)
+    {
+        int did_node_split = 0;
+        printf("\n Finding Northern Neighbour");
+        for(int i = neighbour_pos; i < patharray[20] - 2; i++)
+        {
+            quadtree_node_t *temp = NULL;
+            path_step = patharray[i];
+            if((root->bounds != NULL && quadtree_node_isempty(root))|| (quadtree_node_isleaf(root)))
+            {
+                // Analysis - Should give only a few outputs because only some nodes will have
+                // neighbour not at the same level or one level higher
+                printf("\n Neigbour split");
+                split_node_(tree, root);
+                did_node_split = 1;
+                temp = root;
+
+                if (path_step == 1) 
+                {
+                  root = root->sw;
+                }
+                else if(did_node_split == 1)
+                {
+                    printf("\n Created new neighbour node : North");
+                    leaf_array[leaf_iter] = *(temp->ne);
+                    leaf_iter++;
+                }
+
+                if (path_step == 2) 
+                {
+                  root = root->se;
+                }
+                else if(did_node_split == 1)
+                {
+                    printf("\n Created new neighbour node : North");
+                    leaf_array[leaf_iter] = *(temp->nw);
+                    leaf_iter++;
+                }
+
+                if (path_step == 3) 
+                {
+                  root = root->nw;
+                }
+                else if(did_node_split == 1)
+                {
+                    printf("\n Created new neighbour node: North");
+                    leaf_array[leaf_iter] = *(temp->se);
+                    leaf_iter++;
+                }
+
+                if (path_step == 4) 
+                {
+                  root = root->ne;
+                }
+                else if(did_node_split == 1)
+                {
+                    printf("\n Created new neighbour node : North");
+                    leaf_array[leaf_iter] = *(temp->sw);
+                    leaf_iter++;
+                }
+                did_node_split = 0;
+                break;
+            }
+            if (path_step == 1) 
+            {
+              root = root->sw;
+            }
+
+            if (path_step == 2) 
+            {
+              root = root->se;
+            }
+
+            if (path_step == 3) 
+            {
+              root = root->nw;
+            }
+
+            if (path_step == 4) 
+            {
+              root = root->ne;
+            }
+        }
+    }
+
+    if(direction == 4)
+    {
+        int did_node_split = 0;
+        printf("\n Finding Southern Neighbour");
+        for(int i = neighbour_pos; i < patharray[20] - 2; i++)
+        {
+            quadtree_node_t *temp = NULL;
+            path_step = patharray[i];
+            if((root->bounds != NULL && quadtree_node_isempty(root))|| (quadtree_node_isleaf(root)))
+            {
+                // Analysis - Should give only a few outputs because only some nodes will have
+                // neighbour not at the same level or one level higher
+                printf("\n Neigbour split");
+                split_node_(tree, root);
+                did_node_split = 1;
+                temp = root;
+
+                if (path_step == 1) 
+                {
+                  root = root->sw;
+                }
+                else if(did_node_split == 1)
+                {
+                    printf("\n Created new neighbour node : South");
+                    leaf_array[leaf_iter] = *(temp->ne);
+                    leaf_iter++;
+                }
+
+                if (path_step == 2) 
+                {
+                  root = root->se;
+                }
+                else if(did_node_split == 1)
+                {
+                    printf("\n Created new neighbour node : South");
+                    leaf_array[leaf_iter] = *(temp->nw);
+                    leaf_iter++;
+                }
+
+                if (path_step == 3) 
+                {
+                  root = root->nw;
+                }
+                else if(did_node_split == 1)
+                {
+                    printf("\n Created new neighbour node : South");
+                    leaf_array[leaf_iter] = *(temp->se);
+                    leaf_iter++;
+                }
+
+                if (path_step == 4) 
+                {
+                  root = root->ne;
+                }
+                else if(did_node_split == 1)
+                {
+                    printf("\n Created new neighbour node : South");
+                    leaf_array[leaf_iter] = *(temp->sw);
+                    leaf_iter++;
+                }
+                did_node_split = 0;
+                break;
+            }
+            if (path_step == 1) 
+            {
+              root = root->sw;
+            }
+
+            if (path_step == 2) 
+            {
+              root = root->se;
+            }
+
+            if (path_step == 3) 
+            {
+              root = root->nw;
+            }
+
+            if (path_step == 4) 
+            {
+              root = root->ne;
+            }
+        }
+    }
+
 }
 
 void find_neighbours(quadtree_t *tree, int patharray[21], quadtree_node_t *leaf_array)
@@ -340,7 +596,148 @@ void find_neighbours(quadtree_t *tree, int patharray[21], quadtree_node_t *leaf_
     }
     else
     {
-        // printf("\n Easter Neighbour does not exist");
+        // printf("\n Eastern Neighbour does not exist");
+    }
+
+    // For Western Neighbour
+    direction = 2;
+    for(i = path_size - 1; i >= 0; i--)
+    {
+        pathstep = patharray[i];
+        if(pathstep == 1)
+        {
+            continue;
+        }
+        else if(pathstep == 2)
+        {
+            // Analysis - Not all leaf nodes should have eastern neighbours (the easternmost nodes)
+            // printf("\n Found common ancestor for Western neighbour");
+            neighbour_pos = path_size-1 - i;
+            break;
+        }
+        else if(pathstep == 3)
+        {
+            continue;
+        }
+        else if(pathstep == 4)
+        {
+            // printf("\n Found common ancestor for Western neighbour");
+            neighbour_pos = path_size-1 - i;
+            break;
+        }
+        else if(pathstep == 0)
+        {
+            printf("\n Array iter has problems");
+        }
+        else
+        {
+            printf("\n Some random value corrupted pathaarray");
+            // exit(1);
+        }
+    }
+    if(neighbour_pos != -1)
+    {
+        // Neighbour exists
+        balance_neighbour(tree, patharray, neighbour_pos, direction, leaf_array);
+        neighbour_pos = -1;
+    }
+    else
+    {
+        // printf("\n Western Neighbour does not exist");
     }
     
+    // For Northern Neighbour
+    direction = 3;
+    for(i = path_size - 1; i>= 0; i--)
+    {
+        pathstep = patharray[i];
+        if(pathstep == 1)
+        {
+            continue;
+        }
+        else if(pathstep == 2)
+        {
+            continue;
+        }
+        else if(pathstep == 3)
+        {
+            // printf("\n Found common ancestor for Northern neighbour");
+            neighbour_pos = path_size-1 - i;
+            break;
+        }
+        else if(pathstep == 4)
+        {
+            // Analysis - Not all leaf nodes should have eastern neighbours (the easternmost nodes)
+            // printf("\n Found common ancestor for Northern neighbour");
+            neighbour_pos = path_size-1 - i;
+            break;
+        }
+        else if(pathstep == 0)
+        {
+            printf("\n Array iter has problems");
+        }
+        else
+        {
+            printf("\n Some random value corrupted pathaarray");
+            // exit(1);
+        }
+    }
+    if(neighbour_pos != -1)
+    {
+        // Neighbour exists
+        balance_neighbour(tree, patharray, neighbour_pos, direction, leaf_array);
+        neighbour_pos = -1;
+    }
+    else
+    {
+        // printf("\n Northern Neighbour does not exist");
+    }
+
+    // For Southern Neighbour
+    direction = 4;
+    for(i = path_size - 1; i>= 0; i--)
+    {
+        pathstep = patharray[i];
+        if(pathstep == 1)
+        {
+            // printf("\n Found common ancestor for Southern neighbour");
+            neighbour_pos = path_size-1 - i;
+            break;
+        }
+        else if(pathstep == 2)
+        {
+            // Analysis - Not all leaf nodes should have eastern neighbours (the easternmost nodes)
+            // printf("\n Found common ancestor for Southern neighbour");
+            neighbour_pos = path_size-1 - i;
+            break;
+        }
+        else if(pathstep == 3)
+        {
+            continue;
+        }
+        else if(pathstep == 4)
+        {
+            continue;
+        }
+        else if(pathstep == 0)
+        {
+            printf("\n Array iter has problems");
+        }
+        else
+        {
+            printf("\n Some random value corrupted pathaarray");
+            // exit(1);
+        }
+    }
+    if(neighbour_pos != -1)
+    {
+        // Neighbour exists
+        balance_neighbour(tree, patharray, neighbour_pos, direction, leaf_array);
+        neighbour_pos = -1;
+    }
+    else
+    {
+        // printf("\n Southern Neighbour does not exist");
+    }
+
 }
