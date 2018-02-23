@@ -218,8 +218,8 @@ void descent(quadtree_node_t *node) {
     // printf("\n Centroids Quad : { nw.x:%f, nw.y:%f, se.x:%f, se.y:%f }: ",
     // node->bounds->nw->x,
     //     node->bounds->nw->y, node->bounds->se->x, node->bounds->se->y);
-    printf("\n%f %f", (node->bounds->nw->x + node->bounds->se->x) / 2,
-           (node->bounds->nw->y + node->bounds->se->y) / 2);
+    //printf("\n%f %f", (node->bounds->nw->x + node->bounds->se->x) / 2,
+    //       (node->bounds->nw->y + node->bounds->se->y) / 2);
     char *filename = "output.txt";
     double xcord = (node->bounds->nw->x + node->bounds->se->x) / 2;
     double ycord = (node->bounds->nw->y + node->bounds->se->y) / 2;
