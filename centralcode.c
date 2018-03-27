@@ -4,6 +4,8 @@
 #include <assert.h>
 
 int leaf_iter = 0;
+coords_t *coords_list;
+int line_count = 0;
 
 void main_tree(int initial_coord_length, coords_t *coords_list, quadtree_node_t *leaf_array)
 {
@@ -40,11 +42,10 @@ void main_tree(int initial_coord_length, coords_t *coords_list, quadtree_node_t 
 
 int main(int argc, char *argv[])
 {
-    coords_t *coords_list = malloc(sizeof(coords_t) * MAX);
+    coords_list = malloc(sizeof(coords_t) * MAX);
     quadtree_node_t *leaf_array[MAX];
     printf("\nquadtree_t: %ld\n", sizeof(quadtree_t));
     char *filename = argv[1];
-    int line_count;
     line_count = fileinput(coords_list, filename);
     main_tree(line_count, coords_list, leaf_array);
     printf("\n");

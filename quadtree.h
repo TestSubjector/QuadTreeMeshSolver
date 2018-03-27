@@ -127,4 +127,9 @@ int split_node_newpoints(quadtree_t *tree, quadtree_node_t *node);
 int insert_(quadtree_t *tree, quadtree_node_t *root,
                    quadtree_point_t *point);
 
+int pnpoly(int nvert, coords_t *coords_list, double testx, double testy);
+
+extern coords_t *coords_list;
+extern int line_count;
+
 #endif

@@ -31,23 +31,26 @@ int fileinput(coords_t *coords_list, char *filename) {
 }
 
 void fileoutput(int append, char *filename, double xcord, double ycord) {
-  char xcordstr[11];
-  char ycordstr[11];
-  gcvt(xcord,10,xcordstr);
-  gcvt(ycord,10,ycordstr);
-  // double_to_char(xcord,xcordstr);
-  // double_to_char(ycord,ycordstr);
-  FILE *fp = NULL;
-  if (append==1) {
-    fp = fopen(filename, "a+");
-  } else {
-    fp = fopen(filename, "w");
-  }
-  if (fp != NULL) {
-    fputs(xcordstr, fp);
-    fputs(" ",fp);
-    fputs(ycordstr,fp);
-    fputs("\n",fp);
-    fclose(fp);
+  if(pnpoly(line_count, coords_list, xcord, ycord))
+  {
+    char xcordstr[11];
+    char ycordstr[11];
+    gcvt(xcord,10,xcordstr);
+    gcvt(ycord,10,ycordstr);
+    // double_to_char(xcord,xcordstr);
+    // double_to_char(ycord,ycordstr);
+    FILE *fp = NULL;
+    if (append==1) {
+      fp = fopen(filename, "a+");
+    } else {
+      fp = fopen(filename, "w");
+    }
+    if (fp != NULL) {
+      fputs(xcordstr, fp);
+      fputs(" ",fp);
+      fputs(ycordstr,fp);
+      fputs("\n",fp);
+      fclose(fp);
+    }
   }
 }
