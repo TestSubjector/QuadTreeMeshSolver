@@ -89,6 +89,7 @@ int quadtree_print(quadtree_node_t *node);
 void descent(quadtree_node_t *node);
 void ascent(quadtree_node_t *node);
 
+//Struct that stores all input points for file handling
 typedef struct coords 
 {
     double x; 
@@ -127,9 +128,22 @@ int split_node_newpoints(quadtree_t *tree, quadtree_node_t *node);
 int insert_(quadtree_t *tree, quadtree_node_t *root,
                    quadtree_point_t *point);
 
+// For blaking of points
+
 int pnpoly(int nvert, coords_t *coords_list, double testx, double testy);
 
 extern coords_t *coords_list;
 extern int line_count;
+
+
+// For finding neighbour_set of points
+
+void quadtree_neighbourset(quadtree_node_t *root);
+
+void quadtree_neighbourwalk(quadtree_node_t *root,
+                   void (*descent_node)(quadtree_node_t *node),
+                   void (*ascent)(quadtree_node_t *node));
+
+void descent_node(quadtree_node_t *node);
 
 #endif

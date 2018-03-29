@@ -2,8 +2,6 @@
 #include "quadtree.h"
 #include <stdio.h>
 
-// Put file reading portions here in the future
-
 int fileinput(coords_t *coords_list, char *filename) {
   char *line = NULL;
   size_t n = 0;
@@ -31,6 +29,7 @@ int fileinput(coords_t *coords_list, char *filename) {
 }
 
 void fileoutput(int append, char *filename, double xcord, double ycord) {
+  // The if condition checks for blanking points
   if(pnpoly(line_count, coords_list, xcord, ycord))
   {
     char xcordstr[11];

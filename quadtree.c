@@ -160,6 +160,7 @@ void quadtree_free(quadtree_t *tree) {
   free(tree);
 }
 
+// For getting all the leaf arrays
 void quadtree_leafwalk(quadtree_node_t *root,
                    void (*descent_leaf)(quadtree_node_t *node, quadtree_node_t *leaf_array),
                    void (*ascent)(quadtree_node_t *node), quadtree_node_t *leaf_array) {
@@ -179,11 +180,41 @@ void quadtree_leafwalk(quadtree_node_t *root,
   (*ascent)(root);
 }
 
+// The completing function for 'quadtree_leafwalk"
 void descent_leaf(quadtree_node_t *node, quadtree_node_t *leaf_array) {
   if ((node->bounds != NULL && quadtree_node_isempty(node))|| (quadtree_node_isleaf(node))) {
     leaf_array[leaf_iter] = *node;
     leaf_iter++;
     // printf("%d", leaf_iter);
+  }
+}
+
+// Finding leaves one by one for neighbour set
+void quadtree_neighbourwalk(quadtree_node_t *root,
+                   void (*descent_node)(quadtree_node_t *node),
+                   void (*ascent)(quadtree_node_t *node)) {
+  (*descent_node)(root);
+  if (root->nw != NULL) {
+    quadtree_neighbourwalk(root->nw, descent_node, ascent);
+  }
+  if (root->ne != NULL) {
+    quadtree_neighbourwalk(root->ne, descent_node, ascent);
+  }
+  if (root->sw != NULL) {
+    quadtree_neighbourwalk(root->sw, descent_node, ascent);
+  }
+  if (root->se != NULL) {
+    quadtree_neighbourwalk(root->se, descent_node, ascent);
+  }
+  (*ascent)(root);
+}
+
+// The completing funtion for 'quadtree_neighbourwalk'
+void descent_node(quadtree_node_t *node) {
+  if ((node->bounds != NULL && quadtree_node_isempty(node))|| (quadtree_node_isleaf(node))) 
+  {
+    printf("\n Node found");
+    
   }
 }
 

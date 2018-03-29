@@ -24,7 +24,6 @@ void main_tree(int initial_coord_length, coords_t *coords_list, quadtree_node_t 
     for(i = 0; i < leaf_iter; i++)
     {
         // printf("\n Problems with address %p\n", &leaf_array[i]);
-        // TODO - Use the path array to find neighbours
         find_neighbours(tree, common_ancestor(tree->root, &leaf_array[i]), leaf_array);
         if(i == 400)
         {
@@ -37,6 +36,7 @@ void main_tree(int initial_coord_length, coords_t *coords_list, quadtree_node_t 
         }
     }
     quadtree_walk(tree->root, descent, ascent);
+    quadtree_neighbourset(tree->root);
     quadtree_free(tree);
 }
 
