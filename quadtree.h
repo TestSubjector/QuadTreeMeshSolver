@@ -146,4 +146,10 @@ void quadtree_neighbourwalk(quadtree_node_t *root,
 
 void descent_node(quadtree_node_t *node);
 
+extern quadtree_t *tree;
+
+void find_neighbourset(int patharray[21], quadtree_node_t *node);
+
+void balance_neighbourset(int patharray[21], int neighbour_pos, int direction);
+
 #endif

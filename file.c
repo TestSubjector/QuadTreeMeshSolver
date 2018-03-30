@@ -53,3 +53,57 @@ void fileoutput(int append, char *filename, double xcord, double ycord) {
     }
   }
 }
+
+void neighbouroutput(int append, char *filename, double xcord, double ycord) {
+  // The if condition checks for blanking points
+  if(pnpoly(line_count, coords_list, xcord, ycord))
+  {
+    char xcordstr[11];
+    char ycordstr[11];
+    gcvt(xcord,10,xcordstr);
+    gcvt(ycord,10,ycordstr);
+    // double_to_char(xcord,xcordstr);
+    // double_to_char(ycord,ycordstr);
+    FILE *fp = NULL;
+    if (append==1) {
+      fp = fopen(filename, "a+");
+    } else {
+      fp = fopen(filename, "w");
+    }
+    if (fp != NULL) {
+      fputs("\n", fp);
+      fputs(xcordstr, fp);
+      fputs(" ",fp);
+      fputs(ycordstr,fp);
+      fputs(" has the neighbours : ",fp);
+      fclose(fp);
+    }
+  }
+}
+
+void neighbourset(int append, char *filename, double xcord, double ycord) {
+  // The if condition checks for blanking points
+  if(pnpoly(line_count, coords_list, xcord, ycord))
+  {
+    char xcordstr[11];
+    char ycordstr[11];
+    gcvt(xcord,10,xcordstr);
+    gcvt(ycord,10,ycordstr);
+    // double_to_char(xcord,xcordstr);
+    // double_to_char(ycord,ycordstr);
+    FILE *fp = NULL;
+    if (append==1) {
+      fp = fopen(filename, "a+");
+    } else {
+      fp = fopen(filename, "w");
+    }
+    if (fp != NULL) {
+      fputs("(", fp);
+      fputs(xcordstr, fp);
+      fputs(" ",fp);
+      fputs(ycordstr,fp);
+      fputs(")",fp);
+      fclose(fp);
+    }
+  }
+}

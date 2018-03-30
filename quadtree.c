@@ -210,11 +210,38 @@ void quadtree_neighbourwalk(quadtree_node_t *root,
 }
 
 // The completing funtion for 'quadtree_neighbourwalk'
+// It will one-by-one go through all the pointss and find neighbourset
 void descent_node(quadtree_node_t *node) {
-  if ((node->bounds != NULL && quadtree_node_isempty(node))|| (quadtree_node_isleaf(node))) 
+  char *filename = "neighbour.txt";
+  if (node->bounds != NULL && quadtree_node_isempty(node)) 
   {
-    printf("\n Node found");
-    
+    double xcord = (node->bounds->nw->x + node->bounds->se->x) / 2;
+    double ycord = (node->bounds->nw->y + node->bounds->se->y) / 2;
+    if(newfile == 1)
+    {
+        neighbouroutput(0,filename,xcord,ycord);
+        newfile = 0;
+    }
+    else
+    {
+        neighbouroutput(1,filename,xcord,ycord);
+    }
+    printf("\n %lf %lf has neighbours\t", xcord, ycord);
+    find_neighbourset(common_ancestor(tree->root, node), node);
+  }
+  else if(quadtree_node_isleaf(node))
+  {
+    if(newfile == 1)
+    {
+        neighbouroutput(0, filename, node->point->x, node->point->y);
+        newfile = 0;
+    }
+    else
+    {
+        neighbouroutput(1, filename, node->point->x, node->point->y);
+    }
+    printf("\n %lf %lf has neighbours\t", node->point->x, node->point->y);
+    find_neighbourset(common_ancestor(tree->root, node), node);
   }
 }
 

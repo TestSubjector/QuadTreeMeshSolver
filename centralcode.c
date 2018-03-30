@@ -6,10 +6,14 @@
 int leaf_iter = 0;
 coords_t *coords_list;
 int line_count = 0;
+quadtree_t *tree;
 
 void main_tree(int initial_coord_length, coords_t *coords_list, quadtree_node_t *leaf_array)
 {
-    quadtree_t *tree = quadtree_new(-5, -5, 5, 5);
+    tree = quadtree_new(-5, -5, 5, 5);
+    // double xcord = (tree->root->bounds->nw->x + tree->root->bounds->se->x) / 2;
+    // double ycord = (tree->root->bounds->nw->y + tree->root->bounds->se->y) / 2;
+    // printf("\n ********This could be a horrow show (%lf,%lf) ", xcord, ycord);
     int i = 0;
     for(i = 0; i < initial_coord_length; i++)
     {
