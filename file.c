@@ -2,8 +2,7 @@
 #include "quadtree.h"
 #include <stdio.h>
 
-double main_pointx;
-double main_pointy;
+int serial_number = 1;
 
 int fileinput(coords_t *coords_list, char *filename) 
 {
@@ -67,14 +66,14 @@ void fileoutput(int append, char *filename, double xcord, double ycord)
 
 void neighbouroutput(int append, char *filename, double xcord, double ycord) 
 {
-    main_pointx = xcord;
-    main_pointy = ycord;
     // The if condition checks for blanking points
 
     char xcordstr[11];
     char ycordstr[11];
+    char serialnumstr[11];
     gcvt(xcord,10,xcordstr);
     gcvt(ycord,10,ycordstr);
+    gcvt(serial_number, 10 , serialnumstr);
     // double_to_char(xcord,xcordstr);
     // double_to_char(ycord,ycordstr);
     FILE *fp = NULL;
@@ -86,15 +85,18 @@ void neighbouroutput(int append, char *filename, double xcord, double ycord)
     {
         fp = fopen(filename, "w");
     }
-    //if(pnpoly(line_count, coords_list, xcord, ycord))
+    if(pnpoly(line_count, coords_list, xcord, ycord))
     {    
         if (fp != NULL) 
         {
-            fputs("\n", fp);
+            fputs("\t\n", fp);
+            fputs(serialnumstr, fp);
+            serial_number++;
+            fputs("\t", fp);
             fputs(xcordstr, fp);
-            fputs(" ",fp);
+            fputs(",",fp);
             fputs(ycordstr,fp);
-            fputs(" has the neighbours : ",fp);
+            fputs("\t\t",fp);
             fclose(fp);
         }
         
@@ -119,11 +121,11 @@ void neighbourset(int append, char *filename, double xcord, double ycord)
     if(pnpoly(line_count, coords_list, xcord, ycord))
     {
         if (fp != NULL) {
-          fputs("(", fp);
+          fputs(" ", fp);
           fputs(xcordstr, fp);
           fputs(",",fp);
           fputs(ycordstr,fp);
-          fputs(") ",fp);
+          fputs("\t",fp);
           fclose(fp);
         }
     }

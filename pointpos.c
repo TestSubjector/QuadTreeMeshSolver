@@ -2,12 +2,22 @@
 
 int pnpoly(int nvert, coords_t *coords_list, double testx, double testy)
 {
-  int i, j, c = 1;
-  for (i = 0, j = nvert-1; i < nvert; j = i++) 
-  {
-    if (((coords_list[i].y>testy) != (coords_list[j].y>testy)) &&
-     (testx < (coords_list[j].x-coords_list[i].x) * (testy-coords_list[i].y) / (coords_list[j].y-coords_list[i].y) + coords_list[i].x))
-       c = !c;
-  }
-  return c;
+    int i, j, c = 1;
+
+    // Point on boundary, then not inside the polygon
+    for(i =0; i< nvert; i++)
+    {
+        if(coords_list[i].y == testy && coords_list[i].x == testx)
+        {
+            return c;
+        }
+    }
+
+    for (i = 0, j = nvert-1; i < nvert; j = i++) 
+    {
+        if (((coords_list[i].y>testy) != (coords_list[j].y>testy)) &&
+            (testx < (coords_list[j].x-coords_list[i].x) * (testy-coords_list[i].y) / (coords_list[j].y-coords_list[i].y) + coords_list[i].x))
+                c = !c;
+    }
+    return c;
 }

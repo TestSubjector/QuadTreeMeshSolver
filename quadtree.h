@@ -161,7 +161,5 @@ void neighbourset(int append, char *filename, double xcord, double ycord);
 
 // To prevent a point stating itself as a neighbour
 
-extern double main_pointx;
-extern double main_pointy;
-
+extern int serial_number;
 #endif
