@@ -165,7 +165,7 @@ int* common_ancestor(quadtree_node_t *root, quadtree_node_t *node)
         find_patharray(root, (node->bounds->nw->x + node->bounds->se->x) / 2, (node->bounds->nw->y + node->bounds->se->y) / 2);
         // printf("\n For point %lf, %lf ", (node->bounds->nw->x + node->bounds->se->x) / 2, (node->bounds->nw->y + node->bounds->se->y) / 2);
     }
-    else if (quadtree_node_isleaf(node)) 
+    else if (quadtree_node_isleaf(node))
     {
         // printf("\n Found boundary point \n");
         path_iter = 0;
@@ -178,7 +178,7 @@ int* common_ancestor(quadtree_node_t *root, quadtree_node_t *node)
 
 void balance_neighbour(quadtree_t *tree, int patharray[21], int neighbour_pos, int direction, quadtree_node_t *leaf_array)
 {
-    
+
     // Direction
     // East - 1 , West - 2, North -3, South - 4
 
@@ -188,19 +188,19 @@ void balance_neighbour(quadtree_t *tree, int patharray[21], int neighbour_pos, i
     for(i = 0; i< neighbour_pos; i++)
     {
         path_step = patharray[i];
-        if (path_step == 1) 
+        if (path_step == 1)
         {
           root = root->nw;
         }
-        if (path_step == 2) 
+        if (path_step == 2)
         {
           root = root->ne;
         }
-        if (path_step == 3) 
+        if (path_step == 3)
         {
           root = root->sw;
         }
-        if (path_step == 4) 
+        if (path_step == 4)
         {
           root = root->se;
         }
@@ -210,7 +210,7 @@ void balance_neighbour(quadtree_t *tree, int patharray[21], int neighbour_pos, i
         // printf("\n No need for neighbour adjustment");
         return;
     }
-    
+
     // Eastern Neighbour
     if(direction == 1)
     {
@@ -229,7 +229,7 @@ void balance_neighbour(quadtree_t *tree, int patharray[21], int neighbour_pos, i
                 split_node_newpoints(tree, root);
                 did_node_split = 1;
                 temp1 = root;
-                if (path_step == 1) 
+                if (path_step == 1)
                 {
                   root = root->ne;
                 }
@@ -240,7 +240,7 @@ void balance_neighbour(quadtree_t *tree, int patharray[21], int neighbour_pos, i
                     leaf_iter++;
                 }
 
-                if (path_step == 2) 
+                if (path_step == 2)
                 {
                   root = root->nw;
                 }
@@ -251,7 +251,7 @@ void balance_neighbour(quadtree_t *tree, int patharray[21], int neighbour_pos, i
                     leaf_iter++;
                 }
 
-                if (path_step == 3) 
+                if (path_step == 3)
                 {
                   root = root->se;
                 }
@@ -262,7 +262,7 @@ void balance_neighbour(quadtree_t *tree, int patharray[21], int neighbour_pos, i
                     leaf_iter++;
                 }
 
-                if (path_step == 4) 
+                if (path_step == 4)
                 {
                   root = root->sw;
                 }
@@ -276,22 +276,22 @@ void balance_neighbour(quadtree_t *tree, int patharray[21], int neighbour_pos, i
                 continue;
             }
 
-            if (path_step == 1 ) 
+            if (path_step == 1 )
             {
               root = root->ne;
             }
 
-            if (path_step == 2) 
+            if (path_step == 2)
             {
               root = root->nw;
             }
 
-            if (path_step == 3) 
+            if (path_step == 3)
             {
               root = root->se;
             }
 
-            if (path_step == 4) 
+            if (path_step == 4)
             {
               root = root->sw;
             }
@@ -317,7 +317,7 @@ void balance_neighbour(quadtree_t *tree, int patharray[21], int neighbour_pos, i
                 did_node_split = 1;
                 temp2 = root;
 
-                if (path_step == 1) 
+                if (path_step == 1)
                 {
                   root = root->ne;
                 }
@@ -328,7 +328,7 @@ void balance_neighbour(quadtree_t *tree, int patharray[21], int neighbour_pos, i
                     leaf_iter++;
                 }
 
-                if (path_step == 2) 
+                if (path_step == 2)
                 {
                   root = root->nw;
                 }
@@ -339,7 +339,7 @@ void balance_neighbour(quadtree_t *tree, int patharray[21], int neighbour_pos, i
                     leaf_iter++;
                 }
 
-                if (path_step == 3) 
+                if (path_step == 3)
                 {
                   root = root->se;
                 }
@@ -350,7 +350,7 @@ void balance_neighbour(quadtree_t *tree, int patharray[21], int neighbour_pos, i
                     leaf_iter++;
                 }
 
-                if (path_step == 4) 
+                if (path_step == 4)
                 {
                   root = root->sw;
                 }
@@ -363,22 +363,22 @@ void balance_neighbour(quadtree_t *tree, int patharray[21], int neighbour_pos, i
                 did_node_split = 0;
                 continue;
             }
-            if (path_step == 1) 
+            if (path_step == 1)
             {
               root = root->ne;
             }
 
-            if (path_step == 2) 
+            if (path_step == 2)
             {
               root = root->nw;
             }
 
-            if (path_step == 3) 
+            if (path_step == 3)
             {
               root = root->se;
             }
 
-            if (path_step == 4) 
+            if (path_step == 4)
             {
               root = root->sw;
             }
@@ -403,7 +403,7 @@ void balance_neighbour(quadtree_t *tree, int patharray[21], int neighbour_pos, i
                 did_node_split = 1;
                 temp3 = root;
 
-                if (path_step == 1) 
+                if (path_step == 1)
                 {
                   root = root->sw;
                 }
@@ -414,7 +414,7 @@ void balance_neighbour(quadtree_t *tree, int patharray[21], int neighbour_pos, i
                     leaf_iter++;
                 }
 
-                if (path_step == 2) 
+                if (path_step == 2)
                 {
                   root = root->se;
                 }
@@ -425,7 +425,7 @@ void balance_neighbour(quadtree_t *tree, int patharray[21], int neighbour_pos, i
                     leaf_iter++;
                 }
 
-                if (path_step == 3) 
+                if (path_step == 3)
                 {
                   root = root->nw;
                 }
@@ -436,7 +436,7 @@ void balance_neighbour(quadtree_t *tree, int patharray[21], int neighbour_pos, i
                     leaf_iter++;
                 }
 
-                if (path_step == 4) 
+                if (path_step == 4)
                 {
                   root = root->ne;
                 }
@@ -449,22 +449,22 @@ void balance_neighbour(quadtree_t *tree, int patharray[21], int neighbour_pos, i
                 did_node_split = 0;
                 continue;
             }
-            if (path_step == 1) 
+            if (path_step == 1)
             {
               root = root->sw;
             }
 
-            if (path_step == 2) 
+            if (path_step == 2)
             {
               root = root->se;
             }
 
-            if (path_step == 3) 
+            if (path_step == 3)
             {
               root = root->nw;
             }
 
-            if (path_step == 4) 
+            if (path_step == 4)
             {
               root = root->ne;
             }
@@ -490,7 +490,7 @@ void balance_neighbour(quadtree_t *tree, int patharray[21], int neighbour_pos, i
                 split_node_newpoints(tree, root);
                 did_node_split = 1;
                 temp4 = root;
-                if (path_step == 1) 
+                if (path_step == 1)
                 {
                   root = root->sw;
                 }
@@ -501,7 +501,7 @@ void balance_neighbour(quadtree_t *tree, int patharray[21], int neighbour_pos, i
                     leaf_iter++;
                 }
 
-                if (path_step == 2) 
+                if (path_step == 2)
                 {
                   root = root->se;
                 }
@@ -512,7 +512,7 @@ void balance_neighbour(quadtree_t *tree, int patharray[21], int neighbour_pos, i
                     leaf_iter++;
                 }
 
-                if (path_step == 3) 
+                if (path_step == 3)
                 {
                   root = root->nw;
                 }
@@ -523,7 +523,7 @@ void balance_neighbour(quadtree_t *tree, int patharray[21], int neighbour_pos, i
                     leaf_iter++;
                 }
 
-                if (path_step == 4) 
+                if (path_step == 4)
                 {
                   root = root->ne;
                 }
@@ -536,23 +536,23 @@ void balance_neighbour(quadtree_t *tree, int patharray[21], int neighbour_pos, i
                 did_node_split = 0;
                 continue;
             }
-            
-            if (path_step == 1) 
+
+            if (path_step == 1)
             {
               root = root->sw;
             }
 
-            if (path_step == 2) 
+            if (path_step == 2)
             {
               root = root->se;
             }
 
-            if (path_step == 3) 
+            if (path_step == 3)
             {
               root = root->nw;
             }
 
-            if (path_step == 4) 
+            if (path_step == 4)
             {
               root = root->ne;
             }
@@ -673,7 +673,7 @@ void find_neighbours(quadtree_t *tree, int patharray[21], quadtree_node_t *leaf_
     {
         // printf("\n Western Neighbour does not exist");
     }
-    
+
     // For Northern Neighbour
     direction = 3;
     for(i = path_size - 1; i>= 0; i--)
@@ -769,7 +769,7 @@ void find_neighbours(quadtree_t *tree, int patharray[21], quadtree_node_t *leaf_
     }
 }
 
-int split_node_newpoints(quadtree_t *tree, quadtree_node_t *node) 
+int split_node_newpoints(quadtree_t *tree, quadtree_node_t *node)
 {
     quadtree_node_t *nw = NULL;
     quadtree_node_t *ne = NULL;
@@ -796,7 +796,7 @@ int split_node_newpoints(quadtree_t *tree, quadtree_node_t *node)
     node->ne = ne;
     node->sw = sw;
     node->se = se;
-    
+
     if(quadtree_node_isleaf(node))
     {
         old = node->point;
@@ -815,7 +815,6 @@ int split_node_newpoints(quadtree_t *tree, quadtree_node_t *node)
 void find_neighbourset(int patharray[21], quadtree_node_t *node)
 {
     // printf("\n Start");
-
     int path_size = patharray[20];
     int i = 0;
     int pathstep = -1;
@@ -925,7 +924,7 @@ void find_neighbourset(int patharray[21], quadtree_node_t *node)
     {
         // printf("\n Western Neighbour does not exist");
     }
-    
+
     // For Northern Neighbour
     direction = 3;
     for(i = path_size - 1; i>= 0; i--)
@@ -1023,7 +1022,7 @@ void find_neighbourset(int patharray[21], quadtree_node_t *node)
 
 void balance_neighbourset(int patharray[21], int neighbour_pos, int direction)
 {
-    
+
     // Direction
     // East - 1 , West - 2, North -3, South - 4
 
@@ -1037,22 +1036,22 @@ void balance_neighbourset(int patharray[21], int neighbour_pos, int direction)
     {
         // printf("\n The i is %d", i);
         path_step = patharray[i];
-        if (path_step == 1) 
+        if (path_step == 1)
         {
-            // printf("\n1");  
+            // printf("\n1");
             node = node->nw;
         }
-        if (path_step == 2) 
+        if (path_step == 2)
         {
-            // printf("\n2");     
+            // printf("\n2");
             node = node->ne;
         }
-        if (path_step == 3) 
+        if (path_step == 3)
         {
             // printf("\n3");
             node = node->sw;
         }
-        if (path_step == 4) 
+        if (path_step == 4)
         {
             // printf("\n4");
             node = node->se;
@@ -1071,9 +1070,34 @@ void balance_neighbourset(int patharray[21], int neighbour_pos, int direction)
         int i = neighbour_pos;
         // printf("\n The neighbour pos is %d", i);
         for(i = neighbour_pos; i <= patharray[20] - 1; i++)
-        {   
+        {
+            path_step = patharray[i];
+            if (path_step == 1)
+            {
+                // printf("\n1");
+                node = node->ne;
+            }
+            else if (path_step == 2)
+            {
+                // printf("\n2");
+                node = node->nw;
+            }
+            else if (path_step == 3)
+            {
+                // printf("\n3");
+                node = node->se;
+            }
+            else if (path_step == 4)
+            {
+                // printf("\n4");
+                node = node->sw;
+            }
+            else
+            {
+                printf("ERROR : 2nd stage path traversal for neighbour set went awry");
+            }
             // printf("\n The newer i is %d", i);
-            if (node->bounds != NULL && quadtree_node_isempty(node)) 
+            if (node->bounds != NULL && quadtree_node_isempty(node))
             {
                 double xcord = (node->bounds->nw->x + node->bounds->se->x) / 2;
                 double ycord = (node->bounds->nw->y + node->bounds->se->y) / 2;
@@ -1088,9 +1112,9 @@ void balance_neighbourset(int patharray[21], int neighbour_pos, int direction)
                 break;
             }
             // The neighbours are two
-            else if(i == patharray[20] - 1 && i !=0)
+            else if(i == patharray[20] - 1)
             {
-                if (node->nw->bounds != NULL && quadtree_node_isempty(node->nw)) 
+                if (node->nw->bounds != NULL && quadtree_node_isempty(node->nw))
                 {
                     double xcord = (node->nw->bounds->nw->x + node->nw->bounds->se->x) / 2;
                     double ycord = (node->nw->bounds->nw->y + node->nw->bounds->se->y) / 2;
@@ -1103,7 +1127,7 @@ void balance_neighbourset(int patharray[21], int neighbour_pos, int direction)
                     printf("(%lf,%lf) ", node->nw->point->x, node->nw->point->y);
                 }
 
-                if (node->sw->bounds != NULL && quadtree_node_isempty(node->sw)) 
+                if (node->sw->bounds != NULL && quadtree_node_isempty(node->sw))
                 {
                     double xcord = (node->sw->bounds->nw->x + node->sw->bounds->se->x) / 2;
                     double ycord = (node->sw->bounds->nw->y + node->sw->bounds->se->y) / 2;
@@ -1116,81 +1140,6 @@ void balance_neighbourset(int patharray[21], int neighbour_pos, int direction)
                     printf("(%lf,%lf) ", node->sw->point->x, node->sw->point->y);
                 }
                 break;
-            }
-            else
-            {
-                path_step = patharray[i];
-                if (path_step == 1) 
-                {
-                    // printf("\n1"); 
-                    node = node->ne;
-                }
-                else if (path_step == 2) 
-                {
-                    // printf("\n2"); 
-                    node = node->nw;
-                }
-                else if (path_step == 3) 
-                {
-                    // printf("\n3"); 
-                    node = node->se;
-                }
-                else if (path_step == 4) 
-                {
-                    // printf("\n4"); 
-                    node = node->sw;
-                }
-                else
-                {
-                    printf("ERROR : 2nd stage path traversal for neighbour set went awry");
-                }
-            }
-
-            if(i == 0)
-            {
-                if (node->bounds != NULL && quadtree_node_isempty(node)) 
-                {
-                    double xcord = (node->bounds->nw->x + node->bounds->se->x) / 2;
-                    double ycord = (node->bounds->nw->y + node->bounds->se->y) / 2;
-                    neighbourset(1, filename, xcord, ycord);
-                    printf("(%lf,%lf) ", xcord, ycord);
-                    break;
-                }
-                else if(quadtree_node_isleaf(node))
-                {
-                    neighbourset(1, filename, node->point->x, node->point->y);
-                    printf("(%lf,%lf) ", node->point->x, node->point->y);
-                    break;
-                }
-                else
-                {
-                    if (node->nw->bounds != NULL && quadtree_node_isempty(node->nw)) 
-                    {
-                        double xcord = (node->nw->bounds->nw->x + node->nw->bounds->se->x) / 2;
-                        double ycord = (node->nw->bounds->nw->y + node->nw->bounds->se->y) / 2;
-                        neighbourset(1, filename, xcord, ycord);
-                        printf("(%lf,%lf) ", xcord, ycord);
-                    }
-                    else if(quadtree_node_isleaf(node->nw))
-                    {
-                        neighbourset(1, filename, node->nw->point->x, node->nw->point->y);
-                        printf("(%lf,%lf) ", node->nw->point->x, node->nw->point->y);
-                    }
-
-                    if (node->sw->bounds != NULL && quadtree_node_isempty(node->sw)) 
-                    {
-                        double xcord = (node->sw->bounds->nw->x + node->sw->bounds->se->x) / 2;
-                        double ycord = (node->sw->bounds->nw->y + node->sw->bounds->se->y) / 2;
-                        neighbourset(1, filename, xcord, ycord);
-                        printf("(%lf,%lf) ", xcord, ycord);
-                    }
-                    else if(quadtree_node_isleaf(node->sw))
-                    {
-                        neighbourset(1, filename, node->sw->point->x, node->sw->point->y);
-                        printf("(%lf,%lf) ", node->sw->point->x, node->sw->point->y);
-                    }
-                    break;
-                }
             }
         }
     }
@@ -1202,7 +1151,26 @@ void balance_neighbourset(int patharray[21], int neighbour_pos, int direction)
         int i = neighbour_pos;
         for(i = neighbour_pos; i <= patharray[20] - 1; i++)
         {
-            if(node->bounds != NULL && quadtree_node_isempty(node)) 
+            path_step = patharray[i];
+
+            if (path_step == 1)
+            {
+                node = node->ne;
+            }
+            else if (path_step == 2)
+            {
+                node = node->nw;
+            }
+            else if (path_step == 3)
+            {
+                node = node->se;
+            }
+            else if (path_step == 4)
+            {
+                node = node->sw;
+            }
+
+            if(node->bounds != NULL && quadtree_node_isempty(node))
             {
                 double xcord = (node->bounds->nw->x + node->bounds->se->x) / 2;
                 double ycord = (node->bounds->nw->y + node->bounds->se->y) / 2;
@@ -1216,9 +1184,9 @@ void balance_neighbourset(int patharray[21], int neighbour_pos, int direction)
                 printf("(%lf,%lf) ", node->point->x, node->point->y);
                 break;
             }
-            else if(i == patharray[20] - 1 && i !=0)
+            else if(i == patharray[20] - 1)
             {
-                if (node->ne->bounds != NULL && quadtree_node_isempty(node->ne)) 
+                if (node->ne->bounds != NULL && quadtree_node_isempty(node->ne))
                 {
                     double xcord = (node->ne->bounds->nw->x + node->ne->bounds->se->x) / 2;
                     double ycord = (node->ne->bounds->nw->y + node->ne->bounds->se->y) / 2;
@@ -1231,7 +1199,7 @@ void balance_neighbourset(int patharray[21], int neighbour_pos, int direction)
                     printf("(%lf,%lf) ", node->ne->point->x, node->ne->point->y);
                 }
 
-                if (node->se->bounds != NULL && quadtree_node_isempty(node->se)) 
+                if (node->se->bounds != NULL && quadtree_node_isempty(node->se))
                 {
                     double xcord = (node->se->bounds->nw->x + node->se->bounds->se->x) / 2;
                     double ycord = (node->se->bounds->nw->y + node->se->bounds->se->y) / 2;
@@ -1245,75 +1213,6 @@ void balance_neighbourset(int patharray[21], int neighbour_pos, int direction)
                 }
                 break;
             }
-            else
-            {
-                path_step = patharray[i];
-            
-                if (path_step == 1) 
-                {
-                    node = node->ne;
-                }
-                else if (path_step == 2) 
-                {
-                    node = node->nw;
-                }
-                else if (path_step == 3) 
-                {
-                    node = node->se;
-                }
-                else if (path_step == 4) 
-                {
-                    node = node->sw;
-                }
-            }
-
-            if(i == 0)
-            {
-                if(node->bounds != NULL && quadtree_node_isempty(node)) 
-                {
-                    double xcord = (node->bounds->nw->x + node->bounds->se->x) / 2;
-                    double ycord = (node->bounds->nw->y + node->bounds->se->y) / 2;
-                    neighbourset(1, filename, xcord, ycord);
-                    printf("(%lf,%lf) ", xcord, ycord);
-                    break;
-                }
-                else if(quadtree_node_isleaf(node))
-                {
-                    neighbourset(1, filename, node->point->x, node->point->y);
-                    printf("(%lf,%lf) ", node->point->x, node->point->y);
-                    break;
-                }
-                else if(i == patharray[20] - 1)
-                {
-                    if (node->ne->bounds != NULL && quadtree_node_isempty(node->ne)) 
-                    {
-                        double xcord = (node->ne->bounds->nw->x + node->ne->bounds->se->x) / 2;
-                        double ycord = (node->ne->bounds->nw->y + node->ne->bounds->se->y) / 2;
-                        neighbourset(1, filename, xcord, ycord);
-                        printf("(%lf,%lf) ", xcord, ycord);
-                    }
-                    else if(quadtree_node_isleaf(node->ne))
-                    {
-                        neighbourset(1, filename, node->ne->point->x, node->ne->point->y);
-                        printf("(%lf,%lf) ", node->ne->point->x, node->ne->point->y);
-                    }
-
-                    if (node->se->bounds != NULL && quadtree_node_isempty(node->se)) 
-                    {
-                        double xcord = (node->se->bounds->nw->x + node->se->bounds->se->x) / 2;
-                        double ycord = (node->se->bounds->nw->y + node->se->bounds->se->y) / 2;
-                        neighbourset(1, filename, xcord, ycord);
-                        printf("(%lf,%lf) ", xcord, ycord);
-                    }
-                    else if(quadtree_node_isleaf(node->se))
-                    {
-                        neighbourset(1, filename, node->se->point->x, node->se->point->y);
-                        printf("(%lf,%lf) ", node->se->point->x, node->se->point->y);
-                    }
-                    break;
-                }
-            }
-
         }
     }
 
@@ -1324,7 +1223,27 @@ void balance_neighbourset(int patharray[21], int neighbour_pos, int direction)
         int i = neighbour_pos;
         for(i = neighbour_pos; i <= patharray[20] - 1; i++)
         {
-            if(node->bounds != NULL && quadtree_node_isempty(node)) 
+
+            path_step = patharray[i];
+
+            if (path_step == 1)
+            {
+                node = node->sw;
+            }
+            else if (path_step == 2)
+            {
+                node = node->se;
+            }
+            else if (path_step == 3)
+            {
+                node = node->nw;
+            }
+            else if (path_step == 4)
+            {
+                node = node->ne;
+            }
+
+            if(node->bounds != NULL && quadtree_node_isempty(node))
             {
                 double xcord = (node->bounds->nw->x + node->bounds->se->x) / 2;
                 double ycord = (node->bounds->nw->y + node->bounds->se->y) / 2;
@@ -1338,9 +1257,9 @@ void balance_neighbourset(int patharray[21], int neighbour_pos, int direction)
                 printf("(%lf,%lf) ", node->point->x, node->point->y);
                 break;
             }
-            else if(i == patharray[20] - 1 && i !=0)
+            else if(i == patharray[20] - 1)
             {
-                if (node->se->bounds != NULL && quadtree_node_isempty(node->se)) 
+                if (node->se->bounds != NULL && quadtree_node_isempty(node->se))
                 {
                     double xcord = (node->se->bounds->nw->x + node->se->bounds->se->x) / 2;
                     double ycord = (node->se->bounds->nw->y + node->se->bounds->se->y) / 2;
@@ -1353,7 +1272,7 @@ void balance_neighbourset(int patharray[21], int neighbour_pos, int direction)
                     printf("(%lf,%lf) ", node->se->point->x, node->se->point->y);
                 }
 
-                if (node->sw->bounds != NULL && quadtree_node_isempty(node->sw)) 
+                if (node->sw->bounds != NULL && quadtree_node_isempty(node->sw))
                 {
                     double xcord = (node->sw->bounds->nw->x + node->sw->bounds->se->x) / 2;
                     double ycord = (node->sw->bounds->nw->y + node->sw->bounds->se->y) / 2;
@@ -1367,74 +1286,6 @@ void balance_neighbourset(int patharray[21], int neighbour_pos, int direction)
                 }
                 break;
             }
-            else
-            {
-                path_step = patharray[i];
-            
-                if (path_step == 1) 
-                {
-                    node = node->sw;
-                }
-                else if (path_step == 2) 
-                {
-                    node = node->se;
-                }
-                else if (path_step == 3) 
-                {
-                    node = node->nw;
-                }
-                else if (path_step == 4) 
-                {
-                    node = node->ne;
-                }
-            }
-
-            if(i==0)
-            {
-                if(node->bounds != NULL && quadtree_node_isempty(node)) 
-                {
-                    double xcord = (node->bounds->nw->x + node->bounds->se->x) / 2;
-                    double ycord = (node->bounds->nw->y + node->bounds->se->y) / 2;
-                    neighbourset(1, filename, xcord, ycord);
-                    printf("(%lf,%lf) ", xcord, ycord);
-                    break;
-                }
-                else if(quadtree_node_isleaf(node))
-                {
-                    neighbourset(1, filename, node->point->x, node->point->y);
-                    printf("(%lf,%lf) ", node->point->x, node->point->y);
-                    break;
-                }
-                else if(i == patharray[20] - 1)
-                {
-                    if (node->se->bounds != NULL && quadtree_node_isempty(node->se)) 
-                    {
-                        double xcord = (node->se->bounds->nw->x + node->se->bounds->se->x) / 2;
-                        double ycord = (node->se->bounds->nw->y + node->se->bounds->se->y) / 2;
-                        neighbourset(1, filename, xcord, ycord);
-                        printf("(%lf,%lf) ", xcord, ycord);
-                    }
-                    else if(quadtree_node_isleaf(node->se))
-                    {
-                        neighbourset(1, filename, node->se->point->x, node->se->point->y);
-                        printf("(%lf,%lf) ", node->se->point->x, node->se->point->y);
-                    }
-
-                    if (node->sw->bounds != NULL && quadtree_node_isempty(node->sw)) 
-                    {
-                        double xcord = (node->sw->bounds->nw->x + node->sw->bounds->se->x) / 2;
-                        double ycord = (node->sw->bounds->nw->y + node->sw->bounds->se->y) / 2;
-                        neighbourset(1, filename, xcord, ycord);
-                        printf("(%lf,%lf) ", xcord, ycord);
-                    }
-                    else if(quadtree_node_isleaf(node->sw))
-                    {
-                        neighbourset(1, filename, node->sw->point->x, node->sw->point->y);
-                        printf("(%lf,%lf) ", node->sw->point->x, node->sw->point->y);
-                    }
-                    break;
-                }
-            }
         }
     }
 
@@ -1445,7 +1296,26 @@ void balance_neighbourset(int patharray[21], int neighbour_pos, int direction)
         int i = neighbour_pos;
         for(i = neighbour_pos; i <= patharray[20] - 1; i++)
         {
-            if(node->bounds != NULL && quadtree_node_isempty(node)) 
+            path_step = patharray[i];
+
+            if (path_step == 1)
+            {
+                node = node->sw;
+            }
+            else if (path_step == 2)
+            {
+                node = node->se;
+            }
+            else if (path_step == 3)
+            {
+                node = node->nw;
+            }
+            else if (path_step == 4)
+            {
+                node = node->ne;
+            }
+
+            if(node->bounds != NULL && quadtree_node_isempty(node))
             {
                 double xcord = (node->bounds->nw->x + node->bounds->se->x) / 2;
                 double ycord = (node->bounds->nw->y + node->bounds->se->y) / 2;
@@ -1459,9 +1329,10 @@ void balance_neighbourset(int patharray[21], int neighbour_pos, int direction)
                 printf("(%lf,%lf) ", node->point->x, node->point->y);
                 break;
             }
-            else if(i == patharray[20] - 1 && i !=0)
+            else if(i == patharray[20] - 1)
             {
-                if (node->nw->bounds != NULL && quadtree_node_isempty(node->nw)) 
+                
+                if (node->nw->bounds != NULL && quadtree_node_isempty(node->nw))
                 {
                     double xcord = (node->nw->bounds->nw->x + node->nw->bounds->se->x) / 2;
                     double ycord = (node->nw->bounds->nw->y + node->nw->bounds->se->y) / 2;
@@ -1474,7 +1345,7 @@ void balance_neighbourset(int patharray[21], int neighbour_pos, int direction)
                     printf("(%lf,%lf) ", node->nw->point->x, node->nw->point->y);
                 }
 
-                if (node->ne->bounds != NULL && quadtree_node_isempty(node->ne)) 
+                if (node->ne->bounds != NULL && quadtree_node_isempty(node->ne))
                 {
                     double xcord = (node->ne->bounds->nw->x + node->ne->bounds->se->x) / 2;
                     double ycord = (node->ne->bounds->nw->y + node->ne->bounds->se->y) / 2;
@@ -1487,74 +1358,6 @@ void balance_neighbourset(int patharray[21], int neighbour_pos, int direction)
                     printf("(%lf,%lf) ", node->ne->point->x, node->ne->point->y);
                 }
                 break;
-            }
-            else
-            {
-                path_step = patharray[i];
-            
-                if (path_step == 1) 
-                {
-                    node = node->sw;
-                }
-                else if (path_step == 2) 
-                {
-                    node = node->se;
-                }
-                else if (path_step == 3) 
-                {
-                    node = node->nw;
-                }
-                else if (path_step == 4) 
-                {
-                    node = node->ne;
-                }
-            }
-
-            if(i == 0)
-            {
-                if(node->bounds != NULL && quadtree_node_isempty(node)) 
-                {
-                    double xcord = (node->bounds->nw->x + node->bounds->se->x) / 2;
-                    double ycord = (node->bounds->nw->y + node->bounds->se->y) / 2;
-                    neighbourset(1, filename, xcord, ycord);
-                    printf("(%lf,%lf) ", xcord, ycord);
-                    break;
-                }
-                else if(quadtree_node_isleaf(node))
-                {
-                    neighbourset(1, filename, node->point->x, node->point->y);
-                    printf("(%lf,%lf) ", node->point->x, node->point->y);
-                    break;
-                }
-                else if(i == patharray[20] - 1)
-                {
-                    if (node->nw->bounds != NULL && quadtree_node_isempty(node->nw)) 
-                    {
-                        double xcord = (node->nw->bounds->nw->x + node->nw->bounds->se->x) / 2;
-                        double ycord = (node->nw->bounds->nw->y + node->nw->bounds->se->y) / 2;
-                        neighbourset(1, filename, xcord, ycord);
-                        printf("(%lf,%lf) ", xcord, ycord);
-                    }
-                    else if(quadtree_node_isleaf(node->nw))
-                    {
-                        neighbourset(1, filename, node->nw->point->x, node->nw->point->y);
-                        printf("(%lf,%lf) ", node->nw->point->x, node->nw->point->y);
-                    }
-
-                    if (node->ne->bounds != NULL && quadtree_node_isempty(node->ne)) 
-                    {
-                        double xcord = (node->ne->bounds->nw->x + node->ne->bounds->se->x) / 2;
-                        double ycord = (node->ne->bounds->nw->y + node->ne->bounds->se->y) / 2;
-                        neighbourset(1, filename, xcord, ycord);
-                        printf("(%lf,%lf) ", xcord, ycord);
-                    }
-                    else if(quadtree_node_isleaf(node->ne))
-                    {
-                        neighbourset(1, filename, node->ne->point->x, node->ne->point->y);
-                        printf("(%lf,%lf) ", node->ne->point->x, node->ne->point->y);
-                    }
-                    break;
-                }
             }
         }
     }

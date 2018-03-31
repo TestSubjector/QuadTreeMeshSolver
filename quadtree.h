@@ -128,7 +128,8 @@ int split_node_newpoints(quadtree_t *tree, quadtree_node_t *node);
 int insert_(quadtree_t *tree, quadtree_node_t *root,
                    quadtree_point_t *point);
 
-// For blaking of points
+// For blanking of points
+double main_pointy;
 
 int pnpoly(int nvert, coords_t *coords_list, double testx, double testy);
 
@@ -151,5 +152,16 @@ extern quadtree_t *tree;
 void find_neighbourset(int patharray[21], quadtree_node_t *node);
 
 void balance_neighbourset(int patharray[21], int neighbour_pos, int direction);
+
+// File reading for neighbourset
+
+void neighbouroutput(int append, char *filename, double xcord, double ycord);
+
+void neighbourset(int append, char *filename, double xcord, double ycord);
+
+// To prevent a point stating itself as a neighbour
+
+extern double main_pointx;
+extern double main_pointy;
 
 #endif

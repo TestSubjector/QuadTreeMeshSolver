@@ -3,7 +3,8 @@
 #include <stdio.h>
 #include <string.h>
 
-int newfile = 1;
+int newoutputfile = 1;
+int newneighboursetfile = 1;
 
 static int split_node_(quadtree_t *tree, quadtree_node_t *node);
 
@@ -217,10 +218,11 @@ void descent_node(quadtree_node_t *node) {
   {
     double xcord = (node->bounds->nw->x + node->bounds->se->x) / 2;
     double ycord = (node->bounds->nw->y + node->bounds->se->y) / 2;
-    if(newfile == 1)
+    if(newneighboursetfile == 1)
     {
+        // printf("\n*********Fileclean");
         neighbouroutput(0,filename,xcord,ycord);
-        newfile = 0;
+        newneighboursetfile = 0;
     }
     else
     {
@@ -231,10 +233,11 @@ void descent_node(quadtree_node_t *node) {
   }
   else if(quadtree_node_isleaf(node))
   {
-    if(newfile == 1)
+    if(newneighboursetfile == 1)
     {
+        // printf("\n*********Fileclean");
         neighbouroutput(0, filename, node->point->x, node->point->y);
-        newfile = 0;
+        newneighboursetfile = 0;
     }
     else
     {
@@ -281,10 +284,10 @@ void descent(quadtree_node_t *node) {
     char *filename = "output.txt";
     double xcord = (node->bounds->nw->x + node->bounds->se->x) / 2;
     double ycord = (node->bounds->nw->y + node->bounds->se->y) / 2;
-    if(newfile == 1)
+    if(newoutputfile == 1)
     {
         fileoutput(0,filename,xcord,ycord);
-        newfile = 0;
+        newoutputfile = 0;
     }
     else
     {
