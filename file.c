@@ -3,6 +3,7 @@
 #include <stdio.h>
 
 int serial_number = 1;
+int neighbour_counter;
 
 int fileinput(coords_t *coords_list, char *filename) 
 {
@@ -67,10 +68,10 @@ void fileoutput(int append, char *filename, double xcord, double ycord)
 void neighbouroutput(int append, char *filename, double xcord, double ycord) 
 {
     // The if condition checks for blanking points
-
     char xcordstr[11];
     char ycordstr[11];
     char serialnumstr[11];
+    char neighbourcountstr[11];
     gcvt(xcord,10,xcordstr);
     gcvt(ycord,10,ycordstr);
     gcvt(serial_number, 10 , serialnumstr);
@@ -86,7 +87,14 @@ void neighbouroutput(int append, char *filename, double xcord, double ycord)
         fp = fopen(filename, "w");
     }
     if(pnpoly(line_count, coords_list, xcord, ycord))
-    {    
+    {   
+        if(neighbour_counter != 0)
+        {
+            gcvt(neighbour_counter, 10, neighbourcountstr);
+            fputs("\t", fp);
+            fputs(neighbourcountstr, fp);
+        } 
+        neighbour_counter = 0;
         if (fp != NULL) 
         {
             fputs("\t\n", fp);
@@ -120,12 +128,12 @@ void neighbourset(int append, char *filename, double xcord, double ycord)
     }
     if(pnpoly(line_count, coords_list, xcord, ycord))
     {
-        // coords_t neighbour_point;
-        // neighbour_point.x = xcord;
-        // neighbour_point.y = ycord;
-        if(pnpoly(line_count, coords_list, (main_coord.x + xcord)/2, (main_coord.y + ycord)/2 ))
-        // if(notaero_blank(line_count, coords_list, main_coord, neighbour_point))
+        coords_t neighbour_point;
+        neighbour_point.x = xcord;
+        neighbour_point.y = ycord;
+        if(notaero_blank(line_count, coords_list, main_coord, neighbour_point))
         {
+            neighbour_counter++;
             if (fp != NULL) 
             {
                 fputs(" ", fp);
@@ -138,7 +146,7 @@ void neighbourset(int append, char *filename, double xcord, double ycord)
         }
         else
         {
-            printf("\n \n Non - Aero blanked \n\n");
+            // printf("\n \n Non - Aero blanked \n\n");
         }
     }
 } 
