@@ -807,7 +807,7 @@ int split_node_newpoints(quadtree_t *tree, quadtree_node_t *node)
     }
     else
     {
-        printf("\n ERROR : New node not creted in balancing operation");
+        printf("\n ERROR : New node not created in balancing operation");
         return 0;
     }
 }

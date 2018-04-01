@@ -120,13 +120,25 @@ void neighbourset(int append, char *filename, double xcord, double ycord)
     }
     if(pnpoly(line_count, coords_list, xcord, ycord))
     {
-        if (fp != NULL) {
-          fputs(" ", fp);
-          fputs(xcordstr, fp);
-          fputs(",",fp);
-          fputs(ycordstr,fp);
-          fputs("\t",fp);
-          fclose(fp);
+        // coords_t neighbour_point;
+        // neighbour_point.x = xcord;
+        // neighbour_point.y = ycord;
+        if(pnpoly(line_count, coords_list, (main_coord.x + xcord)/2, (main_coord.y + ycord)/2 ))
+        // if(notaero_blank(line_count, coords_list, main_coord, neighbour_point))
+        {
+            if (fp != NULL) 
+            {
+                fputs(" ", fp);
+                fputs(xcordstr, fp);
+                fputs(",",fp);
+                fputs(ycordstr,fp);
+                fputs("\t",fp);
+                fclose(fp);
+            }
+        }
+        else
+        {
+            printf("\n \n Non - Aero blanked \n\n");
         }
     }
 } 

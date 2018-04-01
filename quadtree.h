@@ -162,4 +162,10 @@ void neighbourset(int append, char *filename, double xcord, double ycord);
 // To prevent a point stating itself as a neighbour
 
 extern int serial_number;
+
+// For blanking of non-aerodynamic points 
+int notaero_blank(int nvert, coords_t *coords_list, coords_t main_point, coords_t neighnour_point);
+
+extern coords_t main_coord;
+
 #endif

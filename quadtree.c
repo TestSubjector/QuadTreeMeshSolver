@@ -5,6 +5,7 @@
 
 int newoutputfile = 1;
 int newneighboursetfile = 1;
+coords_t main_coord;
 
 static int split_node_(quadtree_t *tree, quadtree_node_t *node);
 
@@ -218,6 +219,8 @@ void descent_node(quadtree_node_t *node) {
   {
     double xcord = (node->bounds->nw->x + node->bounds->se->x) / 2;
     double ycord = (node->bounds->nw->y + node->bounds->se->y) / 2;
+    main_coord.x = xcord;
+    main_coord.y = ycord;
     if(newneighboursetfile == 1)
     {
         // printf("\n*********Fileclean");
@@ -233,6 +236,8 @@ void descent_node(quadtree_node_t *node) {
   }
   else if(quadtree_node_isleaf(node))
   {
+    main_coord.x = node->point->x;
+    main_coord.y = node->point->y;
     if(newneighboursetfile == 1)
     {
         // printf("\n*********Fileclean");
