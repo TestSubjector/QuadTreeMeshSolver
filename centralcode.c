@@ -41,6 +41,8 @@ void main_tree(int initial_coord_length, coords_t *coords_list, quadtree_node_t 
     }
     quadtree_walk(tree->root, descent, ascent);
     quadtree_neighbourset(tree->root);
+    // To get number of neighbours of last point
+    neighbouroutput(1, "neighbour.txt", 1000, 1000);
     quadtree_free(tree);
 }
 
