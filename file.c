@@ -86,20 +86,23 @@ void neighbouroutput(int append, char *filename, double xcord, double ycord)
     {
         fp = fopen(filename, "w");
     }
-    if(neighbour_counter != 0)
-    {
-        gcvt(neighbour_counter, 10, neighbourcountstr);
-        fputs("\t", fp);
-        fputs(neighbourcountstr, fp);
-    }
-    neighbour_counter = 0;
     if(xcord == 1000 && ycord == 1000)
     {
         // Do nothing
         // printf("Last point counted");
+        gcvt(neighbour_counter, 10, neighbourcountstr);
+        fputs("\t", fp);
+        fputs(neighbourcountstr, fp);
     }
     else if(pnpoly(line_count, coords_list, xcord, ycord))
     {   
+        if(neighbour_counter != 0)
+        {
+            gcvt(neighbour_counter, 10, neighbourcountstr);
+            fputs("\t", fp);
+            fputs(neighbourcountstr, fp);
+        }
+        neighbour_counter = 0;
         if (fp != NULL) 
         {
             fputs("\t\n", fp);
