@@ -1,10 +1,10 @@
 #include "quadtree.h"
 
-quadtree_point_t*
+quadtree_point_t *
 quadtree_point_new(double x, double y)
 {
-    quadtree_point_t* point;
-    if(!(point = malloc(sizeof(*point))))
+    quadtree_point_t *point;
+    if (!(point = malloc(sizeof(*point))))
     {
         return NULL;
     }
