@@ -99,6 +99,8 @@ int main(int argc, char *argv[])
     } while (check == 'y');
 
     line_count = fileinput(coords_list, filename);
+    serial_number = 1;
+    neighbouroutput(0, "neighbour.txt", 1000, 1000);
     main_tree(line_count, coords_list, leaf_array);
 
     return 0;
