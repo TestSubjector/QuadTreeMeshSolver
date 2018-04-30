@@ -73,6 +73,7 @@ int main(int argc, char *argv[])
     main_tree(line_count, coords_list, leaf_array);
     printf("\n");
 
+    /*
     // Max number of manual adaptations is set to 30
     adapted_list = malloc(sizeof(coords_t) * 30);
     char check;
@@ -102,6 +103,7 @@ int main(int argc, char *argv[])
     serial_number = 1;
     neighbouroutput(0, "neighbour.txt", 1000, 1000);
     main_tree(line_count, coords_list, leaf_array);
-
+    */
+   
     return 0;
 }
