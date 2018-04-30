@@ -42,7 +42,7 @@ def getSmallestXBiggestY(list):
     for item in list:
         if(isPositive(float(item.split(",")[0])) == False and isPositive(float(item.split(",")[1])) == True):
             newlist.append(item)
-    getSmallestX = min(getXCordNeighbours(newlist))
+    getSmallestX = max(getXCordNeighbours(newlist))
     templist = []
     for item in newlist:
         if((item.split(",")[0])==getSmallestX):
@@ -60,7 +60,20 @@ def getBiggestXSmallestY(list):
     for item in newlist:
         if((item.split(",")[0])==getBiggestX):
             templist.append(item)
-    getSmallestY = min(getYCordNeighbours(templist))
+    getSmallestY = max(getYCordNeighbours(templist))
+    return str(getBiggestX) + "," + str(getSmallestY)
+
+def getSmallestXSmallestY(list):
+    newlist = []
+    for item in list:
+        if(isPositive(float(item.split(",")[0])) == False and isPositive(float(item.split(",")[1])) == False):
+            newlist.append(item)
+    getBiggestX = max(getXCordNeighbours(newlist))
+    templist = []
+    for item in newlist:
+        if((item.split(",")[0])==getBiggestX):
+            templist.append(item)
+    getSmallestY = max(getYCordNeighbours(templist))
     return str(getBiggestX) + "," + str(getSmallestY)
 
 def getNeighboursDirectional(direction,maincord,list):
@@ -69,16 +82,16 @@ def getNeighboursDirectional(direction,maincord,list):
     ycord = float(maincord.split(",")[1])
     if(direction==1):
         ## All points towards left of X
-        finallist = [x for x in list if float(x.split(",")[0]) < xcord]
+        finallist = [x for x in list if float(x.split(",")[0]) <= xcord]
     elif(direction==2):
         ## All points towards bottom of Y
-        finallist = [x for x in list if float(x.split(",")[1]) < ycord]
+        finallist = [x for x in list if float(x.split(",")[1]) <= ycord]
     elif(direction==3):
         ## All points towards right of X
-        finallist = [x for x in list if float(x.split(",")[0]) > xcord]
+        finallist = [x for x in list if float(x.split(",")[0]) >= xcord]
     elif(direction==4):
         ## All points towards top of Y
-        finallist = [x for x in list if float(x.split(",")[1]) > xcord]
+        finallist = [x for x in list if float(x.split(",")[1]) >= ycord]
     return finallist
 
 def main():
@@ -202,7 +215,7 @@ def main():
 
     # Outer Point scan
     biggestxy = max(hashtable[1:])
-    smallestxy = min(hashtable[1:])
+    smallestxy = getSmallestXSmallestY(hashtable[1:])
     smallestxbiggesty = getSmallestXBiggestY(hashtable[1:])
     biggestxsmallesty = getBiggestXSmallestY(hashtable[1:])
     startindex = hashtable.index(biggestxy) - 1
@@ -216,6 +229,7 @@ def main():
         # print(currentneighbours)
         # print(currentcord)
         if(currentstatus == 1):
+            # print(currentcord)
             currentneighbours = getNeighboursDirectional(1,currentcord,currentneighbours)
             currentYCords = getYCordNeighbours(currentneighbours)
             try:
@@ -227,10 +241,11 @@ def main():
                 ## Switch Direction to bottom
             startindex = hashtable.index(currentcord) - 1
         elif(currentstatus == 2):
+            # print(currentcord,currentneighbours)
             currentneighbours = getNeighboursDirectional(2,currentcord,currentneighbours)
             currentXCords = getXCordNeighbours(currentneighbours)
             try:
-                leftcord = currentneighbours[currentXCords.index(min(currentXCords))]
+                leftcord = currentneighbours[currentXCords.index(max(currentXCords))]
             except Exception:
                 None
             if(currentcord == smallestxy):
@@ -238,10 +253,11 @@ def main():
                 ## Switch Direction to bottom
             startindex = hashtable.index(currentcord) - 1
         elif(currentstatus == 3):
+            # print(currentcord)
             currentneighbours = getNeighboursDirectional(3,currentcord,currentneighbours)
             currentYCords = getYCordNeighbours(currentneighbours)
             try:
-                leftcord = currentneighbours[currentYCords.index(min(currentYCords))]
+                leftcord = currentneighbours[currentYCords.index(max(currentYCords))]
             except Exception:
                 None
             if(currentcord == biggestxsmallesty):
