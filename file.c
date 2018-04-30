@@ -18,21 +18,21 @@ int fileinput(coords_t *coords_list, char *filename)
         printf("\n Coord structure has memory problems");
         exit(0);
     }
-    int line_count = 0;
+    int local_line_count = 0;
 
-    while (getline(&line, &n, coordFile) != -1 && line_count < MAX)
+    while (getline(&line, &n, coordFile) != -1 && local_line_count < MAX)
     {
-        int items = sscanf(line, "%lf %lf", &coords_list[line_count].x,
-                           &coords_list[line_count].y);
+        int items = sscanf(line, "%lf %lf", &coords_list[local_line_count].x,
+                           &coords_list[local_line_count].y);
         if (items != 2)
         {
             printf("\n File sanity check failed");
             exit(1);
         }
-        line_count++;
+        local_line_count++;
     }
     fclose(coordFile);
-    return line_count;
+    return local_line_count;
 }
 
 // File output function to give the coordinates of all points of the grid
@@ -63,9 +63,9 @@ void fileoutput(int append, char *filename, double xcord, double ycord)
             fputs(" ", fp);
             fputs(ycordstr, fp);
             fputs("\n", fp);
-            fclose(fp);
         }
     }
+    fclose(fp);
 }
 
 // File output function to calculate validate neighbours for points
@@ -117,13 +117,13 @@ void neighbouroutput(int append, char *filename, double xcord, double ycord)
             fputs(",", fp);
             fputs(ycordstr, fp);
             fputs("\t", fp);
-            fclose(fp);
         }
     }
     else
     {
         // printf("\n Blanked point, and so ignored");
     }
+    fclose(fp);
 }
 
 void neighbourset(int append, char *filename, double xcord, double ycord)
@@ -158,7 +158,6 @@ void neighbourset(int append, char *filename, double xcord, double ycord)
                 fputs(",", fp);
                 fputs(ycordstr, fp);
                 fputs("\t", fp);
-                fclose(fp);
             }
         }
         else
@@ -166,4 +165,5 @@ void neighbourset(int append, char *filename, double xcord, double ycord)
             // printf("\n \n Non - Aero blanked \n\n");
         }
     }
+    fclose(fp);
 }

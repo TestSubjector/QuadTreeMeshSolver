@@ -28,6 +28,7 @@ void main_tree(int initial_coord_length, coords_t *coords_list, quadtree_node_t 
     }
 
     // Adaptation section
+    /*
     if (adapt_flag != 0)
     {
         for (int adapt_iter = 0; adapt_iter < adapt_flag; adapt_iter++)
@@ -38,6 +39,7 @@ void main_tree(int initial_coord_length, coords_t *coords_list, quadtree_node_t 
             }
         }
     }
+    */
 
     quadtree_leafnodes(tree->root, leaf_array);
     for (i = 0; i < leaf_iter; i++)
@@ -69,15 +71,15 @@ int main(int argc, char *argv[])
 
     char *filename = argv[1];
     line_count = fileinput(coords_list, filename);
-
+    serial_number = line_count;
     main_tree(line_count, coords_list, leaf_array);
     printf("\n");
 
-    /*
     // Max number of manual adaptations is set to 30
     adapted_list = malloc(sizeof(coords_t) * 30);
     char check;
 
+    /*
     printf("\n Please press 'y' if you want to adapt points, else press anything: ");
     check = getchar();
     do
@@ -98,12 +100,12 @@ int main(int argc, char *argv[])
         printf("\n Please press 'y' if you want to adapt points, else press anything: ");
         scanf(" %c", &check);
     } while (check == 'y');
-
-    line_count = fileinput(coords_list, filename);
+    */
+    coords_list = realloc(coords_list, sizeof(coords_t) * MAX);
+    line_count = serial_number;
     serial_number = 1;
     neighbouroutput(0, "neighbour.txt", 1000, 1000);
     main_tree(line_count, coords_list, leaf_array);
-    */
-   
+    
     return 0;
 }
