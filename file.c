@@ -116,7 +116,7 @@ void neighbouroutput(int append, char *filename, double xcord, double ycord)
             fputs(xcordstr, fp);
             fputs(",", fp);
             fputs(ycordstr, fp);
-            fputs("\t\t", fp);
+            fputs("\t", fp);
             fclose(fp);
         }
     }
@@ -154,7 +154,6 @@ void neighbourset(int append, char *filename, double xcord, double ycord)
             neighbour_counter++;
             if (fp != NULL)
             {
-                fputs(" ", fp);
                 fputs(xcordstr, fp);
                 fputs(",", fp);
                 fputs(ycordstr, fp);
