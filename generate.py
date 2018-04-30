@@ -2,8 +2,11 @@ def getNeighbours(indexval,list):
     val = []
     pointdata = list[indexval]
     numbneigh = int(pointdata[7])
-    for i in range(numbneigh):
-        val = val + [str(pointdata[i+8])]
+    try:
+        for i in range(numbneigh):
+            val = val + [str(pointdata[i+8])]
+    except Exception:
+        pass
     return val
 
 def updateLeft(indexval,list,leftpoint):
@@ -85,7 +88,7 @@ def main():
     data = data.split("\n")
     data.pop(0)
     hashtable = ["start"]
-    data[len(data)-1] = data[len(data)-1][:-1]
+    # data[len(data)-1] = data[len(data)-1][:-1]
     # Wall Point
     file2 = open("input.txt","r")
     geometrydata = file2.read()
@@ -145,31 +148,57 @@ def main():
         cleandata = str(data[i]).split(" ")
         cord = cleandata[1]
         try:
-            val = hashtable.index(cord)
-            cleandata.pop(0)
-            cleandata.pop(-1)
-            cleandata.pop(-2)
-            cleandata.pop(0)
-            cleandata.insert(0,cleandata[len(cleandata)-1])
-            cleandata.pop(-1)
-            globaldata[val-1] = globaldata[val-1] + cleandata
+            if(i!=len(data)-1):
+                val = hashtable.index(cord)
+                cleandata.pop(0)
+                cleandata.pop(-1)
+                cleandata.pop(-2)
+                cleandata.pop(0)
+                cleandata.insert(0,cleandata[len(cleandata)-1])
+                cleandata.pop(-1)
+                globaldata[val-1] = globaldata[val-1] + cleandata
+            else:
+                val = hashtable.index(cord)
+                cleandata.pop(0)
+                cleandata.pop(-2)
+                cleandata.pop(0)
+                cleandata.insert(0,cleandata[len(cleandata)-1])
+                cleandata.pop(-1)
+                globaldata[val-1] = globaldata[val-1] + cleandata
         except Exception as err:
-            hashtable.append(cord)
-            cleandata.pop(0)
-            cleandata.pop(-1)
-            cleandata.pop(-2)
-            cleandata.pop(0)        
-            cleandata.insert(0,cleandata[len(cleandata)-1])
-            cleandata.pop(-1)
-            cleandata.insert(0,1)
-            cleandata.insert(0,1)
-            cleandata.insert(0,0)
-            cleandata.insert(0,0)
-            cleandata.insert(0,cord.split(",")[1])
-            cleandata.insert(0,cord.split(",")[0])
-            cleandata.insert(0,index)
-            index+=1
-            globaldata.append(cleandata)
+            if(i!=len(data)-1):
+                hashtable.append(cord)
+                cleandata.pop(0)
+                cleandata.pop(-1)
+                cleandata.pop(-2)
+                cleandata.pop(0)        
+                cleandata.insert(0,cleandata[len(cleandata)-1])
+                cleandata.pop(-1)
+                cleandata.insert(0,1)
+                cleandata.insert(0,1)
+                cleandata.insert(0,0)
+                cleandata.insert(0,0)
+                cleandata.insert(0,cord.split(",")[1])
+                cleandata.insert(0,cord.split(",")[0])
+                cleandata.insert(0,index)
+                index+=1
+                globaldata.append(cleandata)
+            else:
+                hashtable.append(cord)
+                cleandata.pop(0)
+                cleandata.pop(-2)
+                cleandata.pop(0)        
+                cleandata.insert(0,cleandata[len(cleandata)-1])
+                cleandata.pop(-1)
+                cleandata.insert(0,1)
+                cleandata.insert(0,1)
+                cleandata.insert(0,0)
+                cleandata.insert(0,0)
+                cleandata.insert(0,cord.split(",")[1])
+                cleandata.insert(0,cord.split(",")[0])
+                cleandata.insert(0,index)
+                index+=1
+                globaldata.append(cleandata)
 
     # Outer Point scan
     biggestxy = max(hashtable[1:])
