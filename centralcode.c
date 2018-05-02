@@ -28,7 +28,7 @@ void main_tree(int initial_coord_length, coords_t *coords_list, quadtree_node_t 
         int success = quadtree_insert(tree, coords_list[i].x, coords_list[i].y);
         if (success == 0) // Out of bounds
         {
-            printf("\n On line %d points %lf & %lf are out of bounds", i + 1, coords_list[i].x, coords_list[i].y);
+            printf("\n Warning: On line %d points %lf & %lf are out of bounds or were not created", i + 1, coords_list[i].x, coords_list[i].y);
         }
     }
 

@@ -4,18 +4,19 @@
 int patharray[21];
 int path_iter = 0;
 
-// Boolean is integer in C
+// It is a not a leaf but an actual node
 int quadtree_node_ispointer(quadtree_node_t *node)
 {
     return node->nw != NULL && node->ne != NULL && node->sw != NULL && node->se != NULL && !quadtree_node_isleaf(node);
 }
 
-// Check if quadrant is empty
+// There is no input point in that leaf node
 int quadtree_node_isempty(quadtree_node_t *node)
 {
     return node->nw == NULL && node->ne == NULL && node->sw == NULL && node->se == NULL && !quadtree_node_isleaf(node);
 }
 
+// There is an input point in that leaf node
 int quadtree_node_isleaf(quadtree_node_t *node)
 {
     return node->point != NULL;

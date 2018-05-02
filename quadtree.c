@@ -8,7 +8,7 @@ int newneighboursetfile = 1;
 coords_t main_coord;
 
 // Declarations
-static int split_node_(quadtree_t *tree, quadtree_node_t *node);
+static int split_leafnode_(quadtree_t *tree, quadtree_node_t *node);
 static int node_contains_(quadtree_node_t *outer, quadtree_point_t *it);
 static quadtree_node_t *get_quadrant_(quadtree_node_t *root, quadtree_point_t *point);
 
@@ -26,6 +26,7 @@ static void reset_node_(quadtree_t *tree, quadtree_node_t *node)
   quadtree_node_reset(node);
 }
 
+// Decide which children to traverse into
 static quadtree_node_t *get_quadrant_(quadtree_node_t *root, quadtree_point_t *point)
 {
   if (node_contains_(root->nw, point))
@@ -47,7 +48,7 @@ static quadtree_node_t *get_quadrant_(quadtree_node_t *root, quadtree_point_t *p
   return NULL;
 }
 
-static int split_node_(quadtree_t *tree, quadtree_node_t *node)
+static int split_leafnode_(quadtree_t *tree, quadtree_node_t *node)
 {
   quadtree_node_t *nw = NULL;
   quadtree_node_t *ne = NULL;
@@ -106,7 +107,7 @@ static quadtree_point_t *find_(quadtree_node_t *node, double x, double y)
 
 
 /* Non-Static Definitions */
-// Insert an input point into the tree
+// Create quadtree_poit from an input point and use helper_function to insert into the tree
 int quadtree_insert(quadtree_t *tree, double x, double y)
 {
   quadtree_point_t *point;
@@ -114,17 +115,18 @@ int quadtree_insert(quadtree_t *tree, double x, double y)
 
   if (!(point = quadtree_point_new(x, y)))
   {
-    return 0;
+    return 0; // Point not created
   }
   if (!node_contains_(tree->root, point))
   {
     quadtree_point_free(point);
-    return 0;
+    return 0; // Point is out of defined bounds
   }
 
+  // Using helper_function for point insertion
   if (!(insert_status = insert_(tree, tree->root, point)))
   {
-    quadtree_point_free(point);
+    quadtree_point_free(point); // Simple memory cleanup
     return 0;
   }
   if (insert_status == 1)
@@ -132,8 +134,41 @@ int quadtree_insert(quadtree_t *tree, double x, double y)
     tree->length++;
   }
   return insert_status;
+  // Returns 1 if quadtree_point is successfully created, else returns 0
 }
 
+int insert_(quadtree_t *tree, quadtree_node_t *root, quadtree_point_t *point)
+{
+  if (quadtree_node_isempty(root)) // Insert point into empty leaf
+  {
+    root->point = point;
+    return 1; /* Normal insertion flag */
+  }
+  else if (quadtree_node_isleaf(root)) // Insert point into leaf that has another input point
+  {
+    // The root point is same as new point to be inserted
+    if (root->point->x == point->x && root->point->y == point->y)
+    {
+      reset_node_(tree, root);
+      root->point = point;
+      return 2; /* Replace insertion flag */
+    }
+    else
+    {
+      if (!split_leafnode_(tree, root)) // Points are different, split leaf into 4 leaves 
+      {
+        return 0; /* Failed insertion flag */
+      }
+      return insert_(tree, root, point); // Insert input point into one of the new leaves created (may lead to further leaf splitting)
+    }
+  }
+  else if (quadtree_node_ispointer(root)) // A node which has 4 children from which one will be traversed
+  {
+    quadtree_node_t *quadrant = get_quadrant_(root, point);
+    return quadrant == NULL ? 0 : insert_(tree, quadrant, point);
+  }
+  return 0;
+}
 
 // Function to adapt specific point
 int adapt(quadtree_t *tree, quadtree_node_t *node, double x, double y)
@@ -146,7 +181,7 @@ int adapt(quadtree_t *tree, quadtree_node_t *node, double x, double y)
   {
     if (node->point->x == x && node->point->y == y)
     {
-      split_node_(tree, node);
+      split_leafnode_(tree, node);
       return 1;
     }
   }
@@ -156,39 +191,6 @@ int adapt(quadtree_t *tree, quadtree_node_t *node, double x, double y)
     test.x = x;
     test.y = y;
     return adapt(tree, get_quadrant_(node, &test), x, y);
-  }
-  return 0;
-}
-
-int insert_(quadtree_t *tree, quadtree_node_t *root, quadtree_point_t *point)
-{
-  if (quadtree_node_isempty(root))
-  {
-    root->point = point;
-    return 1; /* normal insertion flag */
-  }
-  // The root point is same as new point to be inserted
-  else if (quadtree_node_isleaf(root))
-  {
-    if (root->point->x == point->x && root->point->y == point->y)
-    {
-      reset_node_(tree, root);
-      root->point = point;
-      return 2; /* replace insertion flag */
-    }
-    else
-    {
-      if (!split_node_(tree, root))
-      {
-        return 0; /* failed insertion flag */
-      }
-      return insert_(tree, root, point);
-    }
-  }
-  else if (quadtree_node_ispointer(root))
-  {
-    quadtree_node_t *quadrant = get_quadrant_(root, point);
-    return quadrant == NULL ? 0 : insert_(tree, quadrant, point);
   }
   return 0;
 }

@@ -1,5 +1,6 @@
 #include "quadtree.h"
 
+// Initialiaze quadtree_point
 quadtree_point_t *quadtree_point_new(double x, double y)
 {
     quadtree_point_t *point;
