@@ -71,7 +71,8 @@ int main(int argc, char *argv[])
 
     char *filename = argv[1];
     line_count = fileinput(coords_list, filename);
-    serial_number = line_count;
+    // The below assignment for some reason shifts line_count to a different number
+    // serial_number = line_count;
     main_tree(line_count, coords_list, leaf_array);
     printf("\n");
 
@@ -101,11 +102,13 @@ int main(int argc, char *argv[])
         scanf(" %c", &check);
     } while (check == 'y');
     */
+    /*
     coords_list = realloc(coords_list, sizeof(coords_t) * MAX);
     line_count = serial_number;
     serial_number = 1;
     neighbouroutput(0, "neighbour.txt", 1000, 1000);
     main_tree(line_count, coords_list, leaf_array);
-    
+    */
+
     return 0;
 }
