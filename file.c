@@ -10,29 +10,25 @@ int fileinput(coords_t *coords_list, char *filename)
 {
     char *line = NULL;
     size_t n = 0;
+    int local_line_count = 0;
 
     FILE *coordFile = fopen(filename, "r");
 
-    if (coords_list == NULL)
-    {
-        printf("\n Coord structure has memory problems");
-        exit(0);
-    }
-    int local_line_count = 0;
-
+    // Take x & y input from each line and store in coords_list
     while (getline(&line, &n, coordFile) != -1 && local_line_count < MAX)
     {
         int items = sscanf(line, "%lf %lf", &coords_list[local_line_count].x,
                            &coords_list[local_line_count].y);
         if (items != 2)
         {
-            printf("\n File sanity check failed");
+            printf("\n ERROR : Input file does not have correct coordinate format");
             exit(1);
         }
         local_line_count++;
     }
     fclose(coordFile);
     return local_line_count;
+    // Returns total number of input points
 }
 
 // File output function to give the coordinates of all points of the grid

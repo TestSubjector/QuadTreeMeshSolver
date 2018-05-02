@@ -7,14 +7,13 @@ int newoutputfile = 1;
 int newneighboursetfile = 1;
 coords_t main_coord;
 
+// Declarations
 static int split_node_(quadtree_t *tree, quadtree_node_t *node);
-
 static int node_contains_(quadtree_node_t *outer, quadtree_point_t *it);
+static quadtree_node_t *get_quadrant_(quadtree_node_t *root, quadtree_point_t *point);
 
-static quadtree_node_t *get_quadrant_(quadtree_node_t *root,
-                                      quadtree_point_t *point);
-
-/* private implementations */
+/* Static Definitions */
+// This function return 1 if the specified point lies in the quadrant, else returns 0
 static int node_contains_(quadtree_node_t *outer, quadtree_point_t *it)
 {
   return outer->bounds != NULL && outer->bounds->nw->x <= it->x &&
@@ -27,8 +26,7 @@ static void reset_node_(quadtree_t *tree, quadtree_node_t *node)
   quadtree_node_reset(node);
 }
 
-static quadtree_node_t *get_quadrant_(quadtree_node_t *root,
-                                      quadtree_point_t *point)
+static quadtree_node_t *get_quadrant_(quadtree_node_t *root, quadtree_point_t *point)
 {
   if (node_contains_(root->nw, point))
   {
@@ -106,6 +104,37 @@ static quadtree_point_t *find_(quadtree_node_t *node, double x, double y)
   return NULL;
 }
 
+
+/* Non-Static Definitions */
+// Insert an input point into the tree
+int quadtree_insert(quadtree_t *tree, double x, double y)
+{
+  quadtree_point_t *point;
+  int insert_status;
+
+  if (!(point = quadtree_point_new(x, y)))
+  {
+    return 0;
+  }
+  if (!node_contains_(tree->root, point))
+  {
+    quadtree_point_free(point);
+    return 0;
+  }
+
+  if (!(insert_status = insert_(tree, tree->root, point)))
+  {
+    quadtree_point_free(point);
+    return 0;
+  }
+  if (insert_status == 1)
+  {
+    tree->length++;
+  }
+  return insert_status;
+}
+
+
 // Function to adapt specific point
 int adapt(quadtree_t *tree, quadtree_node_t *node, double x, double y)
 {
@@ -131,8 +160,7 @@ int adapt(quadtree_t *tree, quadtree_node_t *node, double x, double y)
   return 0;
 }
 
-int insert_(quadtree_t *tree, quadtree_node_t *root,
-            quadtree_point_t *point)
+int insert_(quadtree_t *tree, quadtree_node_t *root, quadtree_point_t *point)
 {
   if (quadtree_node_isempty(root))
   {
@@ -180,33 +208,6 @@ quadtree_t *quadtree_new(double minx, double miny, double maxx, double maxy)
   }
   tree->length = 0;
   return tree;
-}
-
-int quadtree_insert(quadtree_t *tree, double x, double y)
-{
-  quadtree_point_t *point;
-  int insert_status;
-
-  if (!(point = quadtree_point_new(x, y)))
-  {
-    return 0;
-  }
-  if (!node_contains_(tree->root, point))
-  {
-    quadtree_point_free(point);
-    return 0;
-  }
-
-  if (!(insert_status = insert_(tree, tree->root, point)))
-  {
-    quadtree_point_free(point);
-    return 0;
-  }
-  if (insert_status == 1)
-  {
-    tree->length++;
-  }
-  return insert_status;
 }
 
 quadtree_point_t *quadtree_search(quadtree_t *tree, double x, double y)
