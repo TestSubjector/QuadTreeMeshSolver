@@ -50,6 +50,8 @@ static quadtree_node_t *get_quadrant_(quadtree_node_t *root, quadtree_point_t *p
 
 static int split_leafnode_(quadtree_t *tree, quadtree_node_t *node)
 {
+  // Remove input point from node, created 4 children for it and set bounds for all of them
+  // Then lastly insert the old input point into one of the children
   quadtree_node_t *nw = NULL;
   quadtree_node_t *ne = NULL;
   quadtree_node_t *sw = NULL;
@@ -105,8 +107,36 @@ static quadtree_point_t *find_(quadtree_node_t *node, double x, double y)
   return NULL;
 }
 
-
 /* Non-Static Definitions */
+
+quadtree_t *quadtree_new(double minx, double miny, double maxx, double maxy)
+{
+  quadtree_t *tree;
+  if (!(tree = malloc(sizeof(*tree))))
+  {
+    return NULL;
+  }
+
+  tree->root = quadtree_node_with_bounds(minx, miny, maxx, maxy);
+  if (!(tree->root))
+  {
+    return NULL;
+  }
+  tree->length = 0;
+  return tree;
+}
+
+quadtree_point_t *quadtree_search(quadtree_t *tree, double x, double y)
+{
+  return find_(tree->root, x, y);
+}
+
+void quadtree_free(quadtree_t *tree)
+{
+  quadtree_node_free(tree->root);
+  free(tree);
+}
+
 // Create quadtree_poit from an input point and use helper_function to insert into the tree
 int quadtree_insert(quadtree_t *tree, double x, double y)
 {
@@ -155,7 +185,7 @@ int insert_(quadtree_t *tree, quadtree_node_t *root, quadtree_point_t *point)
     }
     else
     {
-      if (!split_leafnode_(tree, root)) // Points are different, split leaf into 4 leaves 
+      if (!split_leafnode_(tree, root)) // Points are different, split leaf into 4 leaves
       {
         return 0; /* Failed insertion flag */
       }
@@ -195,35 +225,7 @@ int adapt(quadtree_t *tree, quadtree_node_t *node, double x, double y)
   return 0;
 }
 
-quadtree_t *quadtree_new(double minx, double miny, double maxx, double maxy)
-{
-  quadtree_t *tree;
-  if (!(tree = malloc(sizeof(*tree))))
-  {
-    return NULL;
-  }
-
-  tree->root = quadtree_node_with_bounds(minx, miny, maxx, maxy);
-  if (!(tree->root))
-  {
-    return NULL;
-  }
-  tree->length = 0;
-  return tree;
-}
-
-quadtree_point_t *quadtree_search(quadtree_t *tree, double x, double y)
-{
-  return find_(tree->root, x, y);
-}
-
-void quadtree_free(quadtree_t *tree)
-{
-  quadtree_node_free(tree->root);
-  free(tree);
-}
-
-// For getting all the leaf arrays
+// Traversal for getting all the leaf nodes
 void quadtree_leafwalk(quadtree_node_t *root,
                        void (*descent_leaf)(quadtree_node_t *node, quadtree_node_t *leaf_array),
                        void (*ascent)(quadtree_node_t *node), quadtree_node_t *leaf_array)
@@ -251,7 +253,8 @@ void quadtree_leafwalk(quadtree_node_t *root,
 // The completing function for 'quadtree_leafwalk"
 void descent_leaf(quadtree_node_t *node, quadtree_node_t *leaf_array)
 {
-  if ((node->bounds != NULL && quadtree_node_isempty(node)) || (quadtree_node_isleaf(node)))
+  // If it is an leaf(empty or filled), then add to leaf array
+  if ((quadtree_node_isempty(node)) || (quadtree_node_isleaf(node)))
   {
     leaf_array[leaf_iter] = *node;
     leaf_iter++;

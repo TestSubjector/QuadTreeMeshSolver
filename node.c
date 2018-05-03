@@ -10,13 +10,13 @@ int quadtree_node_ispointer(quadtree_node_t *node)
     return node->nw != NULL && node->ne != NULL && node->sw != NULL && node->se != NULL && !quadtree_node_isleaf(node);
 }
 
-// There is no input point in that leaf node
+// There is no input point in that leaf, empty leaf
 int quadtree_node_isempty(quadtree_node_t *node)
 {
     return node->nw == NULL && node->ne == NULL && node->sw == NULL && node->se == NULL && !quadtree_node_isleaf(node);
 }
 
-// There is an input point in that leaf node
+// There is an input point in that leaf, filled leaf
 int quadtree_node_isleaf(quadtree_node_t *node)
 {
     return node->point != NULL;

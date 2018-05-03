@@ -78,14 +78,16 @@ int main(int argc, char *argv[])
         exit(0);
     }
 
-    quadtree_node_t *leaf_array[MAX];              // For all the fresh points that will be generated
-    char *filename = argv[1];                      // This will be the file from which the input is taken
-    line_count = fileinput(coords_list, filename); // Receives total number of input points
+    quadtree_node_t *leaf_array = malloc(sizeof(quadtree_node_t) * MAX); // To store all the leaves (input and generated points)
+    if (leaf_array == NULL)
+    {
+        printf("\n ERROR : Memory allocation to leaf_array was unsuccessful");
+        exit(0);
+    }
+    char *filename = argv[1];                                            // This will be the file from which the input is taken
+    line_count = fileinput(coords_list, filename);                       // Receives total number of input points
 
     printf("\nquadtree_t: %ld\n", sizeof(quadtree_t));
-
-    // Bug - The below assignment for some reason shifts line_count to a different number
-    // serial_number = line_count;
 
     main_tree(line_count, coords_list, leaf_array);
     printf("\n");
@@ -117,6 +119,7 @@ int main(int argc, char *argv[])
     } while (check == 'y');
 
     coords_list = realloc(coords_list, sizeof(coords_t) * MAX);
+    leaf_array = realloc(sizeof(quadtree_node_t) * MAX)
 
     neighbouroutput(0, "neighbour.txt", 1000, 1000);
     main_tree(line_count, coords_list, leaf_array);
