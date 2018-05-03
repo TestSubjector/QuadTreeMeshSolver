@@ -236,7 +236,7 @@ void find_neighbours(quadtree_t *tree, int patharray[21], quadtree_node_t *leaf_
     if (ancestor_pos != -1)
     {
         // printf("\n Found common ancestor for Eastern neighbour");
-        balance_neighbour(tree, patharray, ancestor_pos, direction, leaf_array);
+        balance_neighbours(tree, patharray, ancestor_pos, direction, leaf_array);
         ancestor_pos = -1;
     }
     else
@@ -280,7 +280,7 @@ void find_neighbours(quadtree_t *tree, int patharray[21], quadtree_node_t *leaf_
     }
     if (ancestor_pos != -1)
     {
-        balance_neighbour(tree, patharray, ancestor_pos, direction, leaf_array);
+        balance_neighbours(tree, patharray, ancestor_pos, direction, leaf_array);
         ancestor_pos = -1;
     }
     else
@@ -324,7 +324,7 @@ void find_neighbours(quadtree_t *tree, int patharray[21], quadtree_node_t *leaf_
     }
     if (ancestor_pos != -1)
     {
-        balance_neighbour(tree, patharray, ancestor_pos, direction, leaf_array);
+        balance_neighbours(tree, patharray, ancestor_pos, direction, leaf_array);
         ancestor_pos = -1;
     }
     else
@@ -368,7 +368,7 @@ void find_neighbours(quadtree_t *tree, int patharray[21], quadtree_node_t *leaf_
     }
     if (ancestor_pos != -1)
     {
-        balance_neighbour(tree, patharray, ancestor_pos, direction, leaf_array);
+        balance_neighbours(tree, patharray, ancestor_pos, direction, leaf_array);
         ancestor_pos = -1;
     }
     else
@@ -378,7 +378,7 @@ void find_neighbours(quadtree_t *tree, int patharray[21], quadtree_node_t *leaf_
 }
 
 /* This function finds the nieghbour of a point in specified direction */
-void balance_neighbour(quadtree_t *tree, int patharray[21], int ancestor_pos, int direction, quadtree_node_t *leaf_array)
+void balance_neighbours(quadtree_t *tree, int patharray[21], int ancestor_pos, int direction, quadtree_node_t *leaf_array)
 {
 
     // Direction
@@ -767,11 +767,7 @@ int split_node_newpoints(quadtree_t *tree, quadtree_node_t *node)
         node->point = NULL;
         return insert_(tree, node, old);
     }
-    else
-    {
-        printf("\n ERROR : New node not created in balancing operation");
-        return 0;
-    }
+    return 0;
 }
 
 void find_neighbourset(int patharray[21], quadtree_node_t *node)
@@ -832,7 +828,7 @@ void find_neighbourset(int patharray[21], quadtree_node_t *node)
     {
         // Neighbour exists
         // printf("\n Found common ancestor for Eastern neighbour");
-        balance_neighbourset(patharray, ancestor_pos, direction);
+        balance_neighboursset(patharray, ancestor_pos, direction);
         ancestor_pos = -1;
     }
     else
@@ -879,7 +875,7 @@ void find_neighbourset(int patharray[21], quadtree_node_t *node)
     if (ancestor_pos != -1)
     {
         // Neighbour exists
-        balance_neighbourset(patharray, ancestor_pos, direction);
+        balance_neighboursset(patharray, ancestor_pos, direction);
         ancestor_pos = -1;
     }
     else
@@ -926,7 +922,7 @@ void find_neighbourset(int patharray[21], quadtree_node_t *node)
     if (ancestor_pos != -1)
     {
         // Neighbour exists
-        balance_neighbourset(patharray, ancestor_pos, direction);
+        balance_neighboursset(patharray, ancestor_pos, direction);
         ancestor_pos = -1;
     }
     else
@@ -973,7 +969,7 @@ void find_neighbourset(int patharray[21], quadtree_node_t *node)
     if (ancestor_pos != -1)
     {
         // Neighbour exists
-        balance_neighbourset(patharray, ancestor_pos, direction);
+        balance_neighboursset(patharray, ancestor_pos, direction);
         ancestor_pos = -1;
     }
     else
@@ -982,7 +978,7 @@ void find_neighbourset(int patharray[21], quadtree_node_t *node)
     }
 }
 
-void balance_neighbourset(int patharray[21], int ancestor_pos, int direction)
+void balance_neighboursset(int patharray[21], int ancestor_pos, int direction)
 {
 
     // Direction

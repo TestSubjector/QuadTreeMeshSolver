@@ -50,7 +50,7 @@ static quadtree_node_t *get_quadrant_(quadtree_node_t *root, quadtree_point_t *p
 
 static int split_leafnode_(quadtree_t *tree, quadtree_node_t *node)
 {
-  // Remove input point from node, created 4 children for it and set bounds for all of them
+  // Remove input point from node, create 4 children for it and set bounds for all of them
   // Then lastly insert the old input point into one of the children
   quadtree_node_t *nw = NULL;
   quadtree_node_t *ne = NULL;
@@ -226,8 +226,7 @@ int adapt(quadtree_t *tree, quadtree_node_t *node, double x, double y)
 }
 
 // Traversal for getting all the leaf nodes
-void quadtree_leafwalk(quadtree_node_t *root,
-                       void (*descent_leaf)(quadtree_node_t *node, quadtree_node_t *leaf_array),
+void quadtree_leafwalk(quadtree_node_t *root, void (*descent_leaf)(quadtree_node_t *node, quadtree_node_t *leaf_array),
                        void (*ascent)(quadtree_node_t *node), quadtree_node_t *leaf_array)
 {
   (*descent_leaf)(root, leaf_array);
@@ -263,8 +262,7 @@ void descent_leaf(quadtree_node_t *node, quadtree_node_t *leaf_array)
 }
 
 // Finding leaves one by one for neighbour set
-void quadtree_neighbourwalk(quadtree_node_t *root,
-                            void (*descent_node)(quadtree_node_t *node),
+void quadtree_neighbourwalk(quadtree_node_t *root, void (*descent_node)(quadtree_node_t *node),
                             void (*ascent)(quadtree_node_t *node))
 {
   (*descent_node)(root);
@@ -292,7 +290,7 @@ void quadtree_neighbourwalk(quadtree_node_t *root,
 void descent_node(quadtree_node_t *node)
 {
   char *filename = "neighbour.txt";
-  if (node->bounds != NULL && quadtree_node_isempty(node))
+  if (quadtree_node_isempty(node))
   {
     double xcord = (node->bounds->nw->x + node->bounds->se->x) / 2;
     double ycord = (node->bounds->nw->y + node->bounds->se->y) / 2;
@@ -356,14 +354,7 @@ void quadtree_walk(quadtree_node_t *root,
 
 void descent(quadtree_node_t *node)
 {
-  // if(node->point != NULL)
-  // {
-  //     printf("%lf %lf \n", node->point->x, node->point->y);
-  //     // printf("\n { nw.x:%f, nw.y:%f, se.x:%f, se.y:%f }: ",
-  //     node->bounds->nw->x,
-  //     //     node->bounds->nw->y, node->bounds->se->x, node->bounds->se->y);
-  // }
-  if (node->bounds != NULL && quadtree_node_isempty(node))
+  if (quadtree_node_isempty(node))
   {
     // printf("\n Centroids Quad : { nw.x:%f, nw.y:%f, se.x:%f, se.y:%f }: ",
     // node->bounds->nw->x,
