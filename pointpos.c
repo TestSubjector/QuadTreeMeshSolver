@@ -1,4 +1,5 @@
 #include "quadtree.h"
+int second_poly = 0; // This is currently manually replaced with line number where second polygon starts
 #define min(x, y) ({                \
     typeof(x) _min1 = (x);          \
     typeof(y) _min2 = (y);          \
@@ -15,8 +16,16 @@
 int pnpoly(int nvert, coords_t *coords_list, double testx, double testy)
 {
     int i, j, c = 1;
-
-    // Point on boundary, then not inside the polygon
+    int nvert1;
+    if(second_poly == 0)
+    {
+        nvert1 = nvert;
+    }
+    else
+    {
+        nvert1 = second_poly;
+    }
+    // The leaf under observation stores one of the input points, so no blanking
     for (i = 0; i < nvert; i++)
     {
         if (coords_list[i].y == testy && coords_list[i].x == testx)
@@ -25,11 +34,23 @@ int pnpoly(int nvert, coords_t *coords_list, double testx, double testy)
         }
     }
 
-    for (i = 0, j = nvert - 1; i < nvert; j = i++)
+    for (i = 0, j = nvert1 - 1; i < nvert1; j = i++) // We start from j = nvert-1 to cover the last edge
     {
+        // Essentially, the condition below uses the formula {y-y1 = (y2-y1/x2-x1)*(x-x1)} and slopes to find
+        // if the point lies inside the clockwise polygon or not
         if (((coords_list[i].y > testy) != (coords_list[j].y > testy)) &&
             (testx < (coords_list[j].x - coords_list[i].x) * (testy - coords_list[i].y) / (coords_list[j].y - coords_list[i].y) + coords_list[i].x))
             c = !c;
+    }
+
+    if(second_poly !=0 && c == 1)
+    {
+        for (; i < nvert; j = i++)
+        {
+        if (((coords_list[i].y > testy) != (coords_list[j].y > testy)) &&
+            (testx < (coords_list[j].x - coords_list[i].x) * (testy - coords_list[i].y) / (coords_list[j].y - coords_list[i].y) + coords_list[i].x))
+            c = !c;
+        }
     }
     return c;
 }

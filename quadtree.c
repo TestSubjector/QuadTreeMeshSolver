@@ -261,7 +261,7 @@ void descent_leaf(quadtree_node_t *node, quadtree_node_t *leaf_array)
   }
 }
 
-// Finding leaves one by one for neighbour set
+// Finding all the leaves one by one for neighbour set
 void quadtree_neighbourwalk(quadtree_node_t *root, void (*descent_node)(quadtree_node_t *node),
                             void (*ascent)(quadtree_node_t *node))
 {
@@ -286,11 +286,11 @@ void quadtree_neighbourwalk(quadtree_node_t *root, void (*descent_node)(quadtree
 }
 
 // The completing funtion for 'quadtree_neighbourwalk'
-// It will one-by-one go through all the pointss and find neighbourset
+// It will fed all the nodes present in the tree and find neighbourset for the leaves
 void descent_node(quadtree_node_t *node)
 {
   char *filename = "neighbour.txt";
-  if (quadtree_node_isempty(node))
+  if (quadtree_node_isempty(node)) // For empty leaf
   {
     double xcord = (node->bounds->nw->x + node->bounds->se->x) / 2;
     double ycord = (node->bounds->nw->y + node->bounds->se->y) / 2;
@@ -298,7 +298,6 @@ void descent_node(quadtree_node_t *node)
     main_coord.y = ycord;
     if (newneighboursetfile == 1)
     {
-      // printf("\n*********Fileclean");
       neighbouroutput(0, filename, xcord, ycord);
       newneighboursetfile = 0;
     }
@@ -309,13 +308,12 @@ void descent_node(quadtree_node_t *node)
     printf("\n %lf %lf has neighbours\t", xcord, ycord);
     find_neighbourset(common_ancestor(tree->root, node), node);
   }
-  else if (quadtree_node_isleaf(node))
+  else if (quadtree_node_isleaf(node)) // For filled leaf
   {
     main_coord.x = node->point->x;
     main_coord.y = node->point->y;
     if (newneighboursetfile == 1)
     {
-      // printf("\n*********Fileclean");
       neighbouroutput(0, filename, node->point->x, node->point->y);
       newneighboursetfile = 0;
     }
@@ -356,11 +354,6 @@ void descent(quadtree_node_t *node)
 {
   if (quadtree_node_isempty(node))
   {
-    // printf("\n Centroids Quad : { nw.x:%f, nw.y:%f, se.x:%f, se.y:%f }: ",
-    // node->bounds->nw->x,
-    //     node->bounds->nw->y, node->bounds->se->x, node->bounds->se->y);
-    //printf("\n%f %f", (node->bounds->nw->x + node->bounds->se->x) / 2,
-    //       (node->bounds->nw->y + node->bounds->se->y) / 2);
     char *filename = "output.txt";
     double xcord = (node->bounds->nw->x + node->bounds->se->x) / 2;
     double ycord = (node->bounds->nw->y + node->bounds->se->y) / 2;

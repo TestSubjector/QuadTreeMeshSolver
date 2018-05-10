@@ -3,7 +3,7 @@
 #include <stdio.h>
 
 int serial_number = 1;
-int neighbour_counter;
+int neighbour_counter = 0;
 
 // File input function to store the input coordinates
 int fileinput(coords_t *coords_list, char *filename)
@@ -64,10 +64,9 @@ void fileoutput(int append, char *filename, double xcord, double ycord)
     fclose(fp);
 }
 
-// File output function to calculate validate neighbours for points
+// File output function to calculate valid neighbours for points
 void neighbouroutput(int append, char *filename, double xcord, double ycord)
 {
-    // The if condition checks for blanking points
     char xcordstr[11];
     char ycordstr[11];
     char serialnumstr[11];
@@ -75,17 +74,22 @@ void neighbouroutput(int append, char *filename, double xcord, double ycord)
     gcvt(xcord, 10, xcordstr);
     gcvt(ycord, 10, ycordstr);
     gcvt(serial_number, 10, serialnumstr);
-    // double_to_char(xcord,xcordstr);
-    // double_to_char(ycord,ycordstr);
     FILE *fp = NULL;
     if (append == 1)
     {
-        fp = fopen(filename, "a+");
+        fp = fopen(filename, "a+"); // Replace the old file with a blank
     }
     else
     {
         fp = fopen(filename, "w");
     }
+
+    if (fp == NULL)
+    {
+        printf("\n ERROR : File creation of neighbourhood data was unsuccessful");
+        exit(1);
+    }
+
     if (xcord == 1000 && ycord == 1000)
     {
         // Do nothing
@@ -94,7 +98,8 @@ void neighbouroutput(int append, char *filename, double xcord, double ycord)
         fputs("\t", fp);
         fputs(neighbourcountstr, fp);
     }
-    else if (pnpoly(line_count, coords_list, xcord, ycord))
+    // Checks for blanking points i.e points inside the input polygon
+    else if (pnpoly(line_count, coords_list, xcord, ycord)) 
     {
         if (neighbour_counter != 0)
         {
@@ -103,17 +108,16 @@ void neighbouroutput(int append, char *filename, double xcord, double ycord)
             fputs(neighbourcountstr, fp);
         }
         neighbour_counter = 0;
-        if (fp != NULL)
-        {
-            fputs("\t\n", fp);
-            fputs(serialnumstr, fp);
-            serial_number++;
-            fputs("\t", fp);
-            fputs(xcordstr, fp);
-            fputs(",", fp);
-            fputs(ycordstr, fp);
-            fputs("\t", fp);
-        }
+        
+        fputs("\t\n", fp);
+        fputs(serialnumstr, fp);
+        fputs("\t", fp);
+        fputs(xcordstr, fp);
+        fputs(",", fp);
+        fputs(ycordstr, fp);
+        fputs("\t", fp);
+
+        serial_number++; // Increment the S.No for new point
     }
     else
     {
