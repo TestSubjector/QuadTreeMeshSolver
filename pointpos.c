@@ -118,7 +118,7 @@ int notaero_blank(int nvert, coords_t *coords_list, coords_t main_point, coords_
     int i, j, k;
     // printf(" \n It's running atleast");
 
-    // Point on boundary, then not inside the polygon
+    // Point on boundary, therefore not blankable point
     for (i = 0; i < nvert - 1; i++)
     {
         if ((main_point.x == coords_list[i].x && main_point.y == coords_list[i].y || neighbour_point.x == coords_list[i + 1].x && neighbour_point.y == coords_list[i + 1].y || main_point.x == coords_list[i + 1].x && main_point.y == coords_list[i + 1].y || neighbour_point.x == coords_list[i].x && neighbour_point.y == coords_list[i].y))

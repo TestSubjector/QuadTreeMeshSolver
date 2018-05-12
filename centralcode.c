@@ -14,7 +14,7 @@ int adapt_flag = 0;
 
 void main_tree(int initial_coord_length, coords_t *coords_list, quadtree_node_t *leaf_array)
 {
-    tree = quadtree_new(-5, -5, 5, 5);
+    tree = quadtree_new(-10, -10, 10, 10);
     if (tree == NULL)
     {
         printf("\n ERROR : Memory allocation to the main quad_tree was unsuccessful");

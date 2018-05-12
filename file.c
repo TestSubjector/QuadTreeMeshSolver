@@ -35,11 +35,14 @@ int fileinput(coords_t *coords_list, char *filename)
 void fileoutput(int append, char *filename, double xcord, double ycord)
 {
     // The if condition checks for blanking points
-
     char xcordstr[11];
     char ycordstr[11];
-    gcvt(xcord, 10, xcordstr);
-    gcvt(ycord, 10, ycordstr);
+    gcvt(xcord, 9, xcordstr);
+    gcvt(ycord, 9, ycordstr);
+    if(strstr(xcordstr, ycordstr) != NULL && fabs(xcord) != fabs(ycord))
+    {
+        printf("\n xcordstr is %s", xcordstr);
+    }
     // double_to_char(xcord,xcordstr);
     // double_to_char(ycord,ycordstr);
     FILE *fp = NULL;
@@ -51,15 +54,17 @@ void fileoutput(int append, char *filename, double xcord, double ycord)
     {
         fp = fopen(filename, "w");
     }
+    if (fp == NULL)
+    {
+        printf("\n ERROR : File creation of neighbourhood data was unsuccessful");
+        exit(1);
+    }
     if (pnpoly(line_count, coords_list, xcord, ycord))
     {
-        if (fp != NULL)
-        {
             fputs(xcordstr, fp);
             fputs(" ", fp);
             fputs(ycordstr, fp);
             fputs("\n", fp);
-        }
     }
     fclose(fp);
 }
@@ -71,8 +76,8 @@ void neighbouroutput(int append, char *filename, double xcord, double ycord)
     char ycordstr[11];
     char serialnumstr[11];
     char neighbourcountstr[11];
-    gcvt(xcord, 10, xcordstr);
-    gcvt(ycord, 10, ycordstr);
+    gcvt(xcord, 9, xcordstr);
+    gcvt(ycord, 9, ycordstr);
     gcvt(serial_number, 10, serialnumstr);
     FILE *fp = NULL;
     if (append == 1)
@@ -131,8 +136,8 @@ void neighbourset(int append, char *filename, double xcord, double ycord)
     // The if condition checks for blanking points
     char xcordstr[11];
     char ycordstr[11];
-    gcvt(xcord, 10, xcordstr);
-    gcvt(ycord, 10, ycordstr);
+    gcvt(xcord, 9, xcordstr);
+    gcvt(ycord, 9, ycordstr);
     // double_to_char(xcord,xcordstr);
     // double_to_char(ycord,ycordstr);
     FILE *fp = NULL;
