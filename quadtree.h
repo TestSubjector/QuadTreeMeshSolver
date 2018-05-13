@@ -112,7 +112,7 @@ int *common_ancestor(quadtree_node_t *tree, quadtree_node_t *node);
 
 void find_neighbours(quadtree_t *tree, int patharray[21], quadtree_node_t *leaf_array);
 
-void balance_neighbour(quadtree_t *tree, int patharray[21], int neighbour_pos, int direction, quadtree_node_t *leaf_array);
+void balance_neighbours(quadtree_t *tree, int patharray[21], int ancestor_pos, int direction, quadtree_node_t *leaf_array);
 
 int split_node_newpoints(quadtree_t *tree, quadtree_node_t *node);
 
@@ -141,7 +141,7 @@ extern quadtree_t *tree;
 
 void find_neighbourset(int patharray[21], quadtree_node_t *node);
 
-void balance_neighbourset(int patharray[21], int neighbour_pos, int direction);
+void balance_neighboursset(int patharray[21], int ancestor_pos, int direction);
 
 // File reading for neighbourset
 
@@ -159,5 +159,7 @@ int notaero_blank(int nvert, coords_t *coords_list, coords_t main_point, coords_
 extern coords_t main_coord;
 
 int adapt(quadtree_t *tree, quadtree_node_t *node, double x, double y);
+
+extern int check;
 
 #endif

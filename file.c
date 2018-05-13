@@ -3,47 +3,46 @@
 #include <stdio.h>
 
 int serial_number = 1;
-int neighbour_counter;
+int neighbour_counter = 0;
 
 // File input function to store the input coordinates
 int fileinput(coords_t *coords_list, char *filename)
 {
     char *line = NULL;
     size_t n = 0;
+    int local_line_count = 0;
 
     FILE *coordFile = fopen(filename, "r");
 
-    if (coords_list == NULL)
-    {
-        printf("\n Coord structure has memory problems");
-        exit(0);
-    }
-    int local_line_count = 0;
-
+    // Take x & y input from each line and store in coords_list
     while (getline(&line, &n, coordFile) != -1 && local_line_count < MAX)
     {
         int items = sscanf(line, "%lf %lf", &coords_list[local_line_count].x,
                            &coords_list[local_line_count].y);
         if (items != 2)
         {
-            printf("\n File sanity check failed");
+            printf("\n ERROR : Input file does not have correct coordinate format");
             exit(1);
         }
         local_line_count++;
     }
     fclose(coordFile);
     return local_line_count;
+    // Returns total number of input points
 }
 
 // File output function to give the coordinates of all points of the grid
 void fileoutput(int append, char *filename, double xcord, double ycord)
 {
     // The if condition checks for blanking points
-
     char xcordstr[11];
     char ycordstr[11];
-    gcvt(xcord, 10, xcordstr);
-    gcvt(ycord, 10, ycordstr);
+    gcvt(xcord, 9, xcordstr);
+    gcvt(ycord, 9, ycordstr);
+    if(strstr(xcordstr, ycordstr) != NULL && fabs(xcord) != fabs(ycord))
+    {
+        printf("\n xcordstr is %s", xcordstr);
+    }
     // double_to_char(xcord,xcordstr);
     // double_to_char(ycord,ycordstr);
     FILE *fp = NULL;
@@ -55,41 +54,47 @@ void fileoutput(int append, char *filename, double xcord, double ycord)
     {
         fp = fopen(filename, "w");
     }
+    if (fp == NULL)
+    {
+        printf("\n ERROR : File creation of neighbourhood data was unsuccessful");
+        exit(1);
+    }
     if (pnpoly(line_count, coords_list, xcord, ycord))
     {
-        if (fp != NULL)
-        {
             fputs(xcordstr, fp);
             fputs(" ", fp);
             fputs(ycordstr, fp);
             fputs("\n", fp);
-        }
     }
     fclose(fp);
 }
 
-// File output function to calculate validate neighbours for points
+// File output function to calculate valid neighbours for points
 void neighbouroutput(int append, char *filename, double xcord, double ycord)
 {
-    // The if condition checks for blanking points
     char xcordstr[11];
     char ycordstr[11];
     char serialnumstr[11];
     char neighbourcountstr[11];
-    gcvt(xcord, 10, xcordstr);
-    gcvt(ycord, 10, ycordstr);
+    gcvt(xcord, 9, xcordstr);
+    gcvt(ycord, 9, ycordstr);
     gcvt(serial_number, 10, serialnumstr);
-    // double_to_char(xcord,xcordstr);
-    // double_to_char(ycord,ycordstr);
     FILE *fp = NULL;
     if (append == 1)
     {
-        fp = fopen(filename, "a+");
+        fp = fopen(filename, "a+"); // Replace the old file with a blank
     }
     else
     {
         fp = fopen(filename, "w");
     }
+
+    if (fp == NULL)
+    {
+        printf("\n ERROR : File creation of neighbourhood data was unsuccessful");
+        exit(1);
+    }
+
     if (xcord == 1000 && ycord == 1000)
     {
         // Do nothing
@@ -98,7 +103,8 @@ void neighbouroutput(int append, char *filename, double xcord, double ycord)
         fputs("\t", fp);
         fputs(neighbourcountstr, fp);
     }
-    else if (pnpoly(line_count, coords_list, xcord, ycord))
+    // Checks for blanking points i.e points inside the input polygon
+    else if (pnpoly(line_count, coords_list, xcord, ycord)) 
     {
         if (neighbour_counter != 0)
         {
@@ -107,17 +113,16 @@ void neighbouroutput(int append, char *filename, double xcord, double ycord)
             fputs(neighbourcountstr, fp);
         }
         neighbour_counter = 0;
-        if (fp != NULL)
-        {
-            fputs("\t\n", fp);
-            fputs(serialnumstr, fp);
-            serial_number++;
-            fputs("\t", fp);
-            fputs(xcordstr, fp);
-            fputs(",", fp);
-            fputs(ycordstr, fp);
-            fputs("\t", fp);
-        }
+        
+        fputs("\t\n", fp);
+        fputs(serialnumstr, fp);
+        fputs("\t", fp);
+        fputs(xcordstr, fp);
+        fputs(",", fp);
+        fputs(ycordstr, fp);
+        fputs("\t", fp);
+
+        serial_number++; // Increment the S.No for new point
     }
     else
     {
@@ -131,8 +136,8 @@ void neighbourset(int append, char *filename, double xcord, double ycord)
     // The if condition checks for blanking points
     char xcordstr[11];
     char ycordstr[11];
-    gcvt(xcord, 10, xcordstr);
-    gcvt(ycord, 10, ycordstr);
+    gcvt(xcord, 9, xcordstr);
+    gcvt(ycord, 9, ycordstr);
     // double_to_char(xcord,xcordstr);
     // double_to_char(ycord,ycordstr);
     FILE *fp = NULL;
