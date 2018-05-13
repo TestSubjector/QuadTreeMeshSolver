@@ -160,4 +160,6 @@ extern coords_t main_coord;
 
 int adapt(quadtree_t *tree, quadtree_node_t *node, double x, double y);
 
+extern int check;
+
 #endif

@@ -54,7 +54,7 @@ void main_tree(int initial_coord_length, coords_t *coords_list, quadtree_node_t 
         if (i == 400)
         {
             leaf_iter -= 400;
-            for (int j = 0; j <= 400; j++)
+            for (int j = 0; j <= leaf_iter; j++)
             {
                 leaf_array[j] = leaf_array[j + 400];
             }

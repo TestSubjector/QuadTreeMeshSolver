@@ -409,11 +409,6 @@ void balance_neighbours(quadtree_t *tree, int patharray[21], int ancestor_pos, i
             root = root->se;
         }
     }
-    if (ancestor_pos == patharray[20] - 1) // When the leaf is the common ancestor
-    {
-        // printf("\n No need for neighbour adjustment,");
-        return;
-    }
 
     // Eastern Neighbour
     if (direction == 1)
@@ -746,13 +741,25 @@ int split_node_newpoints(quadtree_t *tree, quadtree_node_t *node)
 
     // minx,   miny,       maxx,       maxy
     if (!(nw = quadtree_node_with_bounds(x, y - hh, x + hw, y)))
+    {
+        printf("\n Warning: Problem occured while splitting node");
         return 0;
+    }
     if (!(ne = quadtree_node_with_bounds(x + hw, y - hh, x + hw * 2, y)))
+    {
+        printf("\n Warning: Problem occured while splitting node");
         return 0;
+    }
     if (!(sw = quadtree_node_with_bounds(x, y - hh * 2, x + hw, y - hh)))
+    {
+        printf("\n Warning: Problem occured while splitting node");
         return 0;
+    }
     if (!(se = quadtree_node_with_bounds(x + hw, y - hh * 2, x + hw * 2, y - hh)))
+    {
+        printf("\n Warning: Problem occured while splitting node");
         return 0;
+    }
 
     node->nw = nw;
     node->ne = ne;
@@ -868,7 +875,7 @@ void find_neighbourset(int patharray[21], quadtree_node_t *node)
         }
         else
         {
-            printf("\n Some random value corrupted pathaarray");
+            printf("\n Some random value corrupted patharray");
             // exit(1);
         }
     }
