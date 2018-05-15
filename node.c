@@ -3,6 +3,8 @@
 
 int patharray[21];
 int path_iter = 0;
+int diagonal_patharray[21];
+int diagonal_path_iter;
 
 /* It is a not a leaf but an actual node */
 int quadtree_node_ispointer(quadtree_node_t *node)
@@ -118,6 +120,21 @@ static quadtree_point_t *find_patharray(quadtree_node_t *node, double x, double 
     return NULL; // Stop when leaf is reached
 }
 
+// TODO - Remove this redundant fuction by an argument
+static quadtree_point_t *find_patharray_diagonal(quadtree_node_t *node, double x, double y)
+{
+    if (!node)
+    {
+        printf("\n ERROR : Non-existent node encounted while finding patharray");
+        exit(2);
+    }
+    else if (quadtree_node_ispointer(node))
+    {
+        return find_patharray_diagonal(get_quadrant_patharray_diagonal(node, x, y), x, y);
+    }
+    return NULL; // Stop when leaf is reached
+}
+
 /* Stores the descent path from root node to leaf whose neighbours we need to find */
 static quadtree_node_t *get_quadrant_patharray(quadtree_node_t *root, double x, double y)
 {
@@ -153,6 +170,41 @@ static quadtree_node_t *get_quadrant_patharray(quadtree_node_t *root, double x, 
     exit(2); // Returns the child of the node to which the leaf belongs
 }
 
+/* This function is for the diagonal neighbour findings. TODO - Make the path_array an argument, rather than two different functions */
+static quadtree_node_t *get_quadrant_patharray_diagonal(quadtree_node_t *root, double x, double y)
+{
+    if (node_contains_patharray(root->nw, x, y))
+    {
+        // printf("1");
+        diagonal_patharray[diagonal_path_iter] = 1;
+        diagonal_path_iter++;
+        return root->nw;
+    }
+    if (node_contains_patharray(root->ne, x, y))
+    {
+        // printf("2");
+        diagonal_patharray[diagonal_path_iter] = 2;
+        diagonal_path_iter++;
+        return root->ne;
+    }
+    if (node_contains_patharray(root->sw, x, y))
+    {
+        // printf("3");
+        diagonal_patharray[diagonal_path_iter] = 3;
+        diagonal_path_iter++;
+        return root->sw;
+    }
+    if (node_contains_patharray(root->se, x, y))
+    {
+        // printf("4");
+        diagonal_patharray[diagonal_path_iter] = 4;
+        diagonal_path_iter++;
+        return root->se;
+    }
+    printf("\n ERROR : During patharray, found node that does not belong to any quadrant");
+    exit(2); // Returns the child of the node to which the leaf belongs
+}
+
 /* This function does not find common ancestor, just the tree path from root to node */
 int *common_ancestor(quadtree_node_t *root, quadtree_node_t *node)
 {
@@ -176,6 +228,31 @@ int *common_ancestor(quadtree_node_t *root, quadtree_node_t *node)
     }
     patharray[20] = path_iter; // Store height from root to leaf
     return patharray;
+}
+
+/* TODO - Remove the redundant function with arguments */
+int *common_ancestor_diagonal(quadtree_node_t *root, quadtree_node_t *node)
+{
+    int i = 0;
+    for (i = 0; i < 21; i++)
+    {
+        diagonal_patharray[i] = 0;
+    }
+    /* If the leaf is empty */
+    if (quadtree_node_isempty(node))
+    {
+        diagonal_path_iter = 0;
+        find_patharray_diagonal(root, (node->bounds->nw->x + node->bounds->se->x) / 2, (node->bounds->nw->y + node->bounds->se->y) / 2);
+        // printf("\n For point %lf, %lf ", (node->bounds->nw->x + node->bounds->se->x) / 2, (node->bounds->nw->y + node->bounds->se->y) / 2);
+    }
+    else if (quadtree_node_isleaf(node))
+    {
+        diagonal_path_iter = 0;
+        find_patharray_diagonal(root, node->point->x, node->point->y);
+        // printf("\n For point %lf, %lf ", node->point->x, node->point->y);
+    }
+    diagonal_patharray[20] = diagonal_path_iter; // Store height from root to leaf
+    return diagonal_patharray;
 }
 
 /* This function finds common_ancestor and takes the leaf(and its patharray) as input */
@@ -469,6 +546,9 @@ void balance_neighbours(quadtree_t *tree, int patharray[21], int ancestor_pos, i
                     leaf_array[leaf_iter] = *(temp->sw);
                     leaf_iter++;
                 }
+
+                // SouthWest Neighbour
+                
                 continue;
             }
 
@@ -489,6 +569,292 @@ void balance_neighbours(quadtree_t *tree, int patharray[21], int ancestor_pos, i
                 root = root->sw;
             }
         }
+
+        // if(patharray[patharray[20] - 1] == 2)
+        // {
+        //     // printf("\n Finding/Balancing SouthEast Neighbour");
+        //     common_ancestor_diagonal(tree->root, root);
+
+        //     int diagonal_path_size = diagonal_patharray[20]; 
+        //     int j = 0;                     
+        //     int diagonal_pathstep = -1;                          
+        //     int ancestor_pos = -1;         
+
+        //     for (j = diagonal_path_size - 1; j >= 0; j--)
+        //     {
+        //         diagonal_pathstep = diagonal_patharray[j];
+        //         if (diagonal_pathstep == 1)
+        //         {
+        //             continue;
+        //         }
+        //         else if (diagonal_pathstep == 2)
+        //         {
+        //             continue;   
+        //         }
+        //         else if (diagonal_pathstep == 3)
+        //         {
+        //             // printf("\n Found common ancestor for NorthEast neighbour");
+        //             ancestor_pos = j;
+        //             break;
+        //         }
+        //         else if (diagonal_pathstep == 4)
+        //         {
+        //             // printf("\n Found common ancestor for NorthEast neighbour");
+        //             ancestor_pos = j;
+        //             break;
+        //         }
+        //         else if (diagonal_pathstep == 0)
+        //         {
+        //            //  printf("\n Warning - Diagonal_Patharray has zero value problems");
+        //         }
+        //         else
+        //         {
+        //             printf("\n ERROR - Some random value corrupted patharray");
+        //             exit(2);
+        //         }
+        //     }
+
+        //     root = tree->root;
+        //     j = ancestor_pos;
+        //     int diagonal_path_step = 0;
+
+        //     for (j = 0; j < ancestor_pos; j++)
+        //     {
+        //         diagonal_path_step = diagonal_patharray[j];
+        //         if (diagonal_path_step == 1)
+        //         {
+        //             root = root->nw;
+        //         }
+        //         if (diagonal_path_step == 2)
+        //         {
+        //             root = root->ne;
+        //         }
+        //         if (diagonal_path_step == 3)
+        //         {
+        //             root = root->sw;
+        //         }
+        //         if (diagonal_path_step == 4)
+        //         {
+        //             root = root->se;
+        //         }
+        //     }
+
+        //     for (j = ancestor_pos; j <= patharray[20] - 2; j++)
+        //     {
+        //         diagonal_path_step = diagonal_patharray[j];
+        //         if ((quadtree_node_isempty(root)) || (quadtree_node_isleaf(root)))
+        //         {
+        //             // printf("\n Neighbour split : SouthEast");
+        //             // printf("\n In the if case %lf, %lf ", (root->bounds->nw->x + root->bounds->se->x) / 2, (root->bounds->nw->y + root->bounds->se->y) / 2);
+        //             split_node_newpoints(tree, root);
+        //             temp = root;
+        //             if (diagonal_path_step == 1)
+        //             {
+        //                 root = root->sw;
+        //             }
+        //             else
+        //             {
+        //                 // printf("\n Created new neighbour node : South");
+        //                 leaf_array[leaf_iter] = *(temp->nw);
+        //                 leaf_iter++;
+        //             }
+
+        //             if (diagonal_path_step == 2)
+        //             {
+        //                 root = root->se;
+        //             }
+        //             else
+        //             {
+        //                 // printf("\n Created new neighbour node : South");
+        //                 leaf_array[leaf_iter] = *(temp->se);
+        //                 leaf_iter++;
+        //             }
+
+        //             if (diagonal_path_step == 3)
+        //             {
+        //                 root = root->nw;
+        //             }
+        //             else
+        //             {
+        //                 // printf("\n Created new neighbour node : South");
+        //                 leaf_array[leaf_iter] = *(temp->nw);
+        //                 leaf_iter++;
+        //             }
+
+        //             if (diagonal_path_step == 4)
+        //             {
+        //                 root = root->ne;
+        //             }
+        //             else
+        //             {
+        //                 // printf("\n Created new neighbour node : South");
+        //                 leaf_array[leaf_iter] = *(temp->ne);
+        //                 leaf_iter++;
+        //             }
+        //             continue;
+        //         }
+
+        //         if (diagonal_path_step == 1)
+        //         {
+        //             root = root->sw;
+        //         }
+        //         else if (diagonal_path_step == 2)
+        //         {
+        //             root = root->se;
+        //         }
+        //         else if (diagonal_path_step == 3)
+        //         {
+        //             root = root->nw;
+        //         }
+        //         else if (diagonal_path_step == 4)
+        //         {
+        //             root = root->ne;
+        //         }
+        //     }
+        // }
+
+        // if(patharray[patharray[20] - 1] == 4)
+        // {
+        //     // printf("\n Finding/Balancing SouthEast Neighbour");
+        //     common_ancestor_diagonal(tree->root, root);
+
+        //     int diagonal_path_size = diagonal_patharray[20]; 
+        //     int j = 0;                     
+        //     int diagonal_pathstep = -1;                          
+        //     int ancestor_pos = -1;         
+
+        //     for (j = diagonal_path_size - 1; j >= 0; j--)
+        //     {
+        //         diagonal_pathstep = diagonal_patharray[j];
+        //         if (diagonal_pathstep == 1)
+        //         {
+        //             // printf("\n Found common ancestor for SouthEast neighbour");
+        //             ancestor_pos = j;
+        //             break;
+        //         }
+        //         else if (diagonal_pathstep == 2)
+        //         {
+        //             // printf("\n Found common ancestor for SouthEast neighbour");
+        //             ancestor_pos = j;
+        //             break;
+        //         }
+        //         else if (diagonal_pathstep == 3)
+        //         {
+        //             continue;
+        //         }
+        //         else if (diagonal_pathstep == 4)
+        //         {
+        //             continue;
+        //         }
+        //         else if (diagonal_pathstep == 0)
+        //         {
+        //            //  printf("\n Warning - Diagonal_Patharray has zero value problems");
+        //         }
+        //         else
+        //         {
+        //             printf("\n ERROR - Some random value corrupted patharray");
+        //             exit(2);
+        //         }
+        //     }
+
+        //     root = tree->root;
+        //     j = ancestor_pos;
+        //     int diagonal_path_step = 0;
+
+        //     for (j = 0; j < ancestor_pos; j++)
+        //     {
+        //         diagonal_path_step = diagonal_patharray[j];
+        //         if (diagonal_path_step == 1)
+        //         {
+        //             root = root->nw;
+        //         }
+        //         if (diagonal_path_step == 2)
+        //         {
+        //             root = root->ne;
+        //         }
+        //         if (diagonal_path_step == 3)
+        //         {
+        //             root = root->sw;
+        //         }
+        //         if (diagonal_path_step == 4)
+        //         {
+        //             root = root->se;
+        //         }
+        //     }
+
+        //     for (j = ancestor_pos; j <= patharray[20] - 2; j++)
+        //     {
+        //         diagonal_path_step = diagonal_patharray[j];
+        //         if ((quadtree_node_isempty(root)) || (quadtree_node_isleaf(root)))
+        //         {
+        //             // printf("\n Neighbour split : SouthEast");
+        //             // printf("\n In the if case %lf, %lf ", (root->bounds->nw->x + root->bounds->se->x) / 2, (root->bounds->nw->y + root->bounds->se->y) / 2);
+        //             split_node_newpoints(tree, root);
+        //             temp = root;
+        //             if (diagonal_path_step == 1)
+        //             {
+        //                 root = root->sw;
+        //             }
+        //             else
+        //             {
+        //                 // printf("\n Created new neighbour node : South");
+        //                 leaf_array[leaf_iter] = *(temp->nw);
+        //                 leaf_iter++;
+        //             }
+
+        //             if (diagonal_path_step == 2)
+        //             {
+        //                 root = root->se;
+        //             }
+        //             else
+        //             {
+        //                 // printf("\n Created new neighbour node : South");
+        //                 leaf_array[leaf_iter] = *(temp->se);
+        //                 leaf_iter++;
+        //             }
+
+        //             if (diagonal_path_step == 3)
+        //             {
+        //                 root = root->nw;
+        //             }
+        //             else
+        //             {
+        //                 // printf("\n Created new neighbour node : South");
+        //                 leaf_array[leaf_iter] = *(temp->nw);
+        //                 leaf_iter++;
+        //             }
+
+        //             if (diagonal_path_step == 4)
+        //             {
+        //                 root = root->ne;
+        //             }
+        //             else
+        //             {
+        //                 // printf("\n Created new neighbour node : South");
+        //                 leaf_array[leaf_iter] = *(temp->ne);
+        //                 leaf_iter++;
+        //             }
+        //             continue;
+        //         }
+
+        //         if (diagonal_path_step == 1)
+        //         {
+        //             root = root->sw;
+        //         }
+        //         else if (diagonal_path_step == 2)
+        //         {
+        //             root = root->se;
+        //         }
+        //         else if (diagonal_path_step == 3)
+        //         {
+        //             root = root->nw;
+        //         }
+        //         else if (diagonal_path_step == 4)
+        //         {
+        //             root = root->ne;
+        //         }
+        //     }
+        // }
     }
 
     // Western Neighbour
@@ -567,6 +933,284 @@ void balance_neighbours(quadtree_t *tree, int patharray[21], int ancestor_pos, i
                 root = root->sw;
             }
         }
+
+        // if(patharray[patharray[20] - 1] == 1)
+        // {
+        //     // printf("\n Finding/Balancing NorthWest Neighbour");
+        //     common_ancestor_diagonal(tree->root, root);
+
+        //     int diagonal_path_size = diagonal_patharray[20]; 
+        //     int j = 0;                     
+        //     int diagonal_pathstep = -1;                          
+        //     int ancestor_pos = -1;         
+
+        //     for (j = diagonal_path_size - 1; j >= 0; j--)
+        //     {
+        //         diagonal_pathstep = diagonal_patharray[j];
+        //         if (diagonal_pathstep == 1)
+        //         {
+        //             continue;
+        //         }
+        //         else if (diagonal_pathstep == 2)
+        //         {
+        //             continue;   
+        //         }
+        //         else if (diagonal_pathstep == 3)
+        //         {
+        //             // printf("\n Found common ancestor for NorthWest neighbour");
+        //             ancestor_pos = j;
+        //             break;
+        //         }
+        //         else if (diagonal_pathstep == 4)
+        //         {
+        //             // printf("\n Found common ancestor for NorthWest neighbour");
+        //             ancestor_pos = j;
+        //             break;
+        //         }
+        //         else if (diagonal_pathstep == 0)
+        //         {
+        //            //  printf("\n Warning - Diagonal_Patharray has zero value problems");
+        //         }
+        //         else
+        //         {
+        //             printf("\n ERROR - Some random value corrupted patharray");
+        //             exit(2);
+        //         }
+        //     }
+
+        //     root = tree->root;
+        //     j = ancestor_pos;
+        //     int diagonal_path_step = 0;
+
+        //     for (j = 0; j < ancestor_pos; j++)
+        //     {
+        //         diagonal_path_step = diagonal_patharray[j];
+        //         if (diagonal_path_step == 1)
+        //         {
+        //             root = root->nw;
+        //         }
+        //         if (diagonal_path_step == 2)
+        //         {
+        //             root = root->ne;
+        //         }
+        //         if (diagonal_path_step == 3)
+        //         {
+        //             root = root->sw;
+        //         }
+        //         if (diagonal_path_step == 4)
+        //         {
+        //             root = root->se;
+        //         }
+        //     }
+
+        //     for (j = ancestor_pos; j <= patharray[20] - 2; j++)
+        //     {
+        //         diagonal_path_step = diagonal_patharray[j];
+        //         if ((quadtree_node_isempty(root)) || (quadtree_node_isleaf(root)))
+        //         {
+        //             // printf("\n Neighbour split : NorthWest");
+        //             // printf("\n In the if case %lf, %lf ", (root->bounds->nw->x + root->bounds->se->x) / 2, (root->bounds->nw->y + root->bounds->se->y) / 2);
+        //             split_node_newpoints(tree, root);
+        //             temp = root;
+        //             if (diagonal_path_step == 1)
+        //             {
+        //                 root = root->sw;
+        //             }
+        //             else
+        //             {
+        //                 leaf_array[leaf_iter] = *(temp->nw);
+        //                 leaf_iter++;
+        //             }
+
+        //             if (diagonal_path_step == 2)
+        //             {
+        //                 root = root->se;
+        //             }
+        //             else
+        //             {
+        //                 leaf_array[leaf_iter] = *(temp->se);
+        //                 leaf_iter++;
+        //             }
+
+        //             if (diagonal_path_step == 3)
+        //             {
+        //                 root = root->nw;
+        //             }
+        //             else
+        //             {
+        //                 leaf_array[leaf_iter] = *(temp->nw);
+        //                 leaf_iter++;
+        //             }
+
+        //             if (diagonal_path_step == 4)
+        //             {
+        //                 root = root->ne;
+        //             }
+        //             else
+        //             {
+        //                 leaf_array[leaf_iter] = *(temp->ne);
+        //                 leaf_iter++;
+        //             }
+        //             continue;
+        //         }
+
+        //         if (diagonal_path_step == 1)
+        //         {
+        //             root = root->sw;
+        //         }
+        //         else if (diagonal_path_step == 2)
+        //         {
+        //             root = root->se;
+        //         }
+        //         else if (diagonal_path_step == 3)
+        //         {
+        //             root = root->nw;
+        //         }
+        //         else if (diagonal_path_step == 4)
+        //         {
+        //             root = root->ne;
+        //         }
+        //     }
+        // }
+
+        // if(patharray[patharray[20] - 1] == 3)
+        // {
+        //     // printf("\n Finding/Balancing SouthWest Neighbour");
+        //     common_ancestor_diagonal(tree->root, root);
+
+        //     int diagonal_path_size = diagonal_patharray[20]; 
+        //     int j = 0;                     
+        //     int diagonal_pathstep = -1;                          
+        //     int ancestor_pos = -1;         
+
+        //     for (j = diagonal_path_size - 1; j >= 0; j--)
+        //     {
+        //         diagonal_pathstep = diagonal_patharray[j];
+        //         if (diagonal_pathstep == 1)
+        //         {
+        //             // printf("\n Found common ancestor for SouthWest neighbour");
+        //             ancestor_pos = j;
+        //             break;
+        //         }
+        //         else if (diagonal_pathstep == 2)
+        //         {
+        //             // printf("\n Found common ancestor for SouthWest neighbour");
+        //             ancestor_pos = j;
+        //             break;
+        //         }
+        //         else if (diagonal_pathstep == 3)
+        //         {
+        //             continue;
+        //         }
+        //         else if (diagonal_pathstep == 4)
+        //         {
+        //             continue;
+        //         }
+        //         else if (diagonal_pathstep == 0)
+        //         {
+        //            //  printf("\n Warning - Diagonal_Patharray has zero value problems");
+        //         }
+        //         else
+        //         {
+        //             printf("\n ERROR - Some random value corrupted patharray");
+        //             exit(2);
+        //         }
+        //     }
+
+        //     root = tree->root;
+        //     j = ancestor_pos;
+        //     int diagonal_path_step = 0;
+
+        //     for (j = 0; j < ancestor_pos; j++)
+        //     {
+        //         diagonal_path_step = diagonal_patharray[j];
+        //         if (diagonal_path_step == 1)
+        //         {
+        //             root = root->nw;
+        //         }
+        //         if (diagonal_path_step == 2)
+        //         {
+        //             root = root->ne;
+        //         }
+        //         if (diagonal_path_step == 3)
+        //         {
+        //             root = root->sw;
+        //         }
+        //         if (diagonal_path_step == 4)
+        //         {
+        //             root = root->se;
+        //         }
+        //     }
+
+        //     for (j = ancestor_pos; j <= patharray[20] - 2; j++)
+        //     {
+        //         diagonal_path_step = diagonal_patharray[j];
+        //         if ((quadtree_node_isempty(root)) || (quadtree_node_isleaf(root)))
+        //         {
+        //             // printf("\n Neighbour split : SouthWest");
+        //             // printf("\n In the if case %lf, %lf ", (root->bounds->nw->x + root->bounds->se->x) / 2, (root->bounds->nw->y + root->bounds->se->y) / 2);
+        //             split_node_newpoints(tree, root);
+        //             temp = root;
+        //             if (diagonal_path_step == 1)
+        //             {
+        //                 root = root->sw;
+        //             }
+        //             else
+        //             {
+        //                 leaf_array[leaf_iter] = *(temp->nw);
+        //                 leaf_iter++;
+        //             }
+
+        //             if (diagonal_path_step == 2)
+        //             {
+        //                 root = root->se;
+        //             }
+        //             else
+        //             {
+        //                 leaf_array[leaf_iter] = *(temp->se);
+        //                 leaf_iter++;
+        //             }
+
+        //             if (diagonal_path_step == 3)
+        //             {
+        //                 root = root->nw;
+        //             }
+        //             else
+        //             {
+        //                 leaf_array[leaf_iter] = *(temp->nw);
+        //                 leaf_iter++;
+        //             }
+
+        //             if (diagonal_path_step == 4)
+        //             {
+        //                 root = root->ne;
+        //             }
+        //             else
+        //             {
+        //                 leaf_array[leaf_iter] = *(temp->ne);
+        //                 leaf_iter++;
+        //             }
+        //             continue;
+        //         }
+
+        //         if (diagonal_path_step == 1)
+        //         {
+        //             root = root->sw;
+        //         }
+        //         else if (diagonal_path_step == 2)
+        //         {
+        //             root = root->se;
+        //         }
+        //         else if (diagonal_path_step == 3)
+        //         {
+        //             root = root->nw;
+        //         }
+        //         else if (diagonal_path_step == 4)
+        //         {
+        //             root = root->ne;
+        //         }
+        //     }
+        // }
     }
 
     // Northern Neighbour
