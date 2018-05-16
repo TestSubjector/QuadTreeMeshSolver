@@ -6,6 +6,7 @@
 int newoutputfile = 1;
 int newneighboursetfile = 1;
 coords_t main_coord;
+int checker = 0;
 
 // Declarations
 static int split_leafnode_(quadtree_t *tree, quadtree_node_t *node);
@@ -296,33 +297,39 @@ void descent_node(quadtree_node_t *node)
     double ycord = (node->bounds->nw->y + node->bounds->se->y) / 2;
     main_coord.x = xcord;
     main_coord.y = ycord;
-    if (newneighboursetfile == 1)
+    if (pnpoly(line_count, coords_list, xcord, ycord))
     {
-      neighbouroutput(0, filename, xcord, ycord);
-      newneighboursetfile = 0;
+      if (newneighboursetfile == 1)
+      {
+        neighbouroutput(0, filename, xcord, ycord);
+        newneighboursetfile = 0;
+      }
+      else
+      {
+        neighbouroutput(1, filename, xcord, ycord);
+      }
+      // printf("\n %lf %lf has neighbours\t", xcord, ycord);
+      find_neighbourset(common_ancestor(tree->root, node), node);
     }
-    else
-    {
-      neighbouroutput(1, filename, xcord, ycord);
-    }
-    // printf("\n %lf %lf has neighbours\t", xcord, ycord);
-    find_neighbourset(common_ancestor(tree->root, node), node);
   }
   else if (quadtree_node_isleaf(node)) // For filled leaf
   {
     main_coord.x = node->point->x;
     main_coord.y = node->point->y;
-    if (newneighboursetfile == 1)
+    if (pnpoly(line_count, coords_list, node->point->x, node->point->y))
     {
-      neighbouroutput(0, filename, node->point->x, node->point->y);
-      newneighboursetfile = 0;
+      if (newneighboursetfile == 1)
+      {
+        neighbouroutput(0, filename, node->point->x, node->point->y);
+        newneighboursetfile = 0;
+      }
+      else
+      {
+        neighbouroutput(1, filename, node->point->x, node->point->y);
+      }
+      // printf("\n %lf %lf has neighbours\t", node->point->x, node->point->y);
+      find_neighbourset(common_ancestor(tree->root, node), node);
     }
-    else
-    {
-      neighbouroutput(1, filename, node->point->x, node->point->y);
-    }
-    // printf("\n %lf %lf has neighbours\t", node->point->x, node->point->y);
-    find_neighbourset(common_ancestor(tree->root, node), node);
   }
 }
 
@@ -375,8 +382,8 @@ void ascent(quadtree_node_t *node)
   // printf("\n");
 }
 
-void quadtree_refinementwalk(quadtree_node_t *root, void (*descent_refinement)(quadtree_node_t *node), 
-                            void (*ascent)(quadtree_node_t *node))
+void quadtree_refinementwalk(quadtree_node_t *root, void (*descent_refinement)(quadtree_node_t *node),
+                             void (*ascent)(quadtree_node_t *node))
 {
   // printf("\n 0");
   if (root->nw != NULL)

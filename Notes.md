@@ -19,3 +19,4 @@
 17. TODO - Check if *second_poly* is working as it should with small examples.
 18. The second function **neighbourset**...*work in progress*
 19. The neighbour file has a blank first line because of append (a+) usage.
+20. TODO - Add conditions in the **notaero** function for concave polygons.

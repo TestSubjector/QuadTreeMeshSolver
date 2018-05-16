@@ -39,7 +39,7 @@ void fileoutput(int append, char *filename, double xcord, double ycord)
     char ycordstr[11];
     gcvt(xcord, 9, xcordstr);
     gcvt(ycord, 9, ycordstr);
-    if(strstr(xcordstr, ycordstr) != NULL && fabs(xcord) != fabs(ycord))
+    if (strstr(xcordstr, ycordstr) != NULL && fabs(xcord) != fabs(ycord))
     {
         printf("\n xcordstr is %s", xcordstr);
     }
@@ -61,10 +61,10 @@ void fileoutput(int append, char *filename, double xcord, double ycord)
     }
     if (pnpoly(line_count, coords_list, xcord, ycord))
     {
-            fputs(xcordstr, fp);
-            fputs(" ", fp);
-            fputs(ycordstr, fp);
-            fputs("\n", fp);
+        fputs(xcordstr, fp);
+        fputs(" ", fp);
+        fputs(ycordstr, fp);
+        fputs("\n", fp);
     }
     fclose(fp);
 }
@@ -104,7 +104,7 @@ void neighbouroutput(int append, char *filename, double xcord, double ycord)
         fputs(neighbourcountstr, fp);
     }
     // Checks for blanking points i.e points inside the input polygon
-    else if (pnpoly(line_count, coords_list, xcord, ycord)) 
+    else
     {
         if (neighbour_counter != 0)
         {
@@ -113,7 +113,7 @@ void neighbouroutput(int append, char *filename, double xcord, double ycord)
             fputs(neighbourcountstr, fp);
         }
         neighbour_counter = 0;
-        
+
         fputs("\t\n", fp);
         fputs(serialnumstr, fp);
         fputs("\t", fp);
@@ -123,10 +123,6 @@ void neighbouroutput(int append, char *filename, double xcord, double ycord)
         fputs("\t", fp);
 
         serial_number++; // Increment the S.No for new point
-    }
-    else
-    {
-        // printf("\n Blanked point, and so ignored");
     }
     fclose(fp);
 }

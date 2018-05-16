@@ -121,7 +121,10 @@ int notaero_blank(int nvert, coords_t *coords_list, coords_t main_point, coords_
     // Point on boundary, therefore not blankable point
     for (i = 0; i < nvert - 1; i++)
     {
-        if ((main_point.x == coords_list[i].x && main_point.y == coords_list[i].y || neighbour_point.x == coords_list[i + 1].x && neighbour_point.y == coords_list[i + 1].y || main_point.x == coords_list[i + 1].x && main_point.y == coords_list[i + 1].y || neighbour_point.x == coords_list[i].x && neighbour_point.y == coords_list[i].y))
+        if ((main_point.x == coords_list[i].x && main_point.y == coords_list[i].y || 
+            neighbour_point.x == coords_list[i + 1].x && neighbour_point.y == coords_list[i + 1].y || 
+            main_point.x == coords_list[i + 1].x && main_point.y == coords_list[i + 1].y || 
+            neighbour_point.x == coords_list[i].x && neighbour_point.y == coords_list[i].y))
         {
             for (j = 0; j < nvert; j++)
             {
@@ -151,11 +154,13 @@ int notaero_blank(int nvert, coords_t *coords_list, coords_t main_point, coords_
             }
             else
             {
+                // TODO - Add condition for concave polygons
                 return 1;
             }
         }
         else
         {
+            // When main_point or neighbouring_point is not a wall point
             if (doIntersect(main_point, neighbour_point, coords_list[i], coords_list[i + 1]))
             {
                 return 0;
