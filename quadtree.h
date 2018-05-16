@@ -145,6 +145,12 @@ void descent_node(quadtree_node_t *node);
 
 extern quadtree_t *tree;
 
+void quadtree_refinementwalk(quadtree_node_t *root, 
+                            void (*descent_refinement)(quadtree_node_t *node), 
+                            void (*ascent)(quadtree_node_t *node));
+                            
+void descent_refinement(quadtree_node_t *node);
+
 void find_neighbourset(int patharray[21], quadtree_node_t *node);
 
 void balance_neighboursset(int patharray[21], int ancestor_pos, int direction);

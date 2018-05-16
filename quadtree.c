@@ -352,6 +352,7 @@ void quadtree_walk(quadtree_node_t *root,
 
 void descent(quadtree_node_t *node)
 {
+
   if (quadtree_node_isempty(node))
   {
     char *filename = "output.txt";
@@ -372,4 +373,37 @@ void descent(quadtree_node_t *node)
 void ascent(quadtree_node_t *node)
 {
   // printf("\n");
+}
+
+void quadtree_refinementwalk(quadtree_node_t *root, void (*descent_refinement)(quadtree_node_t *node), 
+                            void (*ascent)(quadtree_node_t *node))
+{
+  // printf("\n 0");
+  if (root->nw != NULL)
+  {
+    quadtree_refinementwalk(root->nw, descent_refinement, ascent);
+  }
+  if (root->ne != NULL)
+  {
+    quadtree_refinementwalk(root->ne, descent_refinement, ascent);
+  }
+  if (root->sw != NULL)
+  {
+    quadtree_refinementwalk(root->sw, descent_refinement, ascent);
+  }
+  if (root->se != NULL)
+  {
+    quadtree_refinementwalk(root->se, descent_refinement, ascent);
+  }
+  (*descent_refinement)(root);
+  (*ascent)(root);
+}
+
+void descent_refinement(quadtree_node_t *node)
+{
+  // printf("\n 1");
+  if ((quadtree_node_isempty(node)) || (quadtree_node_isleaf(node)))
+  {
+    split_node_newpoints(tree->root, node);
+  }
 }

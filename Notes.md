@@ -16,5 +16,6 @@
 14. You can't find eastern neighbour(And therefore common ancestor) for a point that is located in root->NE->NE-NE... or root->SE->SE->SE... or root->NE->SE->NE... And the same argument holds for other directions too.
 15. There are two functions for the neighbour file. The **neighbouroutput** puts the serial no, point whose neighbours will be given and the number of neighbours found into the file. It also checks whether the point should be blanked or not.
 16. The neighbour_counter is updated by the second function when it runs( since we get total number of neighbours only after we search for those neighbours). So it is put into the file as the last integer of the line and then the file pointer is shifted to the new line.
-17. TODO - Check if *second_poly* is working as it should with small examples
+17. TODO - Check if *second_poly* is working as it should with small examples.
 18. The second function **neighbourset**...*work in progress*
+19. The neighbour file has a blank first line because of append (a+) usage.
