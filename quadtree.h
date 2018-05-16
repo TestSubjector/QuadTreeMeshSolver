@@ -105,10 +105,16 @@ static int node_contains_patharray(quadtree_node_t *outer, double x, double y);
 
 static quadtree_point_t *find_patharray(quadtree_node_t *node, double x, double y);
 
+static quadtree_point_t *find_patharray_diagonal(quadtree_node_t *node, double x, double y);
+
 static quadtree_node_t *get_quadrant_patharray(quadtree_node_t *root,
                                                double x, double y);
 
+static quadtree_node_t *get_quadrant_patharray_diagonal(quadtree_node_t *root, double x, double y);
+
 int *common_ancestor(quadtree_node_t *tree, quadtree_node_t *node);
+
+int *common_ancestor_diagonal(quadtree_node_t *root, quadtree_node_t *node);
 
 void find_neighbours(quadtree_t *tree, int patharray[21], quadtree_node_t *leaf_array);
 
@@ -138,6 +144,12 @@ void quadtree_neighbourwalk(quadtree_node_t *root,
 void descent_node(quadtree_node_t *node);
 
 extern quadtree_t *tree;
+
+void quadtree_refinementwalk(quadtree_node_t *root, 
+                            void (*descent_refinement)(quadtree_node_t *node), 
+                            void (*ascent)(quadtree_node_t *node));
+                            
+void descent_refinement(quadtree_node_t *node);
 
 void find_neighbourset(int patharray[21], quadtree_node_t *node);
 

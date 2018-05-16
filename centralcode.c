@@ -54,15 +54,19 @@ void main_tree(int initial_coord_length, coords_t *coords_list, quadtree_node_t 
         if (i == 400)
         {
             leaf_iter -= 400;
-            for (int j = 0; j <= leaf_iter; j++)
+            for (int j = 0; j < leaf_iter; j++)
             {
                 leaf_array[j] = leaf_array[j + 400];
             }
             i -= 400;
         }
     }
+    
+    quadtree_refinementwalk(tree->root, descent_refinement, ascent);
     quadtree_walk(tree->root, descent, ascent);
+
     quadtree_neighbourset(tree->root);
+    
     // To get number of neighbours of last point
     neighbouroutput(1, "neighbour.txt", 1000, 1000);
     quadtree_free(tree);

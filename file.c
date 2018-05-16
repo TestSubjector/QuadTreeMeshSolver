@@ -82,7 +82,7 @@ void neighbouroutput(int append, char *filename, double xcord, double ycord)
     FILE *fp = NULL;
     if (append == 1)
     {
-        fp = fopen(filename, "a+"); // Replace the old file with a blank
+        fp = fopen(filename, "a+"); // Replace the old file with a blank line
     }
     else
     {
