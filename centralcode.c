@@ -61,12 +61,12 @@ void main_tree(int initial_coord_length, coords_t *coords_list, quadtree_node_t 
             i -= 400;
         }
     }
-    
+
     quadtree_refinementwalk(tree->root, descent_refinement, ascent);
     quadtree_walk(tree->root, descent, ascent);
 
     quadtree_neighbourset(tree->root);
-    
+
     // To get number of neighbours of last point
     neighbouroutput(1, "neighbour.txt", 1000, 1000);
     quadtree_free(tree);
@@ -87,8 +87,8 @@ int main(int argc, char *argv[])
         printf("\n ERROR : Memory allocation to leaf_array was unsuccessful");
         exit(0);
     }
-    char *filename = argv[1];                                            // This will be the file from which the input is taken
-    line_count = fileinput(coords_list, filename);                       // Receives total number of input points
+    char *filename = argv[1];                      // This will be the file from which the input is taken
+    line_count = fileinput(coords_list, filename); // Receives total number of input points
 
     printf("\nquadtree_t: %ld\n", sizeof(quadtree_t));
 

@@ -145,10 +145,10 @@ void descent_node(quadtree_node_t *node);
 
 extern quadtree_t *tree;
 
-void quadtree_refinementwalk(quadtree_node_t *root, 
-                            void (*descent_refinement)(quadtree_node_t *node), 
-                            void (*ascent)(quadtree_node_t *node));
-                            
+void quadtree_refinementwalk(quadtree_node_t *root,
+                             void (*descent_refinement)(quadtree_node_t *node),
+                             void (*ascent)(quadtree_node_t *node));
+
 void descent_refinement(quadtree_node_t *node);
 
 void find_neighbourset(int patharray[21], quadtree_node_t *node);
@@ -173,5 +173,9 @@ extern coords_t main_coord;
 int adapt(quadtree_t *tree, quadtree_node_t *node, double x, double y);
 
 extern int checker;
+
+void northern_diagonal_neighbourset(quadtree_node_t *root, int mainnode_direction);
+
+void southern_diagonal_neighbourset(quadtree_node_t *node, int mainnode_direction);
 
 #endif
