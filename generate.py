@@ -24,13 +24,13 @@ def updateFlag(indexval,list,newflag):
 def getYCordNeighbours(list):
     stuff = []
     for item in list:
-        stuff.append(item.split(",")[1])
+        stuff.append(float(item.split(",")[1]))
     return stuff
 
 def getXCordNeighbours(list):
     stuff = []
     for item in list:
-        stuff.append(item.split(",")[0])
+        stuff.append(float(item.split(",")[0]))
     return stuff
 
 def isPositive(val):
@@ -42,10 +42,10 @@ def getSmallestXBiggestY(list):
     for item in list:
         if(isPositive(float(item.split(",")[0])) == False and isPositive(float(item.split(",")[1])) == True):
             newlist.append(item)
-    getSmallestX = max(getXCordNeighbours(newlist))
+    getSmallestX = min(getXCordNeighbours(newlist))
     templist = []
     for item in newlist:
-        if((item.split(",")[0])==getSmallestX):
+        if(float((item.split(",")[0]))==getSmallestX):
             templist.append(item)
     getBiggestY = max(getYCordNeighbours(templist))
     return str(getSmallestX) + "," + str(getBiggestY)
@@ -58,9 +58,9 @@ def getBiggestXSmallestY(list):
     getBiggestX = max(getXCordNeighbours(newlist))
     templist = []
     for item in newlist:
-        if((item.split(",")[0])==getBiggestX):
+        if(float((item.split(",")[0]))==getBiggestX):
             templist.append(item)
-    getSmallestY = max(getYCordNeighbours(templist))
+    getSmallestY = min(getYCordNeighbours(templist))
     return str(getBiggestX) + "," + str(getSmallestY)
 
 def getSmallestXSmallestY(list):
@@ -68,12 +68,12 @@ def getSmallestXSmallestY(list):
     for item in list:
         if(isPositive(float(item.split(",")[0])) == False and isPositive(float(item.split(",")[1])) == False):
             newlist.append(item)
-    getBiggestX = max(getXCordNeighbours(newlist))
+    getBiggestX = min(getXCordNeighbours(newlist))
     templist = []
     for item in newlist:
-        if((item.split(",")[0])==getBiggestX):
+        if(float((item.split(",")[0]))==getBiggestX):
             templist.append(item)
-    getSmallestY = max(getYCordNeighbours(templist))
+    getSmallestY = min(getYCordNeighbours(templist))
     return str(getBiggestX) + "," + str(getSmallestY)
 
 def getNeighboursDirectional(direction,maincord,list):
@@ -103,7 +103,7 @@ def main():
     hashtable = ["start"]
     # data[len(data)-1] = data[len(data)-1][:-1]
     # Wall Point
-    file2 = open("input.txt","r")
+    file2 = open("airfoil2.txt","r")
     geometrydata = file2.read()
     geometrydata = geometrydata.split("\n")
     firstxcord = 0
@@ -113,10 +113,10 @@ def main():
     index=1
     globaldata = []
     for i in range(len(geometrydata)):
-        xcord = geometrydata[i].split(" ")[0]
+        xcord = geometrydata[i].split()[0]
         # print(len(geometrydata[i].split(" ")))
         # print(geometrydata[i].split(" ")[1])
-        ycord = geometrydata[i].split(" ")[1]
+        ycord = geometrydata[i].split()[1]
         hashtable.append(xcord+','+ycord)
         if(i==0):
             firstxcord = xcord
@@ -223,9 +223,12 @@ def main():
     currentcord = biggestxy
     previouscord = biggestxy
 
-    ## Going Left (+x to -x)
+    ## Going Left (+x to -x)sm
     while True:
         currentneighbours = getNeighbours(hashtable.index(currentcord) - 1,globaldata)
+        # print(currentcord,currentneighbours)
+        # if(currentcord=='9.375,-1.875'):
+        #     break
         # print(currentneighbours)
         # print(currentcord)
         if(currentstatus == 1):
@@ -245,7 +248,7 @@ def main():
             currentneighbours = getNeighboursDirectional(2,currentcord,currentneighbours)
             currentXCords = getXCordNeighbours(currentneighbours)
             try:
-                leftcord = currentneighbours[currentXCords.index(max(currentXCords))]
+                leftcord = currentneighbours[currentXCords.index(min(currentXCords))]
             except Exception:
                 None
             if(currentcord == smallestxy):
@@ -255,9 +258,14 @@ def main():
         elif(currentstatus == 3):
             # print(currentcord)
             currentneighbours = getNeighboursDirectional(3,currentcord,currentneighbours)
-            currentYCords = getYCordNeighbours(currentneighbours)
             try:
-                leftcord = currentneighbours[currentYCords.index(max(currentYCords))]
+                xvals = getXCordNeighbours(currentneighbours)
+                currentnewneighbours = []
+                for index,item in enumerate(xvals):
+                    if(item==max(xvals)):
+                        currentnewneighbours.append(currentneighbours[index])
+                currentYCords = getYCordNeighbours(currentnewneighbours)
+                leftcord = currentnewneighbours[currentYCords.index(min(currentYCords))]
             except Exception:
                 None
             if(currentcord == biggestxsmallesty):
@@ -283,7 +291,9 @@ def main():
         currentcord = leftcord
 
     ## Replacer Code
-    for item in hashtable:
+    print("Beginning Replacement")
+    for index2,item in enumerate(hashtable):
+        print(index2,len(hashtable))
         for index, individualitem in enumerate(globaldata):
             globaldata[index] = [hashtable.index(x) if x==str(item) else x for x in individualitem]
     

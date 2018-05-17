@@ -62,7 +62,7 @@ void main_tree(int initial_coord_length, coords_t *coords_list, quadtree_node_t 
         }
     }
 
-    quadtree_refinementwalk(tree->root, descent_refinement, ascent);
+    // quadtree_refinementwalk(tree->root, descent_refinement, ascent);
     quadtree_walk(tree->root, descent, ascent);
 
     quadtree_neighbourset(tree->root);
