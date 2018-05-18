@@ -95,7 +95,15 @@ static quadtree_point_t *find_(quadtree_node_t *node, double x, double y)
   {
     if (node->point->x == x && node->point->y == y)
     {
-      return node->point;
+      return node;
+    }
+  }
+  else if(quadtree_node_isempty(node))
+  {
+    if((node->bounds->nw->x + node->bounds->se->x) / 2 == x && 
+        (node->bounds->nw->y + node->bounds->se->y) / 2)
+    {
+      return node;
     }
   }
   else if (quadtree_node_ispointer(node))

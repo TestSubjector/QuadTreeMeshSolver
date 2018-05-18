@@ -178,4 +178,9 @@ void northern_diagonal_neighbourset(quadtree_node_t *root, int mainnode_directio
 
 void southern_diagonal_neighbourset(quadtree_node_t *node, int mainnode_direction);
 
+extern coords_t *adapted_list;
+extern int adapted_line_count;
+
+int adaptation_fileinput(coords_t *adapted_list, char *adapted_filename);
+
 #endif

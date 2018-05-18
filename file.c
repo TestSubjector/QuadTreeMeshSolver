@@ -26,7 +26,57 @@ int fileinput(coords_t *coords_list, char *filename)
         }
         local_line_count++;
     }
-    fclose(coordFile);
+    if(fclose(coordFile) != 0)
+    {
+        printf("\n ERROR - Input file stream didn't close properly");
+        exit(1);
+    }
+    return local_line_count;
+    // Returns total number of input points
+}
+
+int adaptation_fileinput(coords_t *adapted_list, char *adapted_filename)
+{
+    char *adapted_line;
+    size_t adapted_n = 0;
+    int local_line_count = 0;
+    double xi = 0;
+    double yi = 0;
+
+    FILE *adapted_coordFile = fopen(adapted_filename, "r");
+
+    // Take x & y input from each line and store in coords_list
+    // while(fscanf(adapted_coordFile, "%lf %lf", xi, yi) != EOF)
+    // {
+    //     printf("\n %lf %lf the points are", xi, yi);
+    //     local_line_count++;
+    // }
+    while (getline(&adapted_line, &adapted_n, adapted_coordFile) != -1 && local_line_count < MAX)
+    {
+        int items = sscanf(adapted_line, "%lf %lf", &xi, &yi);
+        if (items != 2)
+        {
+            printf("\n ERROR : Adapted file does not have correct coordinate format");
+            exit(1);
+        }
+        printf("\n %d, %d", xi, yi);
+        local_line_count++;
+    }
+
+    // while (getline(&line, &n, adapted_coordFile) != -1 && local_line_count < MAX)
+    // {
+    //     int items = sscanf(line, "%lf %lf", &adapted_list[local_line_count].x,
+    //                        &adapted_list[local_line_count].y);
+    //     if (items != 2)
+    //     {
+    //         printf("\n ERROR : Adapted file does not have correct coordinate format");
+    //         exit(1);
+    //     }
+    //     printf("\n %d, %d", adapted_list[local_line_count].x, adapted_list[local_line_count].y);
+    //     local_line_count++;
+    // }
+
+    fclose(adapted_coordFile);
     return local_line_count;
     // Returns total number of input points
 }
