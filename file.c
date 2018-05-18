@@ -51,30 +51,19 @@ int adaptation_fileinput(coords_t *adapted_list, char *adapted_filename)
     //     printf("\n %lf %lf the points are", xi, yi);
     //     local_line_count++;
     // }
+
     while (getline(&adapted_line, &adapted_n, adapted_coordFile) != -1 && local_line_count < MAX)
     {
-        int items = sscanf(adapted_line, "%lf %lf", &xi, &yi);
+        int items = sscanf(adapted_line, "%lf %lf", &adapted_list[local_line_count].x,
+                           &adapted_list[local_line_count].y);
         if (items != 2)
         {
             printf("\n ERROR : Adapted file does not have correct coordinate format");
             exit(1);
         }
-        printf("\n %d, %d", xi, yi);
+        printf("\n %lf, %lf", adapted_list[local_line_count].x, adapted_list[local_line_count].y);
         local_line_count++;
     }
-
-    // while (getline(&line, &n, adapted_coordFile) != -1 && local_line_count < MAX)
-    // {
-    //     int items = sscanf(line, "%lf %lf", &adapted_list[local_line_count].x,
-    //                        &adapted_list[local_line_count].y);
-    //     if (items != 2)
-    //     {
-    //         printf("\n ERROR : Adapted file does not have correct coordinate format");
-    //         exit(1);
-    //     }
-    //     printf("\n %d, %d", adapted_list[local_line_count].x, adapted_list[local_line_count].y);
-    //     local_line_count++;
-    // }
 
     fclose(adapted_coordFile);
     return local_line_count;
