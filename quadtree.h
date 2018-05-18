@@ -71,7 +71,7 @@ quadtree_t *quadtree_new(double minx, double miny, double maxx, double maxy);
 
 void quadtree_free(quadtree_t *tree);
 
-quadtree_point_t *quadtree_search(quadtree_t *tree, double x, double y);
+quadtree_point_t *quadtree_search(double x, double y);
 
 int quadtree_insert(quadtree_t *tree, double x, double y);
 
@@ -182,5 +182,8 @@ extern coords_t *adapted_list;
 extern int adapted_line_count;
 
 int adaptation_fileinput(coords_t *adapted_list, char *adapted_filename);
+
+extern int newoutputfile;
+extern int newneighboursetfile;
 
 #endif

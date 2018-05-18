@@ -89,12 +89,17 @@ static quadtree_point_t *find_(quadtree_node_t *node, double x, double y)
 {
   if (!node)
   {
+    // printf("\n Start");
     return NULL;
   }
   if (quadtree_node_isleaf(node))
   {
+    // printf("\n Start 1");
+    // printf("\n Wanted %lf, %lf", x, y);
+    // printf("\n Wanted %lf, %lf", node->point->x, node->point->y);
     if (node->point->x == x && node->point->y == y)
     {
+      // printf("\n Start 2");
       return node;
     }
   }
@@ -108,6 +113,7 @@ static quadtree_point_t *find_(quadtree_node_t *node, double x, double y)
   }
   else if (quadtree_node_ispointer(node))
   {
+    // printf("\n Start 3");
     quadtree_point_t test;
     test.x = x;
     test.y = y;
@@ -135,7 +141,7 @@ quadtree_t *quadtree_new(double minx, double miny, double maxx, double maxy)
   return tree;
 }
 
-quadtree_point_t *quadtree_search(quadtree_t *tree, double x, double y)
+quadtree_point_t *quadtree_search(double x, double y)
 {
   return find_(tree->root, x, y);
 }
