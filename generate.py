@@ -149,11 +149,11 @@ def main():
     print("Beginning Wall Point Processing")
     for i in range(len(geometrydata)):
         printProgressBar(i, len(geometrydata) - 1, prefix = 'Progress:', suffix = 'Complete', length = 50)
-        xcord = geometrydata[i].split()[0]
+        xcord = float(geometrydata[i].split()[0])
         # print(len(geometrydata[i].split(" ")))
         # print(geometrydata[i].split(" ")[1])
-        ycord = geometrydata[i].split()[1]
-        hashtable.append(xcord+','+ycord)
+        ycord = float(geometrydata[i].split()[1])
+        hashtable.append(str(xcord)+','+str(ycord))
         if(i==0):
             firstxcord = xcord
             firstycord = ycord
@@ -197,7 +197,7 @@ def main():
     for i in range(len(data)):
         printProgressBar(i, len(data) - 1, prefix = 'Progress:', suffix = 'Complete', length = 50)
         cleandata = str(data[i]).split(" ")
-        cord = cleandata[1]
+        cord = str(float(cleandata[1].split(",")[0])) + "," + str(float(cleandata[1].split(",")[1]))
         try:
             if(i!=len(data)-1):
                 val = hashtable.index(cord)
@@ -250,8 +250,8 @@ def main():
                 cleandata.insert(0,index)
                 index+=1
                 globaldata.append(cleandata)
-    print("Interior Point and Wall Points Processed")
-    print("Beginning Left and Right Detection of Wall Points")
+    print("Interior Point and Outer Points Processed")
+    print("Beginning Left and Right Detection of Outer Points")
     # Outer Point scan
     biggestxy = max(hashtable[1:])
     smallestxy = getSmallestXSmallestY(hashtable[1:])
@@ -261,8 +261,10 @@ def main():
     currentstatus = 1
     currentcord = biggestxy
     previouscord = biggestxy
+    count = 0
     ## Going Left (+x to -x)sm
     while True:
+        count += 1
         printProgressBar(currentstatus, 5, prefix = 'Progress:', suffix = 'Complete', length = 50)
         currentneighbours = getNeighbours(hashtable.index(currentcord) - 1,globaldata)
         # print(currentcord,currentneighbours)
@@ -333,7 +335,7 @@ def main():
         globaldata = updateLeft(startindex,globaldata,leftcord)
         previouscord = currentcord
         currentcord = leftcord
-    print("Wall Points Left and Right Detection Complete")
+    print("Outer Points Left and Right Detection Complete")
 
     ## Interior Point Validation
     print("Beginning Interior Point Delta Calculation")
@@ -347,16 +349,25 @@ def main():
             if(xpos < 3 or ypos < 3 or xneg < 3 or yneg < 3):
                 detect = detect + 1
                 currentnewneighbours = []
-                print("Old")
-                print(xpos,ypos,xneg,yneg)
+                # print("Old")
+                # print(xpos,ypos,xneg,yneg)
                 for item in currentneighbours:
                     itemsneighbours = getNeighbours(hashtable.index(item),globaldata)
                     currentnewneighbours = currentnewneighbours + list(set(itemsneighbours) - set(currentneighbours) - set(currentnewneighbours))
+                currentnewneighbours = currentnewneighbours + currentneighbours
                 xpos,ypos,xneg,yneg = deltaNeighbourCalculation(currentnewneighbours,currentcord)
                 if(xpos < 3 or ypos < 3 or xneg < 3 or yneg < 3):
                     detect2 = detect2 + 1
-                print("New")
-                print(xpos,ypos,xneg,yneg)
+                # print("New")
+                # print(xpos,ypos,xneg,yneg)
+        elif(getFlag(index,globaldata)==0):
+            None
+            # print("Wall Point")
+            # print(item)
+        else:
+            None
+            # print("Outer Point")
+            # print(item)
     print(total,detect,detect2)
     print("Interior Points Delta Calculated and Balanced")
 
