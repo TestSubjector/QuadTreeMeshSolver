@@ -1,9 +1,10 @@
+import math
+
 def printProgressBar(iteration, total, prefix = '', suffix = '', decimals = 1, length = 100, fill = '█'):
     percent = ("{0:." + str(decimals) + "f}").format(100 * (iteration / float(total)))
     filledLength = int(length * iteration // total)
     bar = fill * filledLength + '-' * (length - filledLength)
     print('\r%s |%s| %s%% %s' % (prefix, bar, percent, suffix), end = '\r')
-    # Print New Line on Complete
     if iteration == total: 
         print()
 
@@ -125,6 +126,134 @@ def deltaNeighbourCalculation(currentneighbours,currentcord):
             yneg = yneg + 1
     return xpos,ypos,xneg,xneg
 
+def getLeftPoint(cord,globaldata,hashtable):
+    val = hashtable.index(cord)
+    leftpt = globaldata[val - 1][3]
+    if(isinstance(leftpt,int)):
+        return hashtable[leftpt]
+    else:
+        return hashtable.index(leftpt)
+
+def getRightPoint(cord,globaldata,hashtable):
+    val = hashtable.index(cord)
+    rightpt = globaldata[val - 1][4]
+    if(isinstance(rightpt,int)):
+        return hashtable[rightpt]
+    else:
+        return hashtable.index(rightpt)
+
+def deltaWallNeighbourCalculation(index,currentneighbours,currentcord,nx,ny,giveposdelta):
+    deltaspos,deltasneg,deltaszero = 0,0,0
+    nx = float(nx)
+    ny = float(ny)
+    tx = float(ny)
+    ty = -float(nx)
+    xcord = float(currentcord.split(",")[0])
+    ycord = float(currentcord.split(",")[1])
+    output = []
+    for item in currentneighbours:
+        itemx = float(item.split(",")[0])
+        itemy = float(item.split(",")[1])
+        deltas = (tx * (itemx - xcord)) + (ty * (itemy - ycord))
+        if(deltas <= 0):
+            if(giveposdelta):
+                output.append(item)
+            deltaspos = deltaspos + 1
+        if(deltas >= 0):
+            if(not giveposdelta):
+                output.append(item)
+            deltasneg = deltasneg + 1
+        if(deltas == 0):
+            deltaszero = deltaszero + 1
+    return deltaspos,deltasneg,deltaszero,output
+
+def normalCalculation(cord,hashtable,globaldata,wallpoint):
+    nx = 0
+    ny = 0
+    cordx = float(cord.split(",")[0])
+    cordy = float(cord.split(",")[1])
+    val = hashtable.index(cord)
+    pointdata = globaldata[val - 1]
+    if(wallpoint):
+        leftpoint = hashtable[pointdata[3]]
+        rightpoint = hashtable[pointdata[4]]
+    else:
+        leftpoint = pointdata[3]
+        rightpoint = pointdata[4]
+    leftpointx = float(leftpoint.split(",")[0])
+    leftpointy = float(leftpoint.split(",")[1])
+    rightpointx = float(rightpoint.split(",")[0])
+    rightpointy = float(rightpoint.split(",")[1])
+    nx1 = cordy - leftpointy
+    nx2 = rightpointy - cordy
+    ny1 = cordx - leftpointx
+    ny2 = rightpointx - cordx
+    nx = (nx1+nx2)/2
+    ny = (ny1+ny2)/2
+    det = math.sqrt((nx*nx) + (ny*ny))
+    nx = (-nx)/det
+    ny = ny/det
+    return nx,ny
+
+def minDistance(neighbours,cord):
+    dists = []
+    for item in neighbours:
+        dists.append(euclideanDistance(item,cord))
+    dists.sort(key=takeFirst)
+    dists2 = []
+    for item in dists:
+        dists2.append(item[1])
+    return dists2
+    
+def takeFirst(elem):
+    return elem[0]
+
+def euclideanDistance(a,b):
+    ax = float(a.split(",")[0])
+    ay = float(a.split(",")[1])
+    bx = float(b.split(",")[0])
+    by = float(b.split(",")[1])
+    return (float(math.sqrt(((bx-ax)**2)+((by-ay)**2))),a)
+
+def appendNeighbours(neighbours,index,globaldata):
+    nbhcount = int(globaldata[index][7])
+    nbhs = globaldata[index][-nbhcount:]
+    nbhs = nbhs + neighbours
+    nbhcount = nbhcount + len(neighbours)
+    globaldata[index][7] = nbhcount
+    globaldata[index] = globaldata[index][:8] + nbhs
+    return "Done"
+
+def wallBalance(index,globaldata,hashtable,item):
+    currentneighbours = getNeighbours(index,globaldata)
+    currentcord = item
+    nx,ny = normalCalculation(currentcord,hashtable,globaldata,True)
+    deltaspos,deltasneg,deltaszero,temp = deltaWallNeighbourCalculation(index,currentneighbours,currentcord,nx,ny,False)
+    if(deltaspos < 3 or deltasneg < 3):
+        newset = []
+        posdiff = deltaspos
+        negdiff = deltasneg
+        for item in currentneighbours:
+            itemnb = getNeighbours(hashtable.index(item) - 1,globaldata)
+            newset = newset + itemnb
+        # Filter 1
+        newset = list(set(newset) - set(currentneighbours))
+        newset = list(set(newset) - set([currentcord]))
+        if(deltasneg < 3):
+            _,_,_,temp = deltaWallNeighbourCalculation(index,newset,currentcord,nx,ny,False)
+            shortestnewneighbours = minDistance(temp,currentcord)
+            appendNeighbours(shortestnewneighbours[:(3-negdiff)],index,globaldata)
+        if(deltaspos < 3):
+            _,_,_,temp = deltaWallNeighbourCalculation(index,newset,currentcord,nx,ny,True)
+            shortestnewneighbours = minDistance(temp,currentcord)
+            appendNeighbours(shortestnewneighbours[:(3-posdiff)],index,globaldata)
+        with open("dsf.txt", "a") as text_file:
+            currentneighbours = getNeighbours(index,globaldata)
+            deltaspos,deltasneg,deltaszero,temp = deltaWallNeighbourCalculation(index,currentneighbours,currentcord,nx,ny,False)
+            text_file.writelines(" ".join(str(x) for x in [hashtable.index(item),len(currentneighbours),deltaspos,deltasneg,deltaszero]))
+            text_file.writelines("\n")
+
+
 def main():
     print("Hello World")
     print("Loading Data")
@@ -192,7 +321,7 @@ def main():
             globaldata.append(walldata)
             index+=1
     print("Wall Point Processed")
-    print("Beginning Interior and Outer Point Processing")
+    print("Beginning Interior Point and Wall Point Neighbour Processing")
     # Interior and Outer Point
     for i in range(len(data)):
         printProgressBar(i, len(data) - 1, prefix = 'Progress:', suffix = 'Complete', length = 50)
@@ -205,16 +334,20 @@ def main():
                 cleandata.pop(-1)
                 cleandata.pop(-2)
                 cleandata.pop(0)
-                cleandata.insert(0,cleandata[len(cleandata)-1])
+                cleandata.insert(0,str(int(cleandata[len(cleandata)-1]) + 2))
                 cleandata.pop(-1)
+                cleandata.append(str(float(hashtable[int(globaldata[val-1][3])].split(",")[0])) + "," + str(float(hashtable[int(globaldata[val-1][3])].split(",")[1])))
+                cleandata.append(str(float(hashtable[int(globaldata[val-1][4])].split(",")[0])) + "," + str(float(hashtable[int(globaldata[val-1][4])].split(",")[1])))
                 globaldata[val-1] = globaldata[val-1] + cleandata
             else:
                 val = hashtable.index(cord)
                 cleandata.pop(0)
                 cleandata.pop(-2)
                 cleandata.pop(0)
-                cleandata.insert(0,cleandata[len(cleandata)-1])
+                cleandata.insert(0,str(int(cleandata[len(cleandata)-1]) + 2))
                 cleandata.pop(-1)
+                cleandata.append(str(float(hashtable[int(globaldata[val-1][3])].split(",")[0])) + "," + str(float(hashtable[int(globaldata[val-1][3])].split(",")[1])))
+                cleandata.append(str(float(hashtable[int(globaldata[val-1][4])].split(",")[0])) + "," + str(float(hashtable[int(globaldata[val-1][4])].split(",")[1])))
                 globaldata[val-1] = globaldata[val-1] + cleandata
         except Exception as err:
             if(i!=len(data)-1):
@@ -250,7 +383,17 @@ def main():
                 cleandata.insert(0,index)
                 index+=1
                 globaldata.append(cleandata)
-    print("Interior Point and Outer Points Processed")
+    print("Interior Point and Wall Point Neighbour Processed")
+    print("Beginning Duplicate Neighbour Detection")
+    for i in range(len(globaldata)):
+        printProgressBar(i, len(globaldata) - 1, prefix = 'Progress:', suffix = 'Complete', length = 50)
+        noneighours = int(globaldata[i][7])
+        cordneighbours = globaldata[i][-noneighours:]
+        cordneighbours = [str(float(i.split(",")[0])) + "," + str(float(i.split(",")[1])) for i in cordneighbours]
+        cordneighbours = dict.fromkeys(cordneighbours).keys()
+        noneighours = len(cordneighbours)
+        globaldata[i] = globaldata[i][:7] + [noneighours] + list(cordneighbours)
+    print("Duplicate Neighbours Removed")
     print("Beginning Left and Right Detection of Outer Points")
     # Outer Point scan
     biggestxy = max(hashtable[1:])
@@ -337,39 +480,44 @@ def main():
         currentcord = leftcord
     print("Outer Points Left and Right Detection Complete")
 
-    ## Interior Point Validation
-    print("Beginning Interior Point Delta Calculation")
-    total,detect,detect2 = 0,0,0
+    ## Point Validation
+    print("Beginning Point Delta Calculation")
     for index,item in enumerate(hashtable[1:]):
-        if(getFlag(index,globaldata)==1):
-            total = total + 1
-            currentneighbours = getNeighbours(index,globaldata)
-            currentcord = item
-            xpos,ypos,xneg,yneg = deltaNeighbourCalculation(currentneighbours,currentcord)
-            if(xpos < 3 or ypos < 3 or xneg < 3 or yneg < 3):
-                detect = detect + 1
-                currentnewneighbours = []
-                # print("Old")
-                # print(xpos,ypos,xneg,yneg)
-                for item in currentneighbours:
-                    itemsneighbours = getNeighbours(hashtable.index(item),globaldata)
-                    currentnewneighbours = currentnewneighbours + list(set(itemsneighbours) - set(currentneighbours) - set(currentnewneighbours))
-                currentnewneighbours = currentnewneighbours + currentneighbours
-                xpos,ypos,xneg,yneg = deltaNeighbourCalculation(currentnewneighbours,currentcord)
-                if(xpos < 3 or ypos < 3 or xneg < 3 or yneg < 3):
-                    detect2 = detect2 + 1
-                # print("New")
-                # print(xpos,ypos,xneg,yneg)
-        elif(getFlag(index,globaldata)==0):
-            None
-            # print("Wall Point")
-            # print(item)
+        # if(getFlag(index,globaldata)==1):
+        #     currentneighbours = getNeighbours(index,globaldata)
+        #     currentcord = item
+        #     xpos,ypos,xneg,yneg = deltaNeighbourCalculation(currentneighbours,currentcord)
+        #     if(xpos < 3 or ypos < 3 or xneg < 3 or yneg < 3):
+        #         currentnewneighbours = []
+        #         # print("Old")
+        #         # print(xpos,ypos,xneg,yneg)
+        #         for item in currentneighbours:
+        #             itemsneighbours = getNeighbours(hashtable.index(item),globaldata)
+        #             currentnewneighbours = currentnewneighbours + list(set(itemsneighbours) - set(currentneighbours) - set(currentnewneighbours))
+        #         currentnewneighbours = currentnewneighbours + currentneighbours
+        #         xpos,ypos,xneg,yneg = deltaNeighbourCalculation(currentnewneighbours,currentcord)
+        #         if(xpos < 3 or ypos < 3 or xneg < 3 or yneg < 3):
+        #             None
+        #         # print("New")
+        #         # print(xpos,ypos,xneg,yneg)
+        if(getFlag(index,globaldata)==0):
+            wallBalance(index,globaldata,hashtable,item)
         else:
             None
             # print("Outer Point")
             # print(item)
-    print(total,detect,detect2)
-    print("Interior Points Delta Calculated and Balanced")
+    count = 0
+    for index,item in enumerate(hashtable[1:]):
+        if(getFlag(index,globaldata)==0):
+            currentneighbours = getNeighbours(index,globaldata)
+            currentcord = item
+            nx,ny = normalCalculation(currentcord,hashtable,globaldata,True)
+            deltaspos,deltasneg,deltaszero,temp = deltaWallNeighbourCalculation(index,currentneighbours,currentcord,nx,ny,False)
+            if(deltaspos < 3 or deltasneg < 3):
+                count = count + 1
+    print(count)
+                
+    print("Points Delta Calculated and Balanced")
 
     ## Replacer Code
     print("Beginning Replacement")
@@ -378,7 +526,7 @@ def main():
         for index, individualitem in enumerate(globaldata):
             globaldata[index] = [hashtable.index(x) if x==str(item) else x for x in individualitem]
     
-    with open("output.txt", "w") as text_file:
+    with open("preprocessorfile.txt", "w") as text_file:
         for item1 in globaldata:
             text_file.writelines(["%s " % item for item in item1])
             text_file.writelines("\n")
