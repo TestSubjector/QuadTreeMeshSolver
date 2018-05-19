@@ -311,6 +311,18 @@ void descent_node(quadtree_node_t *node)
     double ycord = (node->bounds->nw->y + node->bounds->se->y) / 2;
     main_coord.x = xcord;
     main_coord.y = ycord;
+    if(xcord == 8.75 && ycord == 8.75)
+    {
+      checker = 1;
+    }
+    else
+    {
+      checker = 0;
+    }
+    if(checker == 1)
+    {
+      printf("\n ABC");
+    }
     if (pnpoly(line_count, coords_list, xcord, ycord))
     {
       if (newneighboursetfile == 1)
@@ -328,6 +340,7 @@ void descent_node(quadtree_node_t *node)
   }
   else if (quadtree_node_isleaf(node)) // For filled leaf
   {
+    checker = 0;
     main_coord.x = node->point->x;
     main_coord.y = node->point->y;
     if (pnpoly(line_count, coords_list, node->point->x, node->point->y))
