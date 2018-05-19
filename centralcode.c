@@ -58,6 +58,7 @@ void main_tree(int initial_coord_length, coords_t *coords_list, coords_t *adapte
     neighbouroutput(1, "neighbour.txt", 1000, 1000);
 
     // Adaptation section
+    /*
     if(adapted_line_count != 0)
     {
         // Reset dat and flag variables for redoing of operations
@@ -102,17 +103,6 @@ void main_tree(int initial_coord_length, coords_t *coords_list, coords_t *adapte
         // To get number of neighbours of last point
         neighbouroutput(1, "neighbour.txt", 1000, 1000);
     }
-    /*
-    if (adapt_flag != 0)
-    {
-        for (int adapt_iter = 0; adapt_iter < adapt_flag; adapt_iter++)
-        {
-            if (adapt(tree, tree->root, adapted_list[adapt_iter].x, adapted_list[adapt_iter].y) == 0)
-            {
-                printf("\n ERROR : Point %lf %lf was not adapted successfully", adapted_list[adapt_iter].x, adapted_list[adapt_iter].y);
-            }
-        }
-    }
     */
     quadtree_free(tree);
 }
@@ -141,48 +131,14 @@ int main(int argc, char *argv[])
         printf("\n ERROR : Memory allocation to adapted_list was unsuccessful");
         exit(0);
     }
-    
+
     char *adapted_filename = argv[2];
     adapted_line_count = adaptation_fileinput(adapted_list, adapted_filename);
-    printf("\n %d", adapted_line_count);
+    // printf("\n %d", adapted_line_count);
 
     printf("\nquadtree_t: %ld\n", sizeof(quadtree_t));
 
     main_tree(line_count, coords_list, adapted_list, leaf_array);
     printf("\n");
-
-    /*
-    // Max number of manual adaptations is set to 30
-    adapted_list = malloc(sizeof(coords_t) * 30);
-    char check;
-   
-    printf("\n Please press 'y' if you want to adapt points, else press anything: ");
-    check = getchar();
-    do
-    {
-        if (check != 'y')
-        {
-            printf("\n Thank you, terminating program");
-            break;
-        }
-        else
-        {
-            printf("\n Enter x coordinte of the point to be adapted: ");
-            scanf("%lf", &adapted_list[adapt_flag].x);
-            printf("\n Enter y coordinte of the point to be adapted: ");
-            scanf("%lf", &adapted_list[adapt_flag].y);
-            adapt_flag++;
-        }
-        printf("\n Please press 'y' if you want to adapt points, else press anything: ");
-        scanf(" %c", &check);
-    } while (check == 'y');
-
-    coords_list = realloc(coords_list, sizeof(coords_t) * MAX);
-    leaf_array = realloc(sizeof(quadtree_node_t) * MAX)
-
-    neighbouroutput(0, "neighbour.txt", 1000, 1000);
-    main_tree(line_count, coords_list, leaf_array);
-    */
-
     return 0;
 }
