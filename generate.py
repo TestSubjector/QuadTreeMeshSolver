@@ -142,7 +142,7 @@ def getRightPoint(cord,globaldata,hashtable):
     else:
         return hashtable.index(rightpt)
 
-def deltaWallNeighbourCalculation(currentneighbours,currentcord,nx,ny):
+def deltaWallNeighbourCalculation(index,currentneighbours,currentcord,nx,ny,giveposdelta):
     deltaspos,deltasneg,deltaszero = 0,0,0
     nx = float(nx)
     ny = float(ny)
@@ -150,19 +150,22 @@ def deltaWallNeighbourCalculation(currentneighbours,currentcord,nx,ny):
     ty = -float(nx)
     xcord = float(currentcord.split(",")[0])
     ycord = float(currentcord.split(",")[1])
+    output = []
     for item in currentneighbours:
         itemx = float(item.split(",")[0])
         itemy = float(item.split(",")[1])
         deltas = (tx * (itemx - xcord)) + (ty * (itemy - ycord))
-        if(deltas == 0):
-            print("Yeah")
-        if(deltas < 0):
+        if(deltas <= 0):
+            if(giveposdelta):
+                output.append(item)
             deltaspos = deltaspos + 1
-        if(deltas > 0):
+        if(deltas >= 0):
+            if(not giveposdelta):
+                output.append(item)
             deltasneg = deltasneg + 1
         if(deltas == 0):
             deltaszero = deltaszero + 1
-    return deltaspos,deltasneg,deltaszero
+    return deltaspos,deltasneg,deltaszero,output
 
 def normalCalculation(cord,hashtable,globaldata,wallpoint):
     nx = 0
@@ -191,7 +194,65 @@ def normalCalculation(cord,hashtable,globaldata,wallpoint):
     nx = (-nx)/det
     ny = ny/det
     return nx,ny
-        
+
+def minDistance(neighbours,cord):
+    dists = []
+    for item in neighbours:
+        dists.append(euclideanDistance(item,cord))
+    dists.sort(key=takeFirst)
+    dists2 = []
+    for item in dists:
+        dists2.append(item[1])
+    return dists2
+    
+def takeFirst(elem):
+    return elem[0]
+
+def euclideanDistance(a,b):
+    ax = float(a.split(",")[0])
+    ay = float(a.split(",")[1])
+    bx = float(b.split(",")[0])
+    by = float(b.split(",")[1])
+    return (float(math.sqrt(((bx-ax)**2)+((by-ay)**2))),a)
+
+def appendNeighbours(neighbours,index,globaldata):
+    nbhcount = int(globaldata[index][7])
+    nbhs = globaldata[index][-nbhcount:]
+    nbhs = nbhs + neighbours
+    nbhcount = nbhcount + len(neighbours)
+    globaldata[index][7] = nbhcount
+    globaldata[index] = globaldata[index][:8] + nbhs
+    return "Done"
+
+def wallBalance(index,globaldata,hashtable,item):
+    currentneighbours = getNeighbours(index,globaldata)
+    currentcord = item
+    nx,ny = normalCalculation(currentcord,hashtable,globaldata,True)
+    deltaspos,deltasneg,deltaszero,temp = deltaWallNeighbourCalculation(index,currentneighbours,currentcord,nx,ny,False)
+    if(deltaspos < 3 or deltasneg < 3):
+        newset = []
+        posdiff = deltaspos
+        negdiff = deltasneg
+        for item in currentneighbours:
+            itemnb = getNeighbours(hashtable.index(item) - 1,globaldata)
+            newset = newset + itemnb
+        # Filter 1
+        newset = list(set(newset) - set(currentneighbours))
+        newset = list(set(newset) - set([currentcord]))
+        if(deltasneg < 3):
+            _,_,_,temp = deltaWallNeighbourCalculation(index,newset,currentcord,nx,ny,False)
+            shortestnewneighbours = minDistance(temp,currentcord)
+            appendNeighbours(shortestnewneighbours[:(3-negdiff)],index,globaldata)
+        if(deltaspos < 3):
+            _,_,_,temp = deltaWallNeighbourCalculation(index,newset,currentcord,nx,ny,True)
+            shortestnewneighbours = minDistance(temp,currentcord)
+            appendNeighbours(shortestnewneighbours[:(3-posdiff)],index,globaldata)
+        with open("dsf.txt", "a") as text_file:
+            currentneighbours = getNeighbours(index,globaldata)
+            deltaspos,deltasneg,deltaszero,temp = deltaWallNeighbourCalculation(index,currentneighbours,currentcord,nx,ny,False)
+            text_file.writelines(" ".join(str(x) for x in [hashtable.index(item),len(currentneighbours),deltaspos,deltasneg,deltaszero]))
+            text_file.writelines("\n")
+
 
 def main():
     print("Hello World")
@@ -421,54 +482,41 @@ def main():
 
     ## Point Validation
     print("Beginning Point Delta Calculation")
-    total,detect,detect2,detect21,detect3 = 0,0,0,0,0
-    wallcount = 0
     for index,item in enumerate(hashtable[1:]):
-        if(getFlag(index,globaldata)==1):
-            total = total + 1
-            currentneighbours = getNeighbours(index,globaldata)
-            currentcord = item
-            xpos,ypos,xneg,yneg = deltaNeighbourCalculation(currentneighbours,currentcord)
-            if(xpos < 3 or ypos < 3 or xneg < 3 or yneg < 3):
-                detect = detect + 1
-                currentnewneighbours = []
-                # print("Old")
-                # print(xpos,ypos,xneg,yneg)
-                for item in currentneighbours:
-                    itemsneighbours = getNeighbours(hashtable.index(item),globaldata)
-                    currentnewneighbours = currentnewneighbours + list(set(itemsneighbours) - set(currentneighbours) - set(currentnewneighbours))
-                currentnewneighbours = currentnewneighbours + currentneighbours
-                xpos,ypos,xneg,yneg = deltaNeighbourCalculation(currentnewneighbours,currentcord)
-                if(xpos < 3 or ypos < 3 or xneg < 3 or yneg < 3):
-                    detect2 = detect2 + 1
-                # print("New")
-                # print(xpos,ypos,xneg,yneg)
-        elif(getFlag(index,globaldata)==0):
-            currentneighbours = getNeighbours(index,globaldata)
-            currentcord = item
-            nx,ny = normalCalculation(currentcord,hashtable,globaldata,True)
-            detect21 = detect21 + 1
-            deltaspos,deltasneg,deltaszero = deltaWallNeighbourCalculation(currentneighbours,currentcord,nx,ny)
-            # if(deltaspos < 3 and deltasneg > 2):
-            #     currentnewneighbours = [getLeftPoint(currentcord,globaldata,hashtable)]
-            #     currentnewneighbours = currentnewneighbours + getNeighbours(hashtable.index(currentnewneighbours[0]),globaldata)
-            #     currentnewneighbours = currentnewneighbours + getNeighbours(index + 1,globaldata)
-            #     currentnewneighbours = list(set(currentnewneighbours) - set(currentcord))
-            #     deltaspos,deltasneg,deltaszero = deltaWallNeighbourCalculation(currentnewneighbours,currentcord,nx,ny)
-            #     # print(len(currentnewneighbours),deltaspos,deltasneg)
-            #     if(deltaspos < 3 or deltasneg < 3):
-            #         None
-            #         # print("Not Yet Satisfied")
-            #         # print(deltaspos,deltasneg)
-            #         # print(currentcord)
-            # elif(deltasneg < 3 and deltaspos > 2):
-            #     None
-            if((deltasneg+deltaszero+deltaspos)>=6):
-                print(currentcord,index + 1,deltasneg,deltaspos,deltaszero,len(currentneighbours),(deltasneg+deltaszero+deltaspos)==len(currentneighbours))
+        # if(getFlag(index,globaldata)==1):
+        #     currentneighbours = getNeighbours(index,globaldata)
+        #     currentcord = item
+        #     xpos,ypos,xneg,yneg = deltaNeighbourCalculation(currentneighbours,currentcord)
+        #     if(xpos < 3 or ypos < 3 or xneg < 3 or yneg < 3):
+        #         currentnewneighbours = []
+        #         # print("Old")
+        #         # print(xpos,ypos,xneg,yneg)
+        #         for item in currentneighbours:
+        #             itemsneighbours = getNeighbours(hashtable.index(item),globaldata)
+        #             currentnewneighbours = currentnewneighbours + list(set(itemsneighbours) - set(currentneighbours) - set(currentnewneighbours))
+        #         currentnewneighbours = currentnewneighbours + currentneighbours
+        #         xpos,ypos,xneg,yneg = deltaNeighbourCalculation(currentnewneighbours,currentcord)
+        #         if(xpos < 3 or ypos < 3 or xneg < 3 or yneg < 3):
+        #             None
+        #         # print("New")
+        #         # print(xpos,ypos,xneg,yneg)
+        if(getFlag(index,globaldata)==0):
+            wallBalance(index,globaldata,hashtable,item)
         else:
             None
             # print("Outer Point")
             # print(item)
+    count = 0
+    for index,item in enumerate(hashtable[1:]):
+        if(getFlag(index,globaldata)==0):
+            currentneighbours = getNeighbours(index,globaldata)
+            currentcord = item
+            nx,ny = normalCalculation(currentcord,hashtable,globaldata,True)
+            deltaspos,deltasneg,deltaszero,temp = deltaWallNeighbourCalculation(index,currentneighbours,currentcord,nx,ny,False)
+            if(deltaspos < 3 or deltasneg < 3):
+                count = count + 1
+    print(count)
+                
     print("Points Delta Calculated and Balanced")
 
     ## Replacer Code
@@ -478,7 +526,7 @@ def main():
         for index, individualitem in enumerate(globaldata):
             globaldata[index] = [hashtable.index(x) if x==str(item) else x for x in individualitem]
     
-    with open("output.txt", "w") as text_file:
+    with open("preprocessorfile.txt", "w") as text_file:
         for item1 in globaldata:
             text_file.writelines(["%s " % item for item in item1])
             text_file.writelines("\n")
