@@ -33,6 +33,11 @@ void main_tree(int initial_coord_length, coords_t *coords_list, coords_t *adapte
         }
     }
 
+    if(second_poly != 0)
+    {
+        printf("\nStatus: Please note that it is being assumed that the input file has multiple geometries.");
+    }
+
     quadtree_leafnodes(tree->root, leaf_array);
 
     for (i = 0; i < leaf_iter; i++)
@@ -131,14 +136,13 @@ int main(int argc, char *argv[])
         printf("\n ERROR : Memory allocation to adapted_list was unsuccessful");
         exit(0);
     }
-
     char *adapted_filename = argv[2];
     adapted_line_count = adaptation_fileinput(adapted_list, adapted_filename);
     // printf("\n %d", adapted_line_count);
 
-    printf("\nquadtree_t: %ld\n", sizeof(quadtree_t));
-
     main_tree(line_count, coords_list, adapted_list, leaf_array);
+
+    printf("\nQuadtree_t: %ld\n", sizeof(quadtree_t));
     printf("\n");
     return 0;
 }

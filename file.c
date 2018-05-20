@@ -66,6 +66,14 @@ int adaptation_fileinput(coords_t *adapted_list, char *adapted_filename)
     }
 
     fclose(adapted_coordFile);
+    if(local_line_count == 0)
+    {
+        printf("\nStatus: Adapted file is empty, no adaptation will happen.");
+    }
+    else
+    {
+        printf("\n Please note that the adaptation is happening.");
+    }
     return local_line_count;
     // Returns total number of input points
 }

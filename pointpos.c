@@ -1,5 +1,4 @@
 #include "quadtree.h"
-int second_poly = 0; // This is currently manually replaced with line number where second polygon starts
 #define min(x, y) ({                \
     typeof(x) _min1 = (x);          \
     typeof(y) _min2 = (y);          \
@@ -12,12 +11,14 @@ int second_poly = 0; // This is currently manually replaced with line number whe
     (void) (&_max1 == &_max2);      \
     _max1 > _max2 ? _max1 : _max2; })
 
+int second_poly = 161; // This is currently manually replaced with line number where second polygon starts
+
 // For blanking of points inside the solid boundary
 int pnpoly(int nvert, coords_t *coords_list, double testx, double testy)
 {
     int i, j, c = 1;
     int nvert1;
-    if(second_poly == 0)
+    if (second_poly == 0)
     {
         nvert1 = nvert;
     }
@@ -25,7 +26,8 @@ int pnpoly(int nvert, coords_t *coords_list, double testx, double testy)
     {
         nvert1 = second_poly;
     }
-    // The leaf under observation stores one of the input points, so no blanking
+
+    // The leaf under observation stores one of the input points, so no blanking. Goes through all input points
     for (i = 0; i < nvert; i++)
     {
         if (coords_list[i].y == testy && coords_list[i].x == testx)
@@ -34,6 +36,7 @@ int pnpoly(int nvert, coords_t *coords_list, double testx, double testy)
         }
     }
 
+    // For first polygon
     for (i = 0, j = nvert1 - 1; i < nvert1; j = i++) // We start from j = nvert-1 to cover the last edge
     {
         // Essentially, the condition below uses the formula {y-y1 = (y2-y1/x2-x1)*(x-x1)} and slopes to find
@@ -43,13 +46,14 @@ int pnpoly(int nvert, coords_t *coords_list, double testx, double testy)
             c = !c;
     }
 
-    if(second_poly !=0 && c == 1)
+    // For last polygon
+    if (second_poly != 0 && c == 1)
     {
-        for (; i < nvert; j = i++)
+        for (j = nvert - 1; i < nvert; j = i++)
         {
-        if (((coords_list[i].y > testy) != (coords_list[j].y > testy)) &&
-            (testx < (coords_list[j].x - coords_list[i].x) * (testy - coords_list[i].y) / (coords_list[j].y - coords_list[i].y) + coords_list[i].x))
-            c = !c;
+            if (((coords_list[i].y > testy) != (coords_list[j].y > testy)) &&
+                (testx < (coords_list[j].x - coords_list[i].x) * (testy - coords_list[i].y) / (coords_list[j].y - coords_list[i].y) + coords_list[i].x))
+                c = !c;
         }
     }
     return c;
@@ -121,10 +125,10 @@ int notaero_blank(int nvert, coords_t *coords_list, coords_t main_point, coords_
     // Point on boundary, therefore not blankable point
     for (i = 0; i < nvert - 1; i++)
     {
-        if ((main_point.x == coords_list[i].x && main_point.y == coords_list[i].y || 
-            neighbour_point.x == coords_list[i + 1].x && neighbour_point.y == coords_list[i + 1].y || 
-            main_point.x == coords_list[i + 1].x && main_point.y == coords_list[i + 1].y || 
-            neighbour_point.x == coords_list[i].x && neighbour_point.y == coords_list[i].y))
+        if ((main_point.x == coords_list[i].x && main_point.y == coords_list[i].y ||
+             neighbour_point.x == coords_list[i + 1].x && neighbour_point.y == coords_list[i + 1].y ||
+             main_point.x == coords_list[i + 1].x && main_point.y == coords_list[i + 1].y ||
+             neighbour_point.x == coords_list[i].x && neighbour_point.y == coords_list[i].y))
         {
             for (j = 0; j < nvert; j++)
             {

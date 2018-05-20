@@ -185,5 +185,6 @@ int adaptation_fileinput(coords_t *adapted_list, char *adapted_filename);
 
 extern int newoutputfile;
 extern int newneighboursetfile;
+extern int second_poly;
 
 #endif

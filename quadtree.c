@@ -103,9 +103,9 @@ static quadtree_point_t *find_(quadtree_node_t *node, double x, double y)
       return node;
     }
   }
-  else if(quadtree_node_isempty(node))
+  else if (quadtree_node_isempty(node))
   {
-    if((node->bounds->nw->x + node->bounds->se->x) / 2 == x && 
+    if ((node->bounds->nw->x + node->bounds->se->x) / 2 == x &&
         (node->bounds->nw->y + node->bounds->se->y) / 2)
     {
       return node;
@@ -311,15 +311,16 @@ void descent_node(quadtree_node_t *node)
     double ycord = (node->bounds->nw->y + node->bounds->se->y) / 2;
     main_coord.x = xcord;
     main_coord.y = ycord;
-    if(xcord == 8.75 && ycord == 8.75)
-    {
-      checker = 1;
-    }
-    else
-    {
-      checker = 0;
-    }
-    if(checker == 1)
+    // The commented out code below is to check for specific points
+    // if(xcord == 8.75 && ycord == 8.75)
+    // {
+    //   checker = 1;
+    // }
+    // else
+    // {
+    //   checker = 0;
+    // }
+    if (checker == 1)
     {
       printf("\n ABC");
     }
