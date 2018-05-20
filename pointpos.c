@@ -11,13 +11,16 @@
     (void) (&_max1 == &_max2);      \
     _max1 > _max2 ? _max1 : _max2; })
 
+// TODO - Make this soft-coded rather than hard-coded
 int second_poly = 161; // This is currently manually replaced with line number where second polygon starts
+int third_poly = 0;
+int fourth_poly = 0;
 
 // For blanking of points inside the solid boundary
 int pnpoly(int nvert, coords_t *coords_list, double testx, double testy)
 {
     int i, j, c = 1;
-    int nvert1;
+    int nvert1, nvert2, nvert3;
     if (second_poly == 0)
     {
         nvert1 = nvert;
@@ -25,6 +28,24 @@ int pnpoly(int nvert, coords_t *coords_list, double testx, double testy)
     else
     {
         nvert1 = second_poly;
+    }
+
+    if (third_poly == 0)
+    {
+        nvert2 = nvert;
+    }
+    else
+    {
+        nvert2 = third_poly;
+    }
+
+    if (fourth_poly == 0)
+    {
+        nvert3 = nvert;
+    }
+    else
+    {
+        nvert3 = fourth_poly;
     }
 
     // The leaf under observation stores one of the input points, so no blanking. Goes through all input points
@@ -48,6 +69,26 @@ int pnpoly(int nvert, coords_t *coords_list, double testx, double testy)
 
     // For last polygon
     if (second_poly != 0 && c == 1)
+    {
+        for (j = nvert2 - 1; i < nvert2; j = i++)
+        {
+            if (((coords_list[i].y > testy) != (coords_list[j].y > testy)) &&
+                (testx < (coords_list[j].x - coords_list[i].x) * (testy - coords_list[i].y) / (coords_list[j].y - coords_list[i].y) + coords_list[i].x))
+                c = !c;
+        }
+    }
+
+    if (third_poly != 0 && c == 1)
+    {
+        for (j = nvert3 - 1; i < nvert3; j = i++)
+        {
+            if (((coords_list[i].y > testy) != (coords_list[j].y > testy)) &&
+                (testx < (coords_list[j].x - coords_list[i].x) * (testy - coords_list[i].y) / (coords_list[j].y - coords_list[i].y) + coords_list[i].x))
+                c = !c;
+        }
+    }
+
+    if (fourth_poly != 0 && c == 1)
     {
         for (j = nvert - 1; i < nvert; j = i++)
         {
