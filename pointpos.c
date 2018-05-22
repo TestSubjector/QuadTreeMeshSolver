@@ -12,7 +12,7 @@
     _max1 > _max2 ? _max1 : _max2; })
 
 // TODO - Make this soft-coded rather than hard-coded
-int second_poly = 161; // This is currently manually replaced with line number where second polygon starts
+int second_poly = 0; // This is currently manually replaced with line number where second polygon starts
 int third_poly = 0;
 int fourth_poly = 0;
 

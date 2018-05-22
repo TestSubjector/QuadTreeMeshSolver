@@ -11,6 +11,7 @@ coords_t *adapted_list; // Stores all the adapted points
 int leaf_iter = 0;
 int line_count = 0;
 int adapted_line_count = 0;
+int height_of_tree = 0;
 
 void main_tree(int initial_coord_length, coords_t *coords_list, coords_t *adapted_list, quadtree_node_t *leaf_array)
 {
@@ -53,9 +54,32 @@ void main_tree(int initial_coord_length, coords_t *coords_list, coords_t *adapte
             i -= 400;
         }
     }
+    height_of_tree = maxDepth(tree->root);
+
+    quadtree_valleywalk(tree->root, descent_valley, ascent);
+    // height_of_tree = height_of_tree - 1;
+    free(leaf_array);
+    leaf_array = malloc(sizeof(quadtree_node_t) * MAX);
+    leaf_iter = 0;
+    quadtree_leafnodes(tree->root, leaf_array);
+    for (i = 0; i < leaf_iter; i++)
+    {
+        find_neighbours(tree, common_ancestor(tree->root, &leaf_array[i]), leaf_array);
+        if (i == 400)
+        {
+            leaf_iter -= 400;
+            for (int j = 0; j < leaf_iter; j++)
+            {
+                leaf_array[j] = leaf_array[j + 400];
+            }
+            i -= 400;
+        }
+    }
 
     // quadtree_refinementwalk(tree->root, descent_refinement, ascent);
+    // quadtree_refinementwalk(tree->root, descent_refinement, ascent);
     quadtree_walk(tree->root, descent, ascent);
+    printf("\n Max Depth of tree is %d", maxDepth(tree->root));
 
     quadtree_neighbourset(tree->root);
 

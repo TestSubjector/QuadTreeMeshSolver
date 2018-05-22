@@ -442,3 +442,47 @@ void descent_refinement(quadtree_node_t *node)
     split_node_newpoints(tree->root, node);
   }
 }
+
+void quadtree_valleywalk(quadtree_node_t *root, void (*descent_valley)(quadtree_node_t *node),
+                             void (*ascent)(quadtree_node_t *node))
+{
+  if (root->nw != NULL)
+  {
+    quadtree_valleywalk(root->nw, descent_valley, ascent);
+  }
+  if (root->ne != NULL)
+  {
+    quadtree_valleywalk(root->ne, descent_valley, ascent);
+  }
+  if (root->sw != NULL)
+  {
+    quadtree_valleywalk(root->sw, descent_valley, ascent);
+  }
+  if (root->se != NULL)
+  {
+    quadtree_valleywalk(root->se, descent_valley, ascent);
+  }
+  (*descent_valley)(root);
+  (*ascent)(root);
+}
+
+void descent_valley(quadtree_node_t *node)
+{
+  // printf("\n 1");
+  if ((quadtree_node_isempty(node)) || (quadtree_node_isleaf(node)))
+  {
+    double xcord = (node->bounds->nw->x + node->bounds->se->x) / 2;
+    double ycord = (node->bounds->nw->y + node->bounds->se->y) / 2;
+    // if(xcord == 0.966796875 && (ycord == -0.029296875 || ycord == 0.029296875))
+    // {
+    //   checker = 2;
+    //   printf("\n Yabba Dabba");
+    // }
+    // else
+    // {
+    //   checker = 0;
+    // }
+    valley_refinement(node, 1);
+  }
+}
+

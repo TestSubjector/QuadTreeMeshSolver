@@ -187,4 +187,14 @@ extern int newoutputfile;
 extern int newneighboursetfile;
 extern int second_poly;
 
+void quadtree_valleywalk(quadtree_node_t *root, void (*descent_valley)(quadtree_node_t *node),
+                             void (*ascent)(quadtree_node_t *node));
+
+void descent_valley(quadtree_node_t *node);
+void valley_refinement(quadtree_node_t *valley_node, int flag);
+
+int maxDepth(quadtree_node_t *node);
+
+extern int height_of_tree;
+
 #endif

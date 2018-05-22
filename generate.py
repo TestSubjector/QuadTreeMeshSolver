@@ -339,7 +339,7 @@ def main():
     hashtable = ["start"]
     # data[len(data)-1] = data[len(data)-1][:-1]
     # Wall Point
-    file2 = open("airfoil2.txt","r")
+    file2 = open("airfoil_160.txt","r")
     geometrydata = file2.read()
     geometrydata = geometrydata.split("\n")
     firstxcord = 0
@@ -628,12 +628,10 @@ def main():
         for index, individualitem in enumerate(globaldata):
             globaldata[index] = [hashtable.index(x) if x==str(item) else x for x in individualitem]
     
-    # with open("preprocessorfile.txt", "w") as text_file:
-    #     for item1 in globaldata:
-    #         text_file.writelines(["%s " % item for item in item1])
-    #         text_file.writelines("\n")
-    for item in globaldata[1]:
-        print(item[1])
+    with open("preprocessorfile.txt", "w") as text_file:
+        for item1 in globaldata:
+            text_file.writelines(["%s " % item for item in item1])
+            text_file.writelines("\n")
 
 if __name__ == "__main__":
     main()
