@@ -1,4 +1,7 @@
 import math
+import numpy as np
+from numpy import linalg as LA
+import argparse
 
 def printProgressBar(iteration, total, prefix = '', suffix = '', decimals = 1, length = 100, fill = '█'):
     percent = ("{0:." + str(decimals) + "f}").format(100 * (iteration / float(total)))
@@ -49,6 +52,19 @@ def getXCordNeighbours(list):
 def isPositive(val):
     if(float(val)>=0): return True
     else: return False
+
+def getBiggestXBiggestY(list):
+    newlist = []
+    for item in list:
+        if(isPositive(float(item.split(",")[0])) == True and isPositive(float(item.split(",")[1])) == True):
+            newlist.append(item)
+    getBiggestX = max(getXCordNeighbours(newlist))
+    templist = []
+    for item in newlist:
+        if(float((item.split(",")[0]))==getBiggestX):
+            templist.append(item)
+    getBiggestY = max(getYCordNeighbours(templist))
+    return str(getBiggestX) + "," + str(getBiggestY)    
 
 def getSmallestXBiggestY(list):
     newlist = []
@@ -241,12 +257,108 @@ def appendNeighbours(neighbours,index,globaldata):
     globaldata[index] = globaldata[index][:8] + nbhs
     return "Done"
 
-def wallBalance(index,globaldata,hashtable,item):
+def cleanWallPoints(neighbours,wallpoint):
+    return list(set(neighbours) - set(wallpoint))
+
+def conditionCheck(index,globaldata,cord):
+        item = cord
+        mainptx = float(item.split(",")[0])
+        mainpty = float(item.split(",")[1])
+        nbh = getNeighbours(index,globaldata)
+        deltaSumX = 0
+        deltaSumY = 0
+        deltaSumXY = 0
+        data = []
+        for nbhitem in nbh:
+            nbhitemX = float(nbhitem.split(",")[0])
+            nbhitemY = float(nbhitem.split(",")[1])
+            deltaSumX = deltaSumX + (nbhitemX-mainptx)**2
+            deltaSumY = deltaSumY + (nbhitemY-mainpty)**2
+            deltaSumXY = deltaSumXY + (nbhitemX-mainptx)*(nbhitemY-mainpty)
+        data.append(deltaSumX)
+        data.append(deltaSumXY)
+        data.append(deltaSumXY)
+        data.append(deltaSumY)
+        random = np.array(data)
+        shape = (2,2)
+        random = random.reshape(shape)
+        w,v = LA.eig(random)
+        w = max(w)/min(w)
+        s = np.linalg.svd(random,full_matrices=False,compute_uv=False)
+        s = max(s)/min(s)
+        return w,s
+    
+def conditionCheckWithNeighbours(index,globaldata,cord,nbh):
+        item = cord
+        mainptx = float(item.split(",")[0])
+        mainpty = float(item.split(",")[1])
+        deltaSumX = 0
+        deltaSumY = 0
+        deltaSumXY = 0
+        data = []
+        for nbhitem in nbh:
+            nbhitemX = float(nbhitem.split(",")[0])
+            nbhitemY = float(nbhitem.split(",")[1])
+            deltaSumX = deltaSumX + (nbhitemX-mainptx)**2
+            deltaSumY = deltaSumY + (nbhitemY-mainpty)**2
+            deltaSumXY = deltaSumXY + (nbhitemX-mainptx)*(nbhitemY-mainpty)
+        data.append(deltaSumX)
+        data.append(deltaSumXY)
+        data.append(deltaSumXY)
+        data.append(deltaSumY)
+        random = np.array(data)
+        shape = (2,2)
+        random = random.reshape(shape)
+        s = np.linalg.svd(random,full_matrices=False,compute_uv=False)
+        s = max(s)/min(s)
+        return s
+
+def minConditionValue(index,globaldata,cord,nbhs):
+        item = cord
+        mainptx = float(item.split(",")[0])
+        mainpty = float(item.split(",")[1])
+        nbh = getNeighbours(index,globaldata)
+        nbh = nbh + nbhs
+        deltaSumX = 0
+        deltaSumY = 0
+        deltaSumXY = 0
+        data = []
+        for nbhitem in nbh:
+            nbhitemX = float(nbhitem.split(",")[0])
+            nbhitemY = float(nbhitem.split(",")[1])
+            deltaSumX = deltaSumX + (nbhitemX-mainptx)**2
+            deltaSumY = deltaSumY + (nbhitemY-mainpty)**2
+            deltaSumXY = deltaSumXY + (nbhitemX-mainptx)*(nbhitemY-mainpty)
+        data.append(deltaSumX)
+        data.append(deltaSumXY)
+        data.append(deltaSumXY)
+        data.append(deltaSumY)
+        random = np.array(data)
+        shape = (2,2)
+        random = random.reshape(shape)
+        w,v = LA.eig(random)
+        w = max(w)/min(w)
+        return w
+
+def minCondition(index,globaldata,cord,nbs,threshold):
+    nbsMin = []
+    for index,item in enumerate(nbs):
+        w = minConditionValue(index,globaldata,cord,nbs)
+        if(w < threshold):
+            nbsMin.append([item,index,w])
+        nbsMin.sort(key=lambda x: x[2])
+        nbsFinalList = []
+        for item in nbsMin:
+            nbsFinalList.append(item[0])
+        return nbsFinalList
+
+def wallBalance(index,globaldata,hashtable,itemda,control,wallpoint):
+    # print(index,item,control)
     currentneighbours = getNeighbours(index,globaldata)
-    currentcord = item
+    currentcord = itemda
     nx,ny = normalCalculation(index,currentcord,hashtable,globaldata,True)
     deltaspos,deltasneg,deltaszero,temp = deltaWallNeighbourCalculation(index,currentneighbours,currentcord,nx,ny,False,globaldata)
-    if(deltaspos < 3 or deltasneg < 3):
+    if(deltaspos < control or deltasneg < control):
         newset = []
         posdiff = deltaspos
         negdiff = deltasneg
@@ -256,14 +368,28 @@ def wallBalance(index,globaldata,hashtable,item):
         # Filter 1
         newset = list(set(newset) - set(currentneighbours))
         newset = list(set(newset) - set([currentcord]))
-        if(deltasneg < 3):
+        if(deltasneg < control):
             _,_,_,temp = deltaWallNeighbourCalculation(index,newset,currentcord,nx,ny,False,globaldata)
+            temp = cleanWallPoints(temp,wallpoint)
+            # w,_ = conditionCheck(index,globaldata,item)
+            # shortestnewneighbours = minCondition(index,globaldata,currentcord,temp,w)
             shortestnewneighbours = minDistance(temp,currentcord)
-            appendNeighbours(shortestnewneighbours[:(3-negdiff)],index,globaldata)
-        if(deltaspos < 3):
+            appendNeighbours(shortestnewneighbours[:(control-negdiff)],index,globaldata)
+        if(deltaspos < control):
             _,_,_,temp = deltaWallNeighbourCalculation(index,newset,currentcord,nx,ny,True,globaldata)
+            temp = cleanWallPoints(temp,wallpoint)
+            # w,_ = conditionCheck(index,globaldata,item)
+            # shortestnewneighbours = minCondition(index,globaldata,currentcord,temp,w)
             shortestnewneighbours = minDistance(temp,currentcord)
-            appendNeighbours(shortestnewneighbours[:(3-posdiff)],index,globaldata)
+            appendNeighbours(shortestnewneighbours[:(control-posdiff)],index,globaldata)
+        w,s = conditionCheck(index,globaldata,item)
+        if(w >= 3 or s >= 3):
+            if(control==6):
+                print("Shit Man")
+            else:
+                # print(index,itemda)
+                control = control + 1
+                wallBalance(hashtable.index(itemda) - 1,globaldata,hashtable,itemda,control,wallpoint)
 
 def outerBalance(index,globaldata,hashtable,item):
     currentneighbours = getNeighbours(index,globaldata)
@@ -272,7 +398,7 @@ def outerBalance(index,globaldata,hashtable,item):
     deltaspos,deltasneg,deltaszero,temp = deltaWallNeighbourCalculation(index,currentneighbours,currentcord,nx,ny,False,globaldata)
     # if(item=="8.75,8.75"):
     # print(index,len(currentneighbours),deltaspos,deltasneg,deltaszero,nx,ny,currentneighbours)
-    if(deltaspos < 3 or deltasneg < 3):
+    if(deltaspos < 4 or deltasneg < 4):
         newset = []
         posdiff = deltaspos
         negdiff = deltasneg
@@ -282,43 +408,112 @@ def outerBalance(index,globaldata,hashtable,item):
         # Filter 1
         newset = list(set(newset) - set(currentneighbours))
         newset = list(set(newset) - set([currentcord]))
-        if(deltasneg < 3):
+        if(deltasneg < 4):
             _,_,_,temp = deltaWallNeighbourCalculation(index,newset,currentcord,nx,ny,False,globaldata)
             shortestnewneighbours = minDistance(temp,currentcord)
-            appendNeighbours(shortestnewneighbours[:(3-negdiff)],index,globaldata)
-        if(deltaspos < 3):
+            appendNeighbours(shortestnewneighbours[:(4-negdiff)],index,globaldata)
+        if(deltaspos < 4):
             _,_,_,temp = deltaWallNeighbourCalculation(index,newset,currentcord,nx,ny,True,globaldata)
             shortestnewneighbours = minDistance(temp,currentcord)
-            appendNeighbours(shortestnewneighbours[:(3-posdiff)],index,globaldata)
+            appendNeighbours(shortestnewneighbours[:(4-posdiff)],index,globaldata)
 
 def interiorBalance(index,globaldata,hashtable,item):
     currentneighbours = getNeighbours(index,globaldata)
     currentcord = item
-    xpos,ypos,xneg,yneg,_ = deltaNeighbourCalculation(currentneighbours,currentcord,False,False)
+    _,_,_,_,xposvals = deltaNeighbourCalculation(currentneighbours,currentcord,True,False)
+    _,_,_,_,xnegvals = deltaNeighbourCalculation(currentneighbours,currentcord,True,True)
+    _,_,_,_,yposvals = deltaNeighbourCalculation(currentneighbours,currentcord,False,False)
+    _,_,_,_,ynegvals = deltaNeighbourCalculation(currentneighbours,currentcord,False,True)
+    xposw = conditionCheckWithNeighbours(index,globaldata,item,xposvals)
+    xnegw = conditionCheckWithNeighbours(index,globaldata,item,xnegvals)
+    yposw = conditionCheckWithNeighbours(index,globaldata,item,yposvals)
+    ynegw = conditionCheckWithNeighbours(index,globaldata,item,ynegvals)
+    try:
+        if(xposw >= 20 or xnegw >= 20 or yposw >= 20 or ynegw >= 20):
+            if(xposw >= 20):
+                totalnbhs = []
+                for itm in xposvals:
+                    totalnbhs = totalnbhs + getNeighbours(hashtable.index(itm),globaldata)
+                totalnbhs = list(set(totalnbhs) - set([item]) - set(xposvals))
+                _,_,_,_,newxposvals = deltaNeighbourCalculation(totalnbhs,currentcord,True,False)
+                newxposvals = minCondition(index,globaldata,currentcord,newxposvals,20)
+                if(len(newxposvals) != 0):
+                    appendNeighbours(newxposvals[:1],index,globaldata)
+                else:
+                    newxposvals = minCondition(index,globaldata,currentcord,newxposvals,xposw)
+                    appendNeighbours(newxposvals[:1],index,globaldata)
+                    print(currentcord,index)
+            if(xnegw >= 20):
+                totalnbhs = []
+                for itm in xnegvals:
+                    totalnbhs = totalnbhs + getNeighbours(hashtable.index(itm),globaldata)
+                totalnbhs = list(set(totalnbhs) - set([item]) - set(xnegvals))
+                _,_,_,_,newxnegvals = deltaNeighbourCalculation(totalnbhs,currentcord,True,True)
+                newxnegvals = minCondition(index,globaldata,currentcord,newxposvals,20)
+                if(len(newxnegvals) != 0):
+                    appendNeighbours(newxnegvals[:1],index,globaldata)
+                else:
+                    newxnegvals = minCondition(index,globaldata,currentcord,newxnegvals,xposw)
+                    appendNeighbours(newxnegvals[:1],index,globaldata)
+            if(yposw >= 20):
+                totalnbhs = []
+                for itm in yposvals:
+                    totalnbhs = totalnbhs + getNeighbours(hashtable.index(itm),globaldata)
+                totalnbhs = list(set(totalnbhs) - set([item]) - set(xposvals))
+                _,_,_,_,newyposvals = deltaNeighbourCalculation(totalnbhs,currentcord,True,False)
+                newyposvals = minCondition(index,globaldata,currentcord,newyposvals,20)
+                if(len(newyposvals) != 0):
+                    appendNeighbours(newyposvals[:1],index,globaldata)
+                else:
+                    newyposvals = minCondition(index,globaldata,currentcord,newyposvals,xposw)
+                    appendNeighbours(newyposvals[:1],index,globaldata)
+            if(ynegw >= 20):
+                totalnbhs = []
+                for itm in ynegvals:
+                    totalnbhs = totalnbhs + getNeighbours(hashtable.index(itm),globaldata)
+                totalnbhs = list(set(totalnbhs) - set([item]) - set(ynegvals))
+                _,_,_,_,newynegvals = deltaNeighbourCalculation(totalnbhs,currentcord,True,True)
+                newynegvals = minCondition(index,globaldata,currentcord,newynegvals,20)
+                if(len(newynegvals) != 0):
+                    appendNeighbours(newynegvals[:1],index,globaldata)
+                else:
+                    newynegvals = minCondition(index,globaldata,currentcord,newynegvals,xposw)
+                    appendNeighbours(newynegvals[:1],index,globaldata)
+    except TypeError:
+        pass
     # print(xpos,ypos,xneg,yneg)
+    xpos,ypos,xneg,yneg,_ = deltaNeighbourCalculation(currentneighbours,currentcord,False,False)
     if(xpos < 4 or ypos < 4 or xneg < 4 or yneg < 4):
         currentnewneighbours = []
         # print("Old")
         # print(xpos,ypos,xneg,yneg)
         for item in currentneighbours:
             itemsneighbours = getNeighbours(hashtable.index(item),globaldata)
-            currentnewneighbours = currentnewneighbours + list(set(itemsneighbours) - set(currentneighbours) - set(currentnewneighbours))
+            currentnewneighbours = currentnewneighbours + list(set(itemsneighbours) - set(currentneighbours) - set(currentnewneighbours) - set([currentcord]))
         currentnewneighbours = currentnewneighbours
         if(xpos < 4):
             _,_,_,_,temp = deltaNeighbourCalculation(currentnewneighbours,currentcord,True,False)
-            shortestnewneighbours = minDistance(temp,currentcord)
+            w,_ = conditionCheck(index,globaldata,currentcord)
+            shortestnewneighbours = minCondition(index,globaldata,currentcord,temp,w)
+            # shortestnewneighbours = minDistance(temp,currentcord)
             appendNeighbours(shortestnewneighbours[:(4-xpos)],index,globaldata)
         if(xneg < 4):
             _,_,_,_,temp = deltaNeighbourCalculation(currentnewneighbours,currentcord,True,True)
-            shortestnewneighbours = minDistance(temp,currentcord)
+            w,_ = conditionCheck(index,globaldata,currentcord)
+            shortestnewneighbours = minCondition(index,globaldata,currentcord,temp,w)
+            # shortestnewneighbours = minDistance(temp,currentcord)
             appendNeighbours(shortestnewneighbours[:(4-xneg)],index,globaldata)
         if(ypos < 4):
             _,_,_,_,temp = deltaNeighbourCalculation(currentnewneighbours,currentcord,True,False)
-            shortestnewneighbours = minDistance(temp,currentcord)
+            w,_ = conditionCheck(index,globaldata,currentcord) 
+            shortestnewneighbours = minCondition(index,globaldata,currentcord,temp,w)
+            # shortestnewneighbours = minDistance(temp,currentcord)
             appendNeighbours(shortestnewneighbours[:(4-ypos)],index,globaldata)
         if(yneg < 4):
             _,_,_,_,temp = deltaNeighbourCalculation(currentnewneighbours,currentcord,True,True)
-            shortestnewneighbours = minDistance(temp,currentcord)
+            w,_ = conditionCheck(index,globaldata,currentcord)
+            shortestnewneighbours = minCondition(index,globaldata,currentcord,temp,w)
+            # shortestnewneighbours = minDistance(temp,currentcord)
             appendNeighbours(shortestnewneighbours[:(4-yneg)],index,globaldata)
         xpos,ypos,xneg,yneg,_ = deltaNeighbourCalculation(getNeighbours(hashtable.index(item),globaldata),currentcord,False,False)
         if(xpos < 4 or ypos < 4 or xneg < 4 or yneg < 4):
@@ -329,17 +524,23 @@ def interiorBalance(index,globaldata,hashtable,item):
         # print(xpos,ypos,xneg,yneg)
 
 def main():
-    print("Hello World")
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-n","--neighbour",const=str, nargs="?")
+    parser.add_argument("-w","--wall",const=str, nargs="?")
+    args = parser.parse_args()
+    print(args.neighbour)
+
     print("Loading Data")
-    file1 = open("neighbour.txt","r")
+    file1 = open(args.neighbour or "neighbour.txt","r")
     data = file1.read()
     data = data.replace("\t"," ")
     data = data.split("\n")
     data.pop(0)
     hashtable = ["start"]
+    wallpoint = []
     # data[len(data)-1] = data[len(data)-1][:-1]
     # Wall Point
-    file2 = open("airfoil2.txt","r")
+    file2 = open(args.wall or "airfoil_160.txt","r")
     geometrydata = file2.read()
     geometrydata = geometrydata.split("\n")
     firstxcord = 0
@@ -357,6 +558,7 @@ def main():
         # print(geometrydata[i].split(" ")[1])
         ycord = float(geometrydata[i].split()[1])
         hashtable.append(str(xcord)+','+str(ycord))
+        wallpoint.append(str(xcord)+','+str(ycord))
         if(i==0):
             firstxcord = xcord
             firstycord = ycord
@@ -378,8 +580,8 @@ def main():
             walldata.append(index)
             walldata.insert(1,xcord)
             walldata.insert(2,ycord)
-            walldata.insert(3,1)
-            walldata.insert(4,len(geometrydata)-1)
+            walldata.insert(3,len(geometrydata)-1)
+            walldata.insert(4,1)
             walldata.insert(5,0)
             walldata.insert(6,1)
             globaldata.append(walldata)
@@ -395,6 +597,8 @@ def main():
             globaldata.append(walldata)
             index+=1
     print("Wall Point Processed")
+
+    #
     print("Beginning Interior Point and Wall Point Neighbour Processing")
     # Interior and Outer Point
     for i in range(len(data)):
@@ -458,6 +662,8 @@ def main():
                 index+=1
                 globaldata.append(cleandata)
     print("Interior Point and Wall Point Neighbour Processed")
+
+    # Remove Duplicate Neighbours
     print("Beginning Duplicate Neighbour Detection")
     for i in range(len(globaldata)):
         printProgressBar(i, len(globaldata) - 1, prefix = 'Progress:', suffix = 'Complete', length = 50)
@@ -468,9 +674,11 @@ def main():
         noneighours = len(cordneighbours)
         globaldata[i] = globaldata[i][:7] + [noneighours] + list(cordneighbours)
     print("Duplicate Neighbours Removed")
+
+    # Find Outer Points
     print("Beginning Left and Right Detection of Outer Points")
     # Outer Point scan
-    biggestxy = max(hashtable[1:])
+    biggestxy = getBiggestXBiggestY(hashtable[1:])
     smallestxy = getSmallestXSmallestY(hashtable[1:])
     smallestxbiggesty = getSmallestXBiggestY(hashtable[1:])
     biggestxsmallesty = getBiggestXSmallestY(hashtable[1:])
@@ -500,6 +708,7 @@ def main():
                         currentnewneighbours.append(currentneighbours[index])
                 currentYCords = getYCordNeighbours(currentneighbours)
                 leftcord = currentneighbours[currentYCords.index(max(currentYCords))]
+                # print(leftcord)
             except Exception:
                 None
             if(currentcord == smallestxbiggesty):
@@ -517,6 +726,7 @@ def main():
                         currentnewneighbours.append(currentneighbours[index])
                 currentXCords = getXCordNeighbours(currentneighbours)
                 leftcord = currentneighbours[currentXCords.index(min(currentXCords))]
+                # print(leftcord)
             except Exception:
                 None
             if(currentcord == smallestxy):
@@ -532,8 +742,9 @@ def main():
                 for index,item in enumerate(xvals):
                     if(item==max(xvals)):
                         currentnewneighbours.append(currentneighbours[index])
-                currentYCords = getYCordNeighbours(currentnewneighbours)
+                currentYCords = getYCordNeighbours(currentnewneighbours)                
                 leftcord = currentnewneighbours[currentYCords.index(min(currentYCords))]
+                # print(leftcord)
             except Exception:
                 None
             if(currentcord == biggestxsmallesty):
@@ -550,6 +761,7 @@ def main():
                         currentnewneighbours.append(currentneighbours[index])
                 currentXCords = getXCordNeighbours(currentnewneighbours)
                 leftcord = currentnewneighbours[currentXCords.index(max(currentXCords))]
+                # print(leftcord)
             except Exception:
                 None
             if(currentcord == biggestxy):
@@ -562,7 +774,6 @@ def main():
         globaldata = updateLeft(startindex,globaldata,leftcord)
         previouscord = currentcord
         currentcord = leftcord
-        # print(count)
     print("Outer Points Left and Right Detection Complete")
 
     ## Point Validation
@@ -571,45 +782,12 @@ def main():
         if(getFlag(index,globaldata)==1):
             interiorBalance(index,globaldata,hashtable,item)
         elif(getFlag(index,globaldata)==0):
-            wallBalance(index,globaldata,hashtable,item)
+            wallBalance(index,globaldata,hashtable,item,3,wallpoint)
         elif(getFlag(index,globaldata)==2):
-            # print(hashtable[index + 1])
             outerBalance(index,globaldata,hashtable,item)
-            # outerBalance(index,globaldata,hashtable,item)
-            # print("Outer Point")
-            # print(item)
-    # print(total-inter-wall)
-
-    # startx = hashtable[1:].index("8.75,8.75")
-    # start = startx
-    # while True:
-    #     newindex = globaldata[start][3]
-    #     if(hashtable[1:].index(newindex)==startx):
-    #         currentneighbours = getNeighbours(start,globaldata)
-    #         currentcord = newindex
-    #         nx,ny = normalCalculation(hashtable[1:].index(newindex),currentcord,hashtable,globaldata,False)
-    #         deltaspos,deltasneg,deltaszero,temp = deltaWallNeighbourCalculation(index,currentneighbours,currentcord,nx,ny,False)
-    #         print(newindex)
-    #         print(hashtable[1:].index(newindex),len(currentneighbours),deltaspos,deltasneg,deltaszero,nx,ny)
-    #         break
-    #     else:
-    #         currentneighbours = getNeighbours(start,globaldata)
-    #         currentcord = newindex
-    #         nx,ny = normalCalculation(hashtable[1:].index(newindex),currentcord,hashtable,globaldata,False)
-    #         deltaspos,deltasneg,deltaszero,temp = deltaWallNeighbourCalculation(index,currentneighbours,currentcord,nx,ny,False)
-    #         print(newindex)
-    #         print(hashtable[1:].index(newindex),len(currentneighbours),deltaspos,deltasneg,deltaszero,nx,ny)
-    #         start = hashtable[1:].index(newindex)
-
-    # for index,item in enumerate(hashtable[1:]):
-    #     if(getFlag(index,globaldata)==2):
-    #         currentneighbours = getNeighbours(index,globaldata)
-    #         currentcord = item
-    #         nx,ny = normalCalculation(index,currentcord,hashtable,globaldata,False)
-    #         deltaspos,deltasneg,deltaszero,temp = deltaWallNeighbourCalculation(index,currentneighbours,currentcord,nx,ny,False)
-    #         print(index+1,len(currentneighbours),deltaspos,deltasneg,deltaszero,nx,ny)
-
     print("Points Delta Calculated and Balanced")
+
+    # Dup Neighbour Cleanup
     print("Beginning Duplicate Neighbour Detection")
     for i in range(len(globaldata)):
         printProgressBar(i, len(globaldata) - 1, prefix = 'Progress:', suffix = 'Complete', length = 50)
@@ -621,19 +799,53 @@ def main():
         globaldata[i] = globaldata[i][:7] + [noneighours] + list(cordneighbours)
     print("Duplicate Neighbours Removed")
 
-    ## Replacer Code
+    # Replacer Code
     print("Beginning Replacement")
     for index2,item in enumerate(hashtable):
         printProgressBar(index2, len(hashtable) - 1, prefix = 'Progress:', suffix = 'Complete', length = 50)
         for index, individualitem in enumerate(globaldata):
             globaldata[index] = [hashtable.index(x) if x==str(item) else x for x in individualitem]
     
-    # with open("preprocessorfile.txt", "w") as text_file:
-    #     for item1 in globaldata:
-    #         text_file.writelines(["%s " % item for item in item1])
-    #         text_file.writelines("\n")
-    for item in globaldata[1]:
-        print(item[1])
+    with open("preprocessorfile.txt", "w") as text_file:
+        for item1 in globaldata:
+            text_file.writelines(["%s " % item for item in item1])
+            text_file.writelines("\n")
+    # deltaData = []
+    # for index,item in enumerate(globaldata):
+    #     mainptx = float(item[1])
+    #     mainpty = float(item[2])
+    #     nbh = getNeighbours(index,globaldata)
+    #     deltaSumX = 0
+    #     deltaSumY = 0
+    #     deltaSumXY = 0
+    #     data = []
+    #     for nbhitem in nbh:
+    #         nbhitemX = float(nbhitem.split(",")[0])
+    #         nbhitemY = float(nbhitem.split(",")[1])
+    #         deltaSumX = deltaSumX + (nbhitemX-mainptx)**2
+    #         deltaSumY = deltaSumY + (nbhitemY-mainpty)**2
+    #         deltaSumXY = deltaSumXY + (nbhitemX-mainptx)*(nbhitemY-mainpty)
+    #     data.append(deltaSumX)
+    #     data.append(deltaSumXY)
+    #     data.append(deltaSumXY)
+    #     data.append(deltaSumY)
+    #     deltaData.append(data)
+    #     random = np.array(deltaData[index])
+    #     shape = (2,2)
+    #     random = random.reshape(shape)
+    #     w,v = LA.eig(random)
+    #     w = max(w)/min(w)
+    #     s = np.linalg.svd(random,full_matrices=False,compute_uv=False)
+    #     s = max(s)/min(s)
+    #     with open("eig.txt", "a+") as text_file:
+    #         if(s >= 0):
+    #             text_file.writelines([str(index)," ",str(w)," ", str(s)])
+    #             text_file.writelines("\n")
+        # print(max(w)/min(w))
+
+
+            
+    # print(deltaData)
 
 if __name__ == "__main__":
     main()
