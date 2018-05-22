@@ -540,11 +540,7 @@ def main():
     wallpoint = []
     # data[len(data)-1] = data[len(data)-1][:-1]
     # Wall Point
-<<<<<<< HEAD
-    file2 = open("airfoil_160.txt","r")
-=======
     file2 = open(args.wall or "airfoil_160.txt","r")
->>>>>>> 034f822fe715476bd20388a088ef9da9c357a6f7
     geometrydata = file2.read()
     geometrydata = geometrydata.split("\n")
     firstxcord = 0
@@ -814,8 +810,6 @@ def main():
         for item1 in globaldata:
             text_file.writelines(["%s " % item for item in item1])
             text_file.writelines("\n")
-<<<<<<< HEAD
-=======
     # deltaData = []
     # for index,item in enumerate(globaldata):
     #     mainptx = float(item[1])
@@ -852,7 +846,6 @@ def main():
 
             
     # print(deltaData)
->>>>>>> 034f822fe715476bd20388a088ef9da9c357a6f7
 
 if __name__ == "__main__":
     main()
