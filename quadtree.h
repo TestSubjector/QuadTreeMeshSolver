@@ -5,7 +5,7 @@
 #include <math.h>
 #include "bool.h"
 
-#define MAX 10000
+#define MAX 30000
 
 // A point information
 // Stores x,y and maybe z later (so we get an octree)!
@@ -116,9 +116,9 @@ int *common_ancestor(quadtree_node_t *tree, quadtree_node_t *node);
 
 int *common_ancestor_diagonal(quadtree_node_t *root, quadtree_node_t *node);
 
-void find_neighbours(quadtree_t *tree, int patharray[21], quadtree_node_t *leaf_array);
+void find_neighbours(quadtree_t *tree, int patharray[41], quadtree_node_t *leaf_array);
 
-void balance_neighbours(quadtree_t *tree, int patharray[21], int ancestor_pos, int direction, quadtree_node_t *leaf_array);
+void balance_neighbours(quadtree_t *tree, int patharray[41], int ancestor_pos, int direction, quadtree_node_t *leaf_array);
 
 int split_node_newpoints(quadtree_t *tree, quadtree_node_t *node);
 
@@ -151,9 +151,9 @@ void quadtree_refinementwalk(quadtree_node_t *root,
 
 void descent_refinement(quadtree_node_t *node);
 
-void find_neighbourset(int patharray[21], quadtree_node_t *node);
+void find_neighbourset(int patharray[41], quadtree_node_t *node);
 
-void balance_neighboursset(int patharray[21], int ancestor_pos, int direction);
+void balance_neighboursset(int patharray[41], int ancestor_pos, int direction);
 
 // File reading for neighbourset
 

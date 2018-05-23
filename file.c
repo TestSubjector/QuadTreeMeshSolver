@@ -31,13 +31,14 @@ int fileinput(coords_t *coords_list, char *filename)
         printf("\n ERROR - Input file stream didn't close properly");
         exit(1);
     }
+    free(line);
     return local_line_count;
     // Returns total number of input points
 }
 
 int adaptation_fileinput(coords_t *adapted_list, char *adapted_filename)
 {
-    char *adapted_line;
+    char *adapted_line = NULL;
     size_t adapted_n = 0;
     int local_line_count = 0;
     double xi = 0;
@@ -74,6 +75,7 @@ int adaptation_fileinput(coords_t *adapted_list, char *adapted_filename)
     {
         printf("\n Please note that the adaptation is happening.");
     }
+    free(adapted_line);
     return local_line_count;
     // Returns total number of input points
 }
