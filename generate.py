@@ -385,7 +385,8 @@ def wallBalance(index,globaldata,hashtable,itemda,control,wallpoint):
         w,s = conditionCheck(index,globaldata,item)
         if(w >= 3 or s >= 3):
             if(control==6):
-                print("Shit Man")
+                None
+                # print("Shit Man")
             else:
                 # print(index,itemda)
                 control = control + 1
@@ -428,52 +429,68 @@ def interiorBalance(index,globaldata,hashtable,item):
     xnegw = conditionCheckWithNeighbours(index,globaldata,item,xnegvals)
     yposw = conditionCheckWithNeighbours(index,globaldata,item,yposvals)
     ynegw = conditionCheckWithNeighbours(index,globaldata,item,ynegvals)
+
+    # print(index,xposw,xnegw,yposw,ynegw)
+    with open("temp.txt", "a+") as text_file:
+        if(xposw >= 10 or xnegw >= 10 or yposw >= 10 or ynegw >= 10):
+            text_file.writelines([str(index)," ",str(xposw)," ", str(xnegw)," ", str(yposw)," ", str(ynegw), " ", " ".join(xposvals)])
+            text_file.writelines("\n")
     try:
-        if(xposw >= 20 or xnegw >= 20 or yposw >= 20 or ynegw >= 20):
-            if(xposw >= 20):
+        if(xposw >= 10 or xnegw >= 10 or yposw >= 10 or ynegw >= 10):
+            if(xposw >= 10):
                 totalnbhs = []
                 for itm in xposvals:
                     totalnbhs = totalnbhs + getNeighbours(hashtable.index(itm),globaldata)
                 totalnbhs = list(set(totalnbhs) - set([item]) - set(xposvals))
                 _,_,_,_,newxposvals = deltaNeighbourCalculation(totalnbhs,currentcord,True,False)
-                newxposvals = minCondition(index,globaldata,currentcord,newxposvals,20)
+
+                newxposvals = minCondition(index,globaldata,currentcord,newxposvals,10)
                 if(len(newxposvals) != 0):
                     appendNeighbours(newxposvals[:1],index,globaldata)
                 else:
                     newxposvals = minCondition(index,globaldata,currentcord,newxposvals,xposw)
                     appendNeighbours(newxposvals[:1],index,globaldata)
-                    print(currentcord,index)
-            if(xnegw >= 20):
+                    with open("dump.txt", "a+") as text_file:
+                        _,_,_,_,newxposval = deltaNeighbourCalculation(getNeighbours(hashtable.index(currentcord),globaldata),currentcord,True,False)
+                        val = conditionCheckWithNeighbours(index,globaldata,item,newxposval)
+                        text_file.writelines([str(index)," ",str(val)])
+                        text_file.writelines("\n")
+            if(xnegw >= 10):
                 totalnbhs = []
                 for itm in xnegvals:
                     totalnbhs = totalnbhs + getNeighbours(hashtable.index(itm),globaldata)
                 totalnbhs = list(set(totalnbhs) - set([item]) - set(xnegvals))
                 _,_,_,_,newxnegvals = deltaNeighbourCalculation(totalnbhs,currentcord,True,True)
-                newxnegvals = minCondition(index,globaldata,currentcord,newxposvals,20)
+                newxnegvals = minCondition(index,globaldata,currentcord,newxnegvals,10)
                 if(len(newxnegvals) != 0):
                     appendNeighbours(newxnegvals[:1],index,globaldata)
                 else:
                     newxnegvals = minCondition(index,globaldata,currentcord,newxnegvals,xposw)
                     appendNeighbours(newxnegvals[:1],index,globaldata)
-            if(yposw >= 20):
+                    with open("dump.txt", "a+") as text_file:
+                        _,_,_,_,newxnegval = deltaNeighbourCalculation(getNeighbours(hashtable.index(currentcord),globaldata),currentcord,True,True)
+                        val = conditionCheckWithNeighbours(index,globaldata,item,newxnegval)
+                        text_file.writelines([str(index)," ",str(val)])
+                        text_file.writelines("\n")
+            if(yposw >= 10):
                 totalnbhs = []
                 for itm in yposvals:
                     totalnbhs = totalnbhs + getNeighbours(hashtable.index(itm),globaldata)
                 totalnbhs = list(set(totalnbhs) - set([item]) - set(xposvals))
                 _,_,_,_,newyposvals = deltaNeighbourCalculation(totalnbhs,currentcord,True,False)
-                newyposvals = minCondition(index,globaldata,currentcord,newyposvals,20)
+                newyposvals = minCondition(index,globaldata,currentcord,newyposvals,10)
                 if(len(newyposvals) != 0):
                     appendNeighbours(newyposvals[:1],index,globaldata)
                 else:
                     newyposvals = minCondition(index,globaldata,currentcord,newyposvals,xposw)
                     appendNeighbours(newyposvals[:1],index,globaldata)
-            if(ynegw >= 20):
+            if(ynegw >= 10):
                 totalnbhs = []
                 for itm in ynegvals:
                     totalnbhs = totalnbhs + getNeighbours(hashtable.index(itm),globaldata)
                 totalnbhs = list(set(totalnbhs) - set([item]) - set(ynegvals))
                 _,_,_,_,newynegvals = deltaNeighbourCalculation(totalnbhs,currentcord,True,True)
-                newynegvals = minCondition(index,globaldata,currentcord,newynegvals,20)
+                newynegvals = minCondition(index,globaldata,currentcord,newynegvals,10)
                 if(len(newynegvals) != 0):
                     appendNeighbours(newynegvals[:1],index,globaldata)
                 else:
@@ -837,10 +854,10 @@ def main():
     #     w = max(w)/min(w)
     #     s = np.linalg.svd(random,full_matrices=False,compute_uv=False)
     #     s = max(s)/min(s)
-    #     with open("eig.txt", "a+") as text_file:
-    #         if(s >= 0):
-    #             text_file.writelines([str(index)," ",str(w)," ", str(s)])
-    #             text_file.writelines("\n")
+        # with open("eig.txt", "a+") as text_file:
+        #     if(s >= 0):
+        #         text_file.writelines([str(index)," ",str(w)," ", str(s)])
+        #         text_file.writelines("\n")
         # print(max(w)/min(w))
 
 

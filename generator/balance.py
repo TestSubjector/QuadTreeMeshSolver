@@ -3,13 +3,12 @@ import numpy as np
 from numpy import linalg as LA
 from misc import *
 
-def normalCalculation(index,cord,hashtable,globaldata,wallpoint):
+def normalCalculation(index,hashtable,globaldata,wallpoint):
     nx = 0
     ny = 0
-    cordx = float(cord.split(",")[0])
-    cordy = float(cord.split(",")[1])
-    val = hashtable.index(cord)
-    pointdata = globaldata[val - 1]
+    cordx = float(globaldata[index][1])
+    cordy = float(globaldata[index][2])
+    pointdata = globaldata[index]
     if(wallpoint):
         leftpoint = hashtable[pointdata[3]]
         rightpoint = hashtable[pointdata[4]]
@@ -39,10 +38,9 @@ def normalCalculation(index,cord,hashtable,globaldata,wallpoint):
     ny = ny/det
     return nx,ny
 
-def conditionCheckWithNeighbours(index, globaldata, cord, nbh):
-    item = cord
-    mainptx = float(item.split(",")[0])
-    mainpty = float(item.split(",")[1])
+def conditionCheckWithNeighbours(index, globaldata, nbh):
+    mainptx = float(globaldata[index][1])
+    mainpty = float(globaldata[index][2])
     deltaSumX = 0
     deltaSumY = 0
     deltaSumXY = 0
@@ -50,8 +48,33 @@ def conditionCheckWithNeighbours(index, globaldata, cord, nbh):
     for nbhitem in nbh:
         nbhitemX = float(nbhitem.split(",")[0])
         nbhitemY = float(nbhitem.split(",")[1])
-        deltaSumX = deltaSumX + (nbhitemX - mainptx) ** 2
-        deltaSumY = deltaSumY + (nbhitemY - mainpty) ** 2
+        deltaSumX = deltaSumX + ((nbhitemX - mainptx)**2)
+        deltaSumY = deltaSumY + ((nbhitemY - mainpty)**2)
+        deltaSumXY = deltaSumXY + (nbhitemX - mainptx) * (nbhitemY - mainpty)
+    data.append(deltaSumX)
+    data.append(deltaSumXY)
+    data.append(deltaSumXY)
+    data.append(deltaSumY)
+    random = np.array(data)
+    shape = (2, 2)
+    random = random.reshape(shape)
+    s = np.linalg.svd(random, full_matrices=False, compute_uv=False)
+    s = max(s) / min(s)
+    return s
+
+def conditionValueDefault(index,globaldata):
+    mainptx = float(globaldata[index][1])
+    mainpty = float(globaldata[index][2])
+    deltaSumX = 0
+    deltaSumY = 0
+    deltaSumXY = 0
+    data = []
+    nbh = getNeighbours(index,globaldata)
+    for nbhitem in nbh:
+        nbhitemX = float(nbhitem.split(",")[0])
+        nbhitemY = float(nbhitem.split(",")[1])
+        deltaSumX = deltaSumX + ((nbhitemX - mainptx)**2)
+        deltaSumY = deltaSumY + ((nbhitemY - mainpty)**2)
         deltaSumXY = deltaSumXY + (nbhitemX - mainptx) * (nbhitemY - mainpty)
     data.append(deltaSumX)
     data.append(deltaSumXY)
@@ -65,12 +88,11 @@ def conditionCheckWithNeighbours(index, globaldata, cord, nbh):
     return s
 
 
-def minConditionValue(index, globaldata, cord, nbhs):
-    item = cord
-    mainptx = float(item.split(",")[0])
-    mainpty = float(item.split(",")[1])
+def minConditionValue(index, globaldata, nbhs):
+    mainptx = float(globaldata[index][1])
+    mainpty = float(globaldata[index][2])
     nbh = getNeighbours(index, globaldata)
-    nbh = nbh + nbhs
+    nbh = list(nbh) + list(nbhs)
     deltaSumX = 0
     deltaSumY = 0
     deltaSumXY = 0
@@ -78,8 +100,8 @@ def minConditionValue(index, globaldata, cord, nbhs):
     for nbhitem in nbh:
         nbhitemX = float(nbhitem.split(",")[0])
         nbhitemY = float(nbhitem.split(",")[1])
-        deltaSumX = deltaSumX + (nbhitemX - mainptx) ** 2
-        deltaSumY = deltaSumY + (nbhitemY - mainpty) ** 2
+        deltaSumX = deltaSumX + ((nbhitemX - mainptx)**2)
+        deltaSumY = deltaSumY + ((nbhitemY - mainpty)**2)
         deltaSumXY = deltaSumXY + (nbhitemX - mainptx) * (nbhitemY - mainpty)
     data.append(deltaSumX)
     data.append(deltaSumXY)
@@ -88,27 +110,26 @@ def minConditionValue(index, globaldata, cord, nbhs):
     random = np.array(data)
     shape = (2, 2)
     random = random.reshape(shape)
-    w, v = LA.eig(random)
+    w, _ = LA.eig(random)
     w = max(w) / min(w)
     return w
 
 
-def minCondition(index, globaldata, cord, nbs, threshold):
+def minCondition(inda, globaldata, nbs, threshold):
     nbsMin = []
     for index, item in enumerate(nbs):
-        w = minConditionValue(index, globaldata, cord, nbs)
+        w = minConditionValue(index, globaldata,[item])
         if (w < threshold):
             nbsMin.append([item, index, w])
-        nbsMin.sort(key=lambda x: x[2])
-        nbsFinalList = []
-        for item in nbsMin:
-            nbsFinalList.append(item[0])
-        return nbsFinalList
+    nbsMin.sort(key=lambda x: x[2])
+    nbsFinalList = []
+    for item in nbsMin:
+        nbsFinalList.append(item[0])
+    return nbsFinalList
 
-def conditionCheck(index, globaldata, cord):
-    item = cord
-    mainptx = float(item.split(",")[0])
-    mainpty = float(item.split(",")[1])
+def conditionCheck(index, globaldata):
+    mainptx = float(globaldata[index][1])
+    mainpty = float(globaldata[index][2])
     nbh = getNeighbours(index, globaldata)
     deltaSumX = 0
     deltaSumY = 0
@@ -143,14 +164,14 @@ def minDistance(neighbours,cord):
         dists2.append(item[1])
     return dists2
 
-def deltaWallNeighbourCalculation(index,currentneighbours,currentcord,nx,ny,giveposdelta,globaldata):
+def deltaWallNeighbourCalculation(index,currentneighbours,nx,ny,giveposdelta,globaldata):
     deltaspos,deltasneg,deltaszero = 0,0,0
     nx = float(nx)
     ny = float(ny)
     tx = float(ny)
     ty = -float(nx)
-    xcord = float(currentcord.split(",")[0])
-    ycord = float(currentcord.split(",")[1])
+    xcord = float(globaldata[index][1])
+    ycord = float(globaldata[index][2])
     output = []
     for item in currentneighbours:
         itemx = float(item.split(",")[0])

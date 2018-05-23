@@ -5,6 +5,7 @@ from interior import *
 from balance import *
 from wall import *
 from outer import *
+import progress
 
 def main():
     parser = argparse.ArgumentParser()
@@ -26,17 +27,96 @@ def main():
     hashtable,globaldata = loadInterior(data,hashtable,globaldata,len(hashtable))
     globaldata = cleanNeighbours(globaldata)
     hashtable,globaldata = detectOuter(hashtable, globaldata)
+    # Point Validation
+    # print("Beginning Point Delta Calculation")
+    # for index,item in enumerate(hashtable[1:]):
+    #     # printProgressBar(index, len(hashtable[1:]) - 1, prefix = 'Progress:', suffix = 'Complete', length = 50)
+    #     if(getFlag(index,globaldata)==1):
+    #         interiorBalanceYPos(index,globaldata,hashtable,item,0,1500)
+    # print("Points Delta Calculated and Balanced")
+    # print("Beginning Point Delta Calculation")
+    # for index,item in enumerate(hashtable[1:]):
+    #     # printProgressBar(index, len(hashtable[1:]) - 1, prefix = 'Progress:', suffix = 'Complete', length = 50)
+    #     if(getFlag(index,globaldata)==1):
+    #         interiorBalanceYNeg(index,globaldata,hashtable,item,0,1500)
+    # print("Points Delta Calculated and Balanced")
+    # print("Beginning Point Delta Calculation")
+    # for index,item in enumerate(hashtable[1:]):
+    #     # printProgressBar(index, len(hashtable[1:]) - 1, prefix = 'Progress:', suffix = 'Complete', length = 50)
+    #     if(getFlag(index,globaldata)==1):
+    #         interiorBalanceYPos(index,globaldata,hashtable,item,0,20)
+    # print("Points Delta Calculated and Balanced")
+    # print("Beginning Point Delta Calculation")
+    # for index,item in enumerate(hashtable[1:]):
+    #     # printProgressBar(index, len(hashtable[1:]) - 1, prefix = 'Progress:', suffix = 'Complete', length = 50)
+    #     if(getFlag(index,globaldata)==1):
+    #         interiorBalanceYNeg(index,globaldata,hashtable,item,0,20)
+    # print("Points Delta Calculated and Balanced")
 
-    ## Point Validation
-    print("Beginning Point Delta Calculation")
+    # print("Beginning Point Delta Calculation")
+    # for index,item in enumerate(hashtable[1:]):
+    #     # printProgressBar(index, len(hashtable[1:]) - 1, prefix = 'Progress:', suffix = 'Complete', length = 50)
+    #     if(getFlag(index,globaldata)==1):
+    #         interiorBalanceXPos(index,globaldata,hashtable,item,0,30)
+    # print("Points Delta Calculated and Balanced")
+    # print("Beginning Point Delta Calculation")
+    # for index,item in enumerate(hashtable[1:]):
+    #     # printProgressBar(index, len(hashtable[1:]) - 1, prefix = 'Progress:', suffix = 'Complete', length = 50)
+    #     if(getFlag(index,globaldata)==1):
+    #         interiorBalanceXNeg(index,globaldata,hashtable,item,0,30)
+    # print("Points Delta Calculated and Balanced")
+    # print("Beginning Point Delta Calculation")
+    # for index,item in enumerate(hashtable[1:]):
+    #     # printProgressBar(index, len(hashtable[1:]) - 1, prefix = 'Progress:', suffix = 'Complete', length = 50)
+    #     if(getFlag(index,globaldata)==1):
+    #         interiorBalanceXPos(index,globaldata,hashtable,item,0,50)
+    # print("Points Delta Calculated and Balanced")
+    # print("Beginning Point Delta Calculation")
+    # for index,item in enumerate(hashtable[1:]):
+    #     # printProgressBar(index, len(hashtable[1:]) - 1, prefix = 'Progress:', suffix = 'Complete', length = 50)
+    #     if(getFlag(index,globaldata)==1):
+    #         interiorBalanceXNeg(index,globaldata,hashtable,item,0,50)
+    # print("Points Delta Calculated and Balanced")
+    # print("Wall DS Positive")
+    # for index,item in enumerate(hashtable[1:]):
+    #     # printProgressBar(index, len(hashtable[1:]) - 1, prefix = 'Progress:', suffix = 'Complete', length = 50)
+    #     if(getFlag(index,globaldata)==0):
+    #         wallDeltaSPositiveConditionCheck(index,globaldata,hashtable,item,wallpoint,0,10)
+    # print("Wall DS Negative")
+    # for index,item in enumerate(hashtable[1:]):
+    #     # printProgressBar(index, len(hashtable[1:]) - 1, prefix = 'Progress:', suffix = 'Complete', length = 50)
+    #     if(getFlag(index,globaldata)==0):
+    #         wallDeltaSNegativeConditionCheck(index,globaldata,hashtable,item,wallpoint,0,10)
+    # print("End")
+
+    for index,item in enumerate(hashtable[1:]):
+        if(getFlag(index,globaldata)==0):
+            
+            # printWallConditionValue(index,globaldata,hashtable,item)
+            wallDeltaSPositiveConditionCheck(index,globaldata,hashtable,wallpoint,0,10)
+
+    for index,item in enumerate(hashtable[1:]):
+        if(getFlag(index,globaldata)==0):
+            None
+            # printWallConditionValue(index,globaldata,hashtable,item)
+            # wallDeltaSPositiveConditionCheck(index,globaldata,hashtable,item,wallpoint,0,10)
+            
+
     for index,item in enumerate(hashtable[1:]):
         if(getFlag(index,globaldata)==1):
-            interiorBalance(index,globaldata,hashtable,item)
-        elif(getFlag(index,globaldata)==0):
-            wallBalance(index,globaldata,hashtable,item,3,wallpoint)
-        elif(getFlag(index,globaldata)==2):
-            outerBalance(index,globaldata,hashtable,item)
-    print("Points Delta Calculated and Balanced")
+            currentneighbours = getNeighbours(index, globaldata)
+            currentcord = item
+            _,_,_,_,yposvals = deltaNeighbourCalculation(currentneighbours,currentcord,False,False)
+            _,_,_,_,ynegvals = deltaNeighbourCalculation(currentneighbours,currentcord,False,True)
+            yposw = conditionCheckWithNeighbours(index,globaldata,yposvals)
+            ynegw = conditionCheckWithNeighbours(index,globaldata,ynegvals)
+            _,_,_,_,xposvals = deltaNeighbourCalculation(currentneighbours,currentcord,True,False)
+            _,_,_,_,xnegvals = deltaNeighbourCalculation(currentneighbours,currentcord,True,True)
+            xposw = conditionCheckWithNeighbours(index,globaldata,xposvals)
+            xnegw = conditionCheckWithNeighbours(index,globaldata,xnegvals)
+            if(xposw > 25 or xnegw > 25):
+                None
+                # print(index,xposw,xnegw, len(xposvals),len(xnegvals))
 
     globaldata = cleanNeighbours(globaldata)
     globaldata = generateReplacement(hashtable,globaldata)

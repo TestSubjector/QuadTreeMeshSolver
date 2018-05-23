@@ -14,6 +14,14 @@ def cleanNeighbours(globaldata):
     print("Duplicate Neighbours Removed")
     return globaldata
 
+def getPoint(indexval,list):
+    currentcord = str(list[indexval][1]) + "," + str(list[indexval][2])
+    return currentcord
+
+def getIndexOf(point,hashtable):
+    hashtable = hashtable[1:]
+    return hashtable.index(point)
+
 def getNeighbours(indexval,list):
     val = []
     pointdata = list[indexval]

@@ -1,5 +1,6 @@
 from balance import *
 from misc import *
+from logger import writeLog
 
 def deltaX(xcord,orgxcord):
     return float(xcord - orgxcord)
@@ -29,104 +30,160 @@ def deltaNeighbourCalculation(currentneighbours,currentcord,isxcord,isnegative):
             yneg = yneg + 1
     return xpos,ypos,xneg,xneg,temp
 
-def interiorBalance(index,globaldata,hashtable,item):
+def interiorBalanceXPos(index,globaldata,hashtable,item,count,tolerant):
+    tolerant = float(tolerant)
     currentneighbours = getNeighbours(index, globaldata)
     currentcord = item
     _,_,_,_,xposvals = deltaNeighbourCalculation(currentneighbours,currentcord,True,False)
-    _,_,_,_,xnegvals = deltaNeighbourCalculation(currentneighbours,currentcord,True,True)
-    _,_,_,_,yposvals = deltaNeighbourCalculation(currentneighbours,currentcord,False,False)
-    _,_,_,_,ynegvals = deltaNeighbourCalculation(currentneighbours,currentcord,False,True)
     xposw = conditionCheckWithNeighbours(index,globaldata,item,xposvals)
-    xnegw = conditionCheckWithNeighbours(index,globaldata,item,xnegvals)
-    yposw = conditionCheckWithNeighbours(index,globaldata,item,yposvals)
-    ynegw = conditionCheckWithNeighbours(index,globaldata,item,ynegvals)
     try:
-        if(xposw >= 20 or xnegw >= 20 or yposw >= 20 or ynegw >= 20):
-            if(xposw >= 20):
-                totalnbhs = []
-                for itm in xposvals:
-                    totalnbhs = totalnbhs + getNeighbours(hashtable.index(itm), globaldata)
-                totalnbhs = list(set(totalnbhs) - set([item]) - set(xposvals))
-                _,_,_,_,newxposvals = deltaNeighbourCalculation(totalnbhs,currentcord,True,False)
-                newxposvals = minCondition(index,globaldata,currentcord,newxposvals,20)
-                if(len(newxposvals) != 0):
-                    appendNeighbours(newxposvals[:1], index, globaldata)
-                else:
-                    newxposvals = minCondition(index,globaldata,currentcord,newxposvals,xposw)
-                    appendNeighbours(newxposvals[:1], index, globaldata)
-                    print(currentcord,index)
-            if(xnegw >= 20):
-                totalnbhs = []
-                for itm in xnegvals:
-                    totalnbhs = totalnbhs + getNeighbours(hashtable.index(itm), globaldata)
-                totalnbhs = list(set(totalnbhs) - set([item]) - set(xnegvals))
-                _,_,_,_,newxnegvals = deltaNeighbourCalculation(totalnbhs,currentcord,True,True)
-                newxnegvals = minCondition(index,globaldata,currentcord,newxposvals,20)
-                if(len(newxnegvals) != 0):
-                    appendNeighbours(newxnegvals[:1], index, globaldata)
-                else:
-                    newxnegvals = minCondition(index,globaldata,currentcord,newxnegvals,xposw)
-                    appendNeighbours(newxnegvals[:1], index, globaldata)
-            if(yposw >= 20):
-                totalnbhs = []
-                for itm in yposvals:
-                    totalnbhs = totalnbhs + getNeighbours(hashtable.index(itm), globaldata)
-                totalnbhs = list(set(totalnbhs) - set([item]) - set(xposvals))
-                _,_,_,_,newyposvals = deltaNeighbourCalculation(totalnbhs,currentcord,True,False)
-                newyposvals = minCondition(index,globaldata,currentcord,newyposvals,20)
-                if(len(newyposvals) != 0):
-                    appendNeighbours(newyposvals[:1], index, globaldata)
-                else:
-                    newyposvals = minCondition(index,globaldata,currentcord,newyposvals,xposw)
-                    appendNeighbours(newyposvals[:1], index, globaldata)
-            if(ynegw >= 20):
-                totalnbhs = []
-                for itm in ynegvals:
-                    totalnbhs = totalnbhs + getNeighbours(hashtable.index(itm), globaldata)
-                totalnbhs = list(set(totalnbhs) - set([item]) - set(ynegvals))
-                _,_,_,_,newynegvals = deltaNeighbourCalculation(totalnbhs,currentcord,True,True)
-                newynegvals = minCondition(index,globaldata,currentcord,newynegvals,20)
-                if(len(newynegvals) != 0):
-                    appendNeighbours(newynegvals[:1], index, globaldata)
-                else:
-                    newynegvals = minCondition(index,globaldata,currentcord,newynegvals,xposw)
-                    appendNeighbours(newynegvals[:1], index, globaldata)
+        if(xposw >= tolerant):
+            totalnbhs = []
+            for itm in xposvals:
+                totalnbhs = totalnbhs + getNeighbours(hashtable.index(itm) - 1, globaldata)
+            totalnbhs = list(set(totalnbhs) - set([item]) - set(xposvals))
+            _,_,_,_,newxposvals = deltaNeighbourCalculation(totalnbhs,currentcord,True,False)
+            newxposvals = minCondition(index,globaldata,currentcord,newxposvals,tolerant)
+            if(len(newxposvals) != 0):
+                appendNeighbours(newxposvals[:1], index, globaldata)
+                xpos,_,_,_,_ = deltaNeighbourCalculation(currentneighbours,currentcord,True,False)
+                currentnewneighbours = []
+                for item in currentneighbours:
+                    itemsneighbours = getNeighbours(hashtable.index(item) - 1, globaldata)
+                    currentnewneighbours = currentnewneighbours + list(set(itemsneighbours) - set(currentneighbours) - set(currentnewneighbours) - set([currentcord]))
+                if(xpos < 4):
+                    try:
+                        _,_,_,_,temp = deltaNeighbourCalculation(currentnewneighbours,currentcord,True,False)
+                        shortestnewneighbours = minDistance(temp,currentcord)
+                        if(len(shortestnewneighbours) == 0):
+                            print("Couldn't find neighbour of neighbours which can reduce the xpos condition for the point (",currentcord,")")
+                        appendNeighbours(shortestnewneighbours[:(4 - xpos)], index, globaldata) 
+                        xpos,_,_,_,_ = deltaNeighbourCalculation(getNeighbours(hashtable.index(item) - 1, globaldata), currentcord, False, False)
+                        if(xpos < 4 and count < 3):
+                            interiorBalanceXPos(hashtable.index(currentcord) - 1,globaldata,hashtable,currentcord,count+1,tolerant)
+                        elif(xpos < 4 and count == 2):
+                            print("#2 Couldn't find neighbour of neighbours even after 2 recursions which can reduce the xpos condition for the point (",currentcord,")")
+                    except TypeError:
+                            print("Couldn't find neighbour of neighbours which can reduce the xpos condition for the point (",currentcord,")")
+            else:
+                print("Couldn't satisfy the xpos tolerant value ",tolerant," for point (",currentcord, ")")
     except TypeError:
         pass
-    # print(xpos,ypos,xneg,yneg)
-    xpos,ypos,xneg,yneg,_ = deltaNeighbourCalculation(currentneighbours,currentcord,False,False)
-    if(xpos < 4 or ypos < 4 or xneg < 4 or yneg < 4):
-        currentnewneighbours = []
-        # print("Old")
-        # print(xpos,ypos,xneg,yneg)
-        for item in currentneighbours:
-            itemsneighbours = getNeighbours(hashtable.index(item), globaldata)
-            currentnewneighbours = currentnewneighbours + list(set(itemsneighbours) - set(currentneighbours) - set(currentnewneighbours) - set([currentcord]))
-        currentnewneighbours = currentnewneighbours
-        if(xpos < 4):
-            _,_,_,_,temp = deltaNeighbourCalculation(currentnewneighbours,currentcord,True,False)
-            w,_ = conditionCheck(index,globaldata,currentcord)
-            shortestnewneighbours = minCondition(index,globaldata,currentcord,temp,w)
-            # shortestnewneighbours = minDistance(temp,currentcord)
-            appendNeighbours(shortestnewneighbours[:(4 - xpos)], index, globaldata)
-        if(xneg < 4):
-            _,_,_,_,temp = deltaNeighbourCalculation(currentnewneighbours,currentcord,True,True)
-            w,_ = conditionCheck(index,globaldata,currentcord)
-            shortestnewneighbours = minCondition(index,globaldata,currentcord,temp,w)
-            # shortestnewneighbours = minDistance(temp,currentcord)
-            appendNeighbours(shortestnewneighbours[:(4 - xneg)], index, globaldata)
-        if(ypos < 4):
-            _,_,_,_,temp = deltaNeighbourCalculation(currentnewneighbours,currentcord,True,False)
-            w,_ = conditionCheck(index,globaldata,currentcord) 
-            shortestnewneighbours = minCondition(index,globaldata,currentcord,temp,w)
-            # shortestnewneighbours = minDistance(temp,currentcord)
-            appendNeighbours(shortestnewneighbours[:(4 - ypos)], index, globaldata)
-        if(yneg < 4):
-            _,_,_,_,temp = deltaNeighbourCalculation(currentnewneighbours,currentcord,True,True)
-            w,_ = conditionCheck(index,globaldata,currentcord)
-            shortestnewneighbours = minCondition(index,globaldata,currentcord,temp,w)
-            # shortestnewneighbours = minDistance(temp,currentcord)
-            appendNeighbours(shortestnewneighbours[:(4 - yneg)], index, globaldata)
-        xpos,ypos,xneg,yneg,_ = deltaNeighbourCalculation(getNeighbours(hashtable.index(item), globaldata), currentcord, False, False)
-        if(xpos < 4 or ypos < 4 or xneg < 4 or yneg < 4):
-            None
+def interiorBalanceXNeg(index,globaldata,hashtable,item,count,tolerant):
+    tolerant = float(tolerant)
+    currentneighbours = getNeighbours(index, globaldata)
+    currentcord = item
+    _,_,_,_,xnegvals = deltaNeighbourCalculation(currentneighbours,currentcord,True,True)
+    xnegw = conditionCheckWithNeighbours(index,globaldata,item,xnegvals)
+    try:
+        if(xnegw >= tolerant):
+            totalnbhs = []
+            for itm in xnegvals:
+                totalnbhs = totalnbhs + getNeighbours(hashtable.index(itm) - 1, globaldata)
+            totalnbhs = list(set(totalnbhs) - set([item]) - set(xnegvals))
+            _,_,_,_,newxnegvals = deltaNeighbourCalculation(totalnbhs,currentcord,True,True)
+            newxnegvals = minCondition(index,globaldata,currentcord,newxnegvals,tolerant)
+            if(len(newxnegvals) != 0):
+                appendNeighbours(newxnegvals[:1], index, globaldata)
+                xneg,_,_,_,_ = deltaNeighbourCalculation(currentneighbours,currentcord,True,True)
+                currentnewneighbours = []
+                for item in currentneighbours:
+                    itemsneighbours = getNeighbours(hashtable.index(item) - 1, globaldata)
+                    currentnewneighbours = currentnewneighbours + list(set(itemsneighbours) - set(currentneighbours) - set(currentnewneighbours) - set([currentcord]))
+                if(xneg < 4):
+                    try:
+                        _,_,_,_,temp = deltaNeighbourCalculation(currentnewneighbours,currentcord,True,False)
+                        shortestnewneighbours = minDistance(temp,currentcord)
+                        if(len(shortestnewneighbours) == 0):
+                            print("Couldn't find neighbour of neighbours which can reduce the xneg condition for the point (",currentcord,")")
+                        appendNeighbours(shortestnewneighbours[:(4 - xneg)], index, globaldata) 
+                        xneg,_,_,_,_ = deltaNeighbourCalculation(getNeighbours(hashtable.index(item) - 1, globaldata), currentcord, False, False)
+                        if(xneg < 4 and count < 3):
+                            interiorBalanceXNeg(hashtable.index(currentcord) - 1,globaldata,hashtable,currentcord,count+1,tolerant)
+                        elif(xneg < 4 and count == 2):
+                            print("#2 Couldn't find neighbour of neighbours even after 2 recursions which can reduce the xneg condition for the point (",currentcord,")")
+                    except TypeError:
+                            print("Couldn't find neighbour of neighbours which can reduce the xneg condition for the point (",currentcord,")")
+            else:
+                print("Couldn't satisfy the xneg tolerant value ",tolerant," for point (",currentcord, ")")
+    except TypeError:
+        pass
+def interiorBalanceYPos(index,globaldata,hashtable,item,count,tolerant):
+    tolerant = float(tolerant)
+    currentneighbours = getNeighbours(index, globaldata)
+    currentcord = item
+    _,_,_,_,yposvals = deltaNeighbourCalculation(currentneighbours,currentcord,False,False)
+    yposw = conditionCheckWithNeighbours(index,globaldata,item,yposvals)
+    try:
+        if(yposw >= tolerant):
+            totalnbhs = []
+            for itm in yposvals:
+                totalnbhs = totalnbhs + getNeighbours(hashtable.index(itm) - 1, globaldata)
+            totalnbhs = list(set(totalnbhs) - set([item]) - set(yposvals))
+            _,_,_,_,newyposvals = deltaNeighbourCalculation(totalnbhs,currentcord,False,False)
+            newyposvals = minCondition(index,globaldata,currentcord,newyposvals,tolerant)
+            if(len(newyposvals) != 0):
+                appendNeighbours(newyposvals[:1], index, globaldata)
+                ypos,_,_,_,_ = deltaNeighbourCalculation(currentneighbours,currentcord,False,False)
+                currentnewneighbours = []
+                for item in currentneighbours:
+                    itemsneighbours = getNeighbours(hashtable.index(item) - 1, globaldata)
+                    currentnewneighbours = currentnewneighbours + list(set(itemsneighbours) - set(currentneighbours) - set(currentnewneighbours) - set([currentcord]))
+                if(ypos < 4):
+                    try:
+                        _,_,_,_,temp = deltaNeighbourCalculation(currentnewneighbours,currentcord,False,False)
+                        shortestnewneighbours = minDistance(temp,currentcord)
+                        if(len(shortestnewneighbours) == 0):
+                            print("Couldn't find neighbour of neighbours which can reduce the ypos condition for the point (",currentcord,")")
+                        appendNeighbours(shortestnewneighbours[:(4 - ypos)], index, globaldata) 
+                        ypos,_,_,_,_ = deltaNeighbourCalculation(getNeighbours(hashtable.index(item) - 1, globaldata), currentcord, False, False)
+                        if(ypos < 4 and count < 3):
+                            interiorBalanceYPos(hashtable.index(currentcord) - 1,globaldata,hashtable,currentcord,count+1,tolerant)
+                        elif(ypos < 4 and count == 2):
+                            print("#2 Couldn't find neighbour of neighbours even after 2 recursions which can reduce the ypos condition for the point (",currentcord,")")
+                    except TypeError:
+                            print("Couldn't find neighbour of neighbours which can reduce the ypos condition for the point (",currentcord,")")
+            else:
+                print("Couldn't satisfy the ypos tolerant value ",tolerant," for point (",currentcord, ")")
+    except TypeError:
+        pass
+
+def interiorBalanceYNeg(index,globaldata,hashtable,item,count,tolerant):
+    tolerant = float(tolerant)
+    currentneighbours = getNeighbours(index, globaldata)
+    currentcord = item
+    _,_,_,_,ynegvals = deltaNeighbourCalculation(currentneighbours,currentcord,False,True)
+    ynegw = conditionCheckWithNeighbours(index,globaldata,item,ynegvals)
+    try:
+        if(ynegw >= tolerant):
+            totalnbhs = []
+            for itm in ynegvals:
+                totalnbhs = totalnbhs + getNeighbours(hashtable.index(itm) - 1, globaldata)
+            totalnbhs = list(set(totalnbhs) - set([item]) - set(ynegvals))
+            _,_,_,_,newynegvals = deltaNeighbourCalculation(totalnbhs,currentcord,False,True)
+            newynegvals = minCondition(index,globaldata,currentcord,newynegvals,tolerant)
+            if(len(newynegvals) != 0):
+                appendNeighbours(newynegvals[:1], index, globaldata)
+                yneg,_,_,_,_ = deltaNeighbourCalculation(currentneighbours,currentcord,False,True)
+                currentnewneighbours = []
+                for item in currentneighbours:
+                    itemsneighbours = getNeighbours(hashtable.index(item) - 1, globaldata)
+                    currentnewneighbours = currentnewneighbours + list(set(itemsneighbours) - set(currentneighbours) - set(currentnewneighbours) - set([currentcord]))
+                if(yneg < 4):
+                    try:
+                        _,_,_,_,temp = deltaNeighbourCalculation(currentnewneighbours,currentcord,False,True)
+                        shortestnewneighbours = minDistance(temp,currentcord)
+                        if(len(shortestnewneighbours) == 0):
+                            print("Couldn't find neighbour of neighbours which can reduce the yneg condition for the point (",currentcord,")")
+                        appendNeighbours(shortestnewneighbours[:(4 - yneg)], index, globaldata) 
+                        yneg,_,_,_,_ = deltaNeighbourCalculation(getNeighbours(hashtable.index(item) - 1, globaldata), currentcord, False, True)
+                        if(yneg < 4 and count < 3):
+                            interiorBalanceYNeg(hashtable.index(currentcord) - 1,globaldata,hashtable,currentcord,count+1,tolerant)
+                        elif(yneg < 4 and count == 2):
+                            print("#2 Couldn't find neighbour of neighbours even after 2 recursions which can reduce the yneg condition for the point (",currentcord,")")
+                    except TypeError:
+                            print("Couldn't find neighbour of neighbours which can reduce the yneg condition for the point (",currentcord,")")
+            else:
+                print("Couldn't satisfy the yneg tolerant value ",tolerant," for point (",currentcord, ")")
+    except TypeError:
+        pass
