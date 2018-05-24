@@ -39,21 +39,36 @@ def main():
     globaldata = cleanNeighbours(globaldata)
     hashtable,globaldata = detectOuter(hashtable, globaldata)
     
+    # print("Wall Points")
+
     for index, item in enumerate(hashtable[1:]):
         if(getFlag(index,globaldata)==0):
             printWallConditionValue(index,globaldata,hashtable)
             printWallConditionValue(index,globaldata,hashtable)
             printWallConditionValue(index,globaldata,hashtable)
             
-    print("****************************************")
+    # print("****************************************")
 
     for index, item in enumerate(hashtable[1:]):
         if(getFlag(index,globaldata)==0):
             printWall(index,globaldata,hashtable)
 
-    # for index, item in enumerate(hashtable[1:]):
-    #     if(getFlag(index,globaldata)==0):
-    #         printWall(index,globaldata,hashtable)
+    # print("Outer Points")
+
+    for index, item in enumerate(hashtable[1:]):
+        if(getFlag(index,globaldata)==2):
+            printOuterConditionValue(index,globaldata,hashtable)
+            printOuterConditionValue(index,globaldata,hashtable)
+            printOuterConditionValue(index,globaldata,hashtable)
+
+    for index, item in enumerate(hashtable[1:]):
+        if(getFlag(index,globaldata)==2):
+            printOuter(index,globaldata,hashtable)
+
+    # print("****************************************")
+
+    # printOuterConditionValue(160,globaldata,hashtable)
+    # printOuter(160,globaldata,hashtable)
 
     globaldata = cleanNeighbours(globaldata)
     globaldata = generateReplacement(hashtable,globaldata)

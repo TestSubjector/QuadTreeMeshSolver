@@ -24,10 +24,11 @@ def normalCalculation(index,hashtable,globaldata,wallpoint):
         nx2 = cordy - rightpointy
         ny1 = leftpointx - cordx
         ny2 = cordx - rightpointx
-    nx1 = cordy - leftpointy
-    nx2 = rightpointy - cordy
-    ny1 = cordx - leftpointx
-    ny2 = rightpointx - cordx
+    else:
+        nx1 = cordy - leftpointy
+        nx2 = rightpointy - cordy
+        ny1 = cordx - leftpointx
+        ny2 = rightpointx - cordx
     nx = (nx1+nx2)/2
     ny = (ny1+ny2)/2
     det = math.sqrt((nx*nx) + (ny*ny))
@@ -36,6 +37,8 @@ def normalCalculation(index,hashtable,globaldata,wallpoint):
     else:
         nx = (-nx)/det
     ny = ny/det
+    # print(nx)
+    # print(ny)
     return nx,ny
 
 # Added new potential neighbour
@@ -209,3 +212,32 @@ def deltaWallNeighbourCalculation(index,currentneighbours,nx,ny,giveposdelta,glo
         None
         # print(index,len(currentneighbours),deltaspos,deltasneg,deltaszero)
     return deltaspos,deltasneg,deltaszero,output
+
+def deltaOuterNeighbourCalculation(index,currentneighbours,nx,ny,giveposdelta,globaldata):
+    deltaspos,deltasneg,deltaszero = 0,0,0
+    nx = -float(nx)
+    ny = float(ny)
+    tx = float(ny)
+    ty = -float(nx)
+    xcord = float(globaldata[index][1])
+    ycord = float(globaldata[index][2])
+    output = []
+    for item in currentneighbours:
+        itemx = float(item.split(",")[0])
+        itemy = float(item.split(",")[1])
+        deltas = (tx * (itemx - xcord)) + (ty * (itemy - ycord))
+        if(deltas <= 0):
+            if(giveposdelta):
+                output.append(item)
+            deltaspos = deltaspos + 1
+        if(deltas >= 0):
+            if(not giveposdelta):
+                output.append(item)
+            deltasneg = deltasneg + 1
+        if(deltas == 0):
+            deltaszero = deltaszero + 1
+    if(getFlag(index,globaldata)==2):
+        None
+        # print(index,len(currentneighbours),deltaspos,deltasneg,deltaszero)
+    return deltaspos,deltasneg,deltaszero,output 
+  
