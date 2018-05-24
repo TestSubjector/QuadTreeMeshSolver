@@ -25,9 +25,8 @@ def getPoint(indexval,list):
     currentcord = str(list[indexval][1]) + "," + str(list[indexval][2])
     return currentcord
 
-def getIndexOf(point,hashtable):
-    hashtable = hashtable[1:]
-    return hashtable.index(point)
+def getIndexOf(pointxy,hashtable):
+    return int(hashtable.index(pointxy)) - 1
 
 def getNeighbours(indexval,list):
     val = []

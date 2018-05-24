@@ -48,10 +48,32 @@ def main():
             printWallConditionValue(index,globaldata,hashtable)
             
     # print("****************************************")
-
     for index, item in enumerate(hashtable[1:]):
-        if(getFlag(index,globaldata)==0):
-            printWall(index,globaldata,hashtable)
+        if(getFlag(index,globaldata)==1):
+            conditionValueFixForYPos(index,globaldata,hashtable,1)
+    for index, item in enumerate(hashtable[1:]):
+        if(getFlag(index,globaldata)==1):
+            conditionValueFixForYNeg(index,globaldata,hashtable,1)
+    for index, item in enumerate(hashtable[1:]):
+        if(getFlag(index,globaldata)==1):
+            conditionValueFixForXPos(index,globaldata,hashtable,1)
+    for index, item in enumerate(hashtable[1:]):
+        if(getFlag(index,globaldata)==1):
+            conditionValueFixForXNeg(index,globaldata,hashtable,1)
+    print("****************************************")
+    print("Rechecking after XPos and XNeg")
+    print("****************************************")
+    for index, item in enumerate(hashtable[1:]):
+        if(getFlag(index,globaldata)==1):
+            conditionValueFixForYPos(index,globaldata,hashtable,1)
+    for index, item in enumerate(hashtable[1:]):
+        if(getFlag(index,globaldata)==1):
+            conditionValueFixForYNeg(index,globaldata,hashtable,1)
+    print("****************************************")
+
+    # for index, item in enumerate(hashtable[1:]):
+    #     if(getFlag(index,globaldata)==0):
+    #         printWall(index,globaldata,hashtable)
 
     # print("Outer Points")
 
