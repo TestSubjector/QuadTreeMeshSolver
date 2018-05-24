@@ -41,11 +41,19 @@ def main():
     
     for index, item in enumerate(hashtable[1:]):
         if(getFlag(index,globaldata)==0):
-            None
-            # wallDeltaSPositiveConditionCheck(index,globaldata,hashtable,wallpoint,0,10)
             printWallConditionValue(index,globaldata,hashtable)
+            printWallConditionValue(index,globaldata,hashtable)
+            printWallConditionValue(index,globaldata,hashtable)
+            
+    print("****************************************")
 
-    # printWallConditionValue(63,globaldata,hashtable)
+    for index, item in enumerate(hashtable[1:]):
+        if(getFlag(index,globaldata)==0):
+            printWall(index,globaldata,hashtable)
+
+    # for index, item in enumerate(hashtable[1:]):
+    #     if(getFlag(index,globaldata)==0):
+    #         printWall(index,globaldata,hashtable)
 
     globaldata = cleanNeighbours(globaldata)
     globaldata = generateReplacement(hashtable,globaldata)

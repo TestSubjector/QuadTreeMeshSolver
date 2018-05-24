@@ -96,13 +96,12 @@ def conditionValueDefault(index,globaldata):
     return s
 
 
-def minConditionValue(index, globaldata, nbhs, nx, ny):
+def minConditionValue(index, hashtable, globaldata, nbhs, nx, ny):
     mainptx = float(globaldata[index][1])
     mainpty = float(globaldata[index][2])
     nbh = getNeighbours(index, globaldata)
-    print(index)
-    print(nbh)
     nbh = list(nbh) + list(nbhs)  # Important!
+    # print(nbh)
     nx = float(nx)
     ny = float(ny)
     tx = float(ny)
@@ -131,10 +130,10 @@ def minConditionValue(index, globaldata, nbhs, nx, ny):
     return s
 
 
-def minCondition(inda, globaldata, nbs, threshold, nx, ny):
+def minCondition(inda, hashtable, globaldata, nbs, threshold, nx, ny):
     nbsMin = []
     for index, item in enumerate(nbs):
-        w = minConditionValue(index, globaldata,[item], nx, ny)
+        w = minConditionValue(inda, hashtable, globaldata,[item], nx, ny)
         # print(" This nbhofnbh reduces condition number by")
         # print(w)
         nbsMin.append([item, index, w])
@@ -142,7 +141,7 @@ def minCondition(inda, globaldata, nbs, threshold, nx, ny):
     nbsFinalList = []
     for item in nbsMin:
         nbsFinalList.append(item[0])
-    return nbsFinalList
+    return nbsFinalList[0]
 
 def conditionCheck(index, globaldata):
     mainptx = float(globaldata[index][1])
