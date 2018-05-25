@@ -221,6 +221,7 @@ def conditionValueFixForXNeg(index,globaldata,hashtable,threshold):
     
 def conditionValueFixForYPos(index,globaldata,hashtable,threshold):
     initialConditionValue = getInteriorConditionValueofYPos(index,globaldata,hashtable)
+    print(initialConditionValue)
     # print(initialConditionValue)
     dSPoints = getDYPosPoints(index,globaldata,hashtable)
     # print(index,initialConditionValue)

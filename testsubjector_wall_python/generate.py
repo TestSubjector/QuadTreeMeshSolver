@@ -41,35 +41,37 @@ def main():
     
     # print("Wall Points")
 
-    for index, item in enumerate(hashtable[1:]):
-        if(getFlag(index,globaldata)==0):
-            printWallConditionValue(index,globaldata,hashtable)
-            printWallConditionValue(index,globaldata,hashtable)
-            printWallConditionValue(index,globaldata,hashtable)
+    # for index, item in enumerate(hashtable[1:]):
+    #     if(getFlag(index,globaldata)==0):
+    #         printWallConditionValue(index,globaldata,hashtable)
+    #         printWallConditionValue(index,globaldata,hashtable)
+    #         printWallConditionValue(index,globaldata,hashtable)
             
     # print("****************************************")
-    for index, item in enumerate(hashtable[1:]):
-        if(getFlag(index,globaldata)==1):
-            conditionValueFixForYPos(index,globaldata,hashtable,1)
-    for index, item in enumerate(hashtable[1:]):
-        if(getFlag(index,globaldata)==1):
-            conditionValueFixForYNeg(index,globaldata,hashtable,1)
-    for index, item in enumerate(hashtable[1:]):
-        if(getFlag(index,globaldata)==1):
-            conditionValueFixForXPos(index,globaldata,hashtable,1)
-    for index, item in enumerate(hashtable[1:]):
-        if(getFlag(index,globaldata)==1):
-            conditionValueFixForXNeg(index,globaldata,hashtable,1)
-    print("****************************************")
-    print("Rechecking after XPos and XNeg")
-    print("****************************************")
-    for index, item in enumerate(hashtable[1:]):
-        if(getFlag(index,globaldata)==1):
-            conditionValueFixForYPos(index,globaldata,hashtable,1)
-    for index, item in enumerate(hashtable[1:]):
-        if(getFlag(index,globaldata)==1):
-            conditionValueFixForYNeg(index,globaldata,hashtable,1)
-    print("****************************************")
+    # for index, item in enumerate(hashtable[1:]):
+    #     if(getFlag(index,globaldata)==1):
+    #         conditionValueFixForYPos(index,globaldata,hashtable,1)
+    # for index, item in enumerate(hashtable[1:]):
+    #     if(getFlag(index,globaldata)==1):
+    #         conditionValueFixForYNeg(index,globaldata,hashtable,1)
+    # for index, item in enumerate(hashtable[1:]):
+    #     if(getFlag(index,globaldata)==1):
+    #         conditionValueFixForXPos(index,globaldata,hashtable,1)
+    # for index, item in enumerate(hashtable[1:]):
+    #     if(getFlag(index,globaldata)==1):
+    #         conditionValueFixForXNeg(index,globaldata,hashtable,1)
+    # print("****************************************")
+    # print("Rechecking after XPos and XNeg")
+    # print("****************************************")
+    # for index, item in enumerate(hashtable[1:]):
+    #     if(getFlag(index,globaldata)==1):
+    #         conditionValueFixForYPos(index,globaldata,hashtable,1)
+    # for index, item in enumerate(hashtable[1:]):
+    #     if(getFlag(index,globaldata)==1):
+    #         conditionValueFixForYNeg(index,globaldata,hashtable,1)
+    # print("****************************************")
+
+    conditionValueFixForYPos(1037,globaldata,hashtable,100)
 
     # for index, item in enumerate(hashtable[1:]):
     #     if(getFlag(index,globaldata)==0):
@@ -77,15 +79,15 @@ def main():
 
     # print("Outer Points")
 
-    for index, item in enumerate(hashtable[1:]):
-        if(getFlag(index,globaldata)==2):
-            printOuterConditionValue(index,globaldata,hashtable)
-            printOuterConditionValue(index,globaldata,hashtable)
-            printOuterConditionValue(index,globaldata,hashtable)
+    # for index, item in enumerate(hashtable[1:]):
+    #     if(getFlag(index,globaldata)==2):
+    #         printOuterConditionValue(index,globaldata,hashtable)
+    #         printOuterConditionValue(index,globaldata,hashtable)
+    #         printOuterConditionValue(index,globaldata,hashtable)
 
-    for index, item in enumerate(hashtable[1:]):
-        if(getFlag(index,globaldata)==2):
-            printOuter(index,globaldata,hashtable)
+    # for index, item in enumerate(hashtable[1:]):
+    #     if(getFlag(index,globaldata)==2):
+    #         printOuter(index,globaldata,hashtable)
 
     # print("****************************************")
 

@@ -56,25 +56,25 @@ void main_tree(int initial_coord_length, coords_t *coords_list, coords_t *adapte
     }
     height_of_tree = maxDepth(tree->root);
 
-    quadtree_valleywalk(tree->root, descent_valley, ascent);
+    // quadtree_valleywalk(tree->root, descent_valley, ascent);
 
-    free(leaf_array);
-    leaf_array = malloc(sizeof(quadtree_node_t) * MAX);
-    leaf_iter = 0;
-    quadtree_leafnodes(tree->root, leaf_array);
-    for (i = 0; i < leaf_iter; i++)
-    {
-        find_neighbours(tree, common_ancestor(tree->root, &leaf_array[i]), leaf_array);
-        if (i == 400)
-        {
-            leaf_iter -= 400;
-            for (int j = 0; j < leaf_iter; j++)
-            {
-                leaf_array[j] = leaf_array[j + 400];
-            }
-            i -= 400;
-        }
-    }
+    // free(leaf_array);
+    // leaf_array = malloc(sizeof(quadtree_node_t) * MAX);
+    // leaf_iter = 0;
+    // quadtree_leafnodes(tree->root, leaf_array);
+    // for (i = 0; i < leaf_iter; i++)
+    // {
+    //     find_neighbours(tree, common_ancestor(tree->root, &leaf_array[i]), leaf_array);
+    //     if (i == 400)
+    //     {
+    //         leaf_iter -= 400;
+    //         for (int j = 0; j < leaf_iter; j++)
+    //         {
+    //             leaf_array[j] = leaf_array[j + 400];
+    //         }
+    //         i -= 400;
+    //     }
+    // }
 
     // quadtree_refinementwalk(tree->root, descent_refinement, ascent);
     // quadtree_refinementwalk(tree->root, descent_refinement, ascent);
