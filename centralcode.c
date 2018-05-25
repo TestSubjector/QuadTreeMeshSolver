@@ -87,44 +87,133 @@ void main_tree(int initial_coord_length, coords_t *coords_list, coords_t *adapte
     neighbouroutput(1, "neighbour.txt", 1000, 1000);
 
     // Adaptation section
-    /*
+    int first_adaptation_line = 26;
+    int second_adaptation_line = adapted_line_count;
+    int third_adaptation_line = 0;
     if(adapted_line_count != 0)
     {
-        // Reset dat and flag variables for redoing of operations
-        free(leaf_array);
-        leaf_array = malloc(sizeof(quadtree_node_t) * MAX);
-        newoutputfile = 1;  // Clean file and write new generated files
-        newneighboursetfile = 1; // Write the fresh-er version of neighbours
-        leaf_iter = 0;
-
-        quadtree_node_t *refined_node = NULL;
-        for(j= 0; j < adapted_line_count; j++)
+        // Reset data and flag variables for redoing of operations
+        if(first_adaptation_line !=0)
         {
-            refined_node = quadtree_search(adapted_list[j].x, adapted_list[j].y);
-            // printf("\n %lf, %lf", adapted_list[j].x, adapted_list[j].y);
-            if(refined_node == NULL)
+            free(leaf_array);
+            leaf_array = malloc(sizeof(quadtree_node_t) * MAX);
+            newoutputfile = 1;  // Clean file and write new generated files
+            newneighboursetfile = 1; // Write the fresh-er version of neighbours
+            serial_number = 1;
+            leaf_iter = 0;
+
+            quadtree_node_t *refined_node = NULL;
+            for(j= 0; j < first_adaptation_line; j++)
             {
-                printf("\n Warning - Point to be adapted not found");
-                continue;
+                refined_node = quadtree_search(adapted_list[j].x, adapted_list[j].y);
+                // printf("\n %lf, %lf", adapted_list[j].x, adapted_list[j].y);
+                if(refined_node == NULL)
+                {
+                    printf("\n Warning - Point to be adapted not found");
+                    // printf("\n %.17g, %.17g", adapted_list[j].x, adapted_list[j].y);
+                    continue;
+                }
+                else
+                {
+                    split_node_newpoints(tree->root, refined_node);
+                }
             }
-            else
+            quadtree_leafnodes(tree->root, leaf_array);
+
+            for (i = 0; i < leaf_iter; i++)
             {
-                split_node_newpoints(tree->root, refined_node);
+                find_neighbours(tree, common_ancestor(tree->root, &leaf_array[i]), leaf_array);
+                if (i == 400)
+                {
+                    leaf_iter -= 400;
+                    for (int j = 0; j < leaf_iter; j++)
+                    {
+                        leaf_array[j] = leaf_array[j + 400];
+                    }
+                    i -= 400;
+                }
             }
         }
-        quadtree_leafnodes(tree->root, leaf_array);
-
-        for (i = 0; i < leaf_iter; i++)
+        if(second_adaptation_line !=0)
         {
-            find_neighbours(tree, common_ancestor(tree->root, &leaf_array[i]), leaf_array);
-            if (i == 400)
+            free(leaf_array);
+            leaf_array = malloc(sizeof(quadtree_node_t) * MAX);
+            newoutputfile = 1;  // Clean file and write new generated files
+            newneighboursetfile = 1; // Write the fresh-er version of neighbours
+            serial_number = 1;
+            leaf_iter = 0;
+    
+            quadtree_node_t *refined_node = NULL;
+            for(j= first_adaptation_line; j < second_adaptation_line; j++)
             {
-                leaf_iter -= 400;
-                for (int j = 0; j < leaf_iter; j++)
+                refined_node = quadtree_search(adapted_list[j].x, adapted_list[j].y);
+                // printf("\n %lf, %lf", adapted_list[j].x, adapted_list[j].y);
+                if(refined_node == NULL)
                 {
-                    leaf_array[j] = leaf_array[j + 400];
+                    printf("\n Warning - Point to be adapted not found");
+                    // printf("\n %.17g, %.17g", adapted_list[j].x, adapted_list[j].y);
+                    continue;
                 }
-                i -= 400;
+                else
+                {
+                    split_node_newpoints(tree->root, refined_node);
+                }
+            }
+            quadtree_leafnodes(tree->root, leaf_array);
+    
+            for (i = 0; i < leaf_iter; i++)
+            {
+                find_neighbours(tree, common_ancestor(tree->root, &leaf_array[i]), leaf_array);
+                if (i == 400)
+                {
+                    leaf_iter -= 400;
+                    for (int j = 0; j < leaf_iter; j++)
+                    {
+                        leaf_array[j] = leaf_array[j + 400];
+                    }
+                    i -= 400;
+                }
+            }
+        }
+        if(third_adaptation_line !=0)
+        {
+            free(leaf_array);
+            leaf_array = malloc(sizeof(quadtree_node_t) * MAX);
+            newoutputfile = 1;  // Clean file and write new generated files
+            newneighboursetfile = 1; // Write the fresh-er version of neighbours
+            serial_number = 1;
+            leaf_iter = 0;
+    
+            quadtree_node_t *refined_node = NULL;
+            for(j= second_adaptation_line; j < third_adaptation_line; j++)
+            {
+                refined_node = quadtree_search(adapted_list[j].x, adapted_list[j].y);
+                // printf("\n %lf, %lf", adapted_list[j].x, adapted_list[j].y);
+                if(refined_node == NULL)
+                {
+                    printf("\n Warning - Point to be adapted not found");
+                    // printf("\n %.17g, %.17g", adapted_list[j].x, adapted_list[j].y);
+                    continue;
+                }
+                else
+                {
+                    split_node_newpoints(tree->root, refined_node);
+                }
+            }
+            quadtree_leafnodes(tree->root, leaf_array);
+    
+            for (i = 0; i < leaf_iter; i++)
+            {
+                find_neighbours(tree, common_ancestor(tree->root, &leaf_array[i]), leaf_array);
+                if (i == 400)
+                {
+                    leaf_iter -= 400;
+                    for (int j = 0; j < leaf_iter; j++)
+                    {
+                        leaf_array[j] = leaf_array[j + 400];
+                    }
+                    i -= 400;
+                }
             }
         }
         quadtree_walk(tree->root, descent, ascent);
@@ -132,7 +221,7 @@ void main_tree(int initial_coord_length, coords_t *coords_list, coords_t *adapte
         // To get number of neighbours of last point
         neighbouroutput(1, "neighbour.txt", 1000, 1000);
     }
-    */
+    
     free(leaf_array);
     quadtree_free(tree);
 }

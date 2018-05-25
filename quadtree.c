@@ -2,6 +2,8 @@
 #include "bool.h"
 #include <stdio.h>
 #include <string.h>
+#include <float.h>
+#include <math.h>
 
 int newoutputfile = 1;
 int newneighboursetfile = 1;
@@ -105,10 +107,14 @@ static quadtree_point_t *find_(quadtree_node_t *node, double x, double y)
   }
   else if (quadtree_node_isempty(node))
   {
-    if ((node->bounds->nw->x + node->bounds->se->x) / 2 == x &&
-        (node->bounds->nw->y + node->bounds->se->y) / 2)
+    if (fabs((node->bounds->nw->x + node->bounds->se->x) / 2 - x) < FLT_EPSILON &&
+        fabs((node->bounds->nw->y + node->bounds->se->y) / 2 - y) < FLT_EPSILON)
     {
       return node;
+    }
+    else
+    {
+      // printf("\n %.17g, %.17g", (node->bounds->nw->x + node->bounds->se->x) / 2, (node->bounds->nw->y + node->bounds->se->y)/2);
     }
   }
   else if (quadtree_node_ispointer(node))
