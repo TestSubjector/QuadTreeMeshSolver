@@ -36,6 +36,18 @@ def main():
     hashtable,globaldata = detectOuter(hashtable, globaldata)
 
     for index, item in enumerate(hashtable[1:]):
+        if(getFlag(index,globaldata)==0):
+            printWallConditionValue(index,globaldata,hashtable)
+            printWallConditionValue(index,globaldata,hashtable)
+            printWallConditionValue(index,globaldata,hashtable)
+
+    for index, item in enumerate(hashtable[1:]):
+        if(getFlag(index,globaldata)==2):
+            printOuterConditionValue(index,globaldata,hashtable)
+            printOuterConditionValue(index,globaldata,hashtable)
+            printOuterConditionValue(index,globaldata,hashtable)
+
+    for index, item in enumerate(hashtable[1:]):
         if(getFlag(index,globaldata)==1):
             conditionValueFixForYPos(index,globaldata,hashtable,15)
     for index, item in enumerate(hashtable[1:]):
