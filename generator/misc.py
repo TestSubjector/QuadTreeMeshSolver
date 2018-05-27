@@ -5,7 +5,7 @@ def cleanNeighbours(globaldata): # Verified
     print("Beginning Duplicate Neighbour Detection")
     for i in range(len(globaldata)):
         printProgressBar(i, len(globaldata) - 1, prefix = 'Progress:', suffix = 'Complete', length = 50)
-        noneighours = int(globaldata[i][7]) # Nuber of neighbours
+        noneighours = int(globaldata[i][11]) # Number of neighbours
         cordneighbours = globaldata[i][-noneighours:]
 
         # TODO - Ask, why get the same thing as above?
@@ -13,7 +13,7 @@ def cleanNeighbours(globaldata): # Verified
         
         cordneighbours = dict.fromkeys(cordneighbours).keys()
         noneighours = len(cordneighbours)
-        globaldata[i] = globaldata[i][:7] + [noneighours] + list(cordneighbours)
+        globaldata[i] = globaldata[i][:11] + [noneighours] + list(cordneighbours)
         # with open("duplication_removal.txt", "w") as text_file:
         #     for item1 in globaldata:
         #         text_file.writelines(["%s " % item for item in item1])
@@ -31,10 +31,10 @@ def getIndexOf(pointxy,hashtable):
 def getNeighbours(indexval,list):
     val = []
     pointdata = list[indexval]
-    numbneigh = int(pointdata[7])
+    numbneigh = int(pointdata[11])
     try:
         for i in range(numbneigh):
-            val = val + [str(pointdata[i+8])]
+            val = val + [str(pointdata[i+12])]
     except Exception:
         pass
     return val
@@ -156,6 +156,10 @@ def getRightPoint(cord,globaldata,hashtable):
     else:
         return hashtable.index(rightpt)
 
+def setFlagValue(index,flagindex,value,globaldata):
+    globaldata[index][flagindex] = value
+    return globaldata
+
 def takeFirst(elem):
     return elem[0]
 
@@ -167,12 +171,12 @@ def euclideanDistance(a,b):
     return (float(math.sqrt(((bx-ax)**2)+((by-ay)**2))),a)
 
 def appendNeighbours(neighbours,index,globaldata):
-    nbhcount = int(globaldata[index][7])
+    nbhcount = int(globaldata[index][11])
     nbhs = globaldata[index][-nbhcount:]
     nbhs = nbhs + neighbours
     nbhcount = nbhcount + len(neighbours)
-    globaldata[index][7] = nbhcount
-    globaldata[index] = globaldata[index][:8] + nbhs
+    globaldata[index][11] = nbhcount
+    globaldata[index] = globaldata[index][:12] + nbhs
     return "Done"
 
 def cleanWallPoints(neighbours,wallpoint):

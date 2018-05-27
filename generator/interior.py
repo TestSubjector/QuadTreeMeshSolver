@@ -327,3 +327,24 @@ def printPosDeltaConditions(index,globaldata,hashtable,threshold):
     dSPointYNeg = getDYNegPoints(index,globaldata,hashtable)
     if(initialConditionValueXNeg > threshold or initialConditionValueXPos > threshold or initialConditionValueYPos > threshold or initialConditionValueYNeg > threshold):
         print(index,len(dSPointXPos),initialConditionValueXPos,len(dSPointXNeg),initialConditionValueXNeg,len(dSPointYPos),initialConditionValueYPos,len(dSPointYNeg),initialConditionValueYNeg)
+
+def setPosDeltaFlags(index,globaldata,hashtable,threshold):
+    initialConditionValueXPos = getInteriorConditionValueofXPos(index,globaldata,hashtable)
+    dSPointXPos = getDXPosPoints(index,globaldata,hashtable)
+    initialConditionValueXNeg = getInteriorConditionValueofXNeg(index,globaldata,hashtable)
+    dSPointXNeg = getDXNegPoints(index,globaldata,hashtable)
+    initialConditionValueYPos = getInteriorConditionValueofYPos(index,globaldata,hashtable)
+    dSPointYPos = getDYPosPoints(index,globaldata,hashtable)
+    initialConditionValueYNeg = getInteriorConditionValueofYNeg(index,globaldata,hashtable)
+    dSPointYNeg = getDYNegPoints(index,globaldata,hashtable)
+    if(initialConditionValueXPos > threshold):
+        globaldata = setFlagValue(index,7,1,globaldata)
+    if(initialConditionValueXNeg > threshold):
+        globaldata = setFlagValue(index,8,1,globaldata)
+    if(initialConditionValueYPos > threshold):
+        globaldata = setFlagValue(index,9,1,globaldata)    
+    if(initialConditionValueYNeg > threshold):
+        globaldata = setFlagValue(index,10,1,globaldata)
+    return globaldata
+        
+        
