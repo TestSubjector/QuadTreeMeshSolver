@@ -34,7 +34,7 @@ def main():
     
     print("Processed Pre-Processor File")
 
-    file2 = open(args.adapt or "sensor_flag.dat")
+    file2 = open(args.adapt or "sensor.dat")
     data2 = file2.read()
     data2 = re.sub(' +', ' ',data2)
     data2 = data2.split("\n")
