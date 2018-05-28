@@ -54,11 +54,11 @@ def main():
     print("Adaptation File Data Processed")
     print("Writing adapted.txt")
     
-    with open("adapted.txt", "w") as text_file:
+    with open("adapted.txt", "a+") as text_file:
         for item1 in adaptdata:
             text_file.writelines(["%s " % item for item in item1])
             text_file.writelines("\n")
-    
+        text_file.writelines("1000 1000\n")
     print("Done")
 
 if __name__ == "__main__":
