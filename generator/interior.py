@@ -330,13 +330,11 @@ def printPosDeltaConditions(index,globaldata,hashtable,threshold):
 
 def setPosDeltaFlags(index,globaldata,hashtable,threshold):
     initialConditionValueXPos = getInteriorConditionValueofXPos(index,globaldata,hashtable)
-    dSPointXPos = getDXPosPoints(index,globaldata,hashtable)
     initialConditionValueXNeg = getInteriorConditionValueofXNeg(index,globaldata,hashtable)
-    dSPointXNeg = getDXNegPoints(index,globaldata,hashtable)
     initialConditionValueYPos = getInteriorConditionValueofYPos(index,globaldata,hashtable)
-    dSPointYPos = getDYPosPoints(index,globaldata,hashtable)
     initialConditionValueYNeg = getInteriorConditionValueofYNeg(index,globaldata,hashtable)
-    dSPointYNeg = getDYNegPoints(index,globaldata,hashtable)
+    if(initialConditionValueXPos > 80 or initialConditionValueXNeg > 80 or initialConditionValueYPos > 80 or initialConditionValueYNeg > 80):
+        print(index + 1,initialConditionValueXPos, initialConditionValueXNeg, initialConditionValueYPos, initialConditionValueYNeg)
     if(initialConditionValueXPos > threshold):
         globaldata = setFlagValue(index,7,1,globaldata)
     if(initialConditionValueXNeg > threshold):

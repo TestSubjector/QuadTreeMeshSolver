@@ -49,7 +49,7 @@ def main():
 
     for index, item in enumerate(hashtable[1:]):
         if(getFlag(index,globaldata)==1):
-            globaldata = setPosDeltaFlags(index,globaldata,hashtable,10000) #Threshold for Flag 3 - 6
+            globaldata = setPosDeltaFlags(index,globaldata,hashtable,100) #Threshold for Flag 3 - 6
 
     for index, item in enumerate(hashtable[1:]):
         if(getFlag(index,globaldata)==1):
@@ -64,20 +64,20 @@ def main():
         if(getFlag(index,globaldata)==1):
             conditionValueFixForXNeg(index,globaldata,hashtable,15)
 
-    print("****************************************")
-    print("Rechecking after XPos and XNeg")
-    print("****************************************")
+    # print("****************************************")
+    # print("Rechecking after XPos and XNeg")
+    # print("****************************************")
     
-    for index, item in enumerate(hashtable[1:]):
-        if(getFlag(index,globaldata)==1):
-            conditionValueFixForYPos(index,globaldata,hashtable,15)
-    for index, item in enumerate(hashtable[1:]):
-        if(getFlag(index,globaldata)==1):
-            conditionValueFixForYNeg(index,globaldata,hashtable,15)
-    for index, item in enumerate(hashtable[1:]):
-        if(getFlag(index,globaldata)==1):
-            printPosDeltaConditions(index,globaldata,hashtable,15)
-    print("****************************************")
+    # for index, item in enumerate(hashtable[1:]):
+    #     if(getFlag(index,globaldata)==1):
+    #         conditionValueFixForYPos(index,globaldata,hashtable,15)
+    # for index, item in enumerate(hashtable[1:]):
+    #     if(getFlag(index,globaldata)==1):
+    #         conditionValueFixForYNeg(index,globaldata,hashtable,15)
+    # for index, item in enumerate(hashtable[1:]):
+    #     if(getFlag(index,globaldata)==1):
+    #         printPosDeltaConditions(index,globaldata,hashtable,15)
+    # print("****************************************")
 
     globaldata = cleanNeighbours(globaldata)
     globaldata = generateReplacement(hashtable,globaldata)
