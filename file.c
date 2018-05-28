@@ -62,7 +62,7 @@ int adaptation_fileinput(coords_t *adapted_list, char *adapted_filename)
             printf("\n ERROR : Adapted file does not have correct coordinate format");
             exit(1);
         }
-        printf("\n %lf, %lf", adapted_list[local_line_count].x, adapted_list[local_line_count].y);
+        // printf("\n %lf, %lf", adapted_list[local_line_count].x, adapted_list[local_line_count].y);
         local_line_count++;
     }
 
