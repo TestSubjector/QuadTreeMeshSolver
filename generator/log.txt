@@ -1,0 +1,16 @@
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 449
+It's condition value for dx pos is 1.34195636431e+16
+The least we can reduce it to is 124.136225262
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 449
+It's condition value for dx pos is 124.136225262
+The least we can reduce it to is 37.2544829345
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 449
+It's condition value for dx pos is 37.2544829345
+The least we can reduce it to is 24.9495577059
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 449
+It's condition value for dx pos is 24.9495577059
+The least we can reduce it to is 28.3528841601
+We don't want to worsen the condition value so we are not gonna do anything else
