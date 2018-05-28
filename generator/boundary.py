@@ -1,4 +1,4 @@
-from progress import *
+# from progress import *
 from misc import *
 
 def detectOuter(hashtable,globaldata):
@@ -14,7 +14,7 @@ def detectOuter(hashtable,globaldata):
     count = 0
     while True:
         count += 1
-        printProgressBar(currentstatus, 5, prefix = 'Progress:', suffix = 'Complete', length = 50)
+        # printProgressBar(currentstatus, 5, prefix = 'Progress:', suffix = 'Complete', length = 50)
         currentneighbours = getNeighbours(hashtable.index(currentcord) - 1,globaldata)
         # print(currentcord,currentneighbours)
         # if(currentcord=='9.375,-1.875'):
@@ -90,7 +90,7 @@ def detectOuter(hashtable,globaldata):
                 None
             if(currentcord == biggestxy):
                 globaldata = updateRight(hashtable.index(biggestxy) - 1,globaldata,previouscord)
-                printProgressBar(5, 5, prefix = 'Progress:', suffix = 'Complete', length = 50)
+                # printProgressBar(5, 5, prefix = 'Progress:', suffix = 'Complete', length = 50)
                 break
             startindex = hashtable.index(currentcord) - 1
         globaldata = updateRight(startindex,globaldata,previouscord)

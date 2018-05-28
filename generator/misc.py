@@ -1,15 +1,14 @@
-from progress import *
+# from progress import *
 import math
 
 def cleanNeighbours(globaldata): # Verified
     print("Beginning Duplicate Neighbour Detection")
     for i in range(len(globaldata)):
-        printProgressBar(i, len(globaldata) - 1, prefix = 'Progress:', suffix = 'Complete', length = 50)
+        # printProgressBar(i, len(globaldata) - 1, prefix = 'Progress:', suffix = 'Complete', length = 50)
         noneighours = int(globaldata[i][11]) # Number of neighbours
         cordneighbours = globaldata[i][-noneighours:]
-
         # TODO - Ask, why get the same thing as above?
-        cordneighbours = [str(float(i.split(",")[0])) + "," + str(float(i.split(",")[1])) for i in cordneighbours]
+        cordneighbours = [str(float(j.split(",")[0])) + "," + str(float(j.split(",")[1])) for j in cordneighbours]
         
         cordneighbours = dict.fromkeys(cordneighbours).keys()
         noneighours = len(cordneighbours)
@@ -185,7 +184,7 @@ def cleanWallPoints(neighbours,wallpoint):
 def generateReplacement(hashtable,globaldata):
     print("Beginning Replacement")
     for index2,item in enumerate(hashtable):
-        printProgressBar(index2, len(hashtable) - 1, prefix = 'Progress:', suffix = 'Complete', length = 50)
+        # printProgressBar(index2, len(hashtable) - 1, prefix = 'Progress:', suffix = 'Complete', length = 50)
         for index, individualitem in enumerate(globaldata):
             globaldata[index] = [hashtable.index(x) if x==str(item) else x for x in individualitem]
     print("Replacement Done")

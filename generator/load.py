@@ -1,4 +1,4 @@
-from progress import *
+# from progress import *
 
 def loadWall(geometrydata):
     print("Beginning Wall Point Processing")
@@ -8,7 +8,7 @@ def loadWall(geometrydata):
     index=1
     globaldata = []
     for i in range(len(geometrydata)):
-        printProgressBar(i, len(geometrydata) - 1, prefix = 'Progress:', suffix = 'Complete', length = 50)
+        # printProgressBar(i, len(geometrydata) - 1, prefix = 'Progress:', suffix = 'Complete', length = 50)
         xcord = float(geometrydata[i].split()[0])
         ycord = float(geometrydata[i].split()[1])
         # print(len(geometrydata[i].split(" ")))
@@ -69,7 +69,7 @@ def loadWall(geometrydata):
 def loadInterior(data,hashtable,globaldata,index):
     print("Beginning Interior Point and Wall Point Neighbour Processing")
     for i in range(len(data)):
-        printProgressBar(i, len(data) - 1, prefix = 'Progress:', suffix = 'Complete', length = 50)
+        # printProgressBar(i, len(data) - 1, prefix = 'Progress:', suffix = 'Complete', length = 50)
         cleandata = str(data[i]).split(" ")
         cord = str(float(cleandata[1].split(",")[0])) + "," + str(float(cleandata[1].split(",")[1]))
         try:

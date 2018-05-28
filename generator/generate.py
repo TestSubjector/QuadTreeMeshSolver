@@ -5,7 +5,7 @@ from interior import *
 from balance import *
 from wall import *
 from outer import *
-import progress
+# import progress
 
 def main():
     
