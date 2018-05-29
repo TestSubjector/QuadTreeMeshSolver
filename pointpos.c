@@ -1,4 +1,7 @@
 #include "quadtree.h"
+#include <float.h>
+#include <math.h>
+
 #define min(x, y) ({                \
     typeof(x) _min1 = (x);          \
     typeof(y) _min2 = (y);          \
@@ -65,9 +68,16 @@ int pnpoly(int nvert, coords_t *coords_list, double testx, double testy)
         if (((coords_list[i].y > testy) != (coords_list[j].y > testy)) &&
             (testx < (coords_list[j].x - coords_list[i].x) * (testy - coords_list[i].y) / (coords_list[j].y - coords_list[i].y) + coords_list[i].x))
             c = !c;
+        else if(fabs(((coords_list[j].y - coords_list[i].y) * testx - (coords_list[j].x - coords_list[i].x)* testy + 
+            (coords_list[j].x * coords_list[i].y - coords_list[j].y * coords_list[i].x)) / 
+             sqrt(pow(coords_list[j].y -coords_list[i].y, 2) + pow(coords_list[j].x - coords_list[i].x, 2))) < FLT_EPSILON)
+        {
+            printf("\n Removing cursed points");
+            c = !c;
+        }
     }
 
-    // For last polygon
+
     if (second_poly != 0 && c == 1)
     {
         for (j = nvert2 - 1; i < nvert2; j = i++)
