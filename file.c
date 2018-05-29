@@ -212,7 +212,7 @@ void neighbourset(int append, char *filename, double xcord, double ycord)
         }
         else
         {
-            // printf("\n \n Non - Aero blanked \n\n");
+            // printf("\n Non-Aero blanked");
         }
     }
     fclose(fp);

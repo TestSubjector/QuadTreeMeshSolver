@@ -170,8 +170,14 @@ int doIntersect(coords_t p1, coords_t q1, coords_t p2, coords_t q2)
 
 int notaero_blank(int nvert, coords_t *coords_list, coords_t main_point, coords_t neighbour_point)
 {
-    int i, j, k;
+    int i, j, k, l;
     // printf(" \n It's running atleast");
+    int checker = 0;
+    // if(fabs(main_point.x - 0.999298096) < 0.00001 && fabs(main_point.y + 0.000457763672) < 0.00001  && neighbour_point.x == 0.9991382 && neighbour_point.y == 0.00012220342)
+    // {
+    //     checker = 1;
+    //     printf("\n Found Point Problem");
+    // }
 
     // Point on boundary, therefore not blankable point
     for (i = 0; i < nvert - 1; i++)
@@ -180,7 +186,11 @@ int notaero_blank(int nvert, coords_t *coords_list, coords_t main_point, coords_
              neighbour_point.x == coords_list[i + 1].x && neighbour_point.y == coords_list[i + 1].y ||
              main_point.x == coords_list[i + 1].x && main_point.y == coords_list[i + 1].y ||
              neighbour_point.x == coords_list[i].x && neighbour_point.y == coords_list[i].y))
-        {
+        {   
+            // if(checker == 1)
+            // {
+            //     printf("\n In this test case");
+            // }
             for (j = 0; j < nvert; j++)
             {
                 if (main_point.x == coords_list[j].x && main_point.y == coords_list[j].y)
@@ -204,12 +214,38 @@ int notaero_blank(int nvert, coords_t *coords_list, coords_t main_point, coords_
                 }
                 else
                 {
+                    
                     return pnpoly(line_count, coords_list, (main_coord.x + neighbour_point.x) / 2, (main_coord.y + neighbour_point.y) / 2);
                 }
             }
             else
             {
-                // TODO - Add condition for concave polygons
+                // // if(checker == 1)
+                // // {
+                // //     printf("\n Reached here 1");
+                // //     printf("\n %d is j, %d is k", j,k);
+                // // }
+                // for(l=0 ;l < 0; l++)
+                // {
+                //     if(j== nvert)
+                //     {
+                //         neighbour_point.x += main_point.x;
+                //         neighbour_point.x /= 2;
+                //     }
+                //     else
+                //     {
+                //         main_point.x += neighbour_point.x;
+                //         main_point.x /= 2;
+                //     }
+                // }
+                // if(!pnpoly(line_count, coords_list, (main_coord.x + neighbour_point.x) / 2, (main_coord.y + neighbour_point.y) / 2))
+                // {
+                //     // if(checker == 1)
+                //     // {
+                //     //     printf("\n Reached here 2");
+                //     // }
+                //     return 0;
+                // }
                 return 1;
             }
         }
