@@ -2,6 +2,9 @@ from balance import *
 from misc import *
 from logger import writeLog
 import numpy as np
+import shapely.geometry
+from shapely import wkt
+from shapely.ops import linemerge, unary_union, polygonize
 
 def deltaX(xcord,orgxcord):
     return float(xcord - orgxcord)
@@ -123,7 +126,7 @@ def getDYNegPoints(index,globaldata,hashtable):
     return mypoints
 
 
-def conditionValueFixForXPos(index,globaldata,hashtable,threshold):
+def conditionValueFixForXPos(index,globaldata,hashtable,threshold,wallpoints):
     initialConditionValue = getInteriorConditionValueofXPos(index,globaldata,hashtable)
     dSPoints = getDXPosPoints(index,globaldata,hashtable)
     # writeLog([index,initialConditionValue)
@@ -147,7 +150,11 @@ def conditionValueFixForXPos(index,globaldata,hashtable,threshold):
                 tempnbh = []
                 tempnbh = dSPoints
                 tempnbh = tempnbh + [newitm]
-                conditionVal = conditionValueForSetOfPoints(index,globaldata,tempnbh)
+                tempnbh2 = []
+                for cordpt in tempnbh:
+                    if(not isNonAeroDynamic(index,cordpt,globaldata,wallpoints)):
+                        tempnbh2.append(cordpt)
+                conditionVal = conditionValueForSetOfPoints(index,globaldata,tempnbh2)
                 nothresList.append([newitm,conditionVal])
                 if(conditionVal < threshold):
                     finalList.append([newitm,conditionVal])
@@ -161,7 +168,7 @@ def conditionValueFixForXPos(index,globaldata,hashtable,threshold):
                     appendNeighbours([pointToBeAdded],index,globaldata)
                     initialConditionValue = getInteriorConditionValueofXPos(index,globaldata,hashtable)
                     writeLog(["We will be running again to reduce further"])
-                    conditionValueFixForXPos(index,globaldata,hashtable,threshold)
+                    conditionValueFixForXPos(index,globaldata,hashtable,threshold,wallpoints)
                 else:
                     writeLog(["We don't want to worsen the condition value so we are not gonna do anything else"])
             else:
@@ -171,7 +178,7 @@ def conditionValueFixForXPos(index,globaldata,hashtable,threshold):
                 initialConditionValue = getInteriorConditionValueofXPos(index,globaldata,hashtable)
                 # writeLog([index,initialConditionValue)
 
-def conditionValueFixForXNeg(index,globaldata,hashtable,threshold):
+def conditionValueFixForXNeg(index,globaldata,hashtable,threshold,wallpoints):
     initialConditionValue = getInteriorConditionValueofXNeg(index,globaldata,hashtable)
     dSPoints = getDXNegPoints(index,globaldata,hashtable)
     # writeLog([index,initialConditionValue)
@@ -195,7 +202,11 @@ def conditionValueFixForXNeg(index,globaldata,hashtable,threshold):
                 tempnbh = []
                 tempnbh = dSPoints
                 tempnbh = tempnbh + [newitm]
-                conditionVal = conditionValueForSetOfPoints(index,globaldata,tempnbh)
+                tempnbh2 = []
+                for cordpt in tempnbh:
+                    if(not isNonAeroDynamic(index,cordpt,globaldata,wallpoints)):
+                        tempnbh2.append(cordpt)
+                conditionVal = conditionValueForSetOfPoints(index,globaldata,tempnbh2)
                 nothresList.append([newitm,conditionVal])
                 if(conditionVal < threshold):
                     finalList.append([newitm,conditionVal])
@@ -209,7 +220,7 @@ def conditionValueFixForXNeg(index,globaldata,hashtable,threshold):
                     appendNeighbours([pointToBeAdded],index,globaldata)
                     initialConditionValue = getInteriorConditionValueofXNeg(index,globaldata,hashtable)
                     writeLog(["We will be running again to reduce further"])
-                    conditionValueFixForXNeg(index,globaldata,hashtable,threshold)
+                    conditionValueFixForXNeg(index,globaldata,hashtable,threshold,wallpoints)
                 else:
                     writeLog(["We don't want to worsen the condition value so we are not gonna do anything else"])
             else:
@@ -219,7 +230,7 @@ def conditionValueFixForXNeg(index,globaldata,hashtable,threshold):
                 initialConditionValue = getInteriorConditionValueofXNeg(index,globaldata,hashtable)
                 # writeLog([index,initialConditionValue)
     
-def conditionValueFixForYPos(index,globaldata,hashtable,threshold):
+def conditionValueFixForYPos(index,globaldata,hashtable,threshold,wallpoints):
     initialConditionValue = getInteriorConditionValueofYPos(index,globaldata,hashtable)
     # writeLog([initialConditionValue)
     dSPoints = getDYPosPoints(index,globaldata,hashtable)
@@ -244,7 +255,11 @@ def conditionValueFixForYPos(index,globaldata,hashtable,threshold):
                 tempnbh = []
                 tempnbh = dSPoints
                 tempnbh = tempnbh + [newitm]
-                conditionVal = conditionValueForSetOfPoints(index,globaldata,tempnbh)
+                tempnbh2 = []
+                for cordpt in tempnbh:
+                    if(not isNonAeroDynamic(index,cordpt,globaldata,wallpoints)):
+                        tempnbh2.append(cordpt)
+                conditionVal = conditionValueForSetOfPoints(index,globaldata,tempnbh2)
                 nothresList.append([newitm,conditionVal])
                 if(conditionVal < threshold):
                     finalList.append([newitm,conditionVal])
@@ -258,7 +273,7 @@ def conditionValueFixForYPos(index,globaldata,hashtable,threshold):
                     appendNeighbours([pointToBeAdded],index,globaldata)
                     initialConditionValue = getInteriorConditionValueofYPos(index,globaldata,hashtable)
                     writeLog(["We will be running again to reduce further"])
-                    conditionValueFixForYPos(index,globaldata,hashtable,threshold)
+                    conditionValueFixForYPos(index,globaldata,hashtable,threshold,wallpoints)
                 else:
                     writeLog(["We don't want to worsen the condition value so we are not gonna do anything else"])
             else:
@@ -268,7 +283,7 @@ def conditionValueFixForYPos(index,globaldata,hashtable,threshold):
                 initialConditionValue = getInteriorConditionValueofYPos(index,globaldata,hashtable)
                 # writeLog([index,initialConditionValue)
 
-def conditionValueFixForYNeg(index,globaldata,hashtable,threshold):
+def conditionValueFixForYNeg(index,globaldata,hashtable,threshold,wallpoints):
     initialConditionValue = getInteriorConditionValueofYNeg(index,globaldata,hashtable)
     dSPoints = getDYNegPoints(index,globaldata,hashtable)
     # writeLog([index,initialConditionValue)
@@ -292,7 +307,11 @@ def conditionValueFixForYNeg(index,globaldata,hashtable,threshold):
                 tempnbh = []
                 tempnbh = dSPoints
                 tempnbh = tempnbh + [newitm]
-                conditionVal = conditionValueForSetOfPoints(index,globaldata,tempnbh)
+                tempnbh2 = []
+                for cordpt in tempnbh:
+                    if(not isNonAeroDynamic(index,cordpt,globaldata,wallpoints)):
+                        tempnbh2.append(cordpt)
+                conditionVal = conditionValueForSetOfPoints(index,globaldata,tempnbh2)
                 nothresList.append([newitm,conditionVal])
                 if(conditionVal < threshold):
                     finalList.append([newitm,conditionVal])
@@ -306,7 +325,7 @@ def conditionValueFixForYNeg(index,globaldata,hashtable,threshold):
                     appendNeighbours([pointToBeAdded],index,globaldata)
                     initialConditionValue = getInteriorConditionValueofYNeg(index,globaldata,hashtable)
                     writeLog(["We will be running again to reduce further"])
-                    conditionValueFixForYNeg(index,globaldata,hashtable,threshold)
+                    conditionValueFixForYNeg(index,globaldata,hashtable,threshold,wallpoints)
                 else:
                     writeLog(["We don't want to worsen the condition value so we are not gonna do anything else"])
             else:
@@ -344,5 +363,40 @@ def setPosDeltaFlags(index,globaldata,hashtable,threshold):
     if(initialConditionValueYNeg > threshold):
         globaldata = setFlagValue(index,10,1,globaldata)
     return globaldata
+
+
+def isNonAeroDynamic(index,cordpt,globaldata,wallpoints):
+    main_point = getPoint(index,globaldata)
+    main_pointx = float(main_point.split(",")[0])
+    main_pointy = float(main_point.split(",")[1])
+    cordptx = float(cordpt.split(",")[0])
+    cordpty = float(cordpt.split(",")[1])
+    line = shapely.geometry.LineString([[main_pointx,main_pointy],[cordptx,cordpty]])
+    responselist = []
+    for item in wallpoints:
+        polygonpts = []
+        for item2 in item:
+            polygonpts.append([float(item2.split(",")[0]),float(item2.split(",")[1])])
+        polygontocheck = shapely.geometry.Polygon(polygonpts)
+        merged = linemerge([polygontocheck.boundary, line])
+        borders = unary_union(merged)
+        polygons = polygonize(borders)
+        i = 0
+        for p in polygons:
+            i = i + 1
+        if(i==1):
+            responselist.append(False)
+        else:
+            responselist.append(True)
+    if True in responselist:
+        return True
+    else:
+        return False
+
+            
+            
+
+
+
         
         

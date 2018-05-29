@@ -29,8 +29,10 @@ def main():
     geometrydata = geometrydata.split("\n")
     
     print("Loaded Data")
+    wallpoints = []
 
-    hashtable,wallpoint,globaldata = loadWall(geometrydata)
+    hashtable,wallpointsdata,globaldata = loadWall(geometrydata)
+    wallpoints.append(wallpointsdata)
     hashtable,globaldata = loadInterior(data,hashtable,globaldata,len(hashtable))
     globaldata = cleanNeighbours(globaldata)
     hashtable,globaldata = detectOuter(hashtable, globaldata)
@@ -53,16 +55,16 @@ def main():
 
     for index, item in enumerate(hashtable[1:]):
         if(getFlag(index,globaldata)==1):
-            conditionValueFixForYPos(index,globaldata,hashtable,15)
+            conditionValueFixForYPos(index,globaldata,hashtable,15,wallpoints)
     for index, item in enumerate(hashtable[1:]):
         if(getFlag(index,globaldata)==1):
-            conditionValueFixForYNeg(index,globaldata,hashtable,15)
+            conditionValueFixForYNeg(index,globaldata,hashtable,15,wallpoints)
     for index, item in enumerate(hashtable[1:]):
         if(getFlag(index,globaldata)==1):
-            conditionValueFixForXPos(index,globaldata,hashtable,15)
+            conditionValueFixForXPos(index,globaldata,hashtable,15,wallpoints)
     for index, item in enumerate(hashtable[1:]):
         if(getFlag(index,globaldata)==1):
-            conditionValueFixForXNeg(index,globaldata,hashtable,15)
+            conditionValueFixForXNeg(index,globaldata,hashtable,15,wallpoints)
 
     # print("****************************************")
     # print("Rechecking after XPos and XNeg")
