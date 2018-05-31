@@ -51,7 +51,7 @@ def main():
 
     for index, item in enumerate(hashtable[1:]):
         if(getFlag(index,globaldata)==1):
-            globaldata = setPosDeltaFlags(index,globaldata,hashtable,100) #Threshold for Flag 3 - 6
+            globaldata = setPosDeltaFlags(index,globaldata,hashtable,40) #Threshold for Flag 3 - 6
 
     for index, item in enumerate(hashtable[1:]):
         if(getFlag(index,globaldata)==1):

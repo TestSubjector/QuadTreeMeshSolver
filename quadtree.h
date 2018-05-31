@@ -195,6 +195,8 @@ void valley_refinement(quadtree_node_t *valley_node, int flag);
 
 int maxDepth(quadtree_node_t *node);
 
+quadtree_node_t *reach_ancestor(quadtree_node_t *node, int patharray[41], int ancestor_pos);
+
 extern int height_of_tree;
 
 #endif
