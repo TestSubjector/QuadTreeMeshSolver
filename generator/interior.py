@@ -7,10 +7,10 @@ from shapely import wkt
 from shapely.ops import linemerge, unary_union, polygonize
 
 def deltaX(xcord,orgxcord):
-    return float(xcord - orgxcord)
+    return float(orgxcord - xcord)
 
 def deltaY(ycord,orgycord):
-    return float(ycord - orgycord)
+    return float(orgycord - ycord)
 
 def deltaNeighbourCalculation(currentneighbours,currentcord,isxcord,isnegative):
     xpos,xneg,ypos,yneg = 0,0,0,0

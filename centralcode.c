@@ -43,7 +43,7 @@ void main_tree(int initial_coord_length, coords_t *coords_list, coords_t *adapte
 
     for (i = 0; i < leaf_iter; i++)
     {
-        find_neighbours(tree, common_ancestor(tree->root, &leaf_array[i]), leaf_array);
+        find_neighbours(tree, common_treeroute(tree->root, &leaf_array[i]), leaf_array);
         if (i == 400)
         {
             leaf_iter -= 400;
@@ -64,7 +64,7 @@ void main_tree(int initial_coord_length, coords_t *coords_list, coords_t *adapte
     // quadtree_leafnodes(tree->root, leaf_array);
     // for (i = 0; i < leaf_iter; i++)
     // {
-    //     find_neighbours(tree, common_ancestor(tree->root, &leaf_array[i]), leaf_array);
+    //     find_neighbours(tree, common_treeroute(tree->root, &leaf_array[i]), leaf_array);
     //     if (i == 400)
     //     {
     //         leaf_iter -= 400;
@@ -102,7 +102,7 @@ void main_tree(int initial_coord_length, coords_t *coords_list, coords_t *adapte
                 // printf("\n Leaf iter is %d", leaf_iter);
                 for (i = 0; i < leaf_iter; i++)
                 {
-                    find_neighbours(tree, common_ancestor(tree->root, &leaf_array[i]), leaf_array);
+                    find_neighbours(tree, common_treeroute(tree->root, &leaf_array[i]), leaf_array);
                     if (i == 400)
                     {
                         leaf_iter -= 400;
