@@ -76,7 +76,7 @@ void main_tree(int initial_coord_length, coords_t *coords_list, coords_t *adapte
     //     }
     // }
 
-    // quadtree_refinementwalk(tree->root, descent_refinement, ascent);
+    quadtree_refinementwalk(tree->root, descent_refinement, ascent);
     // quadtree_refinementwalk(tree->root, descent_refinement, ascent);
     quadtree_walk(tree->root, descent, ascent);
     printf("\n Max Depth of tree is %d", maxDepth(tree->root));

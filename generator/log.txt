@@ -5306,3 +5306,1027 @@ We tried finding points to reduce threshold value to 15 but couldn't find any fo
 It's condition value for dy neg is 34.5259105423
 The least we can reduce it to is 18.2001696128
 We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 1029
+It's condition value for dy pos is 1.17224162532e+16
+The least we can reduce it to is 34.7109823516
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 1029
+It's condition value for dy pos is 34.7109823516
+The least we can reduce it to is 33.8826841857
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 1029
+It's condition value for dy pos is 33.8826841857
+The least we can reduce it to is 25.5501329533
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 1029
+It's condition value for dy pos is 25.5501329533
+The least we can reduce it to is 25.5501329533
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 1104
+It's condition value for dy pos is 5.94317415439e+16
+The least we can reduce it to is 67.1623945153
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 1104
+It's condition value for dy pos is 67.1623945153
+The least we can reduce it to is 67.1623945153
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 1129
+It's condition value for dy pos is inf
+The least we can reduce it to is 93.2723802117
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 1129
+It's condition value for dy pos is 93.2723802117
+The least we can reduce it to is 93.2723802117
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 1130
+It's condition value for dy pos is 21.3396453662
+The least we can reduce it to is 117.133925311
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 1139
+It's condition value for dy pos is 16.3138382347
+The least we can reduce it to is 25.8343215258
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 1140
+It's condition value for dy pos is 2.48111938324e+17
+The least we can reduce it to is 197.780585193
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 1140
+It's condition value for dy pos is 197.780585193
+The least we can reduce it to is 199.446983602
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 1310
+It's condition value for dy pos is 16.4876297325
+The least we can reduce it to is 57.2704405627
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 1395
+It's condition value for dy pos is 380.458310034
+The least we can reduce it to is 242.475925205
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 1395
+It's condition value for dy pos is 242.475925205
+The least we can reduce it to is 660.781002395
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 1398
+It's condition value for dy pos is 458.94917938
+The least we can reduce it to is 228.961698551
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 1398
+It's condition value for dy pos is 228.961698551
+The least we can reduce it to is 709.909763166
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 1541
+It's condition value for dy pos is 212.540957847
+The least we can reduce it to is 319.604872189
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 1542
+It's condition value for dy pos is 42.067547638
+The least we can reduce it to is 84.121297186
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 1543
+It's condition value for dy pos is 17.0702588292
+The least we can reduce it to is 36.2117933957
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 1602
+It's condition value for dy pos is 9.01580858503e+17
+The least we can reduce it to is 728.457167358
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 1602
+It's condition value for dy pos is 728.457167358
+The least we can reduce it to is 1037.97046259
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 1605
+It's condition value for dy pos is 60.7369609618
+The least we can reduce it to is 102.666782819
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 1608
+It's condition value for dy pos is 16.9400991494
+The least we can reduce it to is 33.3417320479
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 1636
+It's condition value for dy pos is inf
+The least we can reduce it to is 332.758735437
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 1636
+It's condition value for dy pos is 332.758735437
+The least we can reduce it to is 542.564701343
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 1653
+It's condition value for dy pos is 27.2902903358
+The least we can reduce it to is 55.1147311514
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 1782
+It's condition value for dy pos is 2.40828040081e+17
+The least we can reduce it to is 237.73245372
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 1782
+It's condition value for dy pos is 237.73245372
+The least we can reduce it to is 322.466509364
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 1837
+It's condition value for dy pos is 144.90188634
+The least we can reduce it to is 32.4315989493
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 1837
+It's condition value for dy pos is 32.4315989493
+The least we can reduce it to is 40.1598897795
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 1838
+It's condition value for dy pos is 23.1640939956
+The least we can reduce it to is 23.3106123852
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 1840
+It's condition value for dy pos is 109.613480951
+The least we can reduce it to is 140.902277071
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 1882
+It's condition value for dy pos is 17.0426426974
+The least we can reduce it to is 49.3137969963
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 2015
+It's condition value for dy pos is 1725.16630688
+The least we can reduce it to is 50.2856063473
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 2015
+It's condition value for dy pos is 50.2856063473
+The least we can reduce it to is 217.35601453
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 2087
+It's condition value for dy pos is 362.305856968
+The least we can reduce it to is 82.9232083436
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 2087
+It's condition value for dy pos is 82.9232083436
+The least we can reduce it to is 264.936181599
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 2088
+It's condition value for dy pos is 26.3781341257
+The least we can reduce it to is 31.4611372691
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 2089
+It's condition value for dy pos is 1.71014615956e+17
+The least we can reduce it to is 4701.09714672
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 2089
+It's condition value for dy pos is 4701.09714672
+The least we can reduce it to is 2108.82736227
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 2089
+It's condition value for dy pos is 2108.82736227
+The least we can reduce it to is 1648.01118828
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 2089
+It's condition value for dy pos is 1648.01118828
+The least we can reduce it to is 1909.7464732
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 2092
+It's condition value for dy pos is 603.868815948
+The least we can reduce it to is 93.9391672467
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 2092
+It's condition value for dy pos is 93.9391672467
+The least we can reduce it to is 442.453841111
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 2095
+It's condition value for dy pos is 24.4216648684
+The least we can reduce it to is 34.8331520041
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 2138
+It's condition value for dy pos is inf
+The least we can reduce it to is 88.4549529279
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 2138
+It's condition value for dy pos is 88.4549529279
+The least we can reduce it to is 184.44717866
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 2162
+It's condition value for dy pos is 1.12659551226e+17
+The least we can reduce it to is 252.344121542
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 2162
+It's condition value for dy pos is 252.344121542
+The least we can reduce it to is 257.704514608
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 2246
+It's condition value for dy pos is inf
+The least we can reduce it to is 148.66625057
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 2246
+It's condition value for dy pos is 148.66625057
+The least we can reduce it to is 185.845388197
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 2252
+It's condition value for dy pos is 1.67063353866e+17
+The least we can reduce it to is 324.000306529
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 2252
+It's condition value for dy pos is 324.000306529
+The least we can reduce it to is 248.088463147
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 2252
+It's condition value for dy pos is 248.088463147
+The least we can reduce it to is 248.088463147
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 2306
+It's condition value for dy pos is 59.1504393267
+The least we can reduce it to is 69.8210344675
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 2315
+It's condition value for dy pos is inf
+The least we can reduce it to is 3056.90303316
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 2315
+It's condition value for dy pos is 3056.90303316
+The least we can reduce it to is 441.781814312
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 2315
+It's condition value for dy pos is 441.781814312
+The least we can reduce it to is 639.820236814
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 2351
+It's condition value for dy pos is 24.748981043
+The least we can reduce it to is 44.4534580885
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 3041
+It's condition value for dy neg is 1.17224162532e+16
+The least we can reduce it to is 34.7109823516
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 3041
+It's condition value for dy neg is 34.7109823516
+The least we can reduce it to is 33.8826841857
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 3041
+It's condition value for dy neg is 33.8826841857
+The least we can reduce it to is 25.5501329533
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 3041
+It's condition value for dy neg is 25.5501329533
+The least we can reduce it to is 25.5501329533
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 3089
+It's condition value for dy neg is 5.94317415439e+16
+The least we can reduce it to is 67.1623945153
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 3089
+It's condition value for dy neg is 67.1623945153
+The least we can reduce it to is 67.1623945153
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 3179
+It's condition value for dy neg is inf
+The least we can reduce it to is 93.2723802117
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 3179
+It's condition value for dy neg is 93.2723802117
+The least we can reduce it to is 93.2723802117
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 3187
+It's condition value for dy neg is 21.3396453662
+The least we can reduce it to is 117.133925311
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 3197
+It's condition value for dy neg is 16.3138382347
+The least we can reduce it to is 25.8343215258
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 3198
+It's condition value for dy neg is 2.48111938324e+17
+The least we can reduce it to is 197.780585193
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 3198
+It's condition value for dy neg is 197.780585193
+The least we can reduce it to is 199.446983602
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 3327
+It's condition value for dy neg is 16.4876297325
+The least we can reduce it to is 57.2704405627
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 3426
+It's condition value for dy neg is 380.458310034
+The least we can reduce it to is 242.475925205
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 3426
+It's condition value for dy neg is 242.475925205
+The least we can reduce it to is 660.781002395
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 3429
+It's condition value for dy neg is 458.94917938
+The least we can reduce it to is 228.961698551
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 3429
+It's condition value for dy neg is 228.961698551
+The least we can reduce it to is 709.909763166
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 3606
+It's condition value for dy neg is 212.540957847
+The least we can reduce it to is 319.604872189
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 3607
+It's condition value for dy neg is 42.067547638
+The least we can reduce it to is 84.121297186
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 3608
+It's condition value for dy neg is 17.0702588292
+The least we can reduce it to is 36.2117933957
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 3689
+It's condition value for dy neg is 9.01580858503e+17
+The least we can reduce it to is 728.457167358
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 3689
+It's condition value for dy neg is 728.457167358
+The least we can reduce it to is 1037.97046259
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 3692
+It's condition value for dy neg is 60.7369609618
+The least we can reduce it to is 102.666782819
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 3695
+It's condition value for dy neg is 16.9400991494
+The least we can reduce it to is 33.3417320479
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 3717
+It's condition value for dy neg is inf
+The least we can reduce it to is 332.758735437
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 3717
+It's condition value for dy neg is 332.758735437
+The least we can reduce it to is 542.564701343
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 3734
+It's condition value for dy neg is 27.2902903358
+The least we can reduce it to is 55.1147311514
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 3859
+It's condition value for dy neg is 144.90188634
+The least we can reduce it to is 32.4315989493
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 3859
+It's condition value for dy neg is 32.4315989493
+The least we can reduce it to is 40.1598897795
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 3860
+It's condition value for dy neg is 23.1640939956
+The least we can reduce it to is 23.3106123852
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 3862
+It's condition value for dy neg is 109.613480951
+The least we can reduce it to is 140.902277071
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 3865
+It's condition value for dy neg is 2.40828040081e+17
+The least we can reduce it to is 237.73245372
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 3865
+It's condition value for dy neg is 237.73245372
+The least we can reduce it to is 322.466509364
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 3945
+It's condition value for dy neg is 17.0426426974
+The least we can reduce it to is 49.3137969963
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 4062
+It's condition value for dy neg is 1725.16630688
+The least we can reduce it to is 50.2856063473
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 4062
+It's condition value for dy neg is 50.2856063473
+The least we can reduce it to is 217.35601453
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 4120
+It's condition value for dy neg is 362.305856968
+The least we can reduce it to is 82.9232083436
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 4120
+It's condition value for dy neg is 82.9232083436
+The least we can reduce it to is 264.936181599
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 4121
+It's condition value for dy neg is 26.3781341257
+The least we can reduce it to is 31.4611372691
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 4122
+It's condition value for dy neg is 1.71014615956e+17
+The least we can reduce it to is 4701.09714672
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 4122
+It's condition value for dy neg is 4701.09714672
+The least we can reduce it to is 2108.82736227
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 4122
+It's condition value for dy neg is 2108.82736227
+The least we can reduce it to is 1648.01118828
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 4122
+It's condition value for dy neg is 1648.01118828
+The least we can reduce it to is 1909.7464732
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 4123
+It's condition value for dy neg is 603.868815948
+The least we can reduce it to is 93.9391672467
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 4123
+It's condition value for dy neg is 93.9391672467
+The least we can reduce it to is 442.453841111
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 4126
+It's condition value for dy neg is 24.4216648684
+The least we can reduce it to is 34.8331520041
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 4163
+It's condition value for dy neg is inf
+The least we can reduce it to is 88.4549529279
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 4163
+It's condition value for dy neg is 88.4549529279
+The least we can reduce it to is 184.44717866
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 4185
+It's condition value for dy neg is 1.12659551226e+17
+The least we can reduce it to is 252.344121542
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 4185
+It's condition value for dy neg is 252.344121542
+The least we can reduce it to is 257.704514608
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 4331
+It's condition value for dy neg is inf
+The least we can reduce it to is 148.66625057
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 4331
+It's condition value for dy neg is 148.66625057
+The least we can reduce it to is 185.845388197
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 4335
+It's condition value for dy neg is 1.67063353866e+17
+The least we can reduce it to is 324.000306529
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 4335
+It's condition value for dy neg is 324.000306529
+The least we can reduce it to is 248.088463147
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 4335
+It's condition value for dy neg is 248.088463147
+The least we can reduce it to is 248.088463147
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 4381
+It's condition value for dy neg is 59.1504393267
+The least we can reduce it to is 69.8210344675
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 4384
+It's condition value for dy neg is inf
+The least we can reduce it to is 3056.90303316
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 4384
+It's condition value for dy neg is 3056.90303316
+The least we can reduce it to is 441.781814312
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 4384
+It's condition value for dy neg is 441.781814312
+The least we can reduce it to is 639.820236814
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 4412
+It's condition value for dy neg is 24.748981043
+The least we can reduce it to is 44.4534580885
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 1085
+It's condition value for dx neg is 15.5650265407
+The least we can reduce it to is 18.4000055511
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 1091
+It's condition value for dx neg is inf
+The least we can reduce it to is 53.6376024553
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 1091
+It's condition value for dx neg is 53.6376024553
+The least we can reduce it to is 53.6376024553
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 2933
+It's condition value for dx neg is inf
+The least we can reduce it to is 53.6376024553
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 2933
+It's condition value for dx neg is 53.6376024553
+The least we can reduce it to is 53.6376024553
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 2994
+It's condition value for dx neg is 15.5650265407
+The least we can reduce it to is 18.4000055511
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 1029
+It's condition value for dy pos is 1.17224162532e+16
+The least we can reduce it to is 34.7109823516
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 1029
+It's condition value for dy pos is 34.7109823516
+The least we can reduce it to is 33.8826841857
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 1029
+It's condition value for dy pos is 33.8826841857
+The least we can reduce it to is 25.5501329533
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 1029
+It's condition value for dy pos is 25.5501329533
+The least we can reduce it to is 25.5501329533
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 1104
+It's condition value for dy pos is 5.94317415439e+16
+The least we can reduce it to is 67.1623945153
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 1104
+It's condition value for dy pos is 67.1623945153
+The least we can reduce it to is 67.1623945153
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 1129
+It's condition value for dy pos is inf
+The least we can reduce it to is 93.2723802117
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 1129
+It's condition value for dy pos is 93.2723802117
+The least we can reduce it to is 93.2723802117
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 1130
+It's condition value for dy pos is 21.3396453662
+The least we can reduce it to is 117.133925311
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 1139
+It's condition value for dy pos is 16.3138382347
+The least we can reduce it to is 25.8343215258
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 1140
+It's condition value for dy pos is 2.48111938324e+17
+The least we can reduce it to is 197.780585193
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 1140
+It's condition value for dy pos is 197.780585193
+The least we can reduce it to is 199.446983602
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 1310
+It's condition value for dy pos is 16.4876297325
+The least we can reduce it to is 57.2704405627
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 1395
+It's condition value for dy pos is 380.458310034
+The least we can reduce it to is 242.475925205
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 1395
+It's condition value for dy pos is 242.475925205
+The least we can reduce it to is 660.781002395
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 1398
+It's condition value for dy pos is 458.94917938
+The least we can reduce it to is 228.961698551
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 1398
+It's condition value for dy pos is 228.961698551
+The least we can reduce it to is 709.909763166
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 1541
+It's condition value for dy pos is 212.540957847
+The least we can reduce it to is 319.604872189
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 1542
+It's condition value for dy pos is 42.067547638
+The least we can reduce it to is 84.121297186
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 1543
+It's condition value for dy pos is 17.0702588292
+The least we can reduce it to is 36.2117933957
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 1602
+It's condition value for dy pos is 9.01580858503e+17
+The least we can reduce it to is 728.457167358
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 1602
+It's condition value for dy pos is 728.457167358
+The least we can reduce it to is 1037.97046259
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 1605
+It's condition value for dy pos is 60.7369609618
+The least we can reduce it to is 102.666782819
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 1608
+It's condition value for dy pos is 16.9400991494
+The least we can reduce it to is 33.3417320479
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 1636
+It's condition value for dy pos is inf
+The least we can reduce it to is 332.758735437
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 1636
+It's condition value for dy pos is 332.758735437
+The least we can reduce it to is 542.564701343
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 1653
+It's condition value for dy pos is 27.2902903358
+The least we can reduce it to is 55.1147311514
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 1782
+It's condition value for dy pos is 2.40828040081e+17
+The least we can reduce it to is 237.73245372
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 1782
+It's condition value for dy pos is 237.73245372
+The least we can reduce it to is 322.466509364
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 1837
+It's condition value for dy pos is 144.90188634
+The least we can reduce it to is 32.4315989493
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 1837
+It's condition value for dy pos is 32.4315989493
+The least we can reduce it to is 40.1598897795
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 1838
+It's condition value for dy pos is 23.1640939956
+The least we can reduce it to is 23.3106123852
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 1840
+It's condition value for dy pos is 109.613480951
+The least we can reduce it to is 140.902277071
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 1882
+It's condition value for dy pos is 17.0426426974
+The least we can reduce it to is 49.3137969963
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 2015
+It's condition value for dy pos is 1725.16630688
+The least we can reduce it to is 50.2856063473
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 2015
+It's condition value for dy pos is 50.2856063473
+The least we can reduce it to is 217.35601453
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 2018
+It's condition value for dy pos is 120.417465342
+The least we can reduce it to is 57.465395266
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 2018
+It's condition value for dy pos is 57.465395266
+The least we can reduce it to is 175.044285699
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 2087
+It's condition value for dy pos is 362.305856968
+The least we can reduce it to is 82.9232083436
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 2087
+It's condition value for dy pos is 82.9232083436
+The least we can reduce it to is 264.936181599
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 2088
+It's condition value for dy pos is 26.3781341257
+The least we can reduce it to is 31.4611372691
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 2089
+It's condition value for dy pos is 1.71014615956e+17
+The least we can reduce it to is 4701.09714672
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 2089
+It's condition value for dy pos is 4701.09714672
+The least we can reduce it to is 2108.82736227
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 2089
+It's condition value for dy pos is 2108.82736227
+The least we can reduce it to is 1648.01118828
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 2089
+It's condition value for dy pos is 1648.01118828
+The least we can reduce it to is 1909.7464732
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 2092
+It's condition value for dy pos is 603.868815948
+The least we can reduce it to is 93.9391672467
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 2092
+It's condition value for dy pos is 93.9391672467
+The least we can reduce it to is 442.453841111
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 2095
+It's condition value for dy pos is 24.4216648684
+The least we can reduce it to is 34.8331520041
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 2138
+It's condition value for dy pos is inf
+The least we can reduce it to is 88.4549529279
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 2138
+It's condition value for dy pos is 88.4549529279
+The least we can reduce it to is 184.44717866
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 2162
+It's condition value for dy pos is 1.12659551226e+17
+The least we can reduce it to is 252.344121542
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 2162
+It's condition value for dy pos is 252.344121542
+The least we can reduce it to is 257.704514608
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 2246
+It's condition value for dy pos is inf
+The least we can reduce it to is 148.66625057
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 2246
+It's condition value for dy pos is 148.66625057
+The least we can reduce it to is 185.845388197
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 2252
+It's condition value for dy pos is 1.67063353866e+17
+The least we can reduce it to is 324.000306529
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 2252
+It's condition value for dy pos is 324.000306529
+The least we can reduce it to is 248.088463147
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 2252
+It's condition value for dy pos is 248.088463147
+The least we can reduce it to is 248.088463147
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 2306
+It's condition value for dy pos is 59.1504393267
+The least we can reduce it to is 69.8210344675
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 2315
+It's condition value for dy pos is inf
+The least we can reduce it to is 3056.90303316
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 2315
+It's condition value for dy pos is 3056.90303316
+The least we can reduce it to is 441.781814312
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 2315
+It's condition value for dy pos is 441.781814312
+The least we can reduce it to is 639.820236814
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 2351
+It's condition value for dy pos is 24.748981043
+The least we can reduce it to is 44.4534580885
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 3041
+It's condition value for dy neg is 1.17224162532e+16
+The least we can reduce it to is 34.7109823516
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 3041
+It's condition value for dy neg is 34.7109823516
+The least we can reduce it to is 33.8826841857
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 3041
+It's condition value for dy neg is 33.8826841857
+The least we can reduce it to is 25.5501329533
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 3041
+It's condition value for dy neg is 25.5501329533
+The least we can reduce it to is 25.5501329533
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 3089
+It's condition value for dy neg is 5.94317415439e+16
+The least we can reduce it to is 67.1623945153
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 3089
+It's condition value for dy neg is 67.1623945153
+The least we can reduce it to is 67.1623945153
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 3179
+It's condition value for dy neg is inf
+The least we can reduce it to is 93.2723802117
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 3179
+It's condition value for dy neg is 93.2723802117
+The least we can reduce it to is 93.2723802117
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 3187
+It's condition value for dy neg is 21.3396453662
+The least we can reduce it to is 117.133925311
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 3197
+It's condition value for dy neg is 16.3138382347
+The least we can reduce it to is 25.8343215258
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 3198
+It's condition value for dy neg is 2.48111938324e+17
+The least we can reduce it to is 197.780585193
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 3198
+It's condition value for dy neg is 197.780585193
+The least we can reduce it to is 199.446983602
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 3327
+It's condition value for dy neg is 16.4876297325
+The least we can reduce it to is 57.2704405627
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 3426
+It's condition value for dy neg is 380.458310034
+The least we can reduce it to is 242.475925205
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 3426
+It's condition value for dy neg is 242.475925205
+The least we can reduce it to is 660.781002395
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 3429
+It's condition value for dy neg is 458.94917938
+The least we can reduce it to is 228.961698551
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 3429
+It's condition value for dy neg is 228.961698551
+The least we can reduce it to is 709.909763166
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 3606
+It's condition value for dy neg is 212.540957847
+The least we can reduce it to is 319.604872189
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 3607
+It's condition value for dy neg is 42.067547638
+The least we can reduce it to is 84.121297186
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 3608
+It's condition value for dy neg is 17.0702588292
+The least we can reduce it to is 36.2117933957
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 3689
+It's condition value for dy neg is 9.01580858503e+17
+The least we can reduce it to is 728.457167358
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 3689
+It's condition value for dy neg is 728.457167358
+The least we can reduce it to is 1037.97046259
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 3692
+It's condition value for dy neg is 60.7369609618
+The least we can reduce it to is 102.666782819
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 3695
+It's condition value for dy neg is 16.9400991494
+The least we can reduce it to is 33.3417320479
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 3717
+It's condition value for dy neg is inf
+The least we can reduce it to is 332.758735437
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 3717
+It's condition value for dy neg is 332.758735437
+The least we can reduce it to is 542.564701343
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 3734
+It's condition value for dy neg is 27.2902903358
+The least we can reduce it to is 55.1147311514
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 3859
+It's condition value for dy neg is 144.90188634
+The least we can reduce it to is 32.4315989493
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 3859
+It's condition value for dy neg is 32.4315989493
+The least we can reduce it to is 40.1598897795
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 3860
+It's condition value for dy neg is 23.1640939956
+The least we can reduce it to is 23.3106123852
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 3862
+It's condition value for dy neg is 109.613480951
+The least we can reduce it to is 140.902277071
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 3865
+It's condition value for dy neg is 2.40828040081e+17
+The least we can reduce it to is 237.73245372
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 3865
+It's condition value for dy neg is 237.73245372
+The least we can reduce it to is 322.466509364
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 3945
+It's condition value for dy neg is 17.0426426974
+The least we can reduce it to is 49.3137969963
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 4062
+It's condition value for dy neg is 1725.16630688
+The least we can reduce it to is 50.2856063473
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 4062
+It's condition value for dy neg is 50.2856063473
+The least we can reduce it to is 217.35601453
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 4065
+It's condition value for dy neg is 120.417465342
+The least we can reduce it to is 57.465395266
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 4065
+It's condition value for dy neg is 57.465395266
+The least we can reduce it to is 175.044285699
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 4120
+It's condition value for dy neg is 362.305856968
+The least we can reduce it to is 82.9232083436
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 4120
+It's condition value for dy neg is 82.9232083436
+The least we can reduce it to is 264.936181599
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 4121
+It's condition value for dy neg is 26.3781341257
+The least we can reduce it to is 31.4611372691
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 4122
+It's condition value for dy neg is 1.71014615956e+17
+The least we can reduce it to is 4701.09714672
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 4122
+It's condition value for dy neg is 4701.09714672
+The least we can reduce it to is 2108.82736227
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 4122
+It's condition value for dy neg is 2108.82736227
+The least we can reduce it to is 1648.01118828
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 4122
+It's condition value for dy neg is 1648.01118828
+The least we can reduce it to is 1909.7464732
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 4123
+It's condition value for dy neg is 603.868815948
+The least we can reduce it to is 93.9391672467
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 4123
+It's condition value for dy neg is 93.9391672467
+The least we can reduce it to is 442.453841111
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 4126
+It's condition value for dy neg is 24.4216648684
+The least we can reduce it to is 34.8331520041
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 4163
+It's condition value for dy neg is inf
+The least we can reduce it to is 88.4549529279
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 4163
+It's condition value for dy neg is 88.4549529279
+The least we can reduce it to is 184.44717866
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 4185
+It's condition value for dy neg is 1.12659551226e+17
+The least we can reduce it to is 252.344121542
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 4185
+It's condition value for dy neg is 252.344121542
+The least we can reduce it to is 257.704514608
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 4331
+It's condition value for dy neg is inf
+The least we can reduce it to is 148.66625057
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 4331
+It's condition value for dy neg is 148.66625057
+The least we can reduce it to is 185.845388197
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 4335
+It's condition value for dy neg is 1.67063353866e+17
+The least we can reduce it to is 324.000306529
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 4335
+It's condition value for dy neg is 324.000306529
+The least we can reduce it to is 248.088463147
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 4335
+It's condition value for dy neg is 248.088463147
+The least we can reduce it to is 248.088463147
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 4381
+It's condition value for dy neg is 59.1504393267
+The least we can reduce it to is 69.8210344675
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 4384
+It's condition value for dy neg is inf
+The least we can reduce it to is 3056.90303316
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 4384
+It's condition value for dy neg is 3056.90303316
+The least we can reduce it to is 441.781814312
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 4384
+It's condition value for dy neg is 441.781814312
+The least we can reduce it to is 639.820236814
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 4412
+It's condition value for dy neg is 24.748981043
+The least we can reduce it to is 44.4534580885
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 1085
+It's condition value for dx neg is 15.5650265407
+The least we can reduce it to is 18.4000055511
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 1091
+It's condition value for dx neg is inf
+The least we can reduce it to is 53.6376024553
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 1091
+It's condition value for dx neg is 53.6376024553
+The least we can reduce it to is 53.6376024553
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 2933
+It's condition value for dx neg is inf
+The least we can reduce it to is 53.6376024553
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 2933
+It's condition value for dx neg is 53.6376024553
+The least we can reduce it to is 53.6376024553
+We don't want to worsen the condition value so we are not gonna do anything else
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 2994
+It's condition value for dx neg is 15.5650265407
+The least we can reduce it to is 18.4000055511
+We don't want to worsen the condition value so we are not gonna do anything else

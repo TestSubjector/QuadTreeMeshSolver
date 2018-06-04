@@ -174,6 +174,10 @@ int adapt(quadtree_t *tree, quadtree_node_t *node, double x, double y);
 
 extern int checker;
 
+void eastern_diagonal_neighbourset(quadtree_node_t *node, int mainnode_direction);
+
+void western_diagonal_neighbourset(quadtree_node_t *node, int mainnode_direction);
+
 void northern_diagonal_neighbourset(quadtree_node_t *root, int mainnode_direction);
 
 void southern_diagonal_neighbourset(quadtree_node_t *node, int mainnode_direction);
@@ -203,5 +207,7 @@ int east_ancestor(int patharray[41], int path_size);
 int west_ancestor(int patharray[41], int path_size);
 int north_ancestor(int patharray[41], int path_size);
 int south_ancestor(int patharray[41], int path_size);
+
+
 
 #endif
