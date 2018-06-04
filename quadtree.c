@@ -342,7 +342,7 @@ void descent_node(quadtree_node_t *node)
         neighbouroutput(1, filename, xcord, ycord);
       }
       // printf("\n %lf %lf has neighbours\t", xcord, ycord);
-      find_neighbourset(common_ancestor(tree->root, node), node);
+      find_neighbourset(common_treeroute(tree->root, node), node);
     }
   }
   else if (quadtree_node_isleaf(node)) // For filled leaf
@@ -362,7 +362,7 @@ void descent_node(quadtree_node_t *node)
         neighbouroutput(1, filename, node->point->x, node->point->y);
       }
       // printf("\n %lf %lf has neighbours\t", node->point->x, node->point->y);
-      find_neighbourset(common_ancestor(tree->root, node), node);
+      find_neighbourset(common_treeroute(tree->root, node), node);
     }
   }
 }

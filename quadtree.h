@@ -112,7 +112,7 @@ static quadtree_node_t *get_quadrant_patharray(quadtree_node_t *root,
 
 static quadtree_node_t *get_quadrant_patharray_diagonal(quadtree_node_t *root, double x, double y);
 
-int *common_ancestor(quadtree_node_t *tree, quadtree_node_t *node);
+int *common_treeroute(quadtree_node_t *tree, quadtree_node_t *node);
 
 int *common_ancestor_diagonal(quadtree_node_t *root, quadtree_node_t *node);
 
@@ -196,5 +196,12 @@ void valley_refinement(quadtree_node_t *valley_node, int flag);
 int maxDepth(quadtree_node_t *node);
 
 extern int height_of_tree;
+
+quadtree_node_t *reach_ancestor(quadtree_node_t *node, int patharray[41], int ancestor_pos);
+
+int east_ancestor(int patharray[41], int path_size);
+int west_ancestor(int patharray[41], int path_size);
+int north_ancestor(int patharray[41], int path_size);
+int south_ancestor(int patharray[41], int path_size);
 
 #endif
