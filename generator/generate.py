@@ -5,7 +5,8 @@ from interior import *
 from balance import *
 from wall import *
 from outer import *
-# import progress
+from progress import *
+from logger import *
 
 def main():
     
@@ -15,6 +16,8 @@ def main():
     parser.add_argument("-w","--wall",const=str, nargs="?")
     args = parser.parse_args()
     print("Loading Data")
+
+    PSUEDODETECTION = 0.00001
     
     # Opening the Neighbourhood file
     file1 = open(args.neighbour or "neighbour.txt","r")
@@ -29,6 +32,7 @@ def main():
     geometrydata = geometrydata.split("\n")
     
     print("Loaded Data")
+    silentRemove("log.txt")
     wallpoints = []
 
     hashtable,wallpointsdata,globaldata = loadWall(geometrydata)
@@ -37,11 +41,69 @@ def main():
     globaldata = cleanNeighbours(globaldata)
     hashtable,globaldata = detectOuter(hashtable, globaldata)
 
+    PSUEDODETECTION = calculateAverageWallPointDistance(globaldata,wallpoints)/20
+    writeLog(["Auto set PSUEDODETECTION TO",PSUEDODETECTION])
+
+    # printL("***********************************")
+    # printL("Checking for Non Aerodynamic points")
+    # printL("***********************************")
+
+    # for index,item in enumerate(hashtable[1:]):
+    #     printProgressBar(index,len(hashtable[1:])-1, prefix = 'Progress:', suffix = 'Complete', length = 50)
+    #     if(getFlag(index,globaldata)==1):
+    #         nonAeroCheck(index,globaldata,wallpoints)
+
+    # printL("***********************************")
+    # printL("***********************************")
+    # printL("Checking for Psuedo Points to Nuke")
+    # printL("***********************************")
+    
+    # for index,_ in enumerate(hashtable[1:]):
+    #     if(getFlag(index,globaldata)==1):
+    #         globaldata = fixPsuedoWallPoints(index,globaldata,hashtable,wallpoints,PSUEDODETECTION)
+    
+    # fixPsuedoWallPoints(2295,globaldata,hashtable,wallpoints,PSUEDODETECTION)
+    # fixPsuedoWallPoints(2296,globaldata,hashtable,wallpoints,PSUEDODETECTION)
+    # fixPsuedoWallPoints(2297,globaldata,hashtable,wallpoints,PSUEDODETECTION)
+    # fixPsuedoWallPoints(2298,globaldata,hashtable,wallpoints,PSUEDODETECTION)
+    # fixPsuedoWallPoints(2299,globaldata,hashtable,wallpoints,PSUEDODETECTION)
+
+    # exit()
+
+
+    printL("****************************************")
+    printL("Adding Wall Points")
+    printL("****************************************")
+
+    for index,item in enumerate(hashtable[1:]):
+        if(getFlag(index,globaldata)==1):
+            dSPointXPos = getDXPosPoints(index,globaldata,hashtable)
+            dSPointXNeg = getDXNegPoints(index,globaldata,hashtable)
+            dSPointYPos = getDYPosPoints(index,globaldata,hashtable)
+            dSPointYNeg = getDYNegPoints(index,globaldata,hashtable)
+            if(len(dSPointXNeg) == 1):
+                addNearestWallPoints(index,globaldata,hashtable,wallpoints)
+            elif(len(dSPointXPos) == 1):
+                addNearestWallPoints(index,globaldata,hashtable,wallpoints)
+            elif(len(dSPointYNeg) == 1):
+                addNearestWallPoints(index,globaldata,hashtable,wallpoints)
+            elif(len(dSPointYPos) == 1):
+                addNearestWallPoints(index,globaldata,hashtable,wallpoints)
+
+    printL("***********************************")
+
+    globaldata = cleanNeighbours(globaldata)
+
+    for index,_ in enumerate(hashtable[1:]):
+        if(getFlag(index,globaldata)==1):
+            printPosDeltaConditions(index,globaldata,hashtable,15)
+
     for index, item in enumerate(hashtable[1:]):
         if(getFlag(index,globaldata)==0):
             printWallConditionValue(index,globaldata,hashtable)
             printWallConditionValue(index,globaldata,hashtable)
             printWallConditionValue(index,globaldata,hashtable)
+            writeLog([index,"Condition Value Wall Point",conditionValueOfPointFull(index,globaldata)])
 
     for index, item in enumerate(hashtable[1:]):
         if(getFlag(index,globaldata)==2):
@@ -49,13 +111,21 @@ def main():
             printOuterConditionValue(index,globaldata,hashtable)
             printOuterConditionValue(index,globaldata,hashtable)
 
-    for index, item in enumerate(hashtable[1:]):
-        if(getFlag(index,globaldata)==1):
-            globaldata = setPosDeltaFlags(index,globaldata,hashtable,100) #Threshold for Flag 3 - 6
+    printL("***********************************")
+    printL("Setting Pre Balancing Flags for Interior Points")
+    printL("***********************************")
 
     for index, item in enumerate(hashtable[1:]):
         if(getFlag(index,globaldata)==1):
-            conditionValueFixForYPos(index,globaldata,hashtable,15,wallpoints)
+            globaldata = setPosDeltaFlags(index,globaldata,hashtable,50) #Threshold for Flag 3 - 6
+
+    printL("***********************************")
+    printL("Fixing Interior Points")
+    printL("***********************************")
+
+    for index, item in enumerate(hashtable[1:]):
+        if(getFlag(index,globaldata)==1):
+            conditionValueFixForYPos(index,globaldata,hashtable,15,wallpoints,0)
     for index, item in enumerate(hashtable[1:]):
         if(getFlag(index,globaldata)==1):
             conditionValueFixForYNeg(index,globaldata,hashtable,15,wallpoints)
@@ -66,20 +136,23 @@ def main():
         if(getFlag(index,globaldata)==1):
             conditionValueFixForXNeg(index,globaldata,hashtable,15,wallpoints)
 
-    # print("****************************************")
-    # print("Rechecking after XPos and XNeg")
-    # print("****************************************")
+    printL("****************************************")
+    printL("Printing Delta Conditions for Interior Points")
+    printL("****************************************")
+
+    for index,item in enumerate(hashtable[1:]):
+        if(getFlag(index,globaldata)==1):
+            printPosDeltaConditions(index,globaldata,hashtable,15)
+
+    # printL("****************************************")
+    # printL("Printing Delta Neighbour Conditions for Interior Points")
+    # printL("****************************************")
     
-    # for index, item in enumerate(hashtable[1:]):
+    # for index,item in enumerate(hashtable[1:]):
     #     if(getFlag(index,globaldata)==1):
-    #         conditionValueFixForYPos(index,globaldata,hashtable,15)
-    # for index, item in enumerate(hashtable[1:]):
-    #     if(getFlag(index,globaldata)==1):
-    #         conditionValueFixForYNeg(index,globaldata,hashtable,15)
-    # for index, item in enumerate(hashtable[1:]):
-    #     if(getFlag(index,globaldata)==1):
-    #         printPosDeltaConditions(index,globaldata,hashtable,15)
-    # print("****************************************")
+    #         printPosDeltaPointConditions(index,globaldata,hashtable,3)
+
+    printL("****************************************")
 
     globaldata = cleanNeighbours(globaldata)
     globaldata = generateReplacement(hashtable,globaldata)
