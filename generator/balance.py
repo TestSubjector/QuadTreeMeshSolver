@@ -69,6 +69,8 @@ def conditionCheckWithNeighboursWall(index, globaldata, nbh, nx, ny):
     shape = (2, 2)
     random = random.reshape(shape)
     s = np.linalg.svd(random, full_matrices=False, compute_uv=False)
+    if(min(s)<0):
+        print(index,"ITS LOW")
     s = max(s) / min(s)
     return s
 

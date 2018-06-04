@@ -1,5 +1,18 @@
 # from progress import *
 import math
+import shapely.geometry
+from shapely import wkt
+from shapely.ops import linemerge, unary_union, polygonize
+import os, errno
+from progress import *
+from logger import *
+
+def silentRemove(filename):
+    try:
+        os.remove(filename)
+    except OSError as e: # this would be "except OSError, e:" before Python 2.6
+        if e.errno != errno.ENOENT: # errno.ENOENT = no such file or directory
+            raise # re-raise exception if a different error occurred
 
 def cleanNeighbours(globaldata): # Verified
     print("Beginning Duplicate Neighbour Detection")
@@ -184,8 +197,55 @@ def cleanWallPoints(neighbours,wallpoint):
 def generateReplacement(hashtable,globaldata):
     print("Beginning Replacement")
     for index2,item in enumerate(hashtable):
-        # printProgressBar(index2, len(hashtable) - 1, prefix = 'Progress:', suffix = 'Complete', length = 50)
+        printProgressBar(index2, len(hashtable) - 1, prefix = 'Progress:', suffix = 'Complete', length = 50)
         for index, individualitem in enumerate(globaldata):
             globaldata[index] = [hashtable.index(x) if x==str(item) else x for x in individualitem]
     print("Replacement Done")
     return globaldata
+
+def isNonAeroDynamic(index,cordpt,globaldata,wallpoints):
+    main_point = getPoint(index,globaldata)
+    main_pointx = float(main_point.split(",")[0])
+    main_pointy = float(main_point.split(",")[1])
+    cordptx = float(cordpt.split(",")[0])
+    cordpty = float(cordpt.split(",")[1])
+    line = shapely.geometry.LineString([[main_pointx,main_pointy],[cordptx,cordpty]])
+    responselist = []
+    for item in wallpoints:
+        polygonpts = []
+        for item2 in item:
+            polygonpts.append([float(item2.split(",")[0]),float(item2.split(",")[1])])
+        polygontocheck = shapely.geometry.Polygon(polygonpts)
+        merged = linemerge([polygontocheck.boundary, line])
+        borders = unary_union(merged)
+        polygons = polygonize(borders)
+        i = 0
+        for p in polygons:
+            i = i + 1
+        if(i==1):
+            responselist.append(False)
+        else:
+            responselist.append(True)
+    if True in responselist:
+        return True
+    else:
+        return False
+
+def nonAeroCheck(index,globaldata,wallpoints):
+    cordnbhs = getNeighbours(index,globaldata)
+    for itm in cordnbhs:
+        if(isNonAeroDynamic(index,itm,globaldata,wallpoints)):
+            print("Warning this point",index,"has a non aerodynamic point")
+            writeLog(["Warning this point",index,"has a non aerodynamic point"])
+
+
+def perpendicularDistance(pta,ptb,main_point):
+    ptax = float(pta.split(",")[0])
+    ptay = float(pta.split(",")[1])
+    ptbx = float(ptb.split(",")[0])
+    ptby = float(ptb.split(",")[1])
+    main_pointx = float(main_point.split(",")[0])
+    main_pointy = float(main_point.split(",")[1])
+    top = abs(((ptby-ptay)*main_pointx)-((ptbx-ptax)*main_pointy)+(ptbx*ptay)-(ptax*ptby))
+    bottom = euclideanDistance(pta,ptb)
+    return float(top/bottom[0])
