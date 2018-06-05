@@ -183,7 +183,7 @@ def getDYNegPoints(index,globaldata,hashtable):
     return mypoints
 
 
-def conditionValueFixForXPos(index,globaldata,hashtable,threshold,wallpoints):
+def conditionValueFixForXPos(index,globaldata,hashtable,threshold,wallpoints,control):
     initialConditionValue = getInteriorConditionValueofXPos(index,globaldata,hashtable)
     dSPoints = getDXPosPoints(index,globaldata,hashtable)
     # writeLog([index,initialConditionValue)
@@ -224,7 +224,8 @@ def conditionValueFixForXPos(index,globaldata,hashtable,threshold,wallpoints):
                         appendNeighbours([pointToBeAdded],index,globaldata)
                         initialConditionValue = getInteriorConditionValueofXPos(index,globaldata,hashtable)
                         writeLog(["We will be running again to reduce further"])
-                        conditionValueFixForXPos(index,globaldata,hashtable,threshold,wallpoints)
+                        if(control <= 0):                        
+                            conditionValueFixForXPos(index,globaldata,hashtable,threshold,wallpoints, control + 1)
                     else:
                         writeLog(["We don't want to worsen the condition value so we are not gonna do anything else"])
                 else:
@@ -236,7 +237,7 @@ def conditionValueFixForXPos(index,globaldata,hashtable,threshold,wallpoints):
                 initialConditionValue = getInteriorConditionValueofXPos(index,globaldata,hashtable)
                 # writeLog([index,initialConditionValue)
 
-def conditionValueFixForXNeg(index,globaldata,hashtable,threshold,wallpoints):
+def conditionValueFixForXNeg(index,globaldata,hashtable,threshold,wallpoints,control):
     initialConditionValue = getInteriorConditionValueofXNeg(index,globaldata,hashtable)
     dSPoints = getDXNegPoints(index,globaldata,hashtable)
     # writeLog([index,initialConditionValue)
@@ -278,7 +279,8 @@ def conditionValueFixForXNeg(index,globaldata,hashtable,threshold,wallpoints):
                         appendNeighbours([pointToBeAdded],index,globaldata)
                         initialConditionValue = getInteriorConditionValueofXNeg(index,globaldata,hashtable)
                         writeLog(["We will be running again to reduce further"])
-                        conditionValueFixForXNeg(index,globaldata,hashtable,threshold,wallpoints)
+                        if(control <= 0):
+                            conditionValueFixForXNeg(index,globaldata,hashtable,threshold,wallpoints, control + 1)
                     else:
                         writeLog(["We don't want to worsen the condition value so we are not gonna do anything else"])
                 else:
@@ -333,7 +335,8 @@ def conditionValueFixForYPos(index,globaldata,hashtable,threshold,wallpoints,con
                         appendNeighbours([pointToBeAdded],index,globaldata)
                         initialConditionValue = getInteriorConditionValueofYPos(index,globaldata,hashtable)
                         writeLog(["We will be running again to reduce further"])
-                        conditionValueFixForYPos(index,globaldata,hashtable,threshold,wallpoints,control+1)
+                        if(control <= 0):
+                            conditionValueFixForYPos(index,globaldata,hashtable,threshold,wallpoints,control+1)
                     else:
                         writeLog(["We don't want to worsen the condition value so we are not gonna do anything else"])
                 else:
@@ -345,7 +348,7 @@ def conditionValueFixForYPos(index,globaldata,hashtable,threshold,wallpoints,con
                 initialConditionValue = getInteriorConditionValueofYPos(index,globaldata,hashtable)
                 # writeLog([index,initialConditionValue)
 
-def conditionValueFixForYNeg(index,globaldata,hashtable,threshold,wallpoints):
+def conditionValueFixForYNeg(index,globaldata,hashtable,threshold,wallpoints,control):
     initialConditionValue = getInteriorConditionValueofYNeg(index,globaldata,hashtable)
     dSPoints = getDYNegPoints(index,globaldata,hashtable)
     # writeLog([index,initialConditionValue)
@@ -387,7 +390,8 @@ def conditionValueFixForYNeg(index,globaldata,hashtable,threshold,wallpoints):
                         appendNeighbours([pointToBeAdded],index,globaldata)
                         initialConditionValue = getInteriorConditionValueofYNeg(index,globaldata,hashtable)
                         writeLog(["We will be running again to reduce further"])
-                        conditionValueFixForYNeg(index,globaldata,hashtable,threshold,wallpoints)
+                        if(control <= 0):                        
+                            conditionValueFixForYNeg(index,globaldata,hashtable,threshold,wallpoints, control + 1)
                     else:
                         writeLog(["We don't want to worsen the condition value so we are not gonna do anything else"])
                 else:
@@ -435,7 +439,7 @@ def printPosDeltaPointConditions(index,globaldata,hashtable,threshold):
     dSPointYPos = getDYPosPoints(index,globaldata,hashtable)
     initialConditionValueYNeg = getInteriorConditionValueofYNeg(index,globaldata,hashtable)
     dSPointYNeg = getDYNegPoints(index,globaldata,hashtable)
-    if(len(dSPointXPos) < threshold or len(dSPointXNeg) < threshold or len(dSPointYPos) < threshold or len(dSPointYNeg) < threshold):
+    if(initialConditionValueXPos > threshold or initialConditionValueXNeg > threshold or initialConditionValueYPos > threshold or initialConditionValueYNeg > threshold):
         print(index,len(dSPointXPos),initialConditionValueXPos,len(dSPointXNeg),initialConditionValueXNeg,len(dSPointYPos),initialConditionValueYPos,len(dSPointYNeg),initialConditionValueYNeg)
         writeLog([index,len(dSPointXPos),initialConditionValueXPos,len(dSPointXNeg),initialConditionValueXNeg,len(dSPointYPos),initialConditionValueYPos,len(dSPointYNeg),initialConditionValueYNeg])
 
@@ -445,16 +449,16 @@ def setPosDeltaFlags(index,globaldata,hashtable,threshold):
     initialConditionValueYPos = getInteriorConditionValueofYPos(index,globaldata,hashtable)
     initialConditionValueYNeg = getInteriorConditionValueofYNeg(index,globaldata,hashtable)
     if(initialConditionValueXPos > threshold or math.isnan(initialConditionValueXPos)):
-        globaldata = setFlagValue(index,7,1,globaldata)
+        globaldata = setFlagValue(index,7,0,globaldata)
         writeLog([index,"Full Stencil Condition Value",conditionValueOfPointFull(index,globaldata)])
     if(initialConditionValueXNeg > threshold or math.isnan(initialConditionValueXNeg)):
-        globaldata = setFlagValue(index,8,1,globaldata)
+        globaldata = setFlagValue(index,8,0,globaldata)
         writeLog([index,"Full Stencil Condition Value",conditionValueOfPointFull(index,globaldata)])
     if(initialConditionValueYPos > threshold or math.isnan(initialConditionValueYPos)):
-        globaldata = setFlagValue(index,9,1,globaldata)    
+        globaldata = setFlagValue(index,9,0,globaldata)    
         writeLog([index,"Full Stencil Condition Value",conditionValueOfPointFull(index,globaldata)])
     if(initialConditionValueYNeg > threshold or math.isnan(initialConditionValueYNeg)):
-        globaldata = setFlagValue(index,10,1,globaldata)
+        globaldata = setFlagValue(index,10,0,globaldata)
         writeLog([index,"Full Stencil Condition Value",conditionValueOfPointFull(index,globaldata)])
     return globaldata
 
