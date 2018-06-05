@@ -412,6 +412,10 @@ def printPosDeltaConditions(index,globaldata,hashtable,threshold):
     dSPointYPos = getDYPosPoints(index,globaldata,hashtable)
     initialConditionValueYNeg = getInteriorConditionValueofYNeg(index,globaldata,hashtable)
     dSPointYNeg = getDYNegPoints(index,globaldata,hashtable)
+    # if(len(dSPointXPos) < threshold or len(dSPointXNeg) < threshold or len(dSPointYPos) < threshold or len(dSPointYNeg) > threshold):
+    #     print(index,len(dSPointXPos),initialConditionValueXPos,len(dSPointXNeg),initialConditionValueXNeg,len(dSPointYPos),initialConditionValueYPos,len(dSPointYNeg),initialConditionValueYNeg)
+    #     writeLog([index,len(dSPointXPos),initialConditionValueXPos,len(dSPointXNeg),initialConditionValueXNeg,len(dSPointYPos),initialConditionValueYPos,len(dSPointYNeg),initialConditionValueYNeg])
+    #     printPosDeltaConditions2(index,globaldata,hashtable)
     if(initialConditionValueXNeg > threshold or initialConditionValueXPos > threshold or initialConditionValueYPos > threshold or initialConditionValueYNeg > threshold):
         print(index,len(dSPointXPos),initialConditionValueXPos,len(dSPointXNeg),initialConditionValueXNeg,len(dSPointYPos),initialConditionValueYPos,len(dSPointYNeg),initialConditionValueYNeg)
         writeLog([index,len(dSPointXPos),initialConditionValueXPos,len(dSPointXNeg),initialConditionValueXNeg,len(dSPointYPos),initialConditionValueYPos,len(dSPointYNeg),initialConditionValueYNeg])
@@ -426,7 +430,7 @@ def printPosDeltaConditions2(index,globaldata,hashtable):
     dSPointYPos = getDYPosPoints(index,globaldata,hashtable)
     initialConditionValueYNeg = getInteriorConditionValueofYNeg2(index,globaldata,hashtable)
     dSPointYNeg = getDYNegPoints(index,globaldata,hashtable)
-    print(index,len(dSPointXPos),initialConditionValueXPos,len(dSPointXNeg),initialConditionValueXNeg,len(dSPointYPos),initialConditionValueYPos,len(dSPointYNeg),initialConditionValueYNeg)
+    # print(index,len(dSPointXPos),initialConditionValueXPos,len(dSPointXNeg),initialConditionValueXNeg,len(dSPointYPos),initialConditionValueYPos,len(dSPointYNeg),initialConditionValueYNeg)
     writeLog([index,len(dSPointXPos),initialConditionValueXPos,len(dSPointXNeg),initialConditionValueXNeg,len(dSPointYPos),initialConditionValueYPos,len(dSPointYNeg),initialConditionValueYNeg])
 
 

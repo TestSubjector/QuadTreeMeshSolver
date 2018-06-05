@@ -5,24 +5,24 @@ Adding Wall Points
 ***********************************
 945 3 3.0 3 3.33980380069 2 17.4028368935 4 1.00000003862
 945 3 2.9992759737 3 3.3384731411 2 16.8389245726 4 1.00000003862
-1029 3 1.31563066846 5 49.8809531861 1 1.17224162532e+16 6 11.723388158
-1029 3 1.31549705103 5 49.731556625 1 128.590794466 6 11.7213374378
+1029 3 1.31563066846 3 4.73578709037 1 1.17224162532e+16 4 1.84611862662
+1029 3 1.31549705103 3 4.69124421032 1 128.590794466 4 1.84541210672
 1085 4 2.95564951865 2 15.5650265407 2 4.90833874728 5 2.02100650513
 1085 4 2.95479226345 2 15.084119304 2 4.85686911396 5 2.02080003733
-1091 6 4.70445503435 1 inf 4 9.63459203707 2 11.3563882229
-1091 6 4.69657921088 1 7.79990803922 4 9.5604414935 2 9.77403422168
+1091 5 2.16814074759 1 inf 3 8.75828728002 2 11.3563882229
+1091 5 2.16475250418 1 7.79990803922 3 8.50381987272 2 9.77403422168
 1101 2 11.3563887504 3 6.58357750263 2 209.123163539 4 1.97520487947
 1101 2 11.1633734748 3 6.57384767768 2 59.4609205916 4 1.97499575338
-1104 3 2.1149336458 4 7.79237413782 1 5.94317415439e+16 5 3.45471207044
-1104 3 2.11466255243 4 7.79102947967 1 120.089337307 5 3.45460851487
-1129 3 1.7890298022 4 7.55359106733 1 inf 5 3.86920098666
-1129 3 1.78893256014 4 7.55262078646 1 263.054718771 5 3.86908623066
+1104 3 2.1149336458 3 4.75130873741 1 5.94317415439e+16 4 1.21851287416
+1104 3 2.11466255243 3 4.74833447547 1 120.089337307 4 1.21849603532
+1129 3 1.7890298022 3 4.57407733037 1 inf 4 1.22464095634
+1129 3 1.78893256014 3 4.57115729377 1 263.054718771 4 1.22462260401
 1130 3 3.14980039971 4 3.99356278208 2 21.3396453662 4 1.24999995576
 1130 3 3.14973016406 4 3.99345646629 2 21.0829746819 4 1.24999869487
 1139 4 4.07133975721 2 7.90273595561 3 16.3138382347 4 1.97520458528
 1139 4 4.07120797949 2 7.89726733106 3 16.2512304419 4 1.97519123665
-1140 3 7.21802600568 3 15.5961906674 1 2.48111938324e+17 5 3.75525061775
-1140 3 7.21712559089 3 15.5939419139 1 129.406324649 5 3.7552313458
+1140 3 7.21802600568 2 10.6049524998 1 2.48111938324e+17 4 1.9370922805
+1140 3 7.21712559089 2 10.5964330856 1 129.406324649 4 1.9370812686
 1186 3 3.0 3 1.91396366213 2 25.3642304519 4 1.0000004698
 1186 3 2.99927597417 3 1.91376771967 2 24.5748084661 4 1.00000046977
 1310 3 3.47927567454 4 2.82922441924 2 16.4876297325 4 1.24999988531
@@ -39,18 +39,18 @@ Adding Wall Points
 1542 3 9.08440532732 2 4.7310010059 2 41.8595524358 3 1.93128310127
 1543 3 8.3754298915 2 3.98903721611 2 17.0702588292 3 1.93128382831
 1543 3 8.37533288805 2 3.98899947522 2 17.0554883936 3 1.93128294063
-1602 5 35.860721295 3 2.27729825346 1 9.01580858503e+17 6 22.5093106049
-1602 5 35.8605392706 3 2.27728442303 1 951.643033708 6 22.5092667084
+1602 3 4.47920789346 3 2.27729825346 1 9.01580858503e+17 4 1.27512144235
+1602 3 4.47901094648 3 2.27728442303 1 951.643033708 4 1.27511989066
 1605 3 3.87389407538 3 1.91934082849 2 60.7369609618 3 1.50000006144
 1605 3 3.87376211664 3 1.91933265491 2 60.1665006584 3 1.4999964158
 1608 3 3.36456783522 3 1.62073397092 2 16.9400991494 3 1.50000006144
 1608 3 3.36448049545 3 1.6207294035 2 16.9262382337 3 1.4999964158
-1636 3 4.16824251075 5 137.15483547 3 194219.879921 4 1.24776873701
-1636 3 4.16808533301 5 137.154324366 3 89841.013183 4 1.24776738508
+1636 3 4.16824251075 3 2.14211837415 1 inf 4 1.24776873701
+1636 3 4.16808533301 3 2.14210592087 1 867.19368392 4 1.24776738508
 1653 3 3.3881972905 3 1.74824524708 2 27.2902903358 3 1.49999993856
 1653 3 3.38811085121 3 1.74823853462 2 27.2232350671 3 1.49999629292
-1782 5 205.50085753 3 2.39807123367 1 2.40828040081e+17 6 126.260746153
-1782 5 205.499791922 3 2.39804696263 1 503.502762825 6 126.260499673
+1782 3 3.25205180847 3 2.39807123367 1 2.40828040081e+17 4 1.06325109947
+1782 3 3.2519883463 3 2.39804696263 1 503.502762825 4 1.0632508295
 1837 3 5.95783629815 2 11.3563868668 2 144.90188634 4 1.97520456034
 1837 3 5.9573684012 2 11.3415279189 2 114.156515913 4 1.97519121172
 1838 2 11.3563868668 4 4.1003277005 3 23.1640939956 5 2.04899194849
@@ -69,50 +69,50 @@ Adding Wall Points
 2087 3 9.00682734893 2 11.3415279189 2 131.479527575 4 1.97519121172
 2088 2 11.3563868668 3 5.885752672 2 26.3781341257 4 1.97520456034
 2088 2 11.3415279189 3 5.88524942529 2 25.5888512428 4 1.97519121172
-2089 5 159.231350502 3 3.80948227887 1 1.71014615956e+17 6 94.0481995807
-2089 5 159.230450992 3 3.80935695895 1 177.622157574 6 94.0480149088
+2089 3 3.93293582138 3 3.80948227887 1 1.71014615956e+17 4 1.17765240844
+2089 3 3.93281276116 3 3.80935695895 1 177.622157574 4 1.17765152453
 2092 3 3.72455085624 3 3.0 2 603.868815948 4 1.00000040594
 2092 3 3.72282279003 3 2.99927597423 2 142.446064925 4 1.00000040592
 2095 3 3.0 3 2.07517571854 2 24.4216648684 4 1.00000040594
 2095 3 2.99927597423 3 2.074909821 2 23.6262968208 4 1.00000040592
-2138 3 2.77856436861 5 647.980120514 3 92976.5307129 4 1.11496425702
-2138 3 2.7780654961 5 647.945081781 3 68280.0398609 4 1.11495754346
+2138 3 2.77856436861 3 1.83282282614 1 inf 4 1.11496425702
+2138 3 2.7780654961 3 1.83268754185 1 188.285475918 4 1.11495754346
 2139 3 2.55862960148 3 3.0 2 31.2219794198 4 1.00000016384
 2139 3 2.55808233754 3 2.99927597359 2 29.3933249124 4 1.00000016383
-2162 3 3.2017523238 5 127.954834899 3 450426.114671 4 1.17964004579
-2162 3 3.20105785566 5 127.947781953 3 32276.5964449 4 1.17962961112
-2246 4 475.660068021 3 6.89087411545 1 inf 6 110.928095899
-2246 4 475.614515018 3 6.89009434172 1 140.516010337 6 110.927517115
-2252 5 14.4538208277 3 2.42513858061 1 1.67063353866e+17 6 8.31084588598
-2252 5 14.4523929689 3 2.42475583136 1 131.486863198 6 8.31058951765
+2162 3 3.2017523238 3 2.47686748024 1 1.12659551226e+17 4 1.17964004579
+2162 3 3.20105785566 3 2.47643811629 1 117.830439217 4 1.17962961112
+2246 2 16.3716130795 3 6.89087411545 1 inf 4 1.94315915676
+2246 2 16.3262004633 3 6.89009434172 1 140.516010337 4 1.94314602948
+2252 3 4.74778550277 3 2.42513858061 1 1.67063353866e+17 4 1.2790001849
+2252 3 4.7442667569 3 2.42475583136 1 131.486863198 4 1.27897538999
 2275 3 6.98450667654 2 11.3563938495 2 20.106629243 4 1.97520457431
 2275 3 6.97145960391 2 11.1633783793 2 16.041464478 4 1.97499544832
 2306 3 3.24208028507 3 1.69474445008 2 59.1504393267 3 1.50000031949
 2306 3 3.22717880656 3 1.6934846512 2 38.6869574821 3 1.49913704558
-2315 3 3639.07236839 3 5.30087900954 1 inf 5 818.299930595
-2315 3 3568.35645473 3 5.23442334195 1 15.7653457233 5 817.29097692
+2315 1 2.23912051737e+16 3 5.30087900954 1 inf 3 1.93128217748
+2315 1 33.6342246953 3 5.23442334195 1 15.7653457233 3 1.92803915715
 2351 3 2.50163554564 3 1.57331968043 2 24.748981043 3 1.50000032441
 2351 3 2.43610059955 3 1.5586840255 2 12.6475002388 3 1.48903951813
-2933 6 4.70445503435 1 inf 2 11.3563882229 4 9.63459203707
-2933 6 4.69657921088 1 7.79990803922 2 9.77403422168 4 9.5604414935
+2933 5 2.16814074759 1 inf 2 11.3563882229 3 8.75828728002
+2933 5 2.16475250418 1 7.79990803922 2 9.77403422168 3 8.50381987272
 2994 4 2.95564951865 2 15.5650265407 5 2.02100650513 2 4.90833874728
 2994 4 2.95479226345 2 15.084119304 5 2.02080003733 2 4.85686911396
-3041 3 1.31563066846 5 49.8809531861 6 11.723388158 1 1.17224162532e+16
-3041 3 1.31549705103 5 49.731556625 6 11.7213374378 1 128.590794466
+3041 3 1.31563066846 3 4.73578709037 4 1.84611862662 1 1.17224162532e+16
+3041 3 1.31549705103 3 4.69124421032 4 1.84541210672 1 128.590794466
 3081 2 11.3563887504 3 6.58357750263 4 1.97520487947 2 209.123163539
 3081 2 11.1633734748 3 6.57384767768 4 1.97499575338 2 59.4609205916
-3089 3 2.1149336458 4 7.79237413782 5 3.45471207044 1 5.94317415439e+16
-3089 3 2.11466255243 4 7.79102947967 5 3.45460851487 1 120.089337307
+3089 3 2.1149336458 3 4.75130873741 4 1.21851287416 1 5.94317415439e+16
+3089 3 2.11466255243 3 4.74833447547 4 1.21849603532 1 120.089337307
 3154 3 3.0 3 3.33980380069 4 1.00000003862 2 17.4028368935
 3154 3 2.9992759737 3 3.3384731411 4 1.00000003862 2 16.8389245726
-3179 3 1.7890298022 4 7.55359106733 5 3.86920098666 1 inf
-3179 3 1.78893256014 4 7.55262078646 5 3.86908623066 1 263.054718771
+3179 3 1.7890298022 3 4.57407733037 4 1.22464095634 1 inf
+3179 3 1.78893256014 3 4.57115729377 4 1.22462260401 1 263.054718771
 3187 3 3.14980039971 4 3.99356278208 4 1.24999995576 2 21.3396453662
 3187 3 3.14973016406 4 3.99345646629 4 1.24999869487 2 21.0829746819
 3197 4 4.07133975721 2 7.90273595561 4 1.97520458528 3 16.3138382347
 3197 4 4.07120797949 2 7.89726733106 4 1.97519123665 3 16.2512304419
-3198 3 7.21802600568 3 15.5961906674 5 3.75525061775 1 2.48111938324e+17
-3198 3 7.21712559089 3 15.5939419139 5 3.7552313458 1 129.406324649
+3198 3 7.21802600568 2 10.6049524998 4 1.9370922805 1 2.48111938324e+17
+3198 3 7.21712559089 2 10.5964330856 4 1.9370812686 1 129.406324649
 3219 3 3.0 3 1.91396366213 4 1.0000004698 2 25.3642304519
 3219 3 2.99927597417 3 1.91376771967 4 1.00000046977 2 24.5748084661
 3327 3 3.47927567454 4 2.82922441924 4 1.24999988531 2 16.4876297325
@@ -129,14 +129,14 @@ Adding Wall Points
 3607 3 9.08440532732 2 4.7310010059 3 1.93128310127 2 41.8595524358
 3608 3 8.3754298915 2 3.98903721611 3 1.93128382831 2 17.0702588292
 3608 3 8.37533288805 2 3.98899947522 3 1.93128294063 2 17.0554883936
-3689 5 35.860721295 3 2.27729825346 6 22.5093106049 1 9.01580858503e+17
-3689 5 35.8605392706 3 2.27728442303 6 22.5092667084 1 951.643033708
+3689 3 4.47920789346 3 2.27729825346 4 1.27512144235 1 9.01580858503e+17
+3689 3 4.47901094648 3 2.27728442303 4 1.27511989066 1 951.643033708
 3692 3 3.87389407538 3 1.91934082849 3 1.50000006144 2 60.7369609618
 3692 3 3.87376211664 3 1.91933265491 3 1.4999964158 2 60.1665006584
 3695 3 3.36456783522 3 1.62073397092 3 1.50000006144 2 16.9400991494
 3695 3 3.36448049545 3 1.6207294035 3 1.4999964158 2 16.9262382337
-3717 3 4.16824251075 5 137.15483547 4 1.24776873701 3 194219.879921
-3717 3 4.16808533301 5 137.154324366 4 1.24776738508 3 89841.013183
+3717 3 4.16824251075 3 2.14211837415 4 1.24776873701 1 inf
+3717 3 4.16808533301 3 2.14210592087 4 1.24776738508 1 867.19368392
 3734 3 3.3881972905 3 1.74824524708 3 1.49999993856 2 27.2902903358
 3734 3 3.38811085121 3 1.74823853462 3 1.49999629292 2 27.2232350671
 3859 3 5.95783629815 2 11.3563868668 4 1.97520456034 2 144.90188634
@@ -145,8 +145,8 @@ Adding Wall Points
 3860 2 11.3415279189 4 4.10018987415 5 2.0489787013 3 22.9868290426
 3862 4 3.87532634022 3 1.97353465174 4 1.24999988531 2 109.613480951
 3862 4 3.87523034503 3 1.97352428758 4 1.24999862442 2 105.728563187
-3865 5 205.50085753 3 2.39807123367 6 126.260746153 1 2.40828040081e+17
-3865 5 205.499791922 3 2.39804696263 6 126.260499673 1 503.502762825
+3865 3 3.25205180847 3 2.39807123367 4 1.06325109947 1 2.40828040081e+17
+3865 3 3.2519883463 3 2.39804696263 4 1.0632508295 1 503.502762825
 3945 3 3.07738515672 3 2.05838489355 3 1.50000006144 2 17.0426426974
 3945 3 3.07732407778 3 2.05836910357 3 1.4999964158 2 17.0098119669
 4034 4 1.6904465483 3 3.0 5 1.33333355179 3 21.5935074837
@@ -159,28 +159,28 @@ Adding Wall Points
 4120 3 9.00682734893 2 11.3415279189 4 1.97519121172 2 131.479527575
 4121 2 11.3563868668 3 5.885752672 4 1.97520456034 2 26.3781341257
 4121 2 11.3415279189 3 5.88524942529 4 1.97519121172 2 25.5888512428
-4122 5 159.231350502 3 3.80948227887 6 94.0481995807 1 1.71014615956e+17
-4122 5 159.230450992 3 3.80935695895 6 94.0480149088 1 177.622157574
+4122 3 3.93293582138 3 3.80948227887 4 1.17765240844 1 1.71014615956e+17
+4122 3 3.93281276116 3 3.80935695895 4 1.17765152453 1 177.622157574
 4123 3 3.72455085624 3 3.0 4 1.00000040594 2 603.868815948
 4123 3 3.72282279003 3 2.99927597423 4 1.00000040592 2 142.446064925
 4126 3 3.0 3 2.07517571854 4 1.00000040594 2 24.4216648684
 4126 3 2.99927597423 3 2.074909821 4 1.00000040592 2 23.6262968208
-4163 3 2.77856436861 5 647.980120514 4 1.11496425702 3 92976.5307129
-4163 3 2.7780654961 5 647.945081781 4 1.11495754346 3 68280.0398609
+4163 3 2.77856436861 3 1.83282282614 4 1.11496425702 1 inf
+4163 3 2.7780654961 3 1.83268754185 4 1.11495754346 1 188.285475918
 4164 3 2.55862960148 3 3.0 4 1.00000016384 2 31.2219794198
 4164 3 2.55808233754 3 2.99927597359 4 1.00000016383 2 29.3933249124
-4185 3 3.2017523238 5 127.954834899 4 1.17964004579 3 450426.114672
-4185 3 3.20105785566 5 127.947781953 4 1.17962961112 3 32276.5964449
-4331 4 475.660068021 3 6.89087411545 6 110.928095899 1 inf
-4331 4 475.614515018 3 6.89009434172 6 110.927517115 1 140.516010337
-4335 5 14.4538208277 3 2.42513858061 6 8.31084588598 1 1.67063353866e+17
-4335 5 14.4523929689 3 2.42475583136 6 8.31058951765 1 131.486863198
+4185 3 3.2017523238 3 2.47686748024 4 1.17964004579 1 1.12659551226e+17
+4185 3 3.20105785566 3 2.47643811629 4 1.17962961112 1 117.830439217
+4331 2 16.3716130795 3 6.89087411545 4 1.94315915676 1 inf
+4331 2 16.3262004633 3 6.89009434172 4 1.94314602948 1 140.516010337
+4335 3 4.74778550277 3 2.42513858061 4 1.2790001849 1 1.67063353866e+17
+4335 3 4.7442667569 3 2.42475583136 4 1.27897538999 1 131.486863198
 4352 3 6.98450667654 2 11.3563938495 4 1.97520457431 2 20.106629243
 4352 3 6.97145960391 2 11.1633783793 4 1.97499544832 2 16.041464478
 4381 3 3.24208028507 3 1.69474445008 3 1.50000031949 2 59.1504393267
 4381 3 3.22717880656 3 1.6934846512 3 1.49913704558 2 38.6869574821
-4384 3 3639.07236839 3 5.30087900954 5 818.299930595 1 inf
-4384 3 3568.35645473 3 5.23442334195 5 817.29097692 1 15.7653457233
+4384 1 2.23912051737e+16 3 5.30087900954 3 1.93128217748 1 inf
+4384 1 33.6342246953 3 5.23442334195 3 1.92803915715 1 15.7653457233
 4412 3 2.50163554564 3 1.57331968043 3 1.50000032441 2 24.748981043
 4412 3 2.43610059955 3 1.5586840255 3 1.48903951813 2 12.6475002388
 0 Condition Value Wall Point 3.17273369702
@@ -506,74 +506,56 @@ Adding Wall Points
 ***********************************
 Setting Pre Balancing Flags for Interior Points
 ***********************************
-1029 Full Stencil Condition Value 12.3332969571
-1091 Full Stencil Condition Value 4.70445503435
+1029 Full Stencil Condition Value 1.41864232531
+1091 Full Stencil Condition Value 2.16814074759
 1101 Full Stencil Condition Value 2.0107574604
-1104 Full Stencil Condition Value 3.80003541413
-1129 Full Stencil Condition Value 4.61507060476
-1140 Full Stencil Condition Value 3.8907039189
+1104 Full Stencil Condition Value 1.35689947061
+1129 Full Stencil Condition Value 1.63207056213
+1140 Full Stencil Condition Value 1.98639231606
 1395 Full Stencil Condition Value 1.55180708157
 1398 Full Stencil Condition Value 1.64789546049
 1541 Full Stencil Condition Value 2.14032650443
-1602 Full Stencil Condition Value 23.1712420955
-1636 Full Stencil Condition Value 99.7728730737
-1636 Full Stencil Condition Value 99.7728730737
-1782 Full Stencil Condition Value 126.323459634
-1782 Full Stencil Condition Value 126.323459634
-1782 Full Stencil Condition Value 126.323459634
+1602 Full Stencil Condition Value 1.45724371323
+1636 Full Stencil Condition Value 1.41747676077
+1782 Full Stencil Condition Value 1.29927022588
 1837 Full Stencil Condition Value 2.00103389354
 1840 Full Stencil Condition Value 1.55596165104
 2015 Full Stencil Condition Value 1.56100912946
 2018 Full Stencil Condition Value 5.23372923514
 2087 Full Stencil Condition Value 1.9856253552
-2089 Full Stencil Condition Value 94.0922458239
-2089 Full Stencil Condition Value 94.0922458239
+2089 Full Stencil Condition Value 1.08176175172
 2092 Full Stencil Condition Value 1.15365662324
-2138 Full Stencil Condition Value 486.789812886
-2138 Full Stencil Condition Value 486.789812886
-2162 Full Stencil Condition Value 97.0788288329
-2162 Full Stencil Condition Value 97.0788288329
-2246 Full Stencil Condition Value 110.988060287
-2246 Full Stencil Condition Value 110.988060287
-2246 Full Stencil Condition Value 110.988060287
-2252 Full Stencil Condition Value 8.68063263747
-2315 Full Stencil Condition Value 816.192127481
-2315 Full Stencil Condition Value 816.192127481
-2315 Full Stencil Condition Value 816.192127481
-2933 Full Stencil Condition Value 4.70445503435
-3041 Full Stencil Condition Value 12.3332969571
+2138 Full Stencil Condition Value 1.63028186181
+2162 Full Stencil Condition Value 1.50657047778
+2246 Full Stencil Condition Value 1.92712791045
+2252 Full Stencil Condition Value 1.19220726176
+2315 Full Stencil Condition Value 1.85105203501
+2315 Full Stencil Condition Value 1.85105203501
+2933 Full Stencil Condition Value 2.16814074759
+3041 Full Stencil Condition Value 1.41864232531
 3081 Full Stencil Condition Value 2.0107574604
-3089 Full Stencil Condition Value 3.80003541413
-3179 Full Stencil Condition Value 4.61507060476
-3198 Full Stencil Condition Value 3.8907039189
+3089 Full Stencil Condition Value 1.35689947061
+3179 Full Stencil Condition Value 1.63207056213
+3198 Full Stencil Condition Value 1.98639231606
 3426 Full Stencil Condition Value 1.55180708157
 3429 Full Stencil Condition Value 1.64789546049
 3606 Full Stencil Condition Value 2.14032650443
-3689 Full Stencil Condition Value 23.1712420955
-3717 Full Stencil Condition Value 99.7728730737
-3717 Full Stencil Condition Value 99.7728730737
+3689 Full Stencil Condition Value 1.45724371323
+3717 Full Stencil Condition Value 1.41747676077
 3859 Full Stencil Condition Value 2.00103389354
 3862 Full Stencil Condition Value 1.55596165104
-3865 Full Stencil Condition Value 126.323459634
-3865 Full Stencil Condition Value 126.323459634
-3865 Full Stencil Condition Value 126.323459634
+3865 Full Stencil Condition Value 1.29927022588
 4062 Full Stencil Condition Value 1.56100912946
 4065 Full Stencil Condition Value 5.23372923514
 4120 Full Stencil Condition Value 1.9856253552
-4122 Full Stencil Condition Value 94.0922458239
-4122 Full Stencil Condition Value 94.0922458239
+4122 Full Stencil Condition Value 1.08176175172
 4123 Full Stencil Condition Value 1.15365662324
-4163 Full Stencil Condition Value 486.789812886
-4163 Full Stencil Condition Value 486.789812886
-4185 Full Stencil Condition Value 97.0788288329
-4185 Full Stencil Condition Value 97.0788288329
-4331 Full Stencil Condition Value 110.988060287
-4331 Full Stencil Condition Value 110.988060287
-4331 Full Stencil Condition Value 110.988060287
-4335 Full Stencil Condition Value 8.68063263747
-4384 Full Stencil Condition Value 816.192127481
-4384 Full Stencil Condition Value 816.192127481
-4384 Full Stencil Condition Value 816.192127481
+4163 Full Stencil Condition Value 1.63028186181
+4185 Full Stencil Condition Value 1.50657047778
+4331 Full Stencil Condition Value 1.92712791045
+4335 Full Stencil Condition Value 1.19220726176
+4384 Full Stencil Condition Value 1.85105203501
+4384 Full Stencil Condition Value 1.85105203501
 ***********************************
 Fixing Interior Points
 ***********************************
@@ -585,6 +567,16 @@ We tried finding points to reduce threshold value to 15 but couldn't find any fo
 It's condition value for dy pos is 34.7109823516
 The least we can reduce it to is 33.8826841857
 We will be running again to reduce further
+Found non aero point skipping.
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 1029
+It's condition value for dy pos is 33.8826841857
+The least we can reduce it to is 25.5501329533
+We will be running again to reduce further
+Found non aero point skipping.
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 1029
+It's condition value for dy pos is 25.5501329533
+The least we can reduce it to is 32.6379293479
+We don't want to worsen the condition value so we are not gonna do anything else
 Found non aero point skipping.
 We tried finding points to reduce threshold value to 15 but couldn't find any for index 1104
 It's condition value for dy pos is 5.94317415439e+16
@@ -669,16 +661,14 @@ We tried finding points to reduce threshold value to 15 but couldn't find any fo
 It's condition value for dy pos is 16.9400991494
 The least we can reduce it to is 33.3417320479
 We don't want to worsen the condition value so we are not gonna do anything else
-Found non aero point skipping.
 We tried finding points to reduce threshold value to 15 but couldn't find any for index 1636
-It's condition value for dy pos is 194219.879921
-The least we can reduce it to is 522.022423437
+It's condition value for dy pos is inf
+The least we can reduce it to is 332.758735437
 We will be running again to reduce further
-Found non aero point skipping.
 We tried finding points to reduce threshold value to 15 but couldn't find any for index 1636
-It's condition value for dy pos is 522.022423437
-The least we can reduce it to is 500.337181625
-We will be running again to reduce further
+It's condition value for dy pos is 332.758735437
+The least we can reduce it to is 542.564701343
+We don't want to worsen the condition value so we are not gonna do anything else
 We tried finding points to reduce threshold value to 15 but couldn't find any for index 1653
 It's condition value for dy pos is 27.2902903358
 The least we can reduce it to is 55.1147311514
@@ -747,6 +737,14 @@ We tried finding points to reduce threshold value to 15 but couldn't find any fo
 It's condition value for dy pos is 4701.09714672
 The least we can reduce it to is 2108.82736227
 We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 2089
+It's condition value for dy pos is 2108.82736227
+The least we can reduce it to is 1648.01118828
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 2089
+It's condition value for dy pos is 1648.01118828
+The least we can reduce it to is 1909.7464732
+We don't want to worsen the condition value so we are not gonna do anything else
 We tried finding points to reduce threshold value to 15 but couldn't find any for index 2092
 It's condition value for dy pos is 603.868815948
 The least we can reduce it to is 93.9391672467
@@ -759,26 +757,22 @@ We tried finding points to reduce threshold value to 15 but couldn't find any fo
 It's condition value for dy pos is 24.4216648684
 The least we can reduce it to is 34.8331520041
 We don't want to worsen the condition value so we are not gonna do anything else
-Found non aero point skipping.
 We tried finding points to reduce threshold value to 15 but couldn't find any for index 2138
-It's condition value for dy pos is 92976.5307129
-The least we can reduce it to is 3984.80964499
+It's condition value for dy pos is inf
+The least we can reduce it to is 88.4549529279
 We will be running again to reduce further
-Found non aero point skipping.
 We tried finding points to reduce threshold value to 15 but couldn't find any for index 2138
-It's condition value for dy pos is 3984.80964499
-The least we can reduce it to is 1193.80559111
-We will be running again to reduce further
-Found non aero point skipping.
+It's condition value for dy pos is 88.4549529279
+The least we can reduce it to is 184.44717866
+We don't want to worsen the condition value so we are not gonna do anything else
 We tried finding points to reduce threshold value to 15 but couldn't find any for index 2162
-It's condition value for dy pos is 450426.114671
-The least we can reduce it to is 1097.96426495
+It's condition value for dy pos is 1.12659551226e+17
+The least we can reduce it to is 252.344121542
 We will be running again to reduce further
-Found non aero point skipping.
 We tried finding points to reduce threshold value to 15 but couldn't find any for index 2162
-It's condition value for dy pos is 1097.96426495
-The least we can reduce it to is 1002.52612692
-We will be running again to reduce further
+It's condition value for dy pos is 252.344121542
+The least we can reduce it to is 257.704514608
+We don't want to worsen the condition value so we are not gonna do anything else
 We tried finding points to reduce threshold value to 15 but couldn't find any for index 2246
 It's condition value for dy pos is inf
 The least we can reduce it to is 148.66625057
@@ -795,6 +789,11 @@ We tried finding points to reduce threshold value to 15 but couldn't find any fo
 It's condition value for dy pos is 324.000306529
 The least we can reduce it to is 248.088463147
 We will be running again to reduce further
+Found non aero point skipping.
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 2252
+It's condition value for dy pos is 248.088463147
+The least we can reduce it to is 269.806819154
+We don't want to worsen the condition value so we are not gonna do anything else
 We tried finding points to reduce threshold value to 15 but couldn't find any for index 2306
 It's condition value for dy pos is 59.1504393267
 The least we can reduce it to is 69.8210344675
@@ -807,92 +806,14 @@ We tried finding points to reduce threshold value to 15 but couldn't find any fo
 It's condition value for dy pos is 3056.90303316
 The least we can reduce it to is 441.781814312
 We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 2315
+It's condition value for dy pos is 441.781814312
+The least we can reduce it to is 639.820236814
+We don't want to worsen the condition value so we are not gonna do anything else
 We tried finding points to reduce threshold value to 15 but couldn't find any for index 2351
 It's condition value for dy pos is 24.748981043
 The least we can reduce it to is 44.4534580885
 We don't want to worsen the condition value so we are not gonna do anything else
-Found non aero point skipping.
-Found non aero point skipping.
-We tried finding points to reduce threshold value to 15 but couldn't find any for index 3865
-It's condition value for dy pos is 126.260746153
-The least we can reduce it to is 50.3461101543
-We will be running again to reduce further
-Found non aero point skipping.
-We tried finding points to reduce threshold value to 15 but couldn't find any for index 3865
-It's condition value for dy pos is 50.3461101543
-The least we can reduce it to is 22.152124135
-We will be running again to reduce further
-Found non aero point skipping.
-We tried finding points to reduce threshold value to 15 but couldn't find any for index 4122
-It's condition value for dy pos is 94.0481995807
-The least we can reduce it to is 36.2856221825
-We will be running again to reduce further
-Found non aero point skipping.
-We tried finding points to reduce threshold value to 15 but couldn't find any for index 4122
-It's condition value for dy pos is 36.2856221825
-The least we can reduce it to is 15.9212029014
-We will be running again to reduce further
-Found non aero point skipping.
-We tried finding points to reduce threshold value to 15 but couldn't find any for index 4331
-It's condition value for dy pos is 110.928095899
-The least we can reduce it to is 35.8680486563
-We will be running again to reduce further
-Found non aero point skipping.
-Found non aero point skipping.
-We tried finding points to reduce threshold value to 15 but couldn't find any for index 4384
-It's condition value for dy pos is 818.299930595
-The least we can reduce it to is 180.685299936
-We will be running again to reduce further
-Found non aero point skipping.
-We tried finding points to reduce threshold value to 15 but couldn't find any for index 4384
-It's condition value for dy pos is 180.685299936
-The least we can reduce it to is 57.9481724294
-We will be running again to reduce further
-Found non aero point skipping.
-We tried finding points to reduce threshold value to 15 but couldn't find any for index 1636
-It's condition value for dy neg is 99.4681011601
-The least we can reduce it to is 42.6291852412
-We will be running again to reduce further
-We tried finding points to reduce threshold value to 15 but couldn't find any for index 1636
-It's condition value for dy neg is 42.6291852412
-The least we can reduce it to is 15.5239174414
-We will be running again to reduce further
-Found non aero point skipping.
-We tried finding points to reduce threshold value to 15 but couldn't find any for index 1782
-It's condition value for dy neg is 126.545800015
-The least we can reduce it to is 50.7470749419
-We will be running again to reduce further
-Found non aero point skipping.
-We tried finding points to reduce threshold value to 15 but couldn't find any for index 1782
-It's condition value for dy neg is 50.7470749419
-The least we can reduce it to is 22.3689914185
-We will be running again to reduce further
-Found non aero point skipping.
-We tried finding points to reduce threshold value to 15 but couldn't find any for index 2089
-It's condition value for dy neg is 94.0481995807
-The least we can reduce it to is 36.2856221825
-We will be running again to reduce further
-Found non aero point skipping.
-We tried finding points to reduce threshold value to 15 but couldn't find any for index 2089
-It's condition value for dy neg is 36.2856221825
-The least we can reduce it to is 15.9212029014
-We will be running again to reduce further
-Found non aero point skipping.
-We tried finding points to reduce threshold value to 15 but couldn't find any for index 2246
-It's condition value for dy neg is 110.59663851
-The least we can reduce it to is 35.9770168002
-We will be running again to reduce further
-Found non aero point skipping.
-Found non aero point skipping.
-We tried finding points to reduce threshold value to 15 but couldn't find any for index 2315
-It's condition value for dy neg is 818.299930595
-The least we can reduce it to is 180.685299936
-We will be running again to reduce further
-Found non aero point skipping.
-We tried finding points to reduce threshold value to 15 but couldn't find any for index 2315
-It's condition value for dy neg is 180.685299936
-The least we can reduce it to is 57.9481724294
-We will be running again to reduce further
 We tried finding points to reduce threshold value to 15 but couldn't find any for index 3041
 It's condition value for dy neg is 1.17224162532e+16
 The least we can reduce it to is 34.7109823516
@@ -901,6 +822,16 @@ We tried finding points to reduce threshold value to 15 but couldn't find any fo
 It's condition value for dy neg is 34.7109823516
 The least we can reduce it to is 33.8826841857
 We will be running again to reduce further
+Found non aero point skipping.
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 3041
+It's condition value for dy neg is 33.8826841857
+The least we can reduce it to is 25.5501329533
+We will be running again to reduce further
+Found non aero point skipping.
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 3041
+It's condition value for dy neg is 25.5501329533
+The least we can reduce it to is 32.6379293479
+We don't want to worsen the condition value so we are not gonna do anything else
 Found non aero point skipping.
 We tried finding points to reduce threshold value to 15 but couldn't find any for index 3089
 It's condition value for dy neg is 5.94317415439e+16
@@ -985,16 +916,14 @@ We tried finding points to reduce threshold value to 15 but couldn't find any fo
 It's condition value for dy neg is 16.9400991494
 The least we can reduce it to is 33.3417320479
 We don't want to worsen the condition value so we are not gonna do anything else
-Found non aero point skipping.
 We tried finding points to reduce threshold value to 15 but couldn't find any for index 3717
-It's condition value for dy neg is 194219.879921
-The least we can reduce it to is 522.022423437
+It's condition value for dy neg is inf
+The least we can reduce it to is 332.758735437
 We will be running again to reduce further
-Found non aero point skipping.
 We tried finding points to reduce threshold value to 15 but couldn't find any for index 3717
-It's condition value for dy neg is 522.022423437
-The least we can reduce it to is 500.337181625
-We will be running again to reduce further
+It's condition value for dy neg is 332.758735437
+The least we can reduce it to is 542.564701343
+We don't want to worsen the condition value so we are not gonna do anything else
 We tried finding points to reduce threshold value to 15 but couldn't find any for index 3734
 It's condition value for dy neg is 27.2902903358
 The least we can reduce it to is 55.1147311514
@@ -1063,6 +992,14 @@ We tried finding points to reduce threshold value to 15 but couldn't find any fo
 It's condition value for dy neg is 4701.09714672
 The least we can reduce it to is 2108.82736227
 We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 4122
+It's condition value for dy neg is 2108.82736227
+The least we can reduce it to is 1648.01118828
+We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 4122
+It's condition value for dy neg is 1648.01118828
+The least we can reduce it to is 1909.7464732
+We don't want to worsen the condition value so we are not gonna do anything else
 We tried finding points to reduce threshold value to 15 but couldn't find any for index 4123
 It's condition value for dy neg is 603.868815948
 The least we can reduce it to is 93.9391672467
@@ -1075,26 +1012,22 @@ We tried finding points to reduce threshold value to 15 but couldn't find any fo
 It's condition value for dy neg is 24.4216648684
 The least we can reduce it to is 34.8331520041
 We don't want to worsen the condition value so we are not gonna do anything else
-Found non aero point skipping.
 We tried finding points to reduce threshold value to 15 but couldn't find any for index 4163
-It's condition value for dy neg is 92976.5307129
-The least we can reduce it to is 3984.80964499
+It's condition value for dy neg is inf
+The least we can reduce it to is 88.4549529279
 We will be running again to reduce further
-Found non aero point skipping.
 We tried finding points to reduce threshold value to 15 but couldn't find any for index 4163
-It's condition value for dy neg is 3984.80964499
-The least we can reduce it to is 1193.80559111
-We will be running again to reduce further
-Found non aero point skipping.
+It's condition value for dy neg is 88.4549529279
+The least we can reduce it to is 184.44717866
+We don't want to worsen the condition value so we are not gonna do anything else
 We tried finding points to reduce threshold value to 15 but couldn't find any for index 4185
-It's condition value for dy neg is 450426.114672
-The least we can reduce it to is 1097.96426495
+It's condition value for dy neg is 1.12659551226e+17
+The least we can reduce it to is 252.344121542
 We will be running again to reduce further
-Found non aero point skipping.
 We tried finding points to reduce threshold value to 15 but couldn't find any for index 4185
-It's condition value for dy neg is 1097.96426495
-The least we can reduce it to is 1002.52612692
-We will be running again to reduce further
+It's condition value for dy neg is 252.344121542
+The least we can reduce it to is 257.704514608
+We don't want to worsen the condition value so we are not gonna do anything else
 We tried finding points to reduce threshold value to 15 but couldn't find any for index 4331
 It's condition value for dy neg is inf
 The least we can reduce it to is 148.66625057
@@ -1111,6 +1044,11 @@ We tried finding points to reduce threshold value to 15 but couldn't find any fo
 It's condition value for dy neg is 324.000306529
 The least we can reduce it to is 248.088463147
 We will be running again to reduce further
+Found non aero point skipping.
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 4335
+It's condition value for dy neg is 248.088463147
+The least we can reduce it to is 269.806819154
+We don't want to worsen the condition value so we are not gonna do anything else
 We tried finding points to reduce threshold value to 15 but couldn't find any for index 4381
 It's condition value for dy neg is 59.1504393267
 The least we can reduce it to is 69.8210344675
@@ -1123,73 +1061,14 @@ We tried finding points to reduce threshold value to 15 but couldn't find any fo
 It's condition value for dy neg is 3056.90303316
 The least we can reduce it to is 441.781814312
 We will be running again to reduce further
+We tried finding points to reduce threshold value to 15 but couldn't find any for index 4384
+It's condition value for dy neg is 441.781814312
+The least we can reduce it to is 639.820236814
+We don't want to worsen the condition value so we are not gonna do anything else
 We tried finding points to reduce threshold value to 15 but couldn't find any for index 4412
 It's condition value for dy neg is 24.748981043
 The least we can reduce it to is 44.4534580885
 We don't want to worsen the condition value so we are not gonna do anything else
-Found non aero point skipping.
-Found non aero point skipping.
-We tried finding points to reduce threshold value to 15 but couldn't find any for index 1782
-It's condition value for dx pos is 205.50085753
-The least we can reduce it to is 225.930621478
-We don't want to worsen the condition value so we are not gonna do anything else
-Found non aero point skipping.
-We tried finding points to reduce threshold value to 15 but couldn't find any for index 2089
-It's condition value for dx pos is 159.231350502
-The least we can reduce it to is 159.204818809
-We will be running again to reduce further
-Found non aero point skipping.
-We tried finding points to reduce threshold value to 15 but couldn't find any for index 2089
-It's condition value for dx pos is 159.204818809
-The least we can reduce it to is 161.614962881
-We don't want to worsen the condition value so we are not gonna do anything else
-Found non aero point skipping.
-We tried finding points to reduce threshold value to 15 but couldn't find any for index 2246
-It's condition value for dx pos is 475.660068021
-The least we can reduce it to is 65.2845204942
-We will be running again to reduce further
-Found non aero point skipping.
-We tried finding points to reduce threshold value to 15 but couldn't find any for index 2246
-It's condition value for dx pos is 65.2845204942
-The least we can reduce it to is 38.907453027
-We will be running again to reduce further
-Found non aero point skipping.
-We tried finding points to reduce threshold value to 15 but couldn't find any for index 2315
-It's condition value for dx pos is 59.7851325904
-The least we can reduce it to is 59.7643854926
-We will be running again to reduce further
-Found non aero point skipping.
-We tried finding points to reduce threshold value to 15 but couldn't find any for index 2315
-It's condition value for dx pos is 59.7643854926
-The least we can reduce it to is 57.3287400124
-We will be running again to reduce further
-Found non aero point skipping.
-Found non aero point skipping.
-We tried finding points to reduce threshold value to 15 but couldn't find any for index 3865
-It's condition value for dx pos is 205.50085753
-The least we can reduce it to is 274.788030159
-We don't want to worsen the condition value so we are not gonna do anything else
-Found non aero point skipping.
-We tried finding points to reduce threshold value to 15 but couldn't find any for index 4122
-It's condition value for dx pos is 159.231350502
-The least we can reduce it to is 209.80277312
-We don't want to worsen the condition value so we are not gonna do anything else
-Found non aero point skipping.
-We tried finding points to reduce threshold value to 15 but couldn't find any for index 4331
-It's condition value for dx pos is 475.660068021
-The least we can reduce it to is 157.645746366
-We will be running again to reduce further
-Found non aero point skipping.
-We tried finding points to reduce threshold value to 15 but couldn't find any for index 4331
-It's condition value for dx pos is 157.645746366
-The least we can reduce it to is 206.105726097
-We don't want to worsen the condition value so we are not gonna do anything else
-Found non aero point skipping.
-We tried finding points to reduce threshold value to 15 but couldn't find any for index 4384
-It's condition value for dx pos is 59.7851325904
-The least we can reduce it to is 71.0286711253
-We don't want to worsen the condition value so we are not gonna do anything else
-Found non aero point skipping.
 We tried finding points to reduce threshold value to 15 but couldn't find any for index 1085
 It's condition value for dx neg is 15.5650265407
 The least we can reduce it to is 18.4000055511
@@ -1204,33 +1083,6 @@ We tried finding points to reduce threshold value to 15 but couldn't find any fo
 It's condition value for dx neg is 53.6376024553
 We couldn't find a single point to reduce it to.
 Found non aero point skipping.
-Found non aero point skipping.
-We tried finding points to reduce threshold value to 15 but couldn't find any for index 1636
-It's condition value for dx neg is 81.5848435183
-The least we can reduce it to is 15.597210697
-We will be running again to reduce further
-Found non aero point skipping.
-Found non aero point skipping.
-We tried finding points to reduce threshold value to 15 but couldn't find any for index 2138
-It's condition value for dx neg is 657.259362545
-The least we can reduce it to is 330.643060631
-We will be running again to reduce further
-Found non aero point skipping.
-We tried finding points to reduce threshold value to 15 but couldn't find any for index 2138
-It's condition value for dx neg is 330.643060631
-The least we can reduce it to is 131.744699347
-We will be running again to reduce further
-Found non aero point skipping.
-We tried finding points to reduce threshold value to 15 but couldn't find any for index 2162
-It's condition value for dx neg is 181.614591225
-The least we can reduce it to is 65.5507486249
-We will be running again to reduce further
-Found non aero point skipping.
-We tried finding points to reduce threshold value to 15 but couldn't find any for index 2162
-It's condition value for dx neg is 65.5507486249
-The least we can reduce it to is 27.5891014962
-We will be running again to reduce further
-Found non aero point skipping.
 We tried finding points to reduce threshold value to 15 but couldn't find any for index 2933
 It's condition value for dx neg is inf
 The least we can reduce it to is 53.6376024553
@@ -1243,57 +1095,25 @@ We tried finding points to reduce threshold value to 15 but couldn't find any fo
 It's condition value for dx neg is 15.5650265407
 The least we can reduce it to is 18.4000055511
 We don't want to worsen the condition value so we are not gonna do anything else
-Found non aero point skipping.
-Found non aero point skipping.
-Found non aero point skipping.
-We tried finding points to reduce threshold value to 15 but couldn't find any for index 3717
-It's condition value for dx neg is 181.262792794
-The least we can reduce it to is 78.5772350137
-We will be running again to reduce further
-Found non aero point skipping.
-We tried finding points to reduce threshold value to 15 but couldn't find any for index 3717
-It's condition value for dx neg is 78.5772350137
-The least we can reduce it to is 29.6568716554
-We will be running again to reduce further
-Found non aero point skipping.
-We tried finding points to reduce threshold value to 15 but couldn't find any for index 4163
-It's condition value for dx neg is 657.259362545
-The least we can reduce it to is 330.643060631
-We will be running again to reduce further
-Found non aero point skipping.
-We tried finding points to reduce threshold value to 15 but couldn't find any for index 4163
-It's condition value for dx neg is 330.643060631
-The least we can reduce it to is 131.744699347
-We will be running again to reduce further
-Found non aero point skipping.
-We tried finding points to reduce threshold value to 15 but couldn't find any for index 4185
-It's condition value for dx neg is 181.614591225
-The least we can reduce it to is 65.5507486249
-We will be running again to reduce further
-Found non aero point skipping.
-We tried finding points to reduce threshold value to 15 but couldn't find any for index 4185
-It's condition value for dx neg is 65.5507486249
-The least we can reduce it to is 27.5891014962
-We will be running again to reduce further
 ****************************************
 Printing Delta Conditions for Interior Points
 ****************************************
-1029 5 6.69851412098 6 6.36747762515 3 33.8826841857 7 4.48872962661
-1029 5 6.69764553976 6 6.36718451655 3 33.7732767748 7 4.48863033057
+1029 6 9.92586359747 3 4.73578709037 4 25.5501329533 4 1.84611862662
+1029 6 9.92493878914 3 4.69124421032 4 25.5341210367 4 1.84541210672
 1085 4 2.95564951865 2 15.5650265407 2 4.90833874728 5 2.02100650513
 1085 4 2.95479226345 2 15.084119304 2 4.85686911396 5 2.02080003733
-1091 6 4.70445503435 2 53.6376024553 4 9.63459203707 3 3.32693682825
-1091 6 4.69657921088 2 19.0998651993 4 9.5604414935 3 3.28006670284
-1104 4 3.08014842466 4 7.79237413782 2 67.1623945153 6 4.36528350779
-1104 4 3.07995070199 4 7.79102947967 2 64.8414271286 6 4.3651686353
-1129 4 3.50475228865 4 7.55359106733 2 93.2723802117 6 4.96437248531
-1129 4 3.50453907432 4 7.55262078646 2 89.426316189 6 4.9642332591
+1091 5 2.16814074759 2 53.6376024553 3 8.75828728002 3 3.32693682825
+1091 5 2.16475250418 2 19.0998651993 3 8.50381987272 3 3.28006670284
+1104 4 3.08014842466 3 4.75130873741 2 67.1623945153 5 2.1788910827
+1104 4 3.07995070199 3 4.74833447547 2 64.8414271286 5 2.17883942028
+1129 4 3.50475228865 3 4.57407733037 2 93.2723802117 5 2.15473408322
+1129 4 3.50453907432 3 4.57115729377 2 89.426316189 5 2.15468242737
 1130 3 3.14980039971 4 3.99356278208 2 21.3396453662 4 1.24999995576
 1130 3 3.14973016406 4 3.99345646629 2 21.0829746819 4 1.24999869487
 1139 4 4.07133975721 2 7.90273595561 3 16.3138382347 4 1.97520458528
 1139 4 4.07120797949 2 7.89726733106 3 16.2512304419 4 1.97519123665
-1140 4 5.48644326952 4 3.73877776813 2 197.780585193 7 2.01512479244
-1140 4 5.48620383219 4 3.73876211937 2 166.756888949 7 2.01512337801
+1140 4 5.48644326952 2 10.6049524998 2 197.780585193 5 2.41088129802
+1140 4 5.48620383219 2 10.5964330856 2 166.756888949 5 2.41086742498
 1310 3 3.47927567454 4 2.82922441924 2 16.4876297325 4 1.24999988531
 1310 3 3.47917843532 4 2.82919373514 2 16.4410244404 4 1.24999862442
 1395 3 2.22073824455 4 4.0089246856 3 242.475925205 4 1.00000040594
@@ -1306,18 +1126,18 @@ Printing Delta Conditions for Interior Points
 1542 3 9.08440532732 2 4.7310010059 2 41.8595524358 3 1.93128310127
 1543 3 8.3754298915 2 3.98903721611 2 17.0702588292 3 1.93128382831
 1543 3 8.37533288805 2 3.98899947522 2 17.0554883936 3 1.93128294063
-1602 6 3.1699546856 5 3.23780403177 2 728.457167358 9 2.4941845916
-1602 6 3.16995457526 5 3.23780101527 2 645.296794678 9 2.49418454959
+1602 3 4.47920789346 4 3.80288160278 2 728.457167358 5 2.11756641224
+1602 3 4.47901094648 4 3.80286393447 2 645.296794678 5 2.11756320764
 1605 3 3.87389407538 3 1.91934082849 2 60.7369609618 3 1.50000006144
 1605 3 3.87376211664 3 1.91933265491 2 60.1665006584 3 1.4999964158
 1608 3 3.36456783522 3 1.62073397092 2 16.9400991494 3 1.50000006144
 1608 3 3.36448049545 3 1.6207294035 2 16.9262382337 3 1.4999964158
-1636 6 2.53679301659 10 5.41182487518 5 500.337181625 11 2.69424532471
-1636 6 2.53679235986 10 5.4118248677 5 500.330926204 11 2.69424532177
+1636 3 4.16824251075 4 3.64450328038 2 332.758735437 5 2.13476395014
+1636 3 4.16808533301 4 3.64448691178 2 320.244241927 5 2.13476070343
 1653 3 3.3881972905 3 1.74824524708 2 27.2902903358 3 1.49999993856
 1653 3 3.38811085121 3 1.74823853462 2 27.2232350671 3 1.49999629292
-1782 5 205.50085753 6 10.1673863924 2 237.73245372 9 22.3689914185
-1782 5 205.499791922 6 10.1673673981 2 231.236041951 9 22.3689901524
+1782 3 3.25205180847 4 3.33184389286 2 237.73245372 5 2.27408058409
+1782 3 3.2519883463 4 3.33182854556 2 231.236041951 5 2.27407701003
 1837 3 5.95783629815 3 3.59721420363 3 32.4315989493 4 1.97520456034
 1837 3 5.9573684012 3 3.59706594717 3 32.3158967957 4 1.97519121172
 1838 2 11.3563868668 4 4.1003277005 3 23.1640939956 5 2.04899194849
@@ -1334,42 +1154,42 @@ Printing Delta Conditions for Interior Points
 2087 3 9.00682734893 3 3.77481648292 3 79.7227873314 4 1.97519121172
 2088 2 11.3563868668 3 5.885752672 2 26.3781341257 4 1.97520456034
 2088 2 11.3415279189 3 5.88524942529 2 25.5888512428 4 1.97519121172
-2089 6 159.204818809 7 5.72316464148 3 2108.82736227 9 15.9845837403
-2089 6 159.203929991 7 5.7231616274 3 1603.6346973 9 15.984582909
+2089 3 3.93293582138 6 8.15012424946 4 1648.01118828 4 1.17765240844
+2089 3 3.93281276116 6 8.15009437654 4 1508.50681193 4 1.17765152453
 2092 3 3.72455085624 4 2.64393297288 3 93.9391672467 4 1.00000040594
 2092 3 3.72282279003 4 2.64379314933 3 88.7378148579 4 1.00000040592
 2095 3 3.0 3 2.07517571854 2 24.4216648684 4 1.00000040594
 2095 3 2.99927597423 3 2.074909821 2 23.6262968208 4 1.00000040592
-2138 3 2.77856436861 9 131.744699347 5 1193.80559111 6 11.2180659687
-2138 3 2.7780654961 9 131.744637809 5 1193.75991842 6 11.2177593268
-2162 3 3.2017523238 9 27.5891014962 5 1002.52612692 7 6.01923553514
-2162 3 3.20105785566 9 27.5890777549 5 1001.4076976 7 6.01917491219
-2246 6 38.907453027 7 7.30393046477 2 148.66625057 12 4.2715515897
-2246 6 38.9074288374 7 7.30392792039 2 132.814875735 12 4.27155156267
-2252 5 14.4538208277 5 6.00547795103 3 248.088463147 7 9.42668904428
-2252 5 14.4523929689 5 6.00512607459 3 231.577423618 7 9.42640945644
+2138 3 2.77856436861 4 3.30142754003 2 88.4549529279 5 2.44816663875
+2138 3 2.7780654961 4 3.30121914682 2 84.4811255351 5 2.4481036393
+2162 3 3.2017523238 4 3.31730583391 2 252.344121542 5 2.47827036825
+2162 3 3.20105785566 4 3.31706261629 2 198.933573749 5 2.47820672548
+2246 3 9.09362080096 4 5.38078210683 2 148.66625057 6 3.22621330698
+2246 3 9.0922208631 4 5.38055772089 2 132.814875735 6 3.22619521953
+2252 3 4.74778550277 5 6.00547795103 3 248.088463147 5 2.1151330711
+2252 3 4.7442667569 5 6.00512607459 3 231.577423618 5 2.11508254814
 2306 3 3.24208028507 3 1.69474445008 2 59.1504393267 3 1.50000031949
 2306 3 3.22717880656 3 1.6934846512 2 38.6869574821 3 1.49913704558
-2315 7 57.3287400124 5 14.0310970957 3 441.781814312 9 55.6386506455
-2315 7 57.32865576 5 13.9997794648 3 267.048816522 9 55.6385736739
+2315 2 7.68687143651 5 14.0310970957 3 441.781814312 4 2.37077800421
+2315 2 7.44587903045 5 13.9997794648 3 267.048816522 4 2.36768273637
 2351 3 2.50163554564 3 1.57331968043 2 24.748981043 3 1.50000032441
 2351 3 2.43610059955 3 1.5586840255 2 12.6475002388 3 1.48903951813
-2933 6 4.70445503435 2 53.6376024553 3 3.32693682825 4 9.63459203707
-2933 6 4.69657921088 2 19.0998651993 3 3.28006670284 4 9.5604414935
+2933 5 2.16814074759 2 53.6376024553 3 3.32693682825 3 8.75828728002
+2933 5 2.16475250418 2 19.0998651993 3 3.28006670284 3 8.50381987272
 2994 4 2.95564951865 2 15.5650265407 5 2.02100650513 2 4.90833874728
 2994 4 2.95479226345 2 15.084119304 5 2.02080003733 2 4.85686911396
-3041 5 6.69851412098 6 6.36747762515 7 4.48872962661 3 33.8826841857
-3041 5 6.69764553976 6 6.36718451655 7 4.48863033057 3 33.7732767748
-3089 4 3.08014842466 4 7.79237413782 6 4.36528350779 2 67.1623945153
-3089 4 3.07995070199 4 7.79102947967 6 4.3651686353 2 64.8414271286
-3179 4 3.50475228865 4 7.55359106733 6 4.96437248531 2 93.2723802117
-3179 4 3.50453907432 4 7.55262078646 6 4.9642332591 2 89.426316189
+3041 6 9.92586359747 3 4.73578709037 4 1.84611862662 4 25.5501329533
+3041 6 9.92493878914 3 4.69124421032 4 1.84541210672 4 25.5341210367
+3089 4 3.08014842466 3 4.75130873741 5 2.1788910827 2 67.1623945153
+3089 4 3.07995070199 3 4.74833447547 5 2.17883942028 2 64.8414271286
+3179 4 3.50475228865 3 4.57407733037 5 2.15473408322 2 93.2723802117
+3179 4 3.50453907432 3 4.57115729377 5 2.15468242737 2 89.426316189
 3187 3 3.14980039971 4 3.99356278208 4 1.24999995576 2 21.3396453662
 3187 3 3.14973016406 4 3.99345646629 4 1.24999869487 2 21.0829746819
 3197 4 4.07133975721 2 7.90273595561 4 1.97520458528 3 16.3138382347
 3197 4 4.07120797949 2 7.89726733106 4 1.97519123665 3 16.2512304419
-3198 4 5.48644326952 4 3.73877776813 7 2.01512479244 2 197.780585193
-3198 4 5.48620383219 4 3.73876211937 7 2.01512337801 2 166.756888949
+3198 4 5.48644326952 2 10.6049524998 5 2.41088129802 2 197.780585193
+3198 4 5.48620383219 2 10.5964330856 5 2.41086742498 2 166.756888949
 3327 3 3.47927567454 4 2.82922441924 4 1.24999988531 2 16.4876297325
 3327 3 3.47917843532 4 2.82919373514 4 1.24999862442 2 16.4410244404
 3426 3 2.22073824455 4 4.0089246856 4 1.00000040594 3 242.475925205
@@ -1382,14 +1202,14 @@ Printing Delta Conditions for Interior Points
 3607 3 9.08440532732 2 4.7310010059 3 1.93128310127 2 41.8595524358
 3608 3 8.3754298915 2 3.98903721611 3 1.93128382831 2 17.0702588292
 3608 3 8.37533288805 2 3.98899947522 3 1.93128294063 2 17.0554883936
-3689 6 3.1699546856 5 3.23780403177 9 2.4941845916 2 728.457167358
-3689 6 3.16995457526 5 3.23780101527 9 2.49418454959 2 645.296794678
+3689 3 4.47920789346 4 3.80288160278 5 2.11756641224 2 728.457167358
+3689 3 4.47901094648 4 3.80286393447 5 2.11756320764 2 645.296794678
 3692 3 3.87389407538 3 1.91934082849 3 1.50000006144 2 60.7369609618
 3692 3 3.87376211664 3 1.91933265491 3 1.4999964158 2 60.1665006584
 3695 3 3.36456783522 3 1.62073397092 3 1.50000006144 2 16.9400991494
 3695 3 3.36448049545 3 1.6207294035 3 1.4999964158 2 16.9262382337
-3717 3 4.16824251075 9 29.6568716554 8 16.0921034644 5 500.337181625
-3717 3 4.16808533301 9 29.6568703739 8 16.0921026795 5 500.330926204
+3717 3 4.16824251075 4 3.64450328038 5 2.13476395014 2 332.758735437
+3717 3 4.16808533301 4 3.64448691178 5 2.13476070343 2 320.244241927
 3734 3 3.3881972905 3 1.74824524708 3 1.49999993856 2 27.2902903358
 3734 3 3.38811085121 3 1.74823853462 3 1.49999629292 2 27.2232350671
 3859 3 5.95783629815 3 3.59721420363 4 1.97520456034 3 32.4315989493
@@ -1398,8 +1218,8 @@ Printing Delta Conditions for Interior Points
 3860 2 11.3415279189 4 4.10018987415 5 2.0489787013 3 22.9868290426
 3862 4 3.87532634022 3 1.97353465174 4 1.24999988531 2 109.613480951
 3862 4 3.87523034503 3 1.97352428758 4 1.24999862442 2 105.728563187
-3865 5 205.50085753 6 10.1673863924 9 22.3689914185 2 237.73245372
-3865 5 205.499791922 6 10.1673673981 9 22.3689901524 2 231.236041951
+3865 3 3.25205180847 4 3.33184389286 5 2.27408058409 2 237.73245372
+3865 3 3.2519883463 4 3.33182854556 5 2.27407701003 2 231.236041951
 3945 3 3.07738515672 3 2.05838489355 3 1.50000006144 2 17.0426426974
 3945 3 3.07732407778 3 2.05836910357 3 1.4999964158 2 17.0098119669
 4062 3 2.4306873552 4 2.19635438736 4 1.00000040594 3 50.2856063473
@@ -1410,24 +1230,24 @@ Printing Delta Conditions for Interior Points
 4120 3 9.00682734893 3 3.77481648292 4 1.97519121172 3 79.7227873314
 4121 2 11.3563868668 3 5.885752672 4 1.97520456034 2 26.3781341257
 4121 2 11.3415279189 3 5.88524942529 4 1.97519121172 2 25.5888512428
-4122 5 159.231350502 7 5.72316464148 8 15.9212029014 3 2108.82736227
-4122 5 159.230450992 7 5.7231616274 8 15.921202071 3 1603.6346973
+4122 3 3.93293582138 6 8.15012424946 4 1.17765240844 4 1648.01118828
+4122 3 3.93281276116 6 8.15009437654 4 1.17765152453 4 1508.50681193
 4123 3 3.72455085624 4 2.64393297288 4 1.00000040594 3 93.9391672467
 4123 3 3.72282279003 4 2.64379314933 4 1.00000040592 3 88.7378148579
 4126 3 3.0 3 2.07517571854 4 1.00000040594 2 24.4216648684
 4126 3 2.99927597423 3 2.074909821 4 1.00000040592 2 23.6262968208
-4163 3 2.77856436861 9 131.744699347 6 11.2180659687 5 1193.80559111
-4163 3 2.7780654961 9 131.744637809 6 11.2177593268 5 1193.75991842
-4185 3 3.2017523238 9 27.5891014962 7 6.01923553514 5 1002.52612692
-4185 3 3.20105785566 9 27.5890777549 7 6.01917491219 5 1001.4076976
-4331 5 157.645746366 7 7.30393046477 11 6.40219782988 2 148.66625057
-4331 5 157.644998929 7 7.30392792039 11 6.4021977842 2 132.814875735
-4335 5 14.4538208277 5 6.00547795103 7 9.42668904428 3 248.088463147
-4335 5 14.4523929689 5 6.00512607459 7 9.42640945644 3 231.577423618
+4163 3 2.77856436861 4 3.30142754003 5 2.44816663875 2 88.4549529279
+4163 3 2.7780654961 4 3.30121914682 5 2.4481036393 2 84.4811255351
+4185 3 3.2017523238 4 3.31730583391 5 2.47827036825 2 252.344121542
+4185 3 3.20105785566 4 3.31706261629 5 2.47820672548 2 198.933573749
+4331 3 9.09362080096 4 5.38078210683 6 3.22621330698 2 148.66625057
+4331 3 9.0922208631 4 5.38055772089 6 3.22619521953 2 132.814875735
+4335 3 4.74778550277 5 6.00547795103 5 2.1151330711 3 248.088463147
+4335 3 4.7442667569 5 6.00512607459 5 2.11508254814 3 231.577423618
 4381 3 3.24208028507 3 1.69474445008 3 1.50000031949 2 59.1504393267
 4381 3 3.22717880656 3 1.6934846512 3 1.49913704558 2 38.6869574821
-4384 5 59.7851325904 5 14.0310970957 7 57.9481724294 3 441.781814312
-4384 5 59.7850368728 5 13.9997794648 7 57.9480853192 3 267.048816522
+4384 2 7.68687143651 5 14.0310970957 4 2.37077800421 3 441.781814312
+4384 2 7.44587903045 5 13.9997794648 4 2.36768273637 3 267.048816522
 4412 3 2.50163554564 3 1.57331968043 3 1.50000032441 2 24.748981043
 4412 3 2.43610059955 3 1.5586840255 3 1.48903951813 2 12.6475002388
 ****************************************

@@ -75,20 +75,20 @@ def main():
     printL("Adding Wall Points")
     printL("****************************************")
 
-    for index,item in enumerate(hashtable[1:]):
-        if(getFlag(index,globaldata)==1):
-            dSPointXPos = getDXPosPoints(index,globaldata,hashtable)
-            dSPointXNeg = getDXNegPoints(index,globaldata,hashtable)
-            dSPointYPos = getDYPosPoints(index,globaldata,hashtable)
-            dSPointYNeg = getDYNegPoints(index,globaldata,hashtable)
-            if(len(dSPointXNeg) == 1):
-                addNearestWallPoints(index,globaldata,hashtable,wallpoints)
-            elif(len(dSPointXPos) == 1):
-                addNearestWallPoints(index,globaldata,hashtable,wallpoints)
-            elif(len(dSPointYNeg) == 1):
-                addNearestWallPoints(index,globaldata,hashtable,wallpoints)
-            elif(len(dSPointYPos) == 1):
-                addNearestWallPoints(index,globaldata,hashtable,wallpoints)
+    # for index,item in enumerate(hashtable[1:]):
+    #     if(getFlag(index,globaldata)==1):
+    #         dSPointXPos = getDXPosPoints(index,globaldata,hashtable)
+    #         dSPointXNeg = getDXNegPoints(index,globaldata,hashtable)
+    #         dSPointYPos = getDYPosPoints(index,globaldata,hashtable)
+    #         dSPointYNeg = getDYNegPoints(index,globaldata,hashtable)
+    #         if(len(dSPointXNeg) == 1):
+    #             addNearestWallPoints(index,globaldata,hashtable,wallpoints)
+    #         elif(len(dSPointXPos) == 1):
+    #             addNearestWallPoints(index,globaldata,hashtable,wallpoints)
+    #         elif(len(dSPointYNeg) == 1):
+    #             addNearestWallPoints(index,globaldata,hashtable,wallpoints)
+    #         elif(len(dSPointYPos) == 1):
+    #             addNearestWallPoints(index,globaldata,hashtable,wallpoints)
 
     printL("***********************************")
 
@@ -125,16 +125,16 @@ def main():
 
     for index, item in enumerate(hashtable[1:]):
         if(getFlag(index,globaldata)==1 or getFlag(index,globaldata)==3):
-            conditionValueFixForYPos(index,globaldata,hashtable,15,wallpoints,0)
+            conditionValueFixForYPos(index,globaldata,hashtable,15,wallpoints,-5)
     for index, item in enumerate(hashtable[1:]):
         if(getFlag(index,globaldata)==1 or getFlag(index,globaldata)==3):
-            conditionValueFixForYNeg(index,globaldata,hashtable,15,wallpoints, 0)
+            conditionValueFixForYNeg(index,globaldata,hashtable,15,wallpoints, -5)
     for index, item in enumerate(hashtable[1:]):
         if(getFlag(index,globaldata)==1 or getFlag(index,globaldata)==3):
-            conditionValueFixForXPos(index,globaldata,hashtable,15,wallpoints, 0)
+            conditionValueFixForXPos(index,globaldata,hashtable,15,wallpoints, -5)
     for index, item in enumerate(hashtable[1:]):
         if(getFlag(index,globaldata)==1 or getFlag(index,globaldata)==3):
-            conditionValueFixForXNeg(index,globaldata,hashtable,15,wallpoints, 0)
+            conditionValueFixForXNeg(index,globaldata,hashtable,15,wallpoints, -5)
 
     printL("****************************************")
     printL("Printing Delta Conditions for Interior Points")
