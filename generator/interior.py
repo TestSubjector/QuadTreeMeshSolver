@@ -452,17 +452,17 @@ def setPosDeltaFlags(index,globaldata,hashtable,threshold):
     initialConditionValueXNeg = getInteriorConditionValueofXNeg(index,globaldata,hashtable)
     initialConditionValueYPos = getInteriorConditionValueofYPos(index,globaldata,hashtable)
     initialConditionValueYNeg = getInteriorConditionValueofYNeg(index,globaldata,hashtable)
-    if(initialConditionValueXPos > threshold or math.isnan(initialConditionValueXPos)):
-        globaldata = setFlagValue(index,7,0,globaldata)
+    if(initialConditionValueXPos > threshold or math.isnan(initialConditionValueXPos) or math.isinf(initialConditionValueXPos)):
+        globaldata = setFlagValue(index,7,1,globaldata)
         writeLog([index,"Full Stencil Condition Value",conditionValueOfPointFull(index,globaldata)])
-    if(initialConditionValueXNeg > threshold or math.isnan(initialConditionValueXNeg)):
-        globaldata = setFlagValue(index,8,0,globaldata)
+    if(initialConditionValueXNeg > threshold or math.isnan(initialConditionValueXNeg) or math.isinf(initialConditionValueXNeg)):
+        globaldata = setFlagValue(index,8,1,globaldata)
         writeLog([index,"Full Stencil Condition Value",conditionValueOfPointFull(index,globaldata)])
-    if(initialConditionValueYPos > threshold or math.isnan(initialConditionValueYPos)):
-        globaldata = setFlagValue(index,9,0,globaldata)    
+    if(initialConditionValueYPos > threshold or math.isnan(initialConditionValueYPos) or math.isinf(initialConditionValueYPos)):
+        globaldata = setFlagValue(index,9,1,globaldata)    
         writeLog([index,"Full Stencil Condition Value",conditionValueOfPointFull(index,globaldata)])
-    if(initialConditionValueYNeg > threshold or math.isnan(initialConditionValueYNeg)):
-        globaldata = setFlagValue(index,10,0,globaldata)
+    if(initialConditionValueYNeg > threshold or math.isnan(initialConditionValueYNeg) or math.isinf(initialConditionValueYNeg)):
+        globaldata = setFlagValue(index,10,1,globaldata)
         writeLog([index,"Full Stencil Condition Value",conditionValueOfPointFull(index,globaldata)])
     return globaldata
 

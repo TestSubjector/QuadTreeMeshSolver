@@ -35,6 +35,9 @@ def main():
     silentRemove("log.txt")
     wallpoints = []
 
+    interiorPointsCount = 0
+    outerPointsCount = 0
+
     hashtable,wallpointsdata,globaldata = loadWall(geometrydata)
     wallpoints.append(wallpointsdata)
     hashtable,globaldata = loadInterior(data,hashtable,globaldata,len(hashtable))
@@ -77,17 +80,17 @@ def main():
 
     # for index,item in enumerate(hashtable[1:]):
     #     if(getFlag(index,globaldata)==1):
-    #         dSPointXPos = getDXPosPoints(index,globaldata,hashtable)
-    #         dSPointXNeg = getDXNegPoints(index,globaldata,hashtable)
-    #         dSPointYPos = getDYPosPoints(index,globaldata,hashtable)
-    #         dSPointYNeg = getDYNegPoints(index,globaldata,hashtable)
-    #         if(len(dSPointXNeg) == 1):
+    #         initialConditionValueXPos = getInteriorConditionValueofXPos(index,globaldata,hashtable)
+    #         initialConditionValueXNeg = getInteriorConditionValueofXNeg(index,globaldata,hashtable)
+    #         initialConditionValueYPos = getInteriorConditionValueofYPos(index,globaldata,hashtable)
+    #         initialConditionValueYNeg = getInteriorConditionValueofYNeg(index,globaldata,hashtable)
+    #         if(math.isinf(initialConditionValueXNeg)):
     #             addNearestWallPoints(index,globaldata,hashtable,wallpoints)
-    #         elif(len(dSPointXPos) == 1):
+    #         elif(math.isinf(initialConditionValueXPos)):
     #             addNearestWallPoints(index,globaldata,hashtable,wallpoints)
-    #         elif(len(dSPointYNeg) == 1):
+    #         elif(math.isinf(initialConditionValueYNeg)):
     #             addNearestWallPoints(index,globaldata,hashtable,wallpoints)
-    #         elif(len(dSPointYPos) == 1):
+    #         elif(math.isinf(initialConditionValueYPos)):
     #             addNearestWallPoints(index,globaldata,hashtable,wallpoints)
 
     printL("***********************************")
@@ -96,6 +99,7 @@ def main():
 
     for index,_ in enumerate(hashtable[1:]):
         if(getFlag(index,globaldata)==1 or getFlag(index,globaldata)==3):
+            interiorPointsCount = interiorPointsCount + 1
             printPosDeltaConditions(index,globaldata,hashtable,15)
 
     for index, item in enumerate(hashtable[1:]):
@@ -107,6 +111,7 @@ def main():
 
     for index, item in enumerate(hashtable[1:]):
         if(getFlag(index,globaldata)==2):
+            outerPointsCount = outerPointsCount + 1
             printOuterConditionValue(index,globaldata,hashtable)
             printOuterConditionValue(index,globaldata,hashtable)
             printOuterConditionValue(index,globaldata,hashtable)
@@ -115,9 +120,9 @@ def main():
     printL("Setting Pre Balancing Flags for Interior Points")
     printL("***********************************")
 
-    for index, item in enumerate(hashtable[1:]):
-        if(getFlag(index,globaldata)==1):
-            globaldata = setPosDeltaFlags(index,globaldata,hashtable,100) #Threshold for Flag 3 - 6
+    # for index, item in enumerate(hashtable[1:]):
+    #     if(getFlag(index,globaldata)==1):
+    #         globaldata = setPosDeltaFlags(index,globaldata,hashtable,50) #Threshold for Flag 3 - 6
 
     printL("***********************************")
     printL("Fixing Interior Points")
@@ -125,16 +130,20 @@ def main():
 
     for index, item in enumerate(hashtable[1:]):
         if(getFlag(index,globaldata)==1 or getFlag(index,globaldata)==3):
-            conditionValueFixForYPos(index,globaldata,hashtable,15,wallpoints,-5)
+            conditionValueFixForYPos(index,globaldata,hashtable,15,wallpoints,-1)
     for index, item in enumerate(hashtable[1:]):
         if(getFlag(index,globaldata)==1 or getFlag(index,globaldata)==3):
-            conditionValueFixForYNeg(index,globaldata,hashtable,15,wallpoints, -5)
+            conditionValueFixForYNeg(index,globaldata,hashtable,15,wallpoints, -1)
     for index, item in enumerate(hashtable[1:]):
         if(getFlag(index,globaldata)==1 or getFlag(index,globaldata)==3):
-            conditionValueFixForXPos(index,globaldata,hashtable,15,wallpoints, -5)
+            conditionValueFixForXPos(index,globaldata,hashtable,15,wallpoints, -1)
     for index, item in enumerate(hashtable[1:]):
         if(getFlag(index,globaldata)==1 or getFlag(index,globaldata)==3):
-            conditionValueFixForXNeg(index,globaldata,hashtable,15,wallpoints, -5)
+            conditionValueFixForXNeg(index,globaldata,hashtable,15,wallpoints, -1)
+
+    for index, item in enumerate(hashtable[1:]):
+        if(getFlag(index,globaldata)==1):
+            globaldata = setPosDeltaFlags(index,globaldata,hashtable,400) #Threshold for Flag 3 - 6
 
     printL("****************************************")
     printL("Printing Delta Conditions for Interior Points")
@@ -152,6 +161,9 @@ def main():
     #     if(getFlag(index,globaldata)==1):
     #         printPosDeltaPointConditions(index,globaldata,hashtable,3)
 
+    printL("****************************************")
+    print("Interior Points are " + str(interiorPointsCount))
+    print("Outer Points are " + str(outerPointsCount))
     printL("****************************************")
 
     globaldata = cleanNeighbours(globaldata)
