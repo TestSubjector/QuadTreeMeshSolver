@@ -17,7 +17,7 @@ def main():
     args = parser.parse_args()
     print("Loading Data")
 
-    PSUEDODETECTION = 0.00001
+    CONDITIONTHRESHOLD = 2000
     
     # Opening the Neighbourhood file
     file1 = open(args.neighbour or "neighbour.txt","r")
@@ -54,13 +54,6 @@ def main():
     #         nonAeroCheck(index,globaldata,wallpoints)
 
     # printL("***********************************")
-    # printL("***********************************")
-    # printL("Checking for Psuedo Points to Nuke")
-    # printL("***********************************")
-    
-    # for index,_ in enumerate(hashtable[1:]):
-    #     if(getFlag(index,globaldata)==1):
-    #         globaldata = fixPsuedoWallPoints(index,globaldata,hashtable,wallpoints,PSUEDODETECTION)
     
     # fixPsuedoWallPoints(2295,globaldata,hashtable,wallpoints,PSUEDODETECTION)
     # fixPsuedoWallPoints(2296,globaldata,hashtable,wallpoints,PSUEDODETECTION)
@@ -143,6 +136,14 @@ def main():
     for index,item in enumerate(hashtable[1:]):
         if(getFlag(index,globaldata)==1 or getFlag(index,globaldata)==3):
             printPosDeltaConditions(index,globaldata,hashtable,15)
+
+    printL("***********************************")
+    printL("Checking for Points to Nuke")
+    printL("***********************************")
+    
+    # for index,_ in enumerate(hashtable[1:]):
+    #     if(getFlag(index,globaldata)==1):
+    #         globaldata = fixPsuedoWallPoints(index,globaldata,hashtable,wallpoints,CONDITIONTHRESHOLD)
 
     # printL("****************************************")
     # printL("Printing Delta Neighbour Conditions for Interior Points")
