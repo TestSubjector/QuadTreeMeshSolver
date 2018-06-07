@@ -101,6 +101,12 @@ def main():
         if(getFlag(index,globaldata)==1 or getFlag(index,globaldata)==3):
             interiorPointsCount = interiorPointsCount + 1
             printPosDeltaConditions(index,globaldata,hashtable,15)
+    
+    printL("***********************************")
+
+    for index,_ in enumerate(hashtable[1:]):
+        if(getFlag(index,globaldata)==1 or getFlag(index,globaldata)==3):
+            printWeighedPosDeltaConditions(index,globaldata,hashtable,15)
 
     for index, item in enumerate(hashtable[1:]):
         if(getFlag(index,globaldata)==0):
@@ -130,20 +136,20 @@ def main():
 
     for index, item in enumerate(hashtable[1:]):
         if(getFlag(index,globaldata)==1 or getFlag(index,globaldata)==3):
-            conditionValueFixForYPos(index,globaldata,hashtable,15,wallpoints,-1)
+            conditionValueFixForYPos(index,globaldata,hashtable,15,wallpoints,-1, 1)
     for index, item in enumerate(hashtable[1:]):
         if(getFlag(index,globaldata)==1 or getFlag(index,globaldata)==3):
-            conditionValueFixForYNeg(index,globaldata,hashtable,15,wallpoints, -1)
+            conditionValueFixForYNeg(index,globaldata,hashtable,15,wallpoints, -1, 1)
     for index, item in enumerate(hashtable[1:]):
         if(getFlag(index,globaldata)==1 or getFlag(index,globaldata)==3):
-            conditionValueFixForXPos(index,globaldata,hashtable,15,wallpoints, -1)
+            conditionValueFixForXPos(index,globaldata,hashtable,15,wallpoints, -1, 1)
     for index, item in enumerate(hashtable[1:]):
         if(getFlag(index,globaldata)==1 or getFlag(index,globaldata)==3):
-            conditionValueFixForXNeg(index,globaldata,hashtable,15,wallpoints, -1)
+            conditionValueFixForXNeg(index,globaldata,hashtable,15,wallpoints, -1, 1)
 
-    for index, item in enumerate(hashtable[1:]):
-        if(getFlag(index,globaldata)==1):
-            globaldata = setPosDeltaFlags(index,globaldata,hashtable,400) #Threshold for Flag 3 - 6
+    # for index, item in enumerate(hashtable[1:]):
+    #     if(getFlag(index,globaldata)==1):
+    #         globaldata = setPosDeltaFlags(index,globaldata,hashtable,400) #Threshold for Flag 3 - 6
 
     printL("****************************************")
     printL("Printing Delta Conditions for Interior Points")
@@ -152,6 +158,12 @@ def main():
     for index,item in enumerate(hashtable[1:]):
         if(getFlag(index,globaldata)==1 or getFlag(index,globaldata)==3):
             printPosDeltaConditions(index,globaldata,hashtable,15)
+
+    printL("***********************************")
+
+    for index,item in enumerate(hashtable[1:]):
+        if(getFlag(index,globaldata)==1 or getFlag(index,globaldata)==3):
+            printWeighedPosDeltaConditions(index,globaldata,hashtable,15)
 
     # printL("****************************************")
     # printL("Printing Delta Neighbour Conditions for Interior Points")
