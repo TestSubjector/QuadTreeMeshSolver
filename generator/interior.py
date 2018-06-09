@@ -547,23 +547,33 @@ def printPosDeltaPointConditions(index,globaldata,hashtable,threshold):
         print(index,len(dSPointXPos),initialConditionValueXPos,len(dSPointXNeg),initialConditionValueXNeg,len(dSPointYPos),initialConditionValueYPos,len(dSPointYNeg),initialConditionValueYNeg)
         writeLog([index,len(dSPointXPos),initialConditionValueXPos,len(dSPointXNeg),initialConditionValueXNeg,len(dSPointYPos),initialConditionValueYPos,len(dSPointYNeg),initialConditionValueYNeg])
 
-def setPosDeltaFlags(index,globaldata,hashtable,threshold):
-    initialConditionValueXPos = getInteriorConditionValueofXPos(index,globaldata,hashtable)
-    initialConditionValueXNeg = getInteriorConditionValueofXNeg(index,globaldata,hashtable)
-    initialConditionValueYPos = getInteriorConditionValueofYPos(index,globaldata,hashtable)
-    initialConditionValueYNeg = getInteriorConditionValueofYNeg(index,globaldata,hashtable)
+def setPosDeltaFlags(index,globaldata,hashtable,threshold,problempts, flag):
+    if(flag==0):
+        initialConditionValueXPos = getInteriorConditionValueofXPos(index,globaldata,hashtable)
+        initialConditionValueXNeg = getInteriorConditionValueofXNeg(index,globaldata,hashtable)
+        initialConditionValueYPos = getInteriorConditionValueofYPos(index,globaldata,hashtable)
+        initialConditionValueYNeg = getInteriorConditionValueofYNeg(index,globaldata,hashtable)
+    else:
+        initialConditionValueXPos = getWeightedInteriorConditionValueofXPos(index,globaldata,hashtable)
+        initialConditionValueXNeg = getWeightedInteriorConditionValueofXNeg(index,globaldata,hashtable)
+        initialConditionValueYPos = getWeightedInteriorConditionValueofYPos(index,globaldata,hashtable)
+        initialConditionValueYNeg = getWeightedInteriorConditionValueofYNeg(index,globaldata,hashtable)
     if(initialConditionValueXPos > threshold or math.isnan(initialConditionValueXPos) or math.isinf(initialConditionValueXPos)):
-        globaldata = setFlagValue(index,7,1,globaldata)
-        writeLog([index,"Full Stencil Condition Value",conditionValueOfPointFull(index,globaldata)])
+        problempts.append(index)
+        # globaldata = setFlagValue(index,7,1,globaldata)
+        # writeLog([index,"Full Stencil Condition Value",conditionValueOfPointFull(index,globaldata)])
     if(initialConditionValueXNeg > threshold or math.isnan(initialConditionValueXNeg) or math.isinf(initialConditionValueXNeg)):
-        globaldata = setFlagValue(index,8,1,globaldata)
-        writeLog([index,"Full Stencil Condition Value",conditionValueOfPointFull(index,globaldata)])
+        problempts.append(index)
+        # globaldata = setFlagValue(index,8,1,globaldata)
+        # writeLog([index,"Full Stencil Condition Value",conditionValueOfPointFull(index,globaldata)])
     if(initialConditionValueYPos > threshold or math.isnan(initialConditionValueYPos) or math.isinf(initialConditionValueYPos)):
-        globaldata = setFlagValue(index,9,1,globaldata)    
-        writeLog([index,"Full Stencil Condition Value",conditionValueOfPointFull(index,globaldata)])
+        problempts.append(index)
+        # globaldata = setFlagValue(index,9,1,globaldata)    
+        # writeLog([index,"Full Stencil Condition Value",conditionValueOfPointFull(index,globaldata)])
     if(initialConditionValueYNeg > threshold or math.isnan(initialConditionValueYNeg) or math.isinf(initialConditionValueYNeg)):
-        globaldata = setFlagValue(index,10,1,globaldata)
-        writeLog([index,"Full Stencil Condition Value",conditionValueOfPointFull(index,globaldata)])
+        problempts.append(index)
+        # globaldata = setFlagValue(index,10,1,globaldata)
+        # writeLog([index,"Full Stencil Condition Value",conditionValueOfPointFull(index,globaldata)])
     return globaldata
 
 

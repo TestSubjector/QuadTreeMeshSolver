@@ -1,4 +1,5 @@
 import numpy as np
+import math
 
 def getNeighbours(index,globaldata):
     index = int(index)
@@ -28,6 +29,7 @@ def pointsAffectedFromDeletion(index,globaldata):
             globaldata[int(ptindex)][12:] = itm
             globaldata[int(ptindex)][11] = len(itm)
             pts.append(ptindex)
+        
     return pts,globaldata
 
 def convertIndexToPoints(indexarray,globaldata):
@@ -80,6 +82,36 @@ def conditionValueForSetOfPoints(index,globaldata,points):
     s = max(s) / min(s)
     return s
 
+def weightedConditionValueForSetOfPoints(index,globaldata,points):
+    index = int(index)
+    mainptx = float(globaldata[index][1])
+    mainpty = float(globaldata[index][2])
+
+    nbhs = points
+    shape = (len(nbhs), 2)
+    storage = np.zeros(shape)
+    count = 0 
+    for nbhitem in nbhs:
+        nbhitemX = float(nbhitem.split(",")[0])
+        nbhitemY = float(nbhitem.split(",")[1])
+        deltaSumX = nbhitemX - mainptx
+        deltaSumY = nbhitemY - mainpty
+        d = math.sqrt(deltaSumX**2 + deltaSumY**2)
+        power = -2
+        if(d!=0):
+            w = d ** power
+        else:
+            w = 0
+        storage[count, 0] = w * deltaSumX
+        storage[count, 1] = w * deltaSumY
+        count = count + 1
+    s = np.linalg.svd(storage, full_matrices=False, compute_uv=False)
+    if(len(s) == 1):
+        s = float("inf")
+    else:
+        s = max(s) / min(s)
+    return s  
+
 def deltaX(xcord,orgxcord):
     return float(orgxcord - xcord)
 
@@ -128,6 +160,26 @@ def getInteriorConditionValueofYNeg(index,globaldata):
     _,_,_,_,mypoints = deltaNeighbourCalculation(nbhs,getPointxy(index,globaldata),False,True)
     return conditionValueForSetOfPoints(index,globaldata,mypoints)
 
+def getWeightedInteriorConditionValueofXPos(index,globaldata):
+    nbhs = convertIndexToPoints(getNeighbours(index,globaldata),globaldata)
+    _,_,_,_,mypoints = deltaNeighbourCalculation(nbhs,getPointxy(index,globaldata),True,False)
+    return weightedConditionValueForSetOfPoints(index,globaldata,mypoints)
+
+def getWeightedInteriorConditionValueofXNeg(index,globaldata):
+    nbhs = convertIndexToPoints(getNeighbours(index,globaldata),globaldata)
+    _,_,_,_,mypoints = deltaNeighbourCalculation(nbhs,getPointxy(index,globaldata),True,True)
+    return weightedConditionValueForSetOfPoints(index,globaldata,mypoints)
+
+def getWeightedInteriorConditionValueofYPos(index,globaldata):
+    nbhs = convertIndexToPoints(getNeighbours(index,globaldata),globaldata)
+    _,_,_,_,mypoints = deltaNeighbourCalculation(nbhs,getPointxy(index,globaldata),False,False)
+    return weightedConditionValueForSetOfPoints(index,globaldata,mypoints)
+
+def getWeightedInteriorConditionValueofYNeg(index,globaldata):
+    nbhs = convertIndexToPoints(getNeighbours(index,globaldata),globaldata)
+    _,_,_,_,mypoints = deltaNeighbourCalculation(nbhs,getPointxy(index,globaldata),False,True)
+    return weightedConditionValueForSetOfPoints(index,globaldata,mypoints)
+
 def getDXPosPoints(index,globaldata):
     nbhs = convertIndexToPoints(getNeighbours(index,globaldata),globaldata)
     _,_,_,_,mypoints = deltaNeighbourCalculation(nbhs,getPointxy(index,globaldata),True,False)
@@ -148,108 +200,140 @@ def getDYNegPoints(index,globaldata):
     _,_,_,_,mypoints = deltaNeighbourCalculation(nbhs,getPointxy(index,globaldata),False,True)
     return mypoints
 
-def fixXPos(index,globaldata,pts):
+def fixXPos(index,globaldata,pts,flag):
     itmnbh = convertIndexToPoints(getNeighbours(index,globaldata),globaldata)
     dxpos = getDXPosPoints(index,globaldata)
     if(len(dxpos)<3):
-        print("Not enough points adding")
+        # print("Not enough points - adding")
         if(len(pts) == 0):
-            print("No points available")
+            # print("No points available")
             return globaldata
         else:
-            initialval = conditionValueForSetOfPoints(index,globaldata,dxpos)
+            if(flag == 0):
+                initialval = conditionValueForSetOfPoints(index,globaldata,dxpos)
+            else:
+                initialval = weightedConditionValueForSetOfPoints(index,globaldata,dxpos)
             conditionSet = []
             for itm in pts:
                 checkset = [itm] + dxpos
                 checkset = list(set(checkset))
-                newcheck = conditionValueForSetOfPoints(index,globaldata,checkset)
-                if(newcheck<initialval):
+                if(flag == 0):
+                    newcheck = conditionValueForSetOfPoints(index,globaldata,dxpos)
+                else:
+                    newcheck = weightedConditionValueForSetOfPoints(index,globaldata,dxpos)
+                if(newcheck <= initialval):
                     conditionSet.append([itm,newcheck])
-            if(len(conditionSet)>0):
+            if(len(conditionSet) > 0):
+                # print("Added")
                 conditionSet.sort(key=lambda x: x[1])
                 globaldata = appendNeighbours(index,globaldata,conditionSet[0][0])
                 pts.remove(conditionSet[0][0])
-                fixXPos(index,globaldata,pts)
+                fixXPos(index,globaldata,pts, flag)
             else:
-                print("No Points Available")
+                None
+                # print("No Points Available")
     return globaldata
 
-def fixXNeg(index,globaldata,pts):
+def fixXNeg(index,globaldata,pts,flag):
     itmnbh = convertIndexToPoints(getNeighbours(index,globaldata),globaldata)
     dxneg = getDXNegPoints(index,globaldata)
     if(len(dxneg)<3):
-        print("Not enough points adding")
+        # print("Not enough points - adding")
         if(len(pts) == 0):
-            print("No points available")
+            # print("No points available")
             return globaldata
         else:
-            initialval = conditionValueForSetOfPoints(index,globaldata,dxneg)
+            if(flag == 0):
+                initialval = conditionValueForSetOfPoints(index,globaldata,dxneg)
+            else:
+                initialval = weightedConditionValueForSetOfPoints(index,globaldata,dxneg)
             conditionSet = []
             for itm in pts:
                 checkset = [itm] + dxneg
                 checkset = list(set(checkset))
-                newcheck = conditionValueForSetOfPoints(index,globaldata,checkset)
-                if(newcheck<initialval):
+                if(flag == 0):
+                    newcheck = conditionValueForSetOfPoints(index,globaldata,dxneg)
+                else:
+                    newcheck = weightedConditionValueForSetOfPoints(index,globaldata,dxneg)
+                if(newcheck <= initialval):
                     conditionSet.append([itm,newcheck])
             if(len(conditionSet)>0):
+                # print("Added")
                 conditionSet.sort(key=lambda x: x[1])
                 globaldata = appendNeighbours(index,globaldata,conditionSet[0][0])
                 pts.remove(conditionSet[0][0])
-                fixXNeg(index,globaldata,pts)
+                fixXNeg(index,globaldata,pts,flag)
             else:
-                print("No Points Available")
+                None
+                # print("No Points Available")
     return globaldata
 
-def fixYPos(index,globaldata,pts):
+def fixYPos(index,globaldata,pts,flag):
     itmnbh = convertIndexToPoints(getNeighbours(index,globaldata),globaldata)
     dypos = getDXPosPoints(index,globaldata)
     if(len(dypos)<3):
-        print("Not enough points adding")
+        # print("Not enough points - adding")
         if(len(pts) == 0):
-            print("No points available")
+            # print("No points available")
             return globaldata
         else:
-            initialval = conditionValueForSetOfPoints(index,globaldata,dypos)
+            if(flag == 0):
+                initialval = conditionValueForSetOfPoints(index,globaldata,dypos)
+            else:
+                initialval = weightedConditionValueForSetOfPoints(index,globaldata,dypos)
             conditionSet = []
             for itm in pts:
                 checkset = [itm] + dypos
                 checkset = list(set(checkset))
-                newcheck = conditionValueForSetOfPoints(index,globaldata,checkset)
-                if(newcheck<initialval):
+                if(flag == 0):
+                    newcheck = conditionValueForSetOfPoints(index,globaldata,dypos)
+                else:
+                    newcheck = weightedConditionValueForSetOfPoints(index,globaldata,dypos)
+                if(newcheck <= initialval):
                     conditionSet.append([itm,newcheck])
             if(len(conditionSet)>0):
+                # print("Added")
                 conditionSet.sort(key=lambda x: x[1])
                 globaldata = appendNeighbours(index,globaldata,conditionSet[0][0])
                 pts.remove(conditionSet[0][0])
-                fixYPos(index,globaldata,pts)
+                fixYPos(index,globaldata,pts,flag)
             else:
-                print("No Points Available")
+                None
+                # print("No Points Available")
     return globaldata
 
-def fixYNeg(index,globaldata,pts):
+def fixYNeg(index,globaldata,pts, flag):
     itmnbh = convertIndexToPoints(getNeighbours(index,globaldata),globaldata)
     dyneg = getDYNegPoints(index,globaldata)
     if(len(dyneg)<3):
-        print("Not enough points adding")
+        # print("Not enough points - adding")
         if(len(pts) == 0):
-            print("No points available")
+            # print("No points available")
             return globaldata
         else:
-            initialval = conditionValueForSetOfPoints(index,globaldata,dyneg)
+            if(flag == 0):
+                initialval = conditionValueForSetOfPoints(index,globaldata,dyneg)
+            else:
+                initialval = weightedConditionValueForSetOfPoints(index,globaldata,dyneg)
             conditionSet = []
             for itm in pts:
                 checkset = [itm] + dyneg
                 checkset = list(set(checkset))
-                newcheck = conditionValueForSetOfPoints(index,globaldata,checkset)
-                if(newcheck<initialval):
+                if(flag == 0):
+                    newcheck = conditionValueForSetOfPoints(index,globaldata,dyneg)
+                else:
+                    newcheck = weightedConditionValueForSetOfPoints(index,globaldata,dyneg)
+                if(newcheck <= initialval):
                     conditionSet.append([itm,newcheck])
             if(len(conditionSet)>0):
+                # print("Added")
                 conditionSet.sort(key=lambda x: x[1])
                 globaldata = appendNeighbours(index,globaldata,conditionSet[0][0])
                 pts.remove(conditionSet[0][0])
-                fixYNeg(index,globaldata,pts)
+                fixYNeg(index,globaldata,pts,flag)
             else:
-                print("No Points Available")
+                None
+                # print("No Points Available")
     return globaldata
 
 def getPointFlag(index,globaldata):
@@ -258,7 +342,7 @@ def getPointFlag(index,globaldata):
     return int(ptdata[5])
 
 
-def getProblemPoints(globaldata,threshold):
+def getProblemPoints(globaldata,threshold,flag):
     # dxpos = getDXPosPoints(index,globaldata)
     # dxneg = getDXNegPoints(index,globaldata)
     # dypos = getDYPosPoints(index,globaldata)
@@ -268,10 +352,16 @@ def getProblemPoints(globaldata,threshold):
         # printProgressBar(idx, len(globaldata) - 1, prefix = 'Progress:', suffix = 'Complete', length = 50)
         if(idx!=0):
             if(getPointFlag(idx,globaldata)==1):
-                xpos = getInteriorConditionValueofXPos(idx,globaldata)
-                xneg = getInteriorConditionValueofXNeg(idx,globaldata)
-                ypos = getInteriorConditionValueofYPos(idx,globaldata)
-                yneg = getInteriorConditionValueofYNeg(idx,globaldata)
+                if(flag==0):
+                    xpos = getInteriorConditionValueofXPos(idx,globaldata)
+                    xneg = getInteriorConditionValueofXNeg(idx,globaldata)
+                    ypos = getInteriorConditionValueofYPos(idx,globaldata)
+                    yneg = getInteriorConditionValueofYNeg(idx,globaldata)
+                else:
+                    xpos = getWeightedInteriorConditionValueofXPos(idx,globaldata)
+                    xneg = getWeightedInteriorConditionValueofXNeg(idx,globaldata)
+                    ypos = getWeightedInteriorConditionValueofYPos(idx,globaldata)
+                    yneg = getWeightedInteriorConditionValueofYNeg(idx,globaldata)
                 if(xpos>threshold):
                     badpts.append(idx)
                 elif(xneg>threshold):
@@ -283,43 +373,56 @@ def getProblemPoints(globaldata,threshold):
     return badpts
 
 def deletePoints(globaldata,indexarray):
+    count = 0
     for itm in indexarray:
-        globaldata.pop(itm)
+        print(globaldata[itm + count][0])
+        globaldata.pop(itm + count)
+        count = count - 1
     return globaldata
 
 
-def nukePoints(globaldata,problempts,threshold):
+def nukePoints(globaldata,problempts,threshold,flag):
     # print(problempts)
     for itm in problempts:
         problemptnbhs = getNeighbours(itm,globaldata)
         ptsaffected,globaldata = pointsAffectedFromDeletion(itm,globaldata)
         for ptitm in ptsaffected:
-            xpos = getInteriorConditionValueofXPos(ptitm,globaldata)
-            xneg = getInteriorConditionValueofXNeg(ptitm,globaldata)
-            ypos = getInteriorConditionValueofYPos(ptitm,globaldata)
-            yneg = getInteriorConditionValueofYNeg(ptitm,globaldata)
+            if(flag==0):
+                xpos = getInteriorConditionValueofXPos(ptitm,globaldata)
+                xneg = getInteriorConditionValueofXNeg(ptitm,globaldata)
+                ypos = getInteriorConditionValueofYPos(ptitm,globaldata)
+                yneg = getInteriorConditionValueofYNeg(ptitm,globaldata)
+            else:
+                xpos = getWeightedInteriorConditionValueofXPos(ptitm,globaldata)
+                xneg = getWeightedInteriorConditionValueofXNeg(ptitm,globaldata)
+                ypos = getWeightedInteriorConditionValueofYPos(ptitm,globaldata)
+                yneg = getWeightedInteriorConditionValueofYNeg(ptitm,globaldata)
             if(xpos>threshold):
                 _,_,_,_,dxposfiltered = deltaNeighbourCalculation(convertIndexToPoints(problemptnbhs,globaldata),getPointxy(ptitm,globaldata),True,False)
                 if(len(dxposfiltered) == 0):
-                    print("No Point can be added")
+                    None
+                    # print("No Point can be added")
                 else:
-                    globaldata = fixXPos(ptitm,globaldata,dxposfiltered)
+                    globaldata = fixXPos(ptitm,globaldata,dxposfiltered,flag)
             elif(xneg>threshold):
                 _,_,_,_,dxnegfiltered = deltaNeighbourCalculation(convertIndexToPoints(problemptnbhs,globaldata),getPointxy(ptitm,globaldata),True,True)
                 if(len(dxnegfiltered) == 0):
-                    print("No Point can be added")
+                    None
+                    # print("No Point can be added")
                 else:
-                    globaldata = fixXNeg(ptitm,globaldata,dxnegfiltered)
+                    globaldata = fixXNeg(ptitm,globaldata,dxnegfiltered,flag)
             elif(ypos>threshold):
                 _,_,_,_,dyposfiltered = deltaNeighbourCalculation(convertIndexToPoints(problemptnbhs,globaldata),getPointxy(ptitm,globaldata),False,False)
                 if(len(dyposfiltered) == 0):
-                    print("No Point can be added")
+                    None
+                    # print("No Point can be added")
                 else:
-                    globaldata = fixYPos(ptitm,globaldata,dyposfiltered)
+                    globaldata = fixYPos(ptitm,globaldata,dyposfiltered,flag)
             elif(yneg>threshold):
                 _,_,_,_,dynegfiltered = deltaNeighbourCalculation(convertIndexToPoints(problemptnbhs,globaldata),getPointxy(ptitm,globaldata),False,True)
                 if(len(dynegfiltered) == 0):
-                    print("No Point can be added")
+                    None
+                    # print("No Point can be added")
                 else:
-                    globaldata = fixYNeg(ptitm,globaldata,dynegfiltered)
+                    globaldata = fixYNeg(ptitm,globaldata,dynegfiltered,flag)
     return globaldata
