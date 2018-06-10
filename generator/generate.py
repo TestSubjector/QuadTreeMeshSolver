@@ -29,6 +29,7 @@ def main():
 
     file2 = open(args.wall or "airfoil_160.txt","r")
     geometrydata = file2.read()
+    file2.close()
     geometrydata = geometrydata.split("\n")
     
     print("Loaded Data")
@@ -97,9 +98,9 @@ def main():
     
     printL("***********************************")
 
-    for index,_ in enumerate(hashtable[1:]):
-        if(getFlag(index,globaldata)==1 or getFlag(index,globaldata)==3):
-            printWeighedPosDeltaConditions(index,globaldata,hashtable,15)
+    # for index,_ in enumerate(hashtable[1:]):
+    #     if(getFlag(index,globaldata)==1 or getFlag(index,globaldata)==3):
+    #         printWeighedPosDeltaConditions(index,globaldata,hashtable,15)
 
     for index, item in enumerate(hashtable[1:]):
         if(getFlag(index,globaldata)==0):
@@ -125,7 +126,17 @@ def main():
         if(getFlag(index,globaldata)==1):
             globaldata = setPosDeltaFlags(index,globaldata,hashtable,100, problempts,1) #Threshold for Flag 3 - 6
 
-    print(problempts)
+    printL("***********************************")
+    printL("Writing Removal Points To File")
+    printL("***********************************")
+
+    problempts = [x+1 for x in problempts]
+    with open("removal_points.txt", "w") as text_file:
+        for item1 in problempts:
+            text_file.writelines(["%s " % item1])
+            text_file.writelines("\n")
+    
+    # print(problempts)
 
     printL("***********************************")
     printL("Fixing Interior Points")
@@ -156,11 +167,11 @@ def main():
     #     if(getFlag(index,globaldata)==1 or getFlag(index,globaldata)==3):
     #         printPosDeltaConditions(index,globaldata,hashtable,15)
 
-    # printL("***********************************")
+    printL("***********************************")
 
-    # for index,item in enumerate(hashtable[1:]):
-    #     if(getFlag(index,globaldata)==1 or getFlag(index,globaldata)==3):
-    #         printWeighedPosDeltaConditions(index,globaldata,hashtable,15)
+    for index,item in enumerate(hashtable[1:]):
+        if(getFlag(index,globaldata)==1 or getFlag(index,globaldata)==3):
+            printWeighedPosDeltaConditions(index,globaldata,hashtable,15)
             
     # printL("Checking for Points to Nuke")
     # printL("***********************************")

@@ -32,14 +32,34 @@ def main():
     print("Detecting Problem Points")
     
     # problempts = getProblemPoints(globaldata,100,1)
-    # problempts = [1029, 1091, 1104, 1129, 1140, 1602, 1636, 1782, 2089, 2138, 2162, 2255, 2261, 2327, 3198, 3246, 3336, 3355, 3846, 3874, 4022, 4279, 4320, 4342, 4488, 4492, 4541, 4681]
-    problempts = []
+    problempts = [1029, 1091, 1104, 1129, 1140, 1602, 1636, 1782, 2089, 2138, 2162, 2255, 2261, 2327, 3198, 3246, 3336, 3355, 3846, 3874, 4022, 4279, 4320, 4342, 4488, 4492, 4541, 4681]
+    # problempts = []
     problempts = [x+1 for x in problempts]
-    print(problempts)
+    # print(problempts)
     print("Found",len(problempts),"problem points.")
 
+    # for ptitms in globaldata[640:]:
+    #     if(int(ptitms[3]) != 1):
+    #         continue
+    #     ptitm = int(ptitms[0])
+    #     pxy = ptitms[1:3]
+    #     threshold = 100
+    #     xpos = getWeightedInteriorConditionValueofXPos(ptitm,globaldata)
+    #     xneg = getWeightedInteriorConditionValueofXNeg(ptitm,globaldata)
+    #     ypos = getWeightedInteriorConditionValueofYPos(ptitm,globaldata)
+    #     yneg = getWeightedInteriorConditionValueofYNeg(ptitm,globaldata)
+    #     dSPointXPos = getDXPosPoints(ptitm, globaldata)
+    #     dSPointXNeg = getDXNegPoints(ptitm, globaldata)
+    #     dSPointYPos = getDYPosPoints(ptitm, globaldata)
+    #     dSPointYNeg = getDYNegPoints(ptitm, globaldata)
+    #     if(xneg > threshold or xpos > threshold or ypos > threshold or yneg > threshold):
+    #         print(ptitm,pxy, len(dSPointXPos),xpos,len(dSPointXNeg),xneg,len(dSPointYPos),ypos,len(dSPointYNeg),yneg)
+    #         print(getNeighbours(ptitm,globaldata))
+
+    globaldata = cleanNeighbours(globaldata[1:])    
+
     if(len(problempts)!=0):
-        globaldata = nukePoints(globaldata,problempts,100,1)
+        globaldata = nukePoints(globaldata,problempts,25,1)
 
     globaldata = deletePoints(globaldata,problempts)
 
@@ -79,8 +99,28 @@ def main():
                                     if(int(itm2)==int(item)):
                                         if(int(item)!=int(currentindex[itsval])):
                                             globaldata[index][idx2] = int(currentindex[itsval])
-                                
 
+    globaldata.pop(0)                        
+    globaldata = cleanNeighbours(globaldata)
+    
+    for ptitms in globaldata[640:]:
+        if(int(ptitms[5]) != 1):
+            continue
+        ptitm = int(ptitms[0])
+        pxy = ptitms[1:3]
+        threshold = 100
+        xpos = getWeightedInteriorConditionValueofXPos(ptitm,globaldata)
+        xneg = getWeightedInteriorConditionValueofXNeg(ptitm,globaldata)
+        ypos = getWeightedInteriorConditionValueofYPos(ptitm,globaldata)
+        yneg = getWeightedInteriorConditionValueofYNeg(ptitm,globaldata)
+        dSPointXPos = getDXPosPoints(ptitm, globaldata)
+        dSPointXNeg = getDXNegPoints(ptitm, globaldata)
+        dSPointYPos = getDYPosPoints(ptitm, globaldata)
+        dSPointYNeg = getDYNegPoints(ptitm, globaldata)
+        if(xneg > threshold or xpos > threshold or ypos > threshold or yneg > threshold):
+            print(ptitm,pxy, len(dSPointXPos),xpos,len(dSPointXNeg),xneg,len(dSPointYPos),ypos,len(dSPointYNeg),yneg)
+            print(getNeighbours(ptitm,globaldata))
+    
     with open("preprocessorfile_separator.txt", "w") as text_file:
         for item1 in globaldata:
             text_file.writelines(["%s " % item for item in item1])

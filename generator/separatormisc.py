@@ -375,7 +375,7 @@ def getProblemPoints(globaldata,threshold,flag):
 def deletePoints(globaldata,indexarray):
     count = 0
     for itm in indexarray:
-        print(globaldata[itm + count][0])
+        # print(globaldata[itm + count][0])
         globaldata.pop(itm + count)
         count = count - 1
     return globaldata
@@ -384,8 +384,11 @@ def deletePoints(globaldata,indexarray):
 def nukePoints(globaldata,problempts,threshold,flag):
     # print(problempts)
     for itm in problempts:
+        # print("ABC")
+        # print(itm)
         problemptnbhs = getNeighbours(itm,globaldata)
-        ptsaffected,globaldata = pointsAffectedFromDeletion(itm,globaldata)
+        # print(problemptnbhs)
+        ptsaffected,globaldata = pointsAffectedFromDeletion(itm,globaldata) # Points that has this point as neighbour
         for ptitm in ptsaffected:
             if(flag==0):
                 xpos = getInteriorConditionValueofXPos(ptitm,globaldata)
@@ -397,32 +400,64 @@ def nukePoints(globaldata,problempts,threshold,flag):
                 xneg = getWeightedInteriorConditionValueofXNeg(ptitm,globaldata)
                 ypos = getWeightedInteriorConditionValueofYPos(ptitm,globaldata)
                 yneg = getWeightedInteriorConditionValueofYNeg(ptitm,globaldata)
-            if(xpos>threshold):
+            dSPointXPos = getDXPosPoints(ptitm, globaldata)
+            dSPointXNeg = getDXNegPoints(ptitm, globaldata)
+            dSPointYPos = getDYPosPoints(ptitm, globaldata)
+            dSPointYNeg = getDYNegPoints(ptitm, globaldata)
+            if(int(ptitm) == 177):
+                print(ptitm)
+                print(itm)
+                print(xpos)
+                print(ypos)
+                print(xneg)
+                print(yneg)
+                print(problemptnbhs)
+            if(xpos>threshold or len(dSPointXPos) <= 1):
                 _,_,_,_,dxposfiltered = deltaNeighbourCalculation(convertIndexToPoints(problemptnbhs,globaldata),getPointxy(ptitm,globaldata),True,False)
                 if(len(dxposfiltered) == 0):
                     None
                     # print("No Point can be added")
                 else:
                     globaldata = fixXPos(ptitm,globaldata,dxposfiltered,flag)
-            elif(xneg>threshold):
+            elif(xneg>threshold or len(dSPointXNeg) <= 1):
                 _,_,_,_,dxnegfiltered = deltaNeighbourCalculation(convertIndexToPoints(problemptnbhs,globaldata),getPointxy(ptitm,globaldata),True,True)
                 if(len(dxnegfiltered) == 0):
                     None
                     # print("No Point can be added")
                 else:
                     globaldata = fixXNeg(ptitm,globaldata,dxnegfiltered,flag)
-            elif(ypos>threshold):
+            elif(ypos>threshold or len(dSPointYPos) <= 1):
                 _,_,_,_,dyposfiltered = deltaNeighbourCalculation(convertIndexToPoints(problemptnbhs,globaldata),getPointxy(ptitm,globaldata),False,False)
                 if(len(dyposfiltered) == 0):
                     None
                     # print("No Point can be added")
                 else:
                     globaldata = fixYPos(ptitm,globaldata,dyposfiltered,flag)
-            elif(yneg>threshold):
+            elif(yneg>threshold or len(dSPointYNeg) <= 1):
                 _,_,_,_,dynegfiltered = deltaNeighbourCalculation(convertIndexToPoints(problemptnbhs,globaldata),getPointxy(ptitm,globaldata),False,True)
                 if(len(dynegfiltered) == 0):
                     None
                     # print("No Point can be added")
                 else:
                     globaldata = fixYNeg(ptitm,globaldata,dynegfiltered,flag)
+    return globaldata
+
+def cleanNeighbours(globaldata): # Verified
+    print("Beginning Duplicate Neighbour Detection")
+    for i in range(len(globaldata)):
+        # printProgressBar(i, len(globaldata) - 1, prefix = 'Progress:', suffix = 'Complete', length = 50)
+        noneighours = int(globaldata[i][11]) # Number of neighbours
+        cordneighbours = globaldata[i][-noneighours:]
+        print(cordneighbours)
+        # TODO - Ask, why get the same thing as above?
+        cordneighbours = [str(float(j.split(",")[0])) + "," + str(float(j.split(",")[1])) for j in cordneighbours]
+        
+        cordneighbours = dict.fromkeys(cordneighbours).keys()
+        noneighours = len(cordneighbours)
+        globaldata[i] = globaldata[i][:11] + [noneighours] + list(cordneighbours)
+        # with open("duplication_removal.txt", "w") as text_file:
+        #     for item1 in globaldata:
+        #         text_file.writelines(["%s " % item for item in item1])
+        #         text_file.writelines("\n")
+    print("Duplicate Neighbours Removed")
     return globaldata

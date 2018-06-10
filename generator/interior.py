@@ -91,28 +91,58 @@ def conditionValueForSetOfPoints(index,globaldata,points):
 def weightedConditionValueForSetOfPoints(index,globaldata,points):
     mainptx = float(globaldata[index][1])
     mainpty = float(globaldata[index][2])
-
+    deltaSumXX = 0
+    deltaSumYY = 0
+    deltaSumXY = 0
+    data = []
     nbhs = points
-    shape = (len(nbhs), 2)
-    storage = np.zeros(shape)
-    count = 0 
     for nbhitem in nbhs:
         nbhitemX = float(nbhitem.split(",")[0])
         nbhitemY = float(nbhitem.split(",")[1])
-        deltaSumX = nbhitemX - mainptx
-        deltaSumY = nbhitemY - mainpty
-        d = math.sqrt(deltaSumX**2 + deltaSumY**2)
+        deltaX = (nbhitemX - mainptx)
+        deltaY = (nbhitemY - mainpty)
+        d = math.sqrt(deltaX**2 + deltaY**2)
         power = -2
         w = d ** power
-        storage[count, 0] = w * deltaSumX
-        storage[count, 1] = w * deltaSumY
-        count = count + 1
-    s = np.linalg.svd(storage, full_matrices=False, compute_uv=False)
-    if(len(s) == 1):
-        s = float("inf")
-    else:
-        s = max(s) / min(s)
-    return s    
+        deltaSumXX = deltaSumXX + w * (deltaX**2)
+        deltaSumYY = deltaSumYY + w * (deltaY**2)
+        deltaSumXY = deltaSumXY + w * (deltaX) * (deltaY)
+    data.append(deltaSumXX)
+    data.append(deltaSumXY)
+    data.append(deltaSumXY)
+    data.append(deltaSumYY)
+    random = np.array(data)
+    shape = (2, 2)
+    random = random.reshape(shape)
+    s = np.linalg.svd(random, full_matrices=False, compute_uv=False)
+    s = max(s) / min(s)
+    return s   
+
+# def weightedConditionValueForSetOfPoints(index,globaldata,points):
+#     mainptx = float(globaldata[index][1])
+#     mainpty = float(globaldata[index][2])
+
+#     nbhs = points
+#     shape = (len(nbhs), 2)
+#     storage = np.zeros(shape)
+#     count = 0 
+#     for nbhitem in nbhs:
+#         nbhitemX = float(nbhitem.split(",")[0])
+#         nbhitemY = float(nbhitem.split(",")[1])
+#         deltaSumX = nbhitemX - mainptx
+#         deltaSumY = nbhitemY - mainpty
+#         d = math.sqrt(deltaSumX**2 + deltaSumY**2)
+#         power = -2
+#         w = d ** power
+#         storage[count, 0] = w * deltaSumX
+#         storage[count, 1] = w * deltaSumY
+#         count = count + 1
+#     s = np.linalg.svd(storage, full_matrices=False, compute_uv=False)
+#     if(len(s) == 1):
+#         s = float("inf")
+#     else:
+#         s = max(s) / min(s)
+#     return s    
 
 def conditionValueForSetOfPoints2(index,globaldata,points,mvalue):
     mvalue = float(mvalue)
@@ -499,7 +529,7 @@ def printPosDeltaConditions(index,globaldata,hashtable,threshold):
     #     writeLog([index,len(dSPointXPos),initialConditionValueXPos,len(dSPointXNeg),initialConditionValueXNeg,len(dSPointYPos),initialConditionValueYPos,len(dSPointYNeg),initialConditionValueYNeg])
     #     printPosDeltaConditions2(index,globaldata,hashtable)
     if(initialConditionValueXNeg > threshold or initialConditionValueXPos > threshold or initialConditionValueYPos > threshold or initialConditionValueYNeg > threshold):
-        print(index,len(dSPointXPos),initialConditionValueXPos,len(dSPointXNeg),initialConditionValueXNeg,len(dSPointYPos),initialConditionValueYPos,len(dSPointYNeg),initialConditionValueYNeg)
+        # print(index,len(dSPointXPos),initialConditionValueXPos,len(dSPointXNeg),initialConditionValueXNeg,len(dSPointYPos),initialConditionValueYPos,len(dSPointYNeg),initialConditionValueYNeg)
         writeLog([index,len(dSPointXPos),initialConditionValueXPos,len(dSPointXNeg),initialConditionValueXNeg,len(dSPointYPos),initialConditionValueYPos,len(dSPointYNeg),initialConditionValueYNeg])
         printPosDeltaConditions2(index,globaldata,hashtable)
 
