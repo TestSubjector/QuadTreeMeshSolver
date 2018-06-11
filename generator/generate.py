@@ -131,6 +131,19 @@ def main():
     printL("***********************************")
 
     problempts = [x+1 for x in problempts]
+    print(problempts)
+
+    with open("removal_flags.txt", "w") as text_file:
+        for individiualPoint in globaldata:
+            index = int(individiualPoint[0])
+
+            if(index in problempts):
+                text_file.writelines(["%s   1" % str(index)])
+                text_file.writelines("\n")
+            else:
+                text_file.writelines(["%s   0" % str(index)])
+                text_file.writelines("\n")
+
     with open("removal_points.txt", "w") as text_file:
         for item1 in problempts:
             text_file.writelines(["%s " % item1])

@@ -547,7 +547,7 @@ def printWeighedPosDeltaConditions(index,globaldata,hashtable,threshold):
     #     writeLog([index,len(dSPointXPos),initialConditionValueXPos,len(dSPointXNeg),initialConditionValueXNeg,len(dSPointYPos),initialConditionValueYPos,len(dSPointYNeg),initialConditionValueYNeg])
     #     printPosDeltaConditions2(index,globaldata,hashtable)
     if(initialConditionValueXNeg > threshold or initialConditionValueXPos > threshold or initialConditionValueYPos > threshold or initialConditionValueYNeg > threshold):
-        print(index,len(dSPointXPos),initialConditionValueXPos,len(dSPointXNeg),initialConditionValueXNeg,len(dSPointYPos),initialConditionValueYPos,len(dSPointYNeg),initialConditionValueYNeg)
+        print(index,globaldata[index][1:3], len(dSPointXPos),initialConditionValueXPos,len(dSPointXNeg),initialConditionValueXNeg,len(dSPointYPos),initialConditionValueYPos,len(dSPointYNeg),initialConditionValueYNeg)
         writeLog([index,len(dSPointXPos),initialConditionValueXPos,len(dSPointXNeg),initialConditionValueXNeg,len(dSPointYPos),initialConditionValueYPos,len(dSPointYNeg),initialConditionValueYNeg])
         printPosDeltaConditions2(index,globaldata,hashtable)
 

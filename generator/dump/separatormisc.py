@@ -440,6 +440,7 @@ def nukePoints(globaldata,problempts,threshold,flag):
                     # print("No Point can be added")
                 else:
                     globaldata = fixYNeg(ptitm,globaldata,dynegfiltered,flag)
+    cleanNeighbours(globaldata)
     return globaldata
 
 def cleanNeighbours(globaldata): # Verified
