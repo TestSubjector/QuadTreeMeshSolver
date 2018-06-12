@@ -44,12 +44,15 @@ def main():
     print("Point Classification")
 
     for idx,itm in enumerate(globaldata):
+        printProgressBar(idx, len(globaldata) - 1, prefix = 'Progress:', suffix = 'Complete', length = 50)
         if(idx > 0 and getFlag(idx,globaldata) == 2):
             outerpts.append(idx)
         elif(idx > 0 and getFlag(idx,globaldata) == 1):
             interiorpts.append(idx)
         elif(idx > 0 and getFlag(idx,globaldata) == 0):
             wallpts.append(idx)
+
+    print("Triangulating")
     
     interiorpts = convertPointToShapelyPoint(convertIndexToPoints(interiorpts,globaldata))
     interiorpts = MultiPoint(interiorpts)
@@ -58,11 +61,12 @@ def main():
     wallpts = convertPointToShapelyPoint(convertIndexToPoints(wallpts,globaldata))
     wallpts = Polygon2(wallpts)
 
-    
 
+    print("Generating Model")
     polygns = []
     fig, ax = plt.subplots()
-    for itm in interiortriangles:
+    for idx,itm in enumerate(interiortriangles):
+        printProgressBar(idx, len(interiortriangles) - 1, prefix = 'Progress:', suffix = 'Complete', length = 50)
         itm = itm.difference(wallpts)
         try:
             theshit = list(zip(*itm.exterior.xy))
@@ -73,6 +77,7 @@ def main():
     colors = 100*np.random.rand(len(polygns))
     p.set_array(np.array(colors))
     ax.add_collection(p)
+    print("Plotting")
     plt.show()
     # xs, ys = [],[]
     # mergedtriangles = cascaded_union(outertriangles)
@@ -90,17 +95,8 @@ def main():
     #     if(idx > 0 and getFlag(idx,globaldata) == 1):
     #         globaldata = setFlags(idx,globaldata,60)
 
-    globaldata = cleanNeighbours(globaldata)
 
-    globaldata.pop(0)
-
-    with open("preprocessorfile_rechecker.txt", "w") as text_file:
-        for item1 in globaldata:
-            text_file.writelines(["%s " % item for item in item1])
-            text_file.writelines("\n")
-
-
-    print("Data Converted")
+    print("Done")
 
 if __name__ == "__main__":
     main()
