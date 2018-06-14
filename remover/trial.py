@@ -38,6 +38,8 @@ def main():
     removalFlags = [int(i) for i in removalFlags]
     # print(1030 in removalFlags)
 
+    removalFlags = list(set(removalFlags))
+
     globaldata = cleanNeighbours(globaldata)
     globaldata = addNewPoints(globaldata,removalFlags,100, 1)
     globaldata = cleanNeighbours(globaldata)
