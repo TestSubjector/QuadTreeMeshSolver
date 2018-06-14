@@ -99,7 +99,7 @@ def main():
         if(int(individiualPoint[5]) != 1):
             continue
         index = int(individiualPoint[0])
-        checkConditionNumber(index, newglobaldata, 30)
+        checkConditionNumber(index, newglobaldata, aliasArray, 30)
     
     newglobaldata.pop(0)   
 

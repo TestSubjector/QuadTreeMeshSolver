@@ -132,7 +132,7 @@ def getDYNegPoints(index,globaldata):
     _,_,_,_,mypoints = deltaNeighbourCalculation(nbhs,getPointxy(index,globaldata),False,True)
     return mypoints
 
-def checkConditionNumber(index, globaldata, threshold):
+def checkConditionNumber(index, globaldata, aliasArray, threshold):
     xpos = getWeightedInteriorConditionValueofXPos(index,globaldata)
     xneg = getWeightedInteriorConditionValueofXNeg(index,globaldata)
     ypos = getWeightedInteriorConditionValueofYPos(index,globaldata)
@@ -142,5 +142,5 @@ def checkConditionNumber(index, globaldata, threshold):
     dSPointYPos = getDYPosPoints(index, globaldata)
     dSPointYNeg = getDYNegPoints(index, globaldata)
     if(xneg > threshold or xpos > threshold or ypos > threshold or yneg > threshold):
-        print(index, len(dSPointXPos),xpos,len(dSPointXNeg),xneg,len(dSPointYPos),ypos,len(dSPointYNeg),yneg)
+        print(index, aliasArray[index], len(dSPointXPos),xpos,len(dSPointXNeg),xneg,len(dSPointYPos),ypos,len(dSPointYNeg),yneg)
 

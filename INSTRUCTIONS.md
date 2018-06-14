@@ -22,6 +22,6 @@ The code is in the  **remover** folder
 ** For Rechecking Points
 
 The code is in the **rechecker** folder
-- Run by -> python3 rechecker.py -i preprocessorfile.txt
+- Run by -> python3 rechecker.py -i preprocessorfile_pointremoval.txt
 - Just make sure to update the preprocessor file before running this.
 - Output ->> preprocessorfile_rechecker.txt (conditional Value fix for Interior Points)

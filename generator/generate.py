@@ -130,6 +130,7 @@ def main():
     printL("Writing Removal Points To File")
     printL("***********************************")
 
+    problempts  = list(dict.fromkeys(problempts))
     problempts = [x+1 for x in problempts]
     print(problempts)
 
