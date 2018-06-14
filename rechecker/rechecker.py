@@ -35,16 +35,16 @@ def main():
 
     for idx,itm in enumerate(globaldata):
         if(idx > 0 and getFlag(idx,globaldata) == 1):
-            globaldata = fixXPosMain(idx,globaldata,30)
+            globaldata = fixXPosMain(idx,globaldata,30,-1)
     for idx,itm in enumerate(globaldata):
         if(idx > 0 and getFlag(idx,globaldata) == 1):
-            globaldata = fixXNegMain(idx,globaldata,30)
+            globaldata = fixXNegMain(idx,globaldata,30, -1)
     for idx,itm in enumerate(globaldata):
         if(idx > 0 and getFlag(idx,globaldata) == 1):
-            globaldata = fixYPosMain(idx,globaldata,30)
+            globaldata = fixYPosMain(idx,globaldata,30, -1)
     for idx,itm in enumerate(globaldata):
         if(idx > 0 and getFlag(idx,globaldata) == 1):
-            globaldata = fixYNegMain(idx,globaldata,30)
+            globaldata = fixYNegMain(idx,globaldata,30, -1)
     
     print("New")
 

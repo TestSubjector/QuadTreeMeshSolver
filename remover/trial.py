@@ -95,13 +95,26 @@ def main():
 
     newglobaldata = cleanNeighbours(newglobaldata)
 
+    problempts = []
     for individiualPoint in newglobaldata[1:]:
         if(int(individiualPoint[5]) != 1):
             continue
         index = int(individiualPoint[0])
-        checkConditionNumber(index, newglobaldata, aliasArray, 30)
+        checkConditionNumber(index, newglobaldata, aliasArray, 80, problempts)
+
+    print("***********************************")
+    print("Writing Removal Points To File")
+    print("***********************************")
+
+    problempts  = list(dict.fromkeys(problempts))
+    # print(problempts)
+
+    with open("removal_points2.txt", "w") as text_file:
+        for item1 in problempts:
+            text_file.writelines(["%s " % item1])
+            text_file.writelines("\n")
     
-    newglobaldata.pop(0)   
+    newglobaldata.pop(0)  
 
     with open("preprocessorfile_pointremoval.txt", "w") as text_file:
         for item1 in newglobaldata:

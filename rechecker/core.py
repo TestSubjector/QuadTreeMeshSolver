@@ -200,7 +200,11 @@ def cleanNeighbours(globaldata):
     print("Duplicate Neighbours Removed")
     return globaldata
 
-def fixXPosMain(index,globaldata,threshold):
+def fixXPosMain(index,globaldata,threshold, control):
+    if(control > 0):
+        return
+    else:
+        control = control + 1
     currentnbhs = getNeighbours(index,globaldata)
     currentnbhs = [ int(x) for x in currentnbhs ]
     conditionNumber = getWeightedInteriorConditionValueofXPos(index,globaldata)
@@ -223,12 +227,16 @@ def fixXPosMain(index,globaldata,threshold):
             if(len(conditionSet) > 0):
                 conditionSet.sort(key=lambda x: x[1])
                 globaldata = appendNeighbours(index,globaldata,conditionSet[0][0])
-                fixXPosMain(index,globaldata,threshold)
+                fixXPosMain(index,globaldata,threshold, control)
             else:
                 None
     return globaldata
 
-def fixXNegMain(index,globaldata,threshold):
+def fixXNegMain(index,globaldata,threshold, control):
+    if(control > 0):
+        return
+    else:
+        control = control + 1
     currentnbhs = getNeighbours(index,globaldata)
     currentnbhs = [ int(x) for x in currentnbhs ]
     conditionNumber = getWeightedInteriorConditionValueofXNeg(index,globaldata)
@@ -251,12 +259,16 @@ def fixXNegMain(index,globaldata,threshold):
             if(len(conditionSet) > 0):
                 conditionSet.sort(key=lambda x: x[1])
                 globaldata = appendNeighbours(index,globaldata,conditionSet[0][0])
-                fixXNegMain(index,globaldata,threshold)
+                fixXNegMain(index,globaldata,threshold, control)
             else:
                 None
     return globaldata
 
-def fixYPosMain(index,globaldata,threshold):
+def fixYPosMain(index,globaldata,threshold, control):
+    if(control > 0):
+        return
+    else:
+        control = control + 1
     currentnbhs = getNeighbours(index,globaldata)
     currentnbhs = [ int(x) for x in currentnbhs ]
     conditionNumber = getWeightedInteriorConditionValueofYPos(index,globaldata)
@@ -279,12 +291,16 @@ def fixYPosMain(index,globaldata,threshold):
             if(len(conditionSet) > 0):
                 conditionSet.sort(key=lambda x: x[1])
                 globaldata = appendNeighbours(index,globaldata,conditionSet[0][0])
-                fixYPosMain(index,globaldata,threshold)
+                fixYPosMain(index,globaldata,threshold, control)
             else:
                 None
     return globaldata
 
-def fixYNegMain(index,globaldata,threshold):
+def fixYNegMain(index,globaldata,threshold, control):
+    if(control > 0):
+        return
+    else:
+        control = control + 1
     currentnbhs = getNeighbours(index,globaldata)
     currentnbhs = [ int(x) for x in currentnbhs ]
     conditionNumber = getWeightedInteriorConditionValueofYNeg(index,globaldata)
@@ -307,7 +323,7 @@ def fixYNegMain(index,globaldata,threshold):
             if(len(conditionSet) > 0):
                 conditionSet.sort(key=lambda x: x[1])
                 globaldata = appendNeighbours(index,globaldata,conditionSet[0][0])
-                fixYNegMain(index,globaldata,threshold)
+                fixYNegMain(index,globaldata,threshold, control)
             else:
                 None
     return globaldata
