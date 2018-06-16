@@ -152,60 +152,60 @@ def main():
     
     # print(problempts)
 
-    printL("***********************************")
-    printL("Fixing Interior Points")
-    printL("***********************************")
+    # printL("***********************************")
+    # printL("Fixing Interior Points")
+    # printL("***********************************")
 
-    for index, item in enumerate(hashtable[1:]):
-        if(getFlag(index,globaldata)==1 or getFlag(index,globaldata)==3):
-            conditionValueFixForYPos(index,globaldata,hashtable,15,wallpoints,-1, 1)
-    for index, item in enumerate(hashtable[1:]):
-        if(getFlag(index,globaldata)==1 or getFlag(index,globaldata)==3):
-            conditionValueFixForYNeg(index,globaldata,hashtable,15,wallpoints, -1, 1)
-    for index, item in enumerate(hashtable[1:]):
-        if(getFlag(index,globaldata)==1 or getFlag(index,globaldata)==3):
-            conditionValueFixForXPos(index,globaldata,hashtable,15,wallpoints, -1, 1)
-    for index, item in enumerate(hashtable[1:]):
-        if(getFlag(index,globaldata)==1 or getFlag(index,globaldata)==3):
-            conditionValueFixForXNeg(index,globaldata,hashtable,15,wallpoints, -1, 1)
+    # for index, item in enumerate(hashtable[1:]):
+    #     if(getFlag(index,globaldata)==1 or getFlag(index,globaldata)==3):
+    #         conditionValueFixForYPos(index,globaldata,hashtable,15,wallpoints,-1, 1)
+    # for index, item in enumerate(hashtable[1:]):
+    #     if(getFlag(index,globaldata)==1 or getFlag(index,globaldata)==3):
+    #         conditionValueFixForYNeg(index,globaldata,hashtable,15,wallpoints, -1, 1)
+    # for index, item in enumerate(hashtable[1:]):
+    #     if(getFlag(index,globaldata)==1 or getFlag(index,globaldata)==3):
+    #         conditionValueFixForXPos(index,globaldata,hashtable,15,wallpoints, -1, 1)
+    # for index, item in enumerate(hashtable[1:]):
+    #     if(getFlag(index,globaldata)==1 or getFlag(index,globaldata)==3):
+    #         conditionValueFixForXNeg(index,globaldata,hashtable,15,wallpoints, -1, 1)
 
-    # # for index, item in enumerate(hashtable[1:]):
-    # #     if(getFlag(index,globaldata)==1):
-    # #         globaldata = setPosDeltaFlags(index,globaldata,hashtable,400) #Threshold for Flag 3 - 6
+    # # # for index, item in enumerate(hashtable[1:]):
+    # # #     if(getFlag(index,globaldata)==1):
+    # # #         globaldata = setPosDeltaFlags(index,globaldata,hashtable,400) #Threshold for Flag 3 - 6
 
-    # printL("****************************************")
-    # printL("Printing Delta Conditions for Interior Points")
-    # printL("****************************************")
+    # # printL("****************************************")
+    # # printL("Printing Delta Conditions for Interior Points")
+    # # printL("****************************************")
+
+    # # for index,item in enumerate(hashtable[1:]):
+    # #     if(getFlag(index,globaldata)==1 or getFlag(index,globaldata)==3):
+    # #         printPosDeltaConditions(index,globaldata,hashtable,15)
+
+    # printL("***********************************")
 
     # for index,item in enumerate(hashtable[1:]):
     #     if(getFlag(index,globaldata)==1 or getFlag(index,globaldata)==3):
-    #         printPosDeltaConditions(index,globaldata,hashtable,15)
-
-    printL("***********************************")
-
-    for index,item in enumerate(hashtable[1:]):
-        if(getFlag(index,globaldata)==1 or getFlag(index,globaldata)==3):
-            printWeighedPosDeltaConditions(index,globaldata,hashtable,15)
+    #         printWeighedPosDeltaConditions(index,globaldata,hashtable,15)
             
-    # printL("Checking for Points to Nuke")
-    # printL("***********************************")
+    # # printL("Checking for Points to Nuke")
+    # # printL("***********************************")
     
-    # for index,_ in enumerate(hashtable[1:]):
-    #     if(getFlag(index,globaldata)==1):
-    #         globaldata = fixPsuedoWallPoints(index,globaldata,hashtable,wallpoints,CONDITIONTHRESHOLD)
+    # # for index,_ in enumerate(hashtable[1:]):
+    # #     if(getFlag(index,globaldata)==1):
+    # #         globaldata = fixPsuedoWallPoints(index,globaldata,hashtable,wallpoints,CONDITIONTHRESHOLD)
+
+    # # printL("****************************************")
+    # # printL("Printing Delta Neighbour Conditions for Interior Points")
+    # # printL("****************************************")
+    
+    # # for index,item in enumerate(hashtable[1:]):
+    # #     if(getFlag(index,globaldata)==1):
+    # #         printPosDeltaPointConditions(index,globaldata,hashtable,3)
 
     # printL("****************************************")
-    # printL("Printing Delta Neighbour Conditions for Interior Points")
+    # print("Interior Points are " + str(interiorPointsCount))
+    # print("Outer Points are " + str(outerPointsCount))
     # printL("****************************************")
-    
-    # for index,item in enumerate(hashtable[1:]):
-    #     if(getFlag(index,globaldata)==1):
-    #         printPosDeltaPointConditions(index,globaldata,hashtable,3)
-
-    printL("****************************************")
-    print("Interior Points are " + str(interiorPointsCount))
-    print("Outer Points are " + str(outerPointsCount))
-    printL("****************************************")
 
     globaldata = cleanNeighbours(globaldata)
     globaldata = generateReplacement(hashtable,globaldata)

@@ -6,6 +6,9 @@ from shapely.ops import linemerge, unary_union, polygonize
 import os, errno
 from progress import *
 from logger import *
+import multiprocessing
+from multiprocessing.pool import ThreadPool
+import time
 
 def silentRemove(filename):
     try:
@@ -196,11 +199,37 @@ def cleanWallPoints(neighbours,wallpoint):
 
 def generateReplacement(hashtable,globaldata):
     print("Beginning Replacement")
-    for index2,item in enumerate(hashtable):
-        printProgressBar(index2, len(hashtable) - 1, prefix = 'Progress:', suffix = 'Complete', length = 50)
-        for index, individualitem in enumerate(globaldata):
-            globaldata[index] = [hashtable.index(x) if x==str(item) else x for x in individualitem]
+    coresavail = multiprocessing.cpu_count()
+    globalchunks = list(chunks(globaldata,coresavail))
+    print("Found",coresavail,"available core(s).")
+    print("BOOSTU BOOSTU BOOSTU")
+    t1 = time.clock()
+    pool = ThreadPool(coresavail)
+    results = []
+    for itm in globalchunks:
+        results.append(pool.apply_async(replacer, args=(hashtable, itm)))
+    pool.close()
+    pool.join()
+    results = [r.get() for r in results]
+    globaldata = []
+    stuff = []
+    for itm in results:
+        stuff = stuff + itm
+    globaldata = stuff
+    t2 = time.clock()
+    print(t2-t1)
     print("Replacement Done")
+    return globaldata
+
+def replacer(hashtable,globaldata):
+    for index,individualitem in enumerate(globaldata):
+        for index2,morestuff in enumerate(individualitem):
+            try:
+                b=hashtable.index(morestuff)
+            except ValueError:
+                "Do nothing"
+            else:
+                globaldata[index][index2] = b
     return globaldata
 
 def isNonAeroDynamic(index,cordpt,globaldata,wallpoints):
@@ -249,3 +278,7 @@ def perpendicularDistance(pta,ptb,main_point):
     top = abs(((ptby-ptay)*main_pointx)-((ptbx-ptax)*main_pointy)+(ptbx*ptay)-(ptax*ptby))
     bottom = euclideanDistance(pta,ptb)
     return float(top/bottom[0])
+
+def chunks(l, n):
+    for i in range(0, len(l), n):
+        yield l[i:i + n]
