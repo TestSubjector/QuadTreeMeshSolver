@@ -22,8 +22,9 @@ def main():
     print("Converting to readable format")
 
     for idx, itm in enumerate(splitdata):
-        printProgressBar(idx, len(splitdata) - 1,
-                         prefix='Progress:', suffix='Complete', length=50)
+        printProgressBar(
+            idx, len(splitdata) - 1, prefix="Progress:", suffix="Complete", length=50
+        )
         itm = itm.split(" ")  # Split the gaps
         itm.pop(-1)  # Remove last element
         entry = itm
@@ -48,7 +49,7 @@ def main():
     for individiualPoint in globaldata[1:]:
         index = int(individiualPoint[0])
         # print(index)
-        if(index in removalFlags):
+        if index in removalFlags:
             continue
         else:
             aliasArray[count] = index
@@ -67,7 +68,7 @@ def main():
         storage.append(globaldata[aliasArrayIndex][1])
         storage.append(globaldata[aliasArrayIndex][2])
         reverseAliasArrayIndex = reverseAliasArray[aliasArrayIndex]
-        if(reverseAliasArrayIndex == 0):
+        if reverseAliasArrayIndex == 0:
             left_point = 0
             right_point = 0
         else:
@@ -84,7 +85,7 @@ def main():
         # We are skipping the element that has total number of original
         # neighbours
         for neighbourIterate in globaldata[aliasArrayIndex][12:]:
-            if(int(neighbourIterate) in removalFlags):
+            if int(neighbourIterate) in removalFlags:
                 continue
             else:
                 storage.append(reverseAliasArray[int(neighbourIterate)])
@@ -95,7 +96,7 @@ def main():
     # print(newglobaldata[1028:1034])
 
     for individiualPoint in newglobaldata[1:]:
-        if(int(individiualPoint[5]) != 1):
+        if int(individiualPoint[5]) != 1:
             continue
         index = int(individiualPoint[0])
         checkConditionNumber(index, newglobaldata, 100)

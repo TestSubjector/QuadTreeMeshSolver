@@ -15,12 +15,12 @@ def loadWall(geometrydata):
         # print(len(geometrydata[i].split(" ")))
         # print(geometrydata[i].split(" ")[1])
 
-        hashtable.append(str(xcord) + ',' + str(ycord))
-        wallpoint.append(str(xcord) + ',' + str(ycord))  # Storing Wallpoints
+        hashtable.append(str(xcord) + "," + str(ycord))
+        wallpoint.append(str(xcord) + "," + str(ycord))  # Storing Wallpoints
 
         walldata = []
         # First Point
-        if(index == 1):
+        if index == 1:
             walldata.append(index)
             walldata.insert(1, xcord)
             walldata.insert(2, ycord)
@@ -35,7 +35,7 @@ def loadWall(geometrydata):
             globaldata.append(walldata)
             index += 1
         # Last Point
-        elif(index == len(geometrydata)):
+        elif index == len(geometrydata):
             walldata.append(index)
             walldata.insert(1, xcord)
             walldata.insert(2, ycord)
@@ -73,38 +73,51 @@ def loadInterior(data, hashtable, globaldata, index):
     for i in range(len(data)):
         # printProgressBar(i, len(data) - 1, prefix = 'Progress:', suffix = 'Complete', length = 50)
         cleandata = str(data[i]).split(" ")
-        cord = str(float(cleandata[1].split(",")[0])) + \
-            "," + str(float(cleandata[1].split(",")[1]))
+        cord = (
+            str(float(cleandata[1].split(",")[0]))
+            + ","
+            + str(float(cleandata[1].split(",")[1]))
+        )
         try:
-            if(i != len(data) - 1):
+            if i != len(data) - 1:
                 val = hashtable.index(cord)
                 cleandata.pop(0)  # Pop index
                 cleandata.pop(-1)  # Pop blank space
                 cleandata.pop(-2)  # Pop number of neighbours
                 cleandata.pop(0)  # Pop blank space
-                cleandata.insert(
-                    0, str(int(cleandata[len(cleandata) - 1]) + 2))
+                cleandata.insert(0, str(int(cleandata[len(cleandata) - 1]) + 2))
                 cleandata.pop(-1)
-                cleandata.append(str(float(hashtable[int(globaldata[val - 1][3])].split(",")[
-                                 0])) + "," + str(float(hashtable[int(globaldata[val - 1][3])].split(",")[1])))
-                cleandata.append(str(float(hashtable[int(globaldata[val - 1][4])].split(",")[
-                                 0])) + "," + str(float(hashtable[int(globaldata[val - 1][4])].split(",")[1])))
+                cleandata.append(
+                    str(float(hashtable[int(globaldata[val - 1][3])].split(",")[0]))
+                    + ","
+                    + str(float(hashtable[int(globaldata[val - 1][3])].split(",")[1]))
+                )
+                cleandata.append(
+                    str(float(hashtable[int(globaldata[val - 1][4])].split(",")[0]))
+                    + ","
+                    + str(float(hashtable[int(globaldata[val - 1][4])].split(",")[1]))
+                )
                 globaldata[val - 1] = globaldata[val - 1] + cleandata
             else:
                 val = hashtable.index(cord)
                 cleandata.pop(0)
                 cleandata.pop(-2)
                 cleandata.pop(0)
-                cleandata.insert(
-                    0, str(int(cleandata[len(cleandata) - 1]) + 2))
+                cleandata.insert(0, str(int(cleandata[len(cleandata) - 1]) + 2))
                 cleandata.pop(-1)
-                cleandata.append(str(float(hashtable[int(globaldata[val - 1][3])].split(",")[
-                                 0])) + "," + str(float(hashtable[int(globaldata[val - 1][3])].split(",")[1])))
-                cleandata.append(str(float(hashtable[int(globaldata[val - 1][4])].split(",")[
-                                 0])) + "," + str(float(hashtable[int(globaldata[val - 1][4])].split(",")[1])))
+                cleandata.append(
+                    str(float(hashtable[int(globaldata[val - 1][3])].split(",")[0]))
+                    + ","
+                    + str(float(hashtable[int(globaldata[val - 1][3])].split(",")[1]))
+                )
+                cleandata.append(
+                    str(float(hashtable[int(globaldata[val - 1][4])].split(",")[0]))
+                    + ","
+                    + str(float(hashtable[int(globaldata[val - 1][4])].split(",")[1]))
+                )
                 globaldata[val - 1] = globaldata[val - 1] + cleandata
         except Exception as err:
-            if(i != len(data) - 1):
+            if i != len(data) - 1:
                 hashtable.append(cord)
                 cleandata.pop(0)
                 cleandata.pop(-1)

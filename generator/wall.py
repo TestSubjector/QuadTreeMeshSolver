@@ -7,37 +7,43 @@ def printWallConditionValue(index, globaldata, hashtable):
     currentcord = getPoint(index, globaldata)
     nx, ny = normalCalculation(index, hashtable, globaldata, True)
     _, _, _, ds = deltaWallNeighbourCalculation(
-        index, currentnbhs, nx, ny, False, globaldata)
+        index, currentnbhs, nx, ny, False, globaldata
+    )
     _, _, _, ds2 = deltaWallNeighbourCalculation(
-        index, currentnbhs, nx, ny, True, globaldata)
+        index, currentnbhs, nx, ny, True, globaldata
+    )
     dsCondN = conditionCheckWithNeighboursWall(index, globaldata, ds, nx, ny)
     dsCondP = conditionCheckWithNeighboursWall(index, globaldata, ds2, nx, ny)
-    if(dsCondP > 10):
+    if dsCondP > 10:
         nbhofnbh = []
         for nbh in ds2:
             items = getNeighbours(getIndexOf(nbh, hashtable), globaldata)
-            nbhofnbh = nbhofnbh + \
-                list(set(items) - set([currentcord]) - set(currentnbhs))
+            nbhofnbh = nbhofnbh + list(
+                set(items) - set([currentcord]) - set(currentnbhs)
+            )
         # print(nbhofnbh)
         pointsSurvived = minCondition(
-            index, hashtable, globaldata, nbhofnbh, 10, nx, ny)
-        if(len(pointsSurvived) == 0):
+            index, hashtable, globaldata, nbhofnbh, 10, nx, ny
+        )
+        if len(pointsSurvived) == 0:
             print("\n Problems")
         else:
             pointToBeAdded = pointsSurvived
             # print(pointToBeAdded)
             appendNeighbours(list([pointToBeAdded]), index, globaldata)
 
-    if(dsCondN > 10):
+    if dsCondN > 10:
         nbhofnbh = []
         for nbh in ds:
             items = getNeighbours(getIndexOf(nbh, hashtable), globaldata)
-            nbhofnbh = nbhofnbh + \
-                list(set(items) - set([currentcord]) - set(currentnbhs))
+            nbhofnbh = nbhofnbh + list(
+                set(items) - set([currentcord]) - set(currentnbhs)
+            )
         # print(nbhofnbh)
         pointsSurvived = minCondition(
-            index, hashtable, globaldata, nbhofnbh, 10, nx, ny)
-        if(len(pointsSurvived) == 0):
+            index, hashtable, globaldata, nbhofnbh, 10, nx, ny
+        )
+        if len(pointsSurvived) == 0:
             print("\n Problems")
         else:
             pointToBeAdded = pointsSurvived
@@ -52,12 +58,14 @@ def printWall(index, globaldata, hashtable):
     currentcord = getPoint(index, globaldata)
     nx, ny = normalCalculation(index, hashtable, globaldata, True)
     _, _, _, ds = deltaWallNeighbourCalculation(
-        index, currentnbhs, nx, ny, False, globaldata)
+        index, currentnbhs, nx, ny, False, globaldata
+    )
     _, _, _, ds2 = deltaWallNeighbourCalculation(
-        index, currentnbhs, nx, ny, True, globaldata)
+        index, currentnbhs, nx, ny, True, globaldata
+    )
     dsCondN = conditionCheckWithNeighboursWall(index, globaldata, ds, nx, ny)
     dsCondP = conditionCheckWithNeighboursWall(index, globaldata, ds2, nx, ny)
-    if(dsCondN > 10 or dsCondP > 10):
+    if dsCondN > 10 or dsCondP > 10:
         None
         # print(index,dsCondP,len(ds2),dsCondN,len(ds))
 
@@ -67,37 +75,43 @@ def printOuterConditionValue(index, globaldata, hashtable):
     currentcord = getPoint(index, globaldata)
     nx, ny = normalCalculation(index, hashtable, globaldata, False)
     _, _, _, ds = deltaOuterNeighbourCalculation(
-        index, currentnbhs, nx, ny, False, globaldata)
+        index, currentnbhs, nx, ny, False, globaldata
+    )
     _, _, _, ds2 = deltaOuterNeighbourCalculation(
-        index, currentnbhs, nx, ny, True, globaldata)
+        index, currentnbhs, nx, ny, True, globaldata
+    )
     dsCondN = conditionCheckWithNeighboursWall(index, globaldata, ds, nx, ny)
     dsCondP = conditionCheckWithNeighboursWall(index, globaldata, ds2, nx, ny)
-    if(dsCondP > 10):
+    if dsCondP > 10:
         nbhofnbh = []
         for nbh in ds2:
             items = getNeighbours(getIndexOf(nbh, hashtable), globaldata)
-            nbhofnbh = nbhofnbh + \
-                list(set(items) - set([currentcord]) - set(currentnbhs))
+            nbhofnbh = nbhofnbh + list(
+                set(items) - set([currentcord]) - set(currentnbhs)
+            )
         # print(nbhofnbh)
         pointsSurvived = minCondition(
-            index, hashtable, globaldata, nbhofnbh, 10, nx, ny)
-        if(len(pointsSurvived) == 0):
+            index, hashtable, globaldata, nbhofnbh, 10, nx, ny
+        )
+        if len(pointsSurvived) == 0:
             print("\n Problems")
         else:
             pointToBeAdded = pointsSurvived
             # print(pointToBeAdded)
             appendNeighbours(list([pointToBeAdded]), index, globaldata)
 
-    if(dsCondN > 10):
+    if dsCondN > 10:
         nbhofnbh = []
         for nbh in ds:
             items = getNeighbours(getIndexOf(nbh, hashtable), globaldata)
-            nbhofnbh = nbhofnbh + \
-                list(set(items) - set([currentcord]) - set(currentnbhs))
+            nbhofnbh = nbhofnbh + list(
+                set(items) - set([currentcord]) - set(currentnbhs)
+            )
         # print(nbhofnbh)
         pointsSurvived = minCondition(
-            index, hashtable, globaldata, nbhofnbh, 10, nx, ny)
-        if(len(pointsSurvived) == 0):
+            index, hashtable, globaldata, nbhofnbh, 10, nx, ny
+        )
+        if len(pointsSurvived) == 0:
             print("\n Problems")
         else:
             pointToBeAdded = pointsSurvived
@@ -112,11 +126,13 @@ def printOuter(index, globaldata, hashtable):
     currentcord = getPoint(index, globaldata)
     nx, ny = normalCalculation(index, hashtable, globaldata, False)
     _, _, _, ds = deltaOuterNeighbourCalculation(
-        index, currentnbhs, nx, ny, False, globaldata)
+        index, currentnbhs, nx, ny, False, globaldata
+    )
     _, _, _, ds2 = deltaOuterNeighbourCalculation(
-        index, currentnbhs, nx, ny, True, globaldata)
+        index, currentnbhs, nx, ny, True, globaldata
+    )
     dsCondN = conditionCheckWithNeighboursWall(index, globaldata, ds, nx, ny)
     dsCondP = conditionCheckWithNeighboursWall(index, globaldata, ds2, nx, ny)
-    if(dsCondN > 10 or dsCondP > 10):
+    if dsCondN > 10 or dsCondP > 10:
         None
         # print(index,dsCondP,len(ds2),dsCondN,len(ds))

@@ -30,7 +30,7 @@ def getIndexFromPoint(pt, globaldata):
     ptx = float(pt.split(",")[0])
     pty = float(pt.split(",")[1])
     for itm in globaldata:
-        if(itm[1] == str(ptx) and itm[2] == str(pty)):
+        if itm[1] == str(ptx) and itm[2] == str(pty):
             return int(itm[0])
 
 
@@ -69,7 +69,7 @@ def normalCalculation(index, globaldata, wallpoint):
     leftpointy = float(leftpoint.split(",")[1])
     rightpointx = float(rightpoint.split(",")[0])
     rightpointy = float(rightpoint.split(",")[1])
-    if(not wallpoint):
+    if not wallpoint:
         nx1 = leftpointy - cordy
         nx2 = cordy - rightpointy
         ny1 = leftpointx - cordx
@@ -82,7 +82,7 @@ def normalCalculation(index, globaldata, wallpoint):
     nx = (nx1 + nx2) / 2
     ny = (ny1 + ny2) / 2
     det = math.sqrt((nx * nx) + (ny * ny))
-    if(not wallpoint):
+    if not wallpoint:
         nx = nx / det
     else:
         nx = (-nx) / det
@@ -93,21 +93,20 @@ def normalCalculation(index, globaldata, wallpoint):
 def cleanNeighbours(globaldata):
     print("Beginning Duplicate Neighbour Detection")
     for i in range(len(globaldata)):
-        if(i == 0):
+        if i == 0:
             continue
         noneighours = int(globaldata[i][11])
         cordneighbours = globaldata[i][-noneighours:]
         result = []
         for item in cordneighbours:
-            if(int(item) == i):
+            if int(item) == i:
                 continue
             if str(item) not in result:
                 result.append(str(item))
         cordneighbours = result
 
         noneighours = len(cordneighbours)
-        globaldata[i] = globaldata[i][:11] + \
-            [noneighours] + list(cordneighbours)
+        globaldata[i] = globaldata[i][:11] + [noneighours] + list(cordneighbours)
     print("Duplicate Neighbours Removed")
     return globaldata
 
@@ -135,7 +134,8 @@ def inflatedWallPolygon(globaldata, wallpoints, dist, interiorpts):
         newWallpt = tuple(newWallpt.tolist())
         inflatedWall.append(newWallpt)
     wallptsData = convertPointToShapelyPoint(
-        convertIndexToPoints(wallpoints, globaldata))
+        convertIndexToPoints(wallpoints, globaldata)
+    )
     # wallpointGeo = Polygon(wallptsData)
     lastpt = wallptsData[0]
     newpt = (lastpt[0] + dist, lastpt[1])
@@ -158,8 +158,7 @@ def inflatedWallPolygon(globaldata, wallpoints, dist, interiorpts):
     # plt.show()
     pseudopts = []
     for itm in interiorpts:
-        itmval = convertPointToShapelyPoint(
-            convertIndexToPoints([itm], globaldata))[0]
+        itmval = convertPointToShapelyPoint(convertIndexToPoints([itm], globaldata))[0]
         interiorpoint = Point(itmval)
         if inflatedwallpointGeo.contains(interiorpoint):
             pseudopts.append(itm)

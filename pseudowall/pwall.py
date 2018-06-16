@@ -30,8 +30,9 @@ def main():
     print("Converting to readable format")
 
     for idx, itm in enumerate(splitdata):
-        printProgressBar(idx, len(splitdata) - 1,
-                         prefix='Progress:', suffix='Complete', length=50)
+        printProgressBar(
+            idx, len(splitdata) - 1, prefix="Progress:", suffix="Complete", length=50
+        )
         itm = itm.split(" ")
         itm.pop(-1)
         entry = itm
@@ -46,13 +47,14 @@ def main():
     print("Point Classification")
 
     for idx, itm in enumerate(globaldata):
-        printProgressBar(idx, len(globaldata) - 1,
-                         prefix='Progress:', suffix='Complete', length=50)
-        if(idx > 0 and getFlag(idx, globaldata) == 2):
+        printProgressBar(
+            idx, len(globaldata) - 1, prefix="Progress:", suffix="Complete", length=50
+        )
+        if idx > 0 and getFlag(idx, globaldata) == 2:
             outerpts.append(idx)
-        elif(idx > 0 and getFlag(idx, globaldata) == 1):
+        elif idx > 0 and getFlag(idx, globaldata) == 1:
             interiorpts.append(idx)
-        elif(idx > 0 and getFlag(idx, globaldata) == 0):
+        elif idx > 0 and getFlag(idx, globaldata) == 0:
             wallpts.append(idx)
 
     inflatedWallPolygon(globaldata, wallpts, 4 * 10E-6, interiorpts)

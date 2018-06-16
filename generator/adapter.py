@@ -2,13 +2,13 @@ import argparse
 import re
 
 
-def printProgressBar(iteration, total, prefix='', suffix='',
-                     decimals=1, length=100, fill='█'):
-    percent = ("{0:." + str(decimals) + "f}").format(100 *
-                                                     (iteration / float(total)))
+def printProgressBar(
+    iteration, total, prefix="", suffix="", decimals=1, length=100, fill="█"
+):
+    percent = ("{0:." + str(decimals) + "f}").format(100 * (iteration / float(total)))
     filledLength = int(length * iteration // total)
-    bar = fill * filledLength + '-' * (length - filledLength)
-    print('\r%s |%s| %s%% %s' % (prefix, bar, percent, suffix), end='\r')
+    bar = fill * filledLength + "-" * (length - filledLength)
+    print("\r%s |%s| %s%% %s" % (prefix, bar, percent, suffix), end="\r")
     if iteration == total:
         print()
 
@@ -30,8 +30,9 @@ def main():
     splitdata = splitdata[:-1]
 
     for idx, itm in enumerate(splitdata):
-        printProgressBar(idx, len(splitdata) - 1,
-                         prefix='Progress:', suffix='Complete', length=50)
+        printProgressBar(
+            idx, len(splitdata) - 1, prefix="Progress:", suffix="Complete", length=50
+        )
         itm = itm.split(" ")
         entry = [itm[0], itm[1], itm[2]]
         globaldata.append(entry)
@@ -40,18 +41,19 @@ def main():
 
     file2 = open(args.adapt or "sensor.dat")
     data2 = file2.read()
-    data2 = re.sub(' +', ' ', data2)
+    data2 = re.sub(" +", " ", data2)
     data2 = data2.split("\n")
     data2 = data2[:-1]
 
     print("Reading Adaptation File")
 
     for idx2, itm2 in enumerate(data2):
-        printProgressBar(idx2, len(data2) - 1,
-                         prefix='Progress:', suffix='Complete', length=50)
+        printProgressBar(
+            idx2, len(data2) - 1, prefix="Progress:", suffix="Complete", length=50
+        )
         adaptpoint = itm2.split(" ")
         adaptpoint.pop(0)
-        if(int(adaptpoint[1]) == 1):
+        if int(adaptpoint[1]) == 1:
             xcord = globaldata[int(adaptpoint[0])][1]
             ycord = globaldata[int(adaptpoint[0])][2]
             adaptdata.append([xcord, ycord])

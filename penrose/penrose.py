@@ -31,8 +31,9 @@ def main():
     print("Converting to readable format")
 
     for idx, itm in enumerate(splitdata):
-        printProgressBar(idx, len(splitdata) - 1,
-                         prefix='Progress:', suffix='Complete', length=50)
+        printProgressBar(
+            idx, len(splitdata) - 1, prefix="Progress:", suffix="Complete", length=50
+        )
         itm = itm.split(" ")
         itm.pop(-1)
         entry = itm
@@ -43,9 +44,10 @@ def main():
     print("Calculating Moore-Penrose Inverse Matrices")
     firsttime = True
     for idx, itm in enumerate(globaldata):
-        printProgressBar(idx, len(globaldata) - 1,
-                         prefix='Progress:', suffix='Complete', length=50)
-        if(idx > 0 and getFlag(idx, globaldata) == 1):
+        printProgressBar(
+            idx, len(globaldata) - 1, prefix="Progress:", suffix="Complete", length=50
+        )
+        if idx > 0 and getFlag(idx, globaldata) == 1:
             xpos, xneg, ypos, yneg = getPenrose(idx, globaldata, 1e-3, 2)
             xpos = xpos.tolist()
             xneg = xneg.tolist()
@@ -53,7 +55,7 @@ def main():
             yneg = yneg.tolist()
             ptcord = getPointxy(idx, globaldata)
             with open("penrose.dat", "a+") as text_file:
-                if(firsttime):
+                if firsttime:
                     text_file.writelines([str(idx), " "])
                     firsttime = False
                 else:

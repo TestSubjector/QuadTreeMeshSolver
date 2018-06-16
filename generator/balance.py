@@ -10,7 +10,7 @@ def normalCalculation(index, hashtable, globaldata, wallpoint):
     cordx = float(globaldata[index][1])
     cordy = float(globaldata[index][2])
     pointdata = globaldata[index]
-    if(wallpoint):
+    if wallpoint:
         leftpoint = hashtable[pointdata[3]]
         rightpoint = hashtable[pointdata[4]]
     else:
@@ -20,7 +20,7 @@ def normalCalculation(index, hashtable, globaldata, wallpoint):
     leftpointy = float(leftpoint.split(",")[1])
     rightpointx = float(rightpoint.split(",")[0])
     rightpointy = float(rightpoint.split(",")[1])
-    if(not wallpoint):
+    if not wallpoint:
         nx1 = leftpointy - cordy
         nx2 = cordy - rightpointy
         ny1 = leftpointx - cordx
@@ -33,7 +33,7 @@ def normalCalculation(index, hashtable, globaldata, wallpoint):
     nx = (nx1 + nx2) / 2
     ny = (ny1 + ny2) / 2
     det = math.sqrt((nx * nx) + (ny * ny))
-    if(not wallpoint):
+    if not wallpoint:
         nx = nx / det
     else:
         nx = (-nx) / det
@@ -41,6 +41,7 @@ def normalCalculation(index, hashtable, globaldata, wallpoint):
     # print(nx)
     # print(ny)
     return nx, ny
+
 
 # Added new potential neighbour
 
@@ -72,10 +73,11 @@ def conditionCheckWithNeighboursWall(index, globaldata, nbh, nx, ny):
     shape = (2, 2)
     random = random.reshape(shape)
     s = np.linalg.svd(random, full_matrices=False, compute_uv=False)
-    if(min(s) < 0):
+    if min(s) < 0:
         print(index, "ITS LOW")
     s = max(s) / min(s)
     return s
+
 
 # Original condition number
 
@@ -91,8 +93,8 @@ def conditionValueDefault(index, globaldata):
     for nbhitem in nbh:
         nbhitemX = float(nbhitem.split(",")[0])
         nbhitemY = float(nbhitem.split(",")[1])
-        deltaSumX = deltaSumX + ((nbhitemX - mainptx)**2)
-        deltaSumY = deltaSumY + ((nbhitemY - mainpty)**2)
+        deltaSumX = deltaSumX + ((nbhitemX - mainptx) ** 2)
+        deltaSumY = deltaSumY + ((nbhitemY - mainpty) ** 2)
         deltaSumXY = deltaSumXY + (nbhitemX - mainptx) * (nbhitemY - mainpty)
     data.append(deltaSumX)
     data.append(deltaSumXY)
@@ -194,7 +196,8 @@ def minDistance(neighbours, cord):
 
 
 def deltaWallNeighbourCalculation(
-        index, currentneighbours, nx, ny, giveposdelta, globaldata):
+    index, currentneighbours, nx, ny, giveposdelta, globaldata
+):
     deltaspos, deltasneg, deltaszero = 0, 0, 0
     nx = float(nx)
     ny = float(ny)
@@ -209,24 +212,25 @@ def deltaWallNeighbourCalculation(
         deltas = (tx * (itemx - xcord)) + (ty * (itemy - ycord))
         # if(index==730):
         #     print(deltas)
-        if(deltas <= 0):
-            if(giveposdelta):
+        if deltas <= 0:
+            if giveposdelta:
                 output.append(item)
             deltaspos = deltaspos + 1
-        if(deltas >= 0):
-            if(not giveposdelta):
+        if deltas >= 0:
+            if not giveposdelta:
                 output.append(item)
             deltasneg = deltasneg + 1
-        if(deltas == 0):
+        if deltas == 0:
             deltaszero = deltaszero + 1
-    if(getFlag(index, globaldata) == 2):
+    if getFlag(index, globaldata) == 2:
         None
         # print(index,len(currentneighbours),deltaspos,deltasneg,deltaszero)
     return deltaspos, deltasneg, deltaszero, output
 
 
 def deltaOuterNeighbourCalculation(
-        index, currentneighbours, nx, ny, giveposdelta, globaldata):
+    index, currentneighbours, nx, ny, giveposdelta, globaldata
+):
     deltaspos, deltasneg, deltaszero = 0, 0, 0
     nx = -float(nx)
     ny = float(ny)
@@ -239,17 +243,17 @@ def deltaOuterNeighbourCalculation(
         itemx = float(item.split(",")[0])
         itemy = float(item.split(",")[1])
         deltas = (tx * (itemx - xcord)) + (ty * (itemy - ycord))
-        if(deltas <= 0):
-            if(giveposdelta):
+        if deltas <= 0:
+            if giveposdelta:
                 output.append(item)
             deltaspos = deltaspos + 1
-        if(deltas >= 0):
-            if(not giveposdelta):
+        if deltas >= 0:
+            if not giveposdelta:
                 output.append(item)
             deltasneg = deltasneg + 1
-        if(deltas == 0):
+        if deltas == 0:
             deltaszero = deltaszero + 1
-    if(getFlag(index, globaldata) == 2):
+    if getFlag(index, globaldata) == 2:
         None
         # print(index,len(currentneighbours),deltaspos,deltasneg,deltaszero)
     return deltaspos, deltasneg, deltaszero, output

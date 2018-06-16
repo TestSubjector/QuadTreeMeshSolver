@@ -42,13 +42,11 @@ def main():
 
     hashtable, wallpointsdata, globaldata = loadWall(geometrydata)
     wallpoints.append(wallpointsdata)
-    hashtable, globaldata = loadInterior(
-        data, hashtable, globaldata, len(hashtable))
+    hashtable, globaldata = loadInterior(data, hashtable, globaldata, len(hashtable))
     globaldata = cleanNeighbours(globaldata)
     hashtable, globaldata = detectOuter(hashtable, globaldata)
 
-    PSUEDODETECTION = calculateAverageWallPointDistance(
-        globaldata, wallpoints) / 20
+    PSUEDODETECTION = calculateAverageWallPointDistance(globaldata, wallpoints) / 20
     writeLog(["Auto set PSUEDODETECTION TO", PSUEDODETECTION])
 
     # printL("***********************************")
@@ -94,7 +92,7 @@ def main():
     globaldata = cleanNeighbours(globaldata)
 
     for index, _ in enumerate(hashtable[1:]):
-        if(getFlag(index, globaldata) == 1 or getFlag(index, globaldata) == 3):
+        if getFlag(index, globaldata) == 1 or getFlag(index, globaldata) == 3:
             interiorPointsCount = interiorPointsCount + 1
             printPosDeltaConditions(index, globaldata, hashtable, 15)
 
@@ -105,15 +103,20 @@ def main():
     #         printWeighedPosDeltaConditions(index,globaldata,hashtable,15)
 
     for index, item in enumerate(hashtable[1:]):
-        if(getFlag(index, globaldata) == 0):
+        if getFlag(index, globaldata) == 0:
             printWallConditionValue(index, globaldata, hashtable)
             printWallConditionValue(index, globaldata, hashtable)
             printWallConditionValue(index, globaldata, hashtable)
-            writeLog([index, "Condition Value Wall Point",
-                      conditionValueOfPointFull(index, globaldata)])
+            writeLog(
+                [
+                    index,
+                    "Condition Value Wall Point",
+                    conditionValueOfPointFull(index, globaldata),
+                ]
+            )
 
     for index, item in enumerate(hashtable[1:]):
-        if(getFlag(index, globaldata) == 2):
+        if getFlag(index, globaldata) == 2:
             outerPointsCount = outerPointsCount + 1
             printOuterConditionValue(index, globaldata, hashtable)
             printOuterConditionValue(index, globaldata, hashtable)
@@ -126,9 +129,10 @@ def main():
     problempts = []
 
     for index, item in enumerate(hashtable[1:]):
-        if(getFlag(index, globaldata) == 1):
+        if getFlag(index, globaldata) == 1:
             globaldata = setPosDeltaFlags(
-                index, globaldata, hashtable, 100, problempts, 1)  # Threshold for Flag 3 - 6
+                index, globaldata, hashtable, 100, problempts, 1
+            )  # Threshold for Flag 3 - 6
 
     printL("***********************************")
     printL("Writing Removal Points To File")
@@ -142,7 +146,7 @@ def main():
         for individiualPoint in globaldata:
             index = int(individiualPoint[0])
 
-            if(index in problempts):
+            if index in problempts:
                 text_file.writelines(["%s   1" % str(index)])
                 text_file.writelines("\n")
             else:

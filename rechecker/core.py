@@ -28,7 +28,7 @@ def getIndexFromPoint(pt, globaldata):
     ptx = float(pt.split(",")[0])
     pty = float(pt.split(",")[1])
     for itm in globaldata:
-        if(itm[1] == str(ptx) and itm[2] == str(pty)):
+        if itm[1] == str(ptx) and itm[2] == str(pty):
             return int(itm[0])
 
 
@@ -67,15 +67,15 @@ def weightedConditionValueForSetOfPoints(index, globaldata, points):
     for nbhitem in nbhs:
         nbhitemX = float(nbhitem.split(",")[0])
         nbhitemY = float(nbhitem.split(",")[1])
-        deltaX = (nbhitemX - mainptx)
-        deltaY = (nbhitemY - mainpty)
-        d = math.sqrt(deltaX**2 + deltaY**2)
-        if (d == 0):
+        deltaX = nbhitemX - mainptx
+        deltaY = nbhitemY - mainpty
+        d = math.sqrt(deltaX ** 2 + deltaY ** 2)
+        if d == 0:
             continue
         power = -2
         w = d ** power
-        deltaSumXX = deltaSumXX + w * (deltaX**2)
-        deltaSumYY = deltaSumYY + w * (deltaY**2)
+        deltaSumXX = deltaSumXX + w * (deltaX ** 2)
+        deltaSumYY = deltaSumYY + w * (deltaY ** 2)
         deltaSumXY = deltaSumXY + w * (deltaX) * (deltaY)
     data.append(deltaSumXX)
     data.append(deltaSumXY)
@@ -97,25 +97,24 @@ def deltaY(ycord, orgycord):
     return float(orgycord - ycord)
 
 
-def deltaNeighbourCalculation(
-        currentneighbours, currentcord, isxcord, isnegative):
+def deltaNeighbourCalculation(currentneighbours, currentcord, isxcord, isnegative):
     xpos, xneg, ypos, yneg = 0, 0, 0, 0
     temp = []
     for item in currentneighbours:
-        if((deltaX(float(currentcord.split(",")[0]), float(item.split(",")[0]))) <= 0):
-            if(isxcord and (not isnegative)):
+        if (deltaX(float(currentcord.split(",")[0]), float(item.split(",")[0]))) <= 0:
+            if isxcord and (not isnegative):
                 temp.append(item)
             xpos = xpos + 1
-        if((deltaX(float(currentcord.split(",")[0]), float(item.split(",")[0]))) >= 0):
-            if(isxcord and isnegative):
+        if (deltaX(float(currentcord.split(",")[0]), float(item.split(",")[0]))) >= 0:
+            if isxcord and isnegative:
                 temp.append(item)
             xneg = xneg + 1
-        if((deltaY(float(currentcord.split(",")[1]), float(item.split(",")[1]))) <= 0):
-            if((not isxcord) and (not isnegative)):
+        if (deltaY(float(currentcord.split(",")[1]), float(item.split(",")[1]))) <= 0:
+            if (not isxcord) and (not isnegative):
                 temp.append(item)
             ypos = ypos + 1
-        if((deltaY(float(currentcord.split(",")[1]), float(item.split(",")[1]))) >= 0):
-            if((not isxcord) and isnegative):
+        if (deltaY(float(currentcord.split(",")[1]), float(item.split(",")[1]))) >= 0:
+            if (not isxcord) and isnegative:
                 temp.append(item)
             yneg = yneg + 1
     return xpos, ypos, xneg, yneg, temp
@@ -124,84 +123,96 @@ def deltaNeighbourCalculation(
 def getWeightedInteriorConditionValueofXPos(index, globaldata):
     nbhs = convertIndexToPoints(getNeighbours(index, globaldata), globaldata)
     _, _, _, _, mypoints = deltaNeighbourCalculation(
-        nbhs, getPointxy(index, globaldata), True, False)
+        nbhs, getPointxy(index, globaldata), True, False
+    )
     return weightedConditionValueForSetOfPoints(index, globaldata, mypoints)
 
 
 def getWeightedInteriorConditionValueofXNeg(index, globaldata):
     nbhs = convertIndexToPoints(getNeighbours(index, globaldata), globaldata)
     _, _, _, _, mypoints = deltaNeighbourCalculation(
-        nbhs, getPointxy(index, globaldata), True, True)
+        nbhs, getPointxy(index, globaldata), True, True
+    )
     return weightedConditionValueForSetOfPoints(index, globaldata, mypoints)
 
 
 def getWeightedInteriorConditionValueofYPos(index, globaldata):
     nbhs = convertIndexToPoints(getNeighbours(index, globaldata), globaldata)
     _, _, _, _, mypoints = deltaNeighbourCalculation(
-        nbhs, getPointxy(index, globaldata), False, False)
+        nbhs, getPointxy(index, globaldata), False, False
+    )
     return weightedConditionValueForSetOfPoints(index, globaldata, mypoints)
 
 
 def getWeightedInteriorConditionValueofYNeg(index, globaldata):
     nbhs = convertIndexToPoints(getNeighbours(index, globaldata), globaldata)
     _, _, _, _, mypoints = deltaNeighbourCalculation(
-        nbhs, getPointxy(index, globaldata), False, True)
+        nbhs, getPointxy(index, globaldata), False, True
+    )
     return weightedConditionValueForSetOfPoints(index, globaldata, mypoints)
 
 
 def getDXPosPoints(index, globaldata):
     nbhs = convertIndexToPoints(getNeighbours(index, globaldata), globaldata)
     _, _, _, _, mypoints = deltaNeighbourCalculation(
-        nbhs, getPointxy(index, globaldata), True, False)
+        nbhs, getPointxy(index, globaldata), True, False
+    )
     return mypoints
 
 
 def getDXNegPoints(index, globaldata):
     nbhs = convertIndexToPoints(getNeighbours(index, globaldata), globaldata)
     _, _, _, _, mypoints = deltaNeighbourCalculation(
-        nbhs, getPointxy(index, globaldata), True, True)
+        nbhs, getPointxy(index, globaldata), True, True
+    )
     return mypoints
 
 
 def getDYPosPoints(index, globaldata):
     nbhs = convertIndexToPoints(getNeighbours(index, globaldata), globaldata)
     _, _, _, _, mypoints = deltaNeighbourCalculation(
-        nbhs, getPointxy(index, globaldata), False, False)
+        nbhs, getPointxy(index, globaldata), False, False
+    )
     return mypoints
 
 
 def getDYNegPoints(index, globaldata):
     nbhs = convertIndexToPoints(getNeighbours(index, globaldata), globaldata)
     _, _, _, _, mypoints = deltaNeighbourCalculation(
-        nbhs, getPointxy(index, globaldata), False, True)
+        nbhs, getPointxy(index, globaldata), False, True
+    )
     return mypoints
 
 
 def getDXPosPointsFromSet(index, globaldata, points):
     nbhs = convertIndexToPoints(points, globaldata)
     _, _, _, _, mypoints = deltaNeighbourCalculation(
-        nbhs, getPointxy(index, globaldata), True, False)
+        nbhs, getPointxy(index, globaldata), True, False
+    )
     return mypoints
 
 
 def getDXNegPointsFromSet(index, globaldata, points):
     nbhs = convertIndexToPoints(points, globaldata)
     _, _, _, _, mypoints = deltaNeighbourCalculation(
-        nbhs, getPointxy(index, globaldata), True, True)
+        nbhs, getPointxy(index, globaldata), True, True
+    )
     return mypoints
 
 
 def getDYPosPointsFromSet(index, globaldata, points):
     nbhs = convertIndexToPoints(points, globaldata)
     _, _, _, _, mypoints = deltaNeighbourCalculation(
-        nbhs, getPointxy(index, globaldata), False, False)
+        nbhs, getPointxy(index, globaldata), False, False
+    )
     return mypoints
 
 
 def getDYNegPointsFromSet(index, globaldata, points):
     nbhs = convertIndexToPoints(points, globaldata)
     _, _, _, _, mypoints = deltaNeighbourCalculation(
-        nbhs, getPointxy(index, globaldata), False, True)
+        nbhs, getPointxy(index, globaldata), False, True
+    )
     return mypoints
 
 
@@ -214,22 +225,40 @@ def checkConditionNumber(index, globaldata, threshold):
     dSPointXNeg = getDXNegPoints(index, globaldata)
     dSPointYPos = getDYPosPoints(index, globaldata)
     dSPointYNeg = getDYNegPoints(index, globaldata)
-    if(xneg > threshold or math.isnan(xneg) or xpos > threshold or math.isnan(xpos) or ypos > threshold or math.isnan(ypos) or yneg > threshold or math.isnan(yneg)):
-        print(index, len(dSPointXPos), xpos, len(dSPointXNeg),
-              xneg, len(dSPointYPos), ypos, len(dSPointYNeg), yneg)
+    if (
+        xneg > threshold
+        or math.isnan(xneg)
+        or xpos > threshold
+        or math.isnan(xpos)
+        or ypos > threshold
+        or math.isnan(ypos)
+        or yneg > threshold
+        or math.isnan(yneg)
+    ):
+        print(
+            index,
+            len(dSPointXPos),
+            xpos,
+            len(dSPointXNeg),
+            xneg,
+            len(dSPointYPos),
+            ypos,
+            len(dSPointYNeg),
+            yneg,
+        )
 
 
 def cleanNeighbours(globaldata):
     print("Beginning Duplicate Neighbour Detection")
     for i in range(len(globaldata)):
-        if(i == 0):
+        if i == 0:
             continue
         noneighours = int(globaldata[i][11])
         cordneighbours = globaldata[i][-noneighours:]
         result = []
         for item in cordneighbours:
             try:
-                if(int(item) == i):
+                if int(item) == i:
                     continue
             except BaseException:
                 print(i)
@@ -238,23 +267,21 @@ def cleanNeighbours(globaldata):
         cordneighbours = result
 
         noneighours = len(cordneighbours)
-        globaldata[i] = globaldata[i][:11] + \
-            [noneighours] + list(cordneighbours)
+        globaldata[i] = globaldata[i][:11] + [noneighours] + list(cordneighbours)
     print("Duplicate Neighbours Removed")
     return globaldata
 
 
 def fixXPosMain(index, globaldata, threshold, control):
-    if(control > 0):
+    if control > 0:
         return
     else:
         control = control + 1
     currentnbhs = getNeighbours(index, globaldata)
     currentnbhs = [int(x) for x in currentnbhs]
-    conditionNumber = getWeightedInteriorConditionValueofXPos(
-        index, globaldata)
+    conditionNumber = getWeightedInteriorConditionValueofXPos(index, globaldata)
     numberofxpos = getDXPosPoints(index, globaldata)
-    if(conditionNumber > threshold or len(numberofxpos) < 3):
+    if conditionNumber > threshold or len(numberofxpos) < 3:
         totalnbhs = []
         for itm in currentnbhs:
             nbhofnbh = getNeighbours(int(itm), globaldata)
@@ -262,18 +289,18 @@ def fixXPosMain(index, globaldata, threshold, control):
             totalnbhs = totalnbhs + nbhofnbh
         totalnbhs = list(set(totalnbhs) - set([index]) - set(currentnbhs))
         totalnbhs = getDXPosPointsFromSet(index, globaldata, totalnbhs)
-        if(len(totalnbhs) > 0):
+        if len(totalnbhs) > 0:
             conditionSet = []
             for ptcheck in totalnbhs:
                 checkset = [ptcheck] + numberofxpos
                 newcheck = weightedConditionValueForSetOfPoints(
-                    index, globaldata, checkset)
-                if(newcheck < conditionNumber):
+                    index, globaldata, checkset
+                )
+                if newcheck < conditionNumber:
                     conditionSet.append([ptcheck, newcheck])
-            if(len(conditionSet) > 0):
+            if len(conditionSet) > 0:
                 conditionSet.sort(key=lambda x: x[1])
-                globaldata = appendNeighbours(
-                    index, globaldata, conditionSet[0][0])
+                globaldata = appendNeighbours(index, globaldata, conditionSet[0][0])
                 fixXPosMain(index, globaldata, threshold, control)
             else:
                 None
@@ -281,16 +308,15 @@ def fixXPosMain(index, globaldata, threshold, control):
 
 
 def fixXNegMain(index, globaldata, threshold, control):
-    if(control > 0):
+    if control > 0:
         return
     else:
         control = control + 1
     currentnbhs = getNeighbours(index, globaldata)
     currentnbhs = [int(x) for x in currentnbhs]
-    conditionNumber = getWeightedInteriorConditionValueofXNeg(
-        index, globaldata)
+    conditionNumber = getWeightedInteriorConditionValueofXNeg(index, globaldata)
     numberofxpos = getDXNegPoints(index, globaldata)
-    if(conditionNumber > threshold or len(numberofxpos) < 3):
+    if conditionNumber > threshold or len(numberofxpos) < 3:
         totalnbhs = []
         for itm in currentnbhs:
             nbhofnbh = getNeighbours(int(itm), globaldata)
@@ -298,18 +324,18 @@ def fixXNegMain(index, globaldata, threshold, control):
             totalnbhs = totalnbhs + nbhofnbh
         totalnbhs = list(set(totalnbhs) - set([index]) - set(currentnbhs))
         totalnbhs = getDXNegPointsFromSet(index, globaldata, totalnbhs)
-        if(len(totalnbhs) > 0):
+        if len(totalnbhs) > 0:
             conditionSet = []
             for ptcheck in totalnbhs:
                 checkset = [ptcheck] + numberofxpos
                 newcheck = weightedConditionValueForSetOfPoints(
-                    index, globaldata, checkset)
-                if(newcheck < conditionNumber):
+                    index, globaldata, checkset
+                )
+                if newcheck < conditionNumber:
                     conditionSet.append([ptcheck, newcheck])
-            if(len(conditionSet) > 0):
+            if len(conditionSet) > 0:
                 conditionSet.sort(key=lambda x: x[1])
-                globaldata = appendNeighbours(
-                    index, globaldata, conditionSet[0][0])
+                globaldata = appendNeighbours(index, globaldata, conditionSet[0][0])
                 fixXNegMain(index, globaldata, threshold, control)
             else:
                 None
@@ -317,16 +343,15 @@ def fixXNegMain(index, globaldata, threshold, control):
 
 
 def fixYPosMain(index, globaldata, threshold, control):
-    if(control > 0):
+    if control > 0:
         return
     else:
         control = control + 1
     currentnbhs = getNeighbours(index, globaldata)
     currentnbhs = [int(x) for x in currentnbhs]
-    conditionNumber = getWeightedInteriorConditionValueofYPos(
-        index, globaldata)
+    conditionNumber = getWeightedInteriorConditionValueofYPos(index, globaldata)
     numberofxpos = getDYPosPoints(index, globaldata)
-    if(conditionNumber > threshold or len(numberofxpos) < 3):
+    if conditionNumber > threshold or len(numberofxpos) < 3:
         totalnbhs = []
         for itm in currentnbhs:
             nbhofnbh = getNeighbours(int(itm), globaldata)
@@ -334,18 +359,18 @@ def fixYPosMain(index, globaldata, threshold, control):
             totalnbhs = totalnbhs + nbhofnbh
         totalnbhs = list(set(totalnbhs) - set([index]) - set(currentnbhs))
         totalnbhs = getDYPosPointsFromSet(index, globaldata, totalnbhs)
-        if(len(totalnbhs) > 0):
+        if len(totalnbhs) > 0:
             conditionSet = []
             for ptcheck in totalnbhs:
                 checkset = [ptcheck] + numberofxpos
                 newcheck = weightedConditionValueForSetOfPoints(
-                    index, globaldata, checkset)
-                if(newcheck < conditionNumber):
+                    index, globaldata, checkset
+                )
+                if newcheck < conditionNumber:
                     conditionSet.append([ptcheck, newcheck])
-            if(len(conditionSet) > 0):
+            if len(conditionSet) > 0:
                 conditionSet.sort(key=lambda x: x[1])
-                globaldata = appendNeighbours(
-                    index, globaldata, conditionSet[0][0])
+                globaldata = appendNeighbours(index, globaldata, conditionSet[0][0])
                 fixYPosMain(index, globaldata, threshold, control)
             else:
                 None
@@ -353,16 +378,15 @@ def fixYPosMain(index, globaldata, threshold, control):
 
 
 def fixYNegMain(index, globaldata, threshold, control):
-    if(control > 0):
+    if control > 0:
         return
     else:
         control = control + 1
     currentnbhs = getNeighbours(index, globaldata)
     currentnbhs = [int(x) for x in currentnbhs]
-    conditionNumber = getWeightedInteriorConditionValueofYNeg(
-        index, globaldata)
+    conditionNumber = getWeightedInteriorConditionValueofYNeg(index, globaldata)
     numberofxpos = getDYNegPoints(index, globaldata)
-    if(conditionNumber > threshold or len(numberofxpos) < 3):
+    if conditionNumber > threshold or len(numberofxpos) < 3:
         totalnbhs = []
         for itm in currentnbhs:
             nbhofnbh = getNeighbours(int(itm), globaldata)
@@ -370,18 +394,18 @@ def fixYNegMain(index, globaldata, threshold, control):
             totalnbhs = totalnbhs + nbhofnbh
         totalnbhs = list(set(totalnbhs) - set([index]) - set(currentnbhs))
         totalnbhs = getDYNegPointsFromSet(index, globaldata, totalnbhs)
-        if(len(totalnbhs) > 0):
+        if len(totalnbhs) > 0:
             conditionSet = []
             for ptcheck in totalnbhs:
                 checkset = [ptcheck] + numberofxpos
                 newcheck = weightedConditionValueForSetOfPoints(
-                    index, globaldata, checkset)
-                if(newcheck < conditionNumber):
+                    index, globaldata, checkset
+                )
+                if newcheck < conditionNumber:
                     conditionSet.append([ptcheck, newcheck])
-            if(len(conditionSet) > 0):
+            if len(conditionSet) > 0:
                 conditionSet.sort(key=lambda x: x[1])
-                globaldata = appendNeighbours(
-                    index, globaldata, conditionSet[0][0])
+                globaldata = appendNeighbours(index, globaldata, conditionSet[0][0])
                 fixYNegMain(index, globaldata, threshold, control)
             else:
                 None
@@ -393,12 +417,12 @@ def setFlags(index, globaldata, threshold):
     dxneg = getWeightedInteriorConditionValueofXNeg(index, globaldata)
     dypos = getWeightedInteriorConditionValueofYPos(index, globaldata)
     dyneg = getWeightedInteriorConditionValueofYNeg(index, globaldata)
-    if(dxpos > threshold):
+    if dxpos > threshold:
         globaldata[index][7] = 1
-    if(dxneg > threshold):
+    if dxneg > threshold:
         globaldata[index][8] = 1
-    if(dypos > threshold):
+    if dypos > threshold:
         globaldata[index][9] = 1
-    if(dyneg > threshold):
+    if dyneg > threshold:
         globaldata[index][10] = 1
     return globaldata

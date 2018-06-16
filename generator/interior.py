@@ -17,25 +17,24 @@ def deltaY(ycord, orgycord):
     return float(orgycord - ycord)
 
 
-def deltaNeighbourCalculation(
-        currentneighbours, currentcord, isxcord, isnegative):
+def deltaNeighbourCalculation(currentneighbours, currentcord, isxcord, isnegative):
     xpos, xneg, ypos, yneg = 0, 0, 0, 0
     temp = []
     for item in currentneighbours:
-        if((deltaX(float(currentcord.split(",")[0]), float(item.split(",")[0]))) <= 0):
-            if(isxcord and (not isnegative)):
+        if (deltaX(float(currentcord.split(",")[0]), float(item.split(",")[0]))) <= 0:
+            if isxcord and (not isnegative):
                 temp.append(item)
             xpos = xpos + 1
-        if((deltaX(float(currentcord.split(",")[0]), float(item.split(",")[0]))) >= 0):
-            if(isxcord and isnegative):
+        if (deltaX(float(currentcord.split(",")[0]), float(item.split(",")[0]))) >= 0:
+            if isxcord and isnegative:
                 temp.append(item)
             xneg = xneg + 1
-        if((deltaY(float(currentcord.split(",")[1]), float(item.split(",")[1]))) <= 0):
-            if((not isxcord) and (not isnegative)):
+        if (deltaY(float(currentcord.split(",")[1]), float(item.split(",")[1]))) <= 0:
+            if (not isxcord) and (not isnegative):
                 temp.append(item)
             ypos = ypos + 1
-        if((deltaY(float(currentcord.split(",")[1]), float(item.split(",")[1]))) >= 0):
-            if((not isxcord) and isnegative):
+        if (deltaY(float(currentcord.split(",")[1]), float(item.split(",")[1]))) >= 0:
+            if (not isxcord) and isnegative:
                 temp.append(item)
             yneg = yneg + 1
     return xpos, ypos, xneg, yneg, temp
@@ -52,8 +51,8 @@ def conditionValueOfPointFull(index, globaldata):
     for nbhitem in nbhs:
         nbhitemX = float(nbhitem.split(",")[0])
         nbhitemY = float(nbhitem.split(",")[1])
-        deltaSumX = deltaSumX + ((nbhitemX - mainptx)**2)
-        deltaSumY = deltaSumY + ((nbhitemY - mainpty)**2)
+        deltaSumX = deltaSumX + ((nbhitemX - mainptx) ** 2)
+        deltaSumY = deltaSumY + ((nbhitemY - mainpty) ** 2)
         deltaSumXY = deltaSumXY + (nbhitemX - mainptx) * (nbhitemY - mainpty)
     data.append(deltaSumX)
     data.append(deltaSumXY)
@@ -63,7 +62,7 @@ def conditionValueOfPointFull(index, globaldata):
     shape = (2, 2)
     random = random.reshape(shape)
     s = np.linalg.svd(random, full_matrices=False, compute_uv=False)
-    if(min(s) == 0):
+    if min(s) == 0:
         print(index, "ITS LOW")
     s = max(s) / min(s)
     return s
@@ -80,8 +79,8 @@ def conditionValueForSetOfPoints(index, globaldata, points):
     for nbhitem in nbhs:
         nbhitemX = float(nbhitem.split(",")[0])
         nbhitemY = float(nbhitem.split(",")[1])
-        deltaSumX = deltaSumX + ((nbhitemX - mainptx)**2)
-        deltaSumY = deltaSumY + ((nbhitemY - mainpty)**2)
+        deltaSumX = deltaSumX + ((nbhitemX - mainptx) ** 2)
+        deltaSumY = deltaSumY + ((nbhitemY - mainpty) ** 2)
         deltaSumXY = deltaSumXY + (nbhitemX - mainptx) * (nbhitemY - mainpty)
     data.append(deltaSumX)
     data.append(deltaSumXY)
@@ -106,13 +105,13 @@ def weightedConditionValueForSetOfPoints(index, globaldata, points):
     for nbhitem in nbhs:
         nbhitemX = float(nbhitem.split(",")[0])
         nbhitemY = float(nbhitem.split(",")[1])
-        deltaX = (nbhitemX - mainptx)
-        deltaY = (nbhitemY - mainpty)
-        d = math.sqrt(deltaX**2 + deltaY**2)
+        deltaX = nbhitemX - mainptx
+        deltaY = nbhitemY - mainpty
+        d = math.sqrt(deltaX ** 2 + deltaY ** 2)
         power = -2
         w = d ** power
-        deltaSumXX = deltaSumXX + w * (deltaX**2)
-        deltaSumYY = deltaSumYY + w * (deltaY**2)
+        deltaSumXX = deltaSumXX + w * (deltaX ** 2)
+        deltaSumYY = deltaSumYY + w * (deltaY ** 2)
         deltaSumXY = deltaSumXY + w * (deltaX) * (deltaY)
     data.append(deltaSumXX)
     data.append(deltaSumXY)
@@ -124,6 +123,7 @@ def weightedConditionValueForSetOfPoints(index, globaldata, points):
     s = np.linalg.svd(random, full_matrices=False, compute_uv=False)
     s = max(s) / min(s)
     return s
+
 
 # def weightedConditionValueForSetOfPoints(index,globaldata,points):
 #     mainptx = float(globaldata[index][1])
@@ -164,8 +164,8 @@ def conditionValueForSetOfPoints2(index, globaldata, points, mvalue):
     for nbhitem in nbhs:
         nbhitemX = float(nbhitem.split(",")[0])
         nbhitemY = float(nbhitem.split(",")[1])
-        deltaSumX = deltaSumX + ((nbhitemX - mainptx)**2)
-        deltaSumY = deltaSumY + ((nbhitemY - mainpty)**2)
+        deltaSumX = deltaSumX + ((nbhitemX - mainptx) ** 2)
+        deltaSumY = deltaSumY + ((nbhitemY - mainpty) ** 2)
         deltaSumXY = deltaSumXY + (nbhitemX - mainptx) * (nbhitemY - mainpty)
     data.append(deltaSumX)
     data.append(deltaSumXY)
@@ -189,126 +189,145 @@ def conditionValueForSetOfPoints2(index, globaldata, points, mvalue):
 def getInteriorConditionValueofXPos(index, globaldata, hashtable):
     nbhs = getNeighbours(index, globaldata)
     _, _, _, _, mypoints = deltaNeighbourCalculation(
-        nbhs, getPoint(index, globaldata), True, False)
+        nbhs, getPoint(index, globaldata), True, False
+    )
     return conditionValueForSetOfPoints(index, globaldata, mypoints)
 
 
 def getInteriorConditionValueofXNeg(index, globaldata, hashtable):
     nbhs = getNeighbours(index, globaldata)
     _, _, _, _, mypoints = deltaNeighbourCalculation(
-        nbhs, getPoint(index, globaldata), True, True)
+        nbhs, getPoint(index, globaldata), True, True
+    )
     return conditionValueForSetOfPoints(index, globaldata, mypoints)
 
 
 def getInteriorConditionValueofYPos(index, globaldata, hashtable):
     nbhs = getNeighbours(index, globaldata)
     _, _, _, _, mypoints = deltaNeighbourCalculation(
-        nbhs, getPoint(index, globaldata), False, False)
+        nbhs, getPoint(index, globaldata), False, False
+    )
     return conditionValueForSetOfPoints(index, globaldata, mypoints)
 
 
 def getInteriorConditionValueofYNeg(index, globaldata, hashtable):
     nbhs = getNeighbours(index, globaldata)
     _, _, _, _, mypoints = deltaNeighbourCalculation(
-        nbhs, getPoint(index, globaldata), False, True)
+        nbhs, getPoint(index, globaldata), False, True
+    )
     return conditionValueForSetOfPoints(index, globaldata, mypoints)
 
 
 def getWeightedInteriorConditionValueofXPos(index, globaldata, hashtable):
     nbhs = getNeighbours(index, globaldata)
     _, _, _, _, mypoints = deltaNeighbourCalculation(
-        nbhs, getPoint(index, globaldata), True, False)
+        nbhs, getPoint(index, globaldata), True, False
+    )
     return weightedConditionValueForSetOfPoints(index, globaldata, mypoints)
 
 
 def getWeightedInteriorConditionValueofXNeg(index, globaldata, hashtable):
     nbhs = getNeighbours(index, globaldata)
     _, _, _, _, mypoints = deltaNeighbourCalculation(
-        nbhs, getPoint(index, globaldata), True, True)
+        nbhs, getPoint(index, globaldata), True, True
+    )
     return weightedConditionValueForSetOfPoints(index, globaldata, mypoints)
 
 
 def getWeightedInteriorConditionValueofYPos(index, globaldata, hashtable):
     nbhs = getNeighbours(index, globaldata)
     _, _, _, _, mypoints = deltaNeighbourCalculation(
-        nbhs, getPoint(index, globaldata), False, False)
+        nbhs, getPoint(index, globaldata), False, False
+    )
     return weightedConditionValueForSetOfPoints(index, globaldata, mypoints)
 
 
 def getWeightedInteriorConditionValueofYNeg(index, globaldata, hashtable):
     nbhs = getNeighbours(index, globaldata)
     _, _, _, _, mypoints = deltaNeighbourCalculation(
-        nbhs, getPoint(index, globaldata), False, True)
+        nbhs, getPoint(index, globaldata), False, True
+    )
     return weightedConditionValueForSetOfPoints(index, globaldata, mypoints)
 
 
 def getInteriorConditionValueofXPos2(index, globaldata, hashtable):
     nbhs = getNeighbours(index, globaldata)
     _, _, _, _, mypoints = deltaNeighbourCalculation(
-        nbhs, getPoint(index, globaldata), True, False)
+        nbhs, getPoint(index, globaldata), True, False
+    )
     return conditionValueForSetOfPoints2(index, globaldata, mypoints, 10e-8)
 
 
 def getInteriorConditionValueofXNeg2(index, globaldata, hashtable):
     nbhs = getNeighbours(index, globaldata)
     _, _, _, _, mypoints = deltaNeighbourCalculation(
-        nbhs, getPoint(index, globaldata), True, True)
+        nbhs, getPoint(index, globaldata), True, True
+    )
     return conditionValueForSetOfPoints2(index, globaldata, mypoints, 10e-8)
 
 
 def getInteriorConditionValueofYPos2(index, globaldata, hashtable):
     nbhs = getNeighbours(index, globaldata)
     _, _, _, _, mypoints = deltaNeighbourCalculation(
-        nbhs, getPoint(index, globaldata), False, False)
+        nbhs, getPoint(index, globaldata), False, False
+    )
     return conditionValueForSetOfPoints2(index, globaldata, mypoints, 10e-8)
 
 
 def getInteriorConditionValueofYNeg2(index, globaldata, hashtable):
     nbhs = getNeighbours(index, globaldata)
     _, _, _, _, mypoints = deltaNeighbourCalculation(
-        nbhs, getPoint(index, globaldata), False, True)
+        nbhs, getPoint(index, globaldata), False, True
+    )
     return conditionValueForSetOfPoints2(index, globaldata, mypoints, 10e-8)
 
 
 def getDXPosPoints(index, globaldata, hashtable):
     nbhs = getNeighbours(index, globaldata)
     _, _, _, _, mypoints = deltaNeighbourCalculation(
-        nbhs, getPoint(index, globaldata), True, False)
+        nbhs, getPoint(index, globaldata), True, False
+    )
     return mypoints
 
 
 def getDXNegPoints(index, globaldata, hashtable):
     nbhs = getNeighbours(index, globaldata)
     _, _, _, _, mypoints = deltaNeighbourCalculation(
-        nbhs, getPoint(index, globaldata), True, True)
+        nbhs, getPoint(index, globaldata), True, True
+    )
     return mypoints
 
 
 def getDYPosPoints(index, globaldata, hashtable):
     nbhs = getNeighbours(index, globaldata)
     _, _, _, _, mypoints = deltaNeighbourCalculation(
-        nbhs, getPoint(index, globaldata), False, False)
+        nbhs, getPoint(index, globaldata), False, False
+    )
     return mypoints
 
 
 def getDYNegPoints(index, globaldata, hashtable):
     nbhs = getNeighbours(index, globaldata)
     _, _, _, _, mypoints = deltaNeighbourCalculation(
-        nbhs, getPoint(index, globaldata), False, True)
+        nbhs, getPoint(index, globaldata), False, True
+    )
     return mypoints
 
 
 def conditionValueFixForXPos(
-        index, globaldata, hashtable, threshold, wallpoints, control, flag):
-    if(flag == 0):
+    index, globaldata, hashtable, threshold, wallpoints, control, flag
+):
+    if flag == 0:
         initialConditionValue = getInteriorConditionValueofXPos(
-            index, globaldata, hashtable)
+            index, globaldata, hashtable
+        )
     else:
         initialConditionValue = getWeightedInteriorConditionValueofXPos(
-            index, globaldata, hashtable)
+            index, globaldata, hashtable
+        )
     dSPoints = getDXPosPoints(index, globaldata, hashtable)
     # writeLog([index,initialConditionValue)
-    if(initialConditionValue > threshold):
+    if initialConditionValue > threshold:
         # Point Failed Threshold. Let's try balancing it.
         oldnbhs = getNeighbours(index, globaldata)
         # Get Neighbour of Neighbours
@@ -317,83 +336,111 @@ def conditionValueFixForXPos(
             nbhofnbh = getNeighbours(getIndexOf(itm, hashtable), globaldata)
             # Removes original point and its neighbours. We only want new
             # neighbours
-            newnbhs = newnbhs + \
-                list(
-                    set(nbhofnbh) - set([getPoint(index, globaldata)]) - set(oldnbhs) - set(newnbhs))
+            newnbhs = newnbhs + list(
+                set(nbhofnbh)
+                - set([getPoint(index, globaldata)])
+                - set(oldnbhs)
+                - set(newnbhs)
+            )
         # We got a new list of points to be tested against lets find the
         # points.
         _, _, _, _, newdxpospoints = deltaNeighbourCalculation(
-            newnbhs, getPoint(index, globaldata), True, False)
-        if(len(newdxpospoints) == 0):
-            writeLog(["We tried finding neighbour of neighbours but none satisfy the delta xpos condition for", getPoint(
-                index, globaldata)])
+            newnbhs, getPoint(index, globaldata), True, False
+        )
+        if len(newdxpospoints) == 0:
+            writeLog(
+                [
+                    "We tried finding neighbour of neighbours but none satisfy the delta xpos condition for",
+                    getPoint(index, globaldata),
+                ]
+            )
         else:
             finalList = []
             nothresList = []
             for newitm in newdxpospoints:
-                if(not isNonAeroDynamic(index, newitm, globaldata, wallpoints)):
+                if not isNonAeroDynamic(index, newitm, globaldata, wallpoints):
                     tempnbh = []
                     tempnbh = dSPoints
                     tempnbh = tempnbh + [newitm]
                     conditionVal = conditionValueForSetOfPoints(
-                        index, globaldata, tempnbh)
+                        index, globaldata, tempnbh
+                    )
                     nothresList.append([newitm, conditionVal])
-                    if(conditionVal < threshold):
+                    if conditionVal < threshold:
                         finalList.append([newitm, conditionVal])
                 else:
                     writeLog(["Found non aero point skipping."])
-            if(len(finalList) == 0 or finalList is None):
-                writeLog(["We tried finding points to reduce threshold value to",
-                          threshold, "but couldn't find any for index", index])
-                writeLog(["It's condition value for dx pos is",
-                          initialConditionValue])
-                if(len(nothresList) != 0):
-                    writeLog(
-                        ["The least we can reduce it to is", nothresList[0][1]])
-                    if(float(nothresList[0][1]) < initialConditionValue):
+            if len(finalList) == 0 or finalList is None:
+                writeLog(
+                    [
+                        "We tried finding points to reduce threshold value to",
+                        threshold,
+                        "but couldn't find any for index",
+                        index,
+                    ]
+                )
+                writeLog(["It's condition value for dx pos is", initialConditionValue])
+                if len(nothresList) != 0:
+                    writeLog(["The least we can reduce it to is", nothresList[0][1]])
+                    if float(nothresList[0][1]) < initialConditionValue:
                         pointToBeAdded = nothresList[0][0]
                         appendNeighbours([pointToBeAdded], index, globaldata)
-                        if(flag == 0):
+                        if flag == 0:
                             initialConditionValue = getInteriorConditionValueofXPos(
-                                index, globaldata, hashtable)
+                                index, globaldata, hashtable
+                            )
                         else:
                             initialConditionValue = getWeightedInteriorConditionValueofXPos(
-                                index, globaldata, hashtable)
-                        writeLog(
-                            ["We will be running again to reduce further"])
-                        if(control <= 0):
+                                index, globaldata, hashtable
+                            )
+                        writeLog(["We will be running again to reduce further"])
+                        if control <= 0:
                             conditionValueFixForXPos(
-                                index, globaldata, hashtable, threshold, wallpoints, control + 1, flag)
+                                index,
+                                globaldata,
+                                hashtable,
+                                threshold,
+                                wallpoints,
+                                control + 1,
+                                flag,
+                            )
                     else:
                         writeLog(
-                            ["We don't want to worsen the condition value so we are not gonna do anything else"])
+                            [
+                                "We don't want to worsen the condition value so we are not gonna do anything else"
+                            ]
+                        )
                 else:
-                    writeLog(
-                        ["We couldn't find a single point to reduce it to."])
+                    writeLog(["We couldn't find a single point to reduce it to."])
             else:
                 finalList.sort(key=lambda x: x[1])
                 pointToBeAdded = finalList[0][0]
                 appendNeighbours([pointToBeAdded], index, globaldata)
-                if(flag == 0):
+                if flag == 0:
                     initialConditionValue = getInteriorConditionValueofXPos(
-                        index, globaldata, hashtable)
+                        index, globaldata, hashtable
+                    )
                 else:
                     initialConditionValue = getWeightedInteriorConditionValueofXPos(
-                        index, globaldata, hashtable)
+                        index, globaldata, hashtable
+                    )
                 # writeLog([index,initialConditionValue)
 
 
 def conditionValueFixForXNeg(
-        index, globaldata, hashtable, threshold, wallpoints, control, flag):
-    if(flag == 0):
+    index, globaldata, hashtable, threshold, wallpoints, control, flag
+):
+    if flag == 0:
         initialConditionValue = getInteriorConditionValueofXNeg(
-            index, globaldata, hashtable)
+            index, globaldata, hashtable
+        )
     else:
         initialConditionValue = getWeightedInteriorConditionValueofXNeg(
-            index, globaldata, hashtable)
+            index, globaldata, hashtable
+        )
     dSPoints = getDXNegPoints(index, globaldata, hashtable)
     # writeLog([index,initialConditionValue)
-    if(initialConditionValue > threshold):
+    if initialConditionValue > threshold:
         # Point Failed Threshold. Let's try balancing it.
         oldnbhs = getNeighbours(index, globaldata)
         # Get Neighbour of Neighbours
@@ -402,85 +449,113 @@ def conditionValueFixForXNeg(
             nbhofnbh = getNeighbours(getIndexOf(itm, hashtable), globaldata)
             # Removes original point and its neighbours. We only want new
             # neighbours
-            newnbhs = newnbhs + \
-                list(
-                    set(nbhofnbh) - set([getPoint(index, globaldata)]) - set(oldnbhs) - set(newnbhs))
+            newnbhs = newnbhs + list(
+                set(nbhofnbh)
+                - set([getPoint(index, globaldata)])
+                - set(oldnbhs)
+                - set(newnbhs)
+            )
         # We got a new list of points to be tested against lets find the
         # points.
         _, _, _, _, newdxpospoints = deltaNeighbourCalculation(
-            newnbhs, getPoint(index, globaldata), True, True)
-        if(len(newdxpospoints) == 0):
-            writeLog(["We tried finding neighbour of neighbours but none satisfy the delta xneg condition for", getPoint(
-                index, globaldata)])
+            newnbhs, getPoint(index, globaldata), True, True
+        )
+        if len(newdxpospoints) == 0:
+            writeLog(
+                [
+                    "We tried finding neighbour of neighbours but none satisfy the delta xneg condition for",
+                    getPoint(index, globaldata),
+                ]
+            )
         else:
             finalList = []
             nothresList = []
             for newitm in newdxpospoints:
-                if(not isNonAeroDynamic(index, newitm, globaldata, wallpoints)):
+                if not isNonAeroDynamic(index, newitm, globaldata, wallpoints):
                     tempnbh = []
                     tempnbh = dSPoints
                     tempnbh = tempnbh + [newitm]
                     conditionVal = conditionValueForSetOfPoints(
-                        index, globaldata, tempnbh)
+                        index, globaldata, tempnbh
+                    )
                     nothresList.append([newitm, conditionVal])
-                    if(conditionVal < threshold):
+                    if conditionVal < threshold:
                         finalList.append([newitm, conditionVal])
                 else:
                     writeLog(["Found non aero point skipping."])
-            if(len(finalList) == 0 or finalList is None):
-                writeLog(["We tried finding points to reduce threshold value to",
-                          threshold, "but couldn't find any for index", index])
-                writeLog(["It's condition value for dx neg is",
-                          initialConditionValue])
+            if len(finalList) == 0 or finalList is None:
+                writeLog(
+                    [
+                        "We tried finding points to reduce threshold value to",
+                        threshold,
+                        "but couldn't find any for index",
+                        index,
+                    ]
+                )
+                writeLog(["It's condition value for dx neg is", initialConditionValue])
                 nothresList.sort(key=lambda x: x[1])
-                if(len(nothresList) != 0):
-                    writeLog(
-                        ["The least we can reduce it to is", nothresList[0][1]])
-                    if(float(nothresList[0][1]) < initialConditionValue):
+                if len(nothresList) != 0:
+                    writeLog(["The least we can reduce it to is", nothresList[0][1]])
+                    if float(nothresList[0][1]) < initialConditionValue:
                         pointToBeAdded = nothresList[0][0]
                         appendNeighbours([pointToBeAdded], index, globaldata)
-                        if(flag == 0):
+                        if flag == 0:
                             initialConditionValue = getInteriorConditionValueofXNeg(
-                                index, globaldata, hashtable)
+                                index, globaldata, hashtable
+                            )
                         else:
                             initialConditionValue = getWeightedInteriorConditionValueofXNeg(
-                                index, globaldata, hashtable)
-                        writeLog(
-                            ["We will be running again to reduce further"])
-                        if(control <= 0):
+                                index, globaldata, hashtable
+                            )
+                        writeLog(["We will be running again to reduce further"])
+                        if control <= 0:
                             conditionValueFixForXNeg(
-                                index, globaldata, hashtable, threshold, wallpoints, control + 1, flag)
+                                index,
+                                globaldata,
+                                hashtable,
+                                threshold,
+                                wallpoints,
+                                control + 1,
+                                flag,
+                            )
                     else:
                         writeLog(
-                            ["We don't want to worsen the condition value so we are not gonna do anything else"])
+                            [
+                                "We don't want to worsen the condition value so we are not gonna do anything else"
+                            ]
+                        )
                 else:
-                    writeLog(
-                        ["We couldn't find a single point to reduce it to."])
+                    writeLog(["We couldn't find a single point to reduce it to."])
             else:
                 finalList.sort(key=lambda x: x[1])
                 pointToBeAdded = finalList[0][0]
                 appendNeighbours([pointToBeAdded], index, globaldata)
-                if(flag == 0):
+                if flag == 0:
                     initialConditionValue = getInteriorConditionValueofXNeg(
-                        index, globaldata, hashtable)
+                        index, globaldata, hashtable
+                    )
                 else:
                     initialConditionValue = getWeightedInteriorConditionValueofXNeg(
-                        index, globaldata, hashtable)
+                        index, globaldata, hashtable
+                    )
                 # writeLog([index,initialConditionValue)
 
 
 def conditionValueFixForYPos(
-        index, globaldata, hashtable, threshold, wallpoints, control, flag):
-    if(flag == 0):
+    index, globaldata, hashtable, threshold, wallpoints, control, flag
+):
+    if flag == 0:
         initialConditionValue = getInteriorConditionValueofYPos(
-            index, globaldata, hashtable)
+            index, globaldata, hashtable
+        )
     else:
         initialConditionValue = getWeightedInteriorConditionValueofYPos(
-            index, globaldata, hashtable)
+            index, globaldata, hashtable
+        )
     # writeLog([initialConditionValue)
     dSPoints = getDYPosPoints(index, globaldata, hashtable)
     # writeLog([index,initialConditionValue)
-    if(initialConditionValue > threshold):
+    if initialConditionValue > threshold:
         # Point Failed Threshold. Let's try balancing it.
         oldnbhs = getNeighbours(index, globaldata)
         # Get Neighbour of Neighbours
@@ -489,84 +564,112 @@ def conditionValueFixForYPos(
             nbhofnbh = getNeighbours(getIndexOf(itm, hashtable), globaldata)
             # Removes original point and its neighbours. We only want new
             # neighbours
-            newnbhs = newnbhs + \
-                list(
-                    set(nbhofnbh) - set([getPoint(index, globaldata)]) - set(oldnbhs) - set(newnbhs))
+            newnbhs = newnbhs + list(
+                set(nbhofnbh)
+                - set([getPoint(index, globaldata)])
+                - set(oldnbhs)
+                - set(newnbhs)
+            )
         # We got a new list of points to be tested against lets find the
         # points.
         _, _, _, _, newdxpospoints = deltaNeighbourCalculation(
-            newnbhs, getPoint(index, globaldata), False, False)
-        if(len(newdxpospoints) == 0):
-            writeLog(["We tried finding neighbour of neighbours but none satisfy the delta ypos condition for", getPoint(
-                index, globaldata)])
+            newnbhs, getPoint(index, globaldata), False, False
+        )
+        if len(newdxpospoints) == 0:
+            writeLog(
+                [
+                    "We tried finding neighbour of neighbours but none satisfy the delta ypos condition for",
+                    getPoint(index, globaldata),
+                ]
+            )
         else:
             finalList = []
             nothresList = []
             for newitm in newdxpospoints:
-                if(not isNonAeroDynamic(index, newitm, globaldata, wallpoints)):
+                if not isNonAeroDynamic(index, newitm, globaldata, wallpoints):
                     tempnbh = []
                     tempnbh = dSPoints
                     tempnbh = tempnbh + [newitm]
                     conditionVal = conditionValueForSetOfPoints(
-                        index, globaldata, tempnbh)
+                        index, globaldata, tempnbh
+                    )
                     nothresList.append([newitm, conditionVal])
-                    if(conditionVal < threshold):
+                    if conditionVal < threshold:
                         finalList.append([newitm, conditionVal])
                 else:
                     writeLog(["Found non aero point skipping."])
-            if(len(finalList) == 0 or finalList is None):
-                writeLog(["We tried finding points to reduce threshold value to",
-                          threshold, "but couldn't find any for index", index])
-                writeLog(["It's condition value for dy pos is",
-                          initialConditionValue])
+            if len(finalList) == 0 or finalList is None:
+                writeLog(
+                    [
+                        "We tried finding points to reduce threshold value to",
+                        threshold,
+                        "but couldn't find any for index",
+                        index,
+                    ]
+                )
+                writeLog(["It's condition value for dy pos is", initialConditionValue])
                 nothresList.sort(key=lambda x: x[1])
-                if(len(nothresList) != 0):
-                    writeLog(
-                        ["The least we can reduce it to is", nothresList[0][1]])
-                    if(float(nothresList[0][1]) < float(initialConditionValue)):
+                if len(nothresList) != 0:
+                    writeLog(["The least we can reduce it to is", nothresList[0][1]])
+                    if float(nothresList[0][1]) < float(initialConditionValue):
                         pointToBeAdded = nothresList[0][0]
                         appendNeighbours([pointToBeAdded], index, globaldata)
-                        if(flag == 0):
+                        if flag == 0:
                             initialConditionValue = getInteriorConditionValueofYPos(
-                                index, globaldata, hashtable)
+                                index, globaldata, hashtable
+                            )
                         else:
                             initialConditionValue = getWeightedInteriorConditionValueofYPos(
-                                index, globaldata, hashtable)
-                        writeLog(
-                            ["We will be running again to reduce further"])
-                        if(control <= 0):
+                                index, globaldata, hashtable
+                            )
+                        writeLog(["We will be running again to reduce further"])
+                        if control <= 0:
                             conditionValueFixForYPos(
-                                index, globaldata, hashtable, threshold, wallpoints, control + 1, flag)
+                                index,
+                                globaldata,
+                                hashtable,
+                                threshold,
+                                wallpoints,
+                                control + 1,
+                                flag,
+                            )
                     else:
                         writeLog(
-                            ["We don't want to worsen the condition value so we are not gonna do anything else"])
+                            [
+                                "We don't want to worsen the condition value so we are not gonna do anything else"
+                            ]
+                        )
                 else:
-                    writeLog(
-                        ["We couldn't find a single point to reduce it to."])
+                    writeLog(["We couldn't find a single point to reduce it to."])
             else:
                 finalList.sort(key=lambda x: x[1])
                 pointToBeAdded = finalList[0][0]
                 appendNeighbours([pointToBeAdded], index, globaldata)
-                if(flag == 0):
+                if flag == 0:
                     initialConditionValue = getInteriorConditionValueofYPos(
-                        index, globaldata, hashtable)
+                        index, globaldata, hashtable
+                    )
                 else:
                     initialConditionValue = getWeightedInteriorConditionValueofYPos(
-                        index, globaldata, hashtable)
+                        index, globaldata, hashtable
+                    )
                 # writeLog([index,initialConditionValue)
 
 
 def conditionValueFixForYNeg(
-        index, globaldata, hashtable, threshold, wallpoints, control, flag):
-    if(flag == 0):
+    index, globaldata, hashtable, threshold, wallpoints, control, flag
+):
+    if flag == 0:
         initialConditionValue = getInteriorConditionValueofYNeg(
-            index, globaldata, hashtable)
+            index, globaldata, hashtable
+        )
     else:
         initialConditionValue = getWeightedInteriorConditionValueofYNeg(
-            index, globaldata, hashtable)
+            index, globaldata, hashtable
+        )
     dSPoints = getDYNegPoints(index, globaldata, hashtable)
     # writeLog([index,initialConditionValue)
-    if(initialConditionValue > threshold):
+    if initialConditionValue > threshold:
         # Point Failed Threshold. Let's try balancing it.
         oldnbhs = getNeighbours(index, globaldata)
         # Get Neighbour of Neighbours
@@ -575,193 +678,335 @@ def conditionValueFixForYNeg(
             nbhofnbh = getNeighbours(getIndexOf(itm, hashtable), globaldata)
             # Removes original point and its neighbours. We only want new
             # neighbours
-            newnbhs = newnbhs + \
-                list(
-                    set(nbhofnbh) - set([getPoint(index, globaldata)]) - set(oldnbhs) - set(newnbhs))
+            newnbhs = newnbhs + list(
+                set(nbhofnbh)
+                - set([getPoint(index, globaldata)])
+                - set(oldnbhs)
+                - set(newnbhs)
+            )
         # We got a new list of points to be tested against lets find the
         # points.
         _, _, _, _, newdxpospoints = deltaNeighbourCalculation(
-            newnbhs, getPoint(index, globaldata), False, True)
-        if(len(newdxpospoints) == 0):
-            writeLog(["We tried finding neighbour of neighbours but none satisfy the delta yneg condition for", getPoint(
-                index, globaldata)])
+            newnbhs, getPoint(index, globaldata), False, True
+        )
+        if len(newdxpospoints) == 0:
+            writeLog(
+                [
+                    "We tried finding neighbour of neighbours but none satisfy the delta yneg condition for",
+                    getPoint(index, globaldata),
+                ]
+            )
         else:
             finalList = []
             nothresList = []
             for newitm in newdxpospoints:
-                if(not isNonAeroDynamic(index, newitm, globaldata, wallpoints)):
+                if not isNonAeroDynamic(index, newitm, globaldata, wallpoints):
                     tempnbh = []
                     tempnbh = dSPoints
                     tempnbh = tempnbh + [newitm]
                     conditionVal = conditionValueForSetOfPoints(
-                        index, globaldata, tempnbh)
+                        index, globaldata, tempnbh
+                    )
                     nothresList.append([newitm, conditionVal])
-                    if(conditionVal < threshold):
+                    if conditionVal < threshold:
                         finalList.append([newitm, conditionVal])
                 else:
                     writeLog(["Found non aero point skipping."])
-            if(len(finalList) == 0 or finalList is None):
-                writeLog(["We tried finding points to reduce threshold value to",
-                          threshold, "but couldn't find any for index", index])
-                writeLog(["It's condition value for dy neg is",
-                          initialConditionValue])
+            if len(finalList) == 0 or finalList is None:
+                writeLog(
+                    [
+                        "We tried finding points to reduce threshold value to",
+                        threshold,
+                        "but couldn't find any for index",
+                        index,
+                    ]
+                )
+                writeLog(["It's condition value for dy neg is", initialConditionValue])
                 nothresList.sort(key=lambda x: x[1])
-                if(len(nothresList) != 0):
-                    writeLog(
-                        ["The least we can reduce it to is", nothresList[0][1]])
-                    if(float(nothresList[0][1]) < initialConditionValue):
+                if len(nothresList) != 0:
+                    writeLog(["The least we can reduce it to is", nothresList[0][1]])
+                    if float(nothresList[0][1]) < initialConditionValue:
                         pointToBeAdded = nothresList[0][0]
                         appendNeighbours([pointToBeAdded], index, globaldata)
-                        if(flag == 0):
+                        if flag == 0:
                             initialConditionValue = getInteriorConditionValueofYNeg(
-                                index, globaldata, hashtable)
+                                index, globaldata, hashtable
+                            )
                         else:
                             initialConditionValue = getWeightedInteriorConditionValueofYNeg(
-                                index, globaldata, hashtable)
-                        writeLog(
-                            ["We will be running again to reduce further"])
-                        if(control <= 0):
+                                index, globaldata, hashtable
+                            )
+                        writeLog(["We will be running again to reduce further"])
+                        if control <= 0:
                             conditionValueFixForYNeg(
-                                index, globaldata, hashtable, threshold, wallpoints, control + 1, flag)
+                                index,
+                                globaldata,
+                                hashtable,
+                                threshold,
+                                wallpoints,
+                                control + 1,
+                                flag,
+                            )
                     else:
                         writeLog(
-                            ["We don't want to worsen the condition value so we are not gonna do anything else"])
+                            [
+                                "We don't want to worsen the condition value so we are not gonna do anything else"
+                            ]
+                        )
                 else:
-                    writeLog(
-                        ["We couldn't find a single point to reduce it to."])
+                    writeLog(["We couldn't find a single point to reduce it to."])
             else:
                 finalList.sort(key=lambda x: x[1])
                 pointToBeAdded = finalList[0][0]
                 appendNeighbours([pointToBeAdded], index, globaldata)
-                if(flag == 0):
+                if flag == 0:
                     initialConditionValue = getInteriorConditionValueofYNeg(
-                        index, globaldata, hashtable)
+                        index, globaldata, hashtable
+                    )
                 else:
                     initialConditionValue = getWeightedInteriorConditionValueofYNeg(
-                        index, globaldata, hashtable)
+                        index, globaldata, hashtable
+                    )
                 # writeLog([index,initialConditionValue)
 
 
 def printPosDeltaConditions(index, globaldata, hashtable, threshold):
     initialConditionValueXPos = getInteriorConditionValueofXPos(
-        index, globaldata, hashtable)
+        index, globaldata, hashtable
+    )
     dSPointXPos = getDXPosPoints(index, globaldata, hashtable)
     initialConditionValueXNeg = getInteriorConditionValueofXNeg(
-        index, globaldata, hashtable)
+        index, globaldata, hashtable
+    )
     dSPointXNeg = getDXNegPoints(index, globaldata, hashtable)
     initialConditionValueYPos = getInteriorConditionValueofYPos(
-        index, globaldata, hashtable)
+        index, globaldata, hashtable
+    )
     dSPointYPos = getDYPosPoints(index, globaldata, hashtable)
     initialConditionValueYNeg = getInteriorConditionValueofYNeg(
-        index, globaldata, hashtable)
+        index, globaldata, hashtable
+    )
     dSPointYNeg = getDYNegPoints(index, globaldata, hashtable)
     # if(len(dSPointXPos) < threshold or len(dSPointXNeg) < threshold or len(dSPointYPos) < threshold or len(dSPointYNeg) > threshold):
     #     print(index,len(dSPointXPos),initialConditionValueXPos,len(dSPointXNeg),initialConditionValueXNeg,len(dSPointYPos),initialConditionValueYPos,len(dSPointYNeg),initialConditionValueYNeg)
     #     writeLog([index,len(dSPointXPos),initialConditionValueXPos,len(dSPointXNeg),initialConditionValueXNeg,len(dSPointYPos),initialConditionValueYPos,len(dSPointYNeg),initialConditionValueYNeg])
     #     printPosDeltaConditions2(index,globaldata,hashtable)
-    if(initialConditionValueXNeg > threshold or initialConditionValueXPos > threshold or initialConditionValueYPos > threshold or initialConditionValueYNeg > threshold):
+    if (
+        initialConditionValueXNeg > threshold
+        or initialConditionValueXPos > threshold
+        or initialConditionValueYPos > threshold
+        or initialConditionValueYNeg > threshold
+    ):
         # print(index,len(dSPointXPos),initialConditionValueXPos,len(dSPointXNeg),initialConditionValueXNeg,len(dSPointYPos),initialConditionValueYPos,len(dSPointYNeg),initialConditionValueYNeg)
-        writeLog([index, len(dSPointXPos), initialConditionValueXPos, len(dSPointXNeg), initialConditionValueXNeg, len(
-            dSPointYPos), initialConditionValueYPos, len(dSPointYNeg), initialConditionValueYNeg])
+        writeLog(
+            [
+                index,
+                len(dSPointXPos),
+                initialConditionValueXPos,
+                len(dSPointXNeg),
+                initialConditionValueXNeg,
+                len(dSPointYPos),
+                initialConditionValueYPos,
+                len(dSPointYNeg),
+                initialConditionValueYNeg,
+            ]
+        )
         printPosDeltaConditions2(index, globaldata, hashtable)
 
 
 def printWeighedPosDeltaConditions(index, globaldata, hashtable, threshold):
     initialConditionValueXPos = getWeightedInteriorConditionValueofXPos(
-        index, globaldata, hashtable)
+        index, globaldata, hashtable
+    )
     dSPointXPos = getDXPosPoints(index, globaldata, hashtable)
     initialConditionValueXNeg = getWeightedInteriorConditionValueofXNeg(
-        index, globaldata, hashtable)
+        index, globaldata, hashtable
+    )
     dSPointXNeg = getDXNegPoints(index, globaldata, hashtable)
     initialConditionValueYPos = getWeightedInteriorConditionValueofYPos(
-        index, globaldata, hashtable)
+        index, globaldata, hashtable
+    )
     dSPointYPos = getDYPosPoints(index, globaldata, hashtable)
     initialConditionValueYNeg = getWeightedInteriorConditionValueofYNeg(
-        index, globaldata, hashtable)
+        index, globaldata, hashtable
+    )
     dSPointYNeg = getDYNegPoints(index, globaldata, hashtable)
     # if(len(dSPointXPos) < threshold or len(dSPointXNeg) < threshold or len(dSPointYPos) < threshold or len(dSPointYNeg) > threshold):
     #     print(index,len(dSPointXPos),initialConditionValueXPos,len(dSPointXNeg),initialConditionValueXNeg,len(dSPointYPos),initialConditionValueYPos,len(dSPointYNeg),initialConditionValueYNeg)
     #     writeLog([index,len(dSPointXPos),initialConditionValueXPos,len(dSPointXNeg),initialConditionValueXNeg,len(dSPointYPos),initialConditionValueYPos,len(dSPointYNeg),initialConditionValueYNeg])
     #     printPosDeltaConditions2(index,globaldata,hashtable)
-    if(initialConditionValueXNeg > threshold or initialConditionValueXPos > threshold or initialConditionValueYPos > threshold or initialConditionValueYNeg > threshold):
-        print(index, globaldata[index][1:3], len(dSPointXPos), initialConditionValueXPos, len(dSPointXNeg), initialConditionValueXNeg, len(
-            dSPointYPos), initialConditionValueYPos, len(dSPointYNeg), initialConditionValueYNeg)
-        writeLog([index, len(dSPointXPos), initialConditionValueXPos, len(dSPointXNeg), initialConditionValueXNeg, len(
-            dSPointYPos), initialConditionValueYPos, len(dSPointYNeg), initialConditionValueYNeg])
+    if (
+        initialConditionValueXNeg > threshold
+        or initialConditionValueXPos > threshold
+        or initialConditionValueYPos > threshold
+        or initialConditionValueYNeg > threshold
+    ):
+        print(
+            index,
+            globaldata[index][1:3],
+            len(dSPointXPos),
+            initialConditionValueXPos,
+            len(dSPointXNeg),
+            initialConditionValueXNeg,
+            len(dSPointYPos),
+            initialConditionValueYPos,
+            len(dSPointYNeg),
+            initialConditionValueYNeg,
+        )
+        writeLog(
+            [
+                index,
+                len(dSPointXPos),
+                initialConditionValueXPos,
+                len(dSPointXNeg),
+                initialConditionValueXNeg,
+                len(dSPointYPos),
+                initialConditionValueYPos,
+                len(dSPointYNeg),
+                initialConditionValueYNeg,
+            ]
+        )
         printPosDeltaConditions2(index, globaldata, hashtable)
 
 
 def printPosDeltaConditions2(index, globaldata, hashtable):
     initialConditionValueXPos = getInteriorConditionValueofXPos2(
-        index, globaldata, hashtable)
+        index, globaldata, hashtable
+    )
     dSPointXPos = getDXPosPoints(index, globaldata, hashtable)
     initialConditionValueXNeg = getInteriorConditionValueofXNeg2(
-        index, globaldata, hashtable)
+        index, globaldata, hashtable
+    )
     dSPointXNeg = getDXNegPoints(index, globaldata, hashtable)
     initialConditionValueYPos = getInteriorConditionValueofYPos2(
-        index, globaldata, hashtable)
+        index, globaldata, hashtable
+    )
     dSPointYPos = getDYPosPoints(index, globaldata, hashtable)
     initialConditionValueYNeg = getInteriorConditionValueofYNeg2(
-        index, globaldata, hashtable)
+        index, globaldata, hashtable
+    )
     dSPointYNeg = getDYNegPoints(index, globaldata, hashtable)
     # print(index,len(dSPointXPos),initialConditionValueXPos,len(dSPointXNeg),initialConditionValueXNeg,len(dSPointYPos),initialConditionValueYPos,len(dSPointYNeg),initialConditionValueYNeg)
-    writeLog([index, len(dSPointXPos), initialConditionValueXPos, len(dSPointXNeg), initialConditionValueXNeg, len(
-        dSPointYPos), initialConditionValueYPos, len(dSPointYNeg), initialConditionValueYNeg])
+    writeLog(
+        [
+            index,
+            len(dSPointXPos),
+            initialConditionValueXPos,
+            len(dSPointXNeg),
+            initialConditionValueXNeg,
+            len(dSPointYPos),
+            initialConditionValueYPos,
+            len(dSPointYNeg),
+            initialConditionValueYNeg,
+        ]
+    )
 
 
 def printPosDeltaPointConditions(index, globaldata, hashtable, threshold):
     initialConditionValueXPos = getInteriorConditionValueofXPos(
-        index, globaldata, hashtable)
+        index, globaldata, hashtable
+    )
     dSPointXPos = getDXPosPoints(index, globaldata, hashtable)
     initialConditionValueXNeg = getInteriorConditionValueofXNeg(
-        index, globaldata, hashtable)
+        index, globaldata, hashtable
+    )
     dSPointXNeg = getDXNegPoints(index, globaldata, hashtable)
     initialConditionValueYPos = getInteriorConditionValueofYPos(
-        index, globaldata, hashtable)
+        index, globaldata, hashtable
+    )
     dSPointYPos = getDYPosPoints(index, globaldata, hashtable)
     initialConditionValueYNeg = getInteriorConditionValueofYNeg(
-        index, globaldata, hashtable)
+        index, globaldata, hashtable
+    )
     dSPointYNeg = getDYNegPoints(index, globaldata, hashtable)
-    if(initialConditionValueXPos > threshold or initialConditionValueXNeg > threshold or initialConditionValueYPos > threshold or initialConditionValueYNeg > threshold):
-        print(index, len(dSPointXPos), initialConditionValueXPos, len(dSPointXNeg), initialConditionValueXNeg, len(
-            dSPointYPos), initialConditionValueYPos, len(dSPointYNeg), initialConditionValueYNeg)
-        writeLog([index, len(dSPointXPos), initialConditionValueXPos, len(dSPointXNeg), initialConditionValueXNeg, len(
-            dSPointYPos), initialConditionValueYPos, len(dSPointYNeg), initialConditionValueYNeg])
+    if (
+        initialConditionValueXPos > threshold
+        or initialConditionValueXNeg > threshold
+        or initialConditionValueYPos > threshold
+        or initialConditionValueYNeg > threshold
+    ):
+        print(
+            index,
+            len(dSPointXPos),
+            initialConditionValueXPos,
+            len(dSPointXNeg),
+            initialConditionValueXNeg,
+            len(dSPointYPos),
+            initialConditionValueYPos,
+            len(dSPointYNeg),
+            initialConditionValueYNeg,
+        )
+        writeLog(
+            [
+                index,
+                len(dSPointXPos),
+                initialConditionValueXPos,
+                len(dSPointXNeg),
+                initialConditionValueXNeg,
+                len(dSPointYPos),
+                initialConditionValueYPos,
+                len(dSPointYNeg),
+                initialConditionValueYNeg,
+            ]
+        )
 
 
-def setPosDeltaFlags(index, globaldata, hashtable,
-                     threshold, problempts, flag):
-    if(flag == 0):
+def setPosDeltaFlags(index, globaldata, hashtable, threshold, problempts, flag):
+    if flag == 0:
         initialConditionValueXPos = getInteriorConditionValueofXPos(
-            index, globaldata, hashtable)
+            index, globaldata, hashtable
+        )
         initialConditionValueXNeg = getInteriorConditionValueofXNeg(
-            index, globaldata, hashtable)
+            index, globaldata, hashtable
+        )
         initialConditionValueYPos = getInteriorConditionValueofYPos(
-            index, globaldata, hashtable)
+            index, globaldata, hashtable
+        )
         initialConditionValueYNeg = getInteriorConditionValueofYNeg(
-            index, globaldata, hashtable)
+            index, globaldata, hashtable
+        )
     else:
         initialConditionValueXPos = getWeightedInteriorConditionValueofXPos(
-            index, globaldata, hashtable)
+            index, globaldata, hashtable
+        )
         initialConditionValueXNeg = getWeightedInteriorConditionValueofXNeg(
-            index, globaldata, hashtable)
+            index, globaldata, hashtable
+        )
         initialConditionValueYPos = getWeightedInteriorConditionValueofYPos(
-            index, globaldata, hashtable)
+            index, globaldata, hashtable
+        )
         initialConditionValueYNeg = getWeightedInteriorConditionValueofYNeg(
-            index, globaldata, hashtable)
-    if(initialConditionValueXPos > threshold or math.isnan(initialConditionValueXPos) or math.isinf(initialConditionValueXPos)):
+            index, globaldata, hashtable
+        )
+    if (
+        initialConditionValueXPos > threshold
+        or math.isnan(initialConditionValueXPos)
+        or math.isinf(initialConditionValueXPos)
+    ):
         problempts.append(index)
         # globaldata = setFlagValue(index,7,1,globaldata)
         # writeLog([index,"Full Stencil Condition Value",conditionValueOfPointFull(index,globaldata)])
-    if(initialConditionValueXNeg > threshold or math.isnan(initialConditionValueXNeg) or math.isinf(initialConditionValueXNeg)):
+    if (
+        initialConditionValueXNeg > threshold
+        or math.isnan(initialConditionValueXNeg)
+        or math.isinf(initialConditionValueXNeg)
+    ):
         problempts.append(index)
         # globaldata = setFlagValue(index,8,1,globaldata)
         # writeLog([index,"Full Stencil Condition Value",conditionValueOfPointFull(index,globaldata)])
-    if(initialConditionValueYPos > threshold or math.isnan(initialConditionValueYPos) or math.isinf(initialConditionValueYPos)):
+    if (
+        initialConditionValueYPos > threshold
+        or math.isnan(initialConditionValueYPos)
+        or math.isinf(initialConditionValueYPos)
+    ):
         problempts.append(index)
         # globaldata = setFlagValue(index,9,1,globaldata)
         # writeLog([index,"Full Stencil Condition Value",conditionValueOfPointFull(index,globaldata)])
-    if(initialConditionValueYNeg > threshold or math.isnan(initialConditionValueYNeg) or math.isinf(initialConditionValueYNeg)):
+    if (
+        initialConditionValueYNeg > threshold
+        or math.isnan(initialConditionValueYNeg)
+        or math.isinf(initialConditionValueYNeg)
+    ):
         problempts.append(index)
         # globaldata = setFlagValue(index,10,1,globaldata)
         # writeLog([index,"Full Stencil Condition Value",conditionValueOfPointFull(index,globaldata)])
@@ -777,7 +1022,7 @@ def fixPsuedoWallPoints(index, globaldata, hashtable, wallpoints, threshold):
         for idx, _ in enumerate(wallpointset):
             pta = idx
             ptb = idx + 1
-            if(idx == len(wallpointset) - 1):
+            if idx == len(wallpointset) - 1:
                 ptb = 0
             ptax = float(wallpointset[pta].split(",")[0])
             ptay = float(wallpointset[pta].split(",")[1])
@@ -785,24 +1030,26 @@ def fixPsuedoWallPoints(index, globaldata, hashtable, wallpoints, threshold):
             ptby = float(wallpointset[ptb].split(",")[1])
             ptapt = shapely.geometry.Point([ptax, ptay])
             ptbpt = shapely.geometry.Point([ptbx, ptby])
-            wallline = shapely.geometry.LineString(
-                [[ptax, ptay], [ptbx, ptby]])
+            wallline = shapely.geometry.LineString([[ptax, ptay], [ptbx, ptby]])
             distance = perpendicularDistance(
-                wallpointset[pta], wallpointset[ptb], main_point)
+                wallpointset[pta], wallpointset[ptb], main_point
+            )
             # distance = mainpt.distance(wallline)
-            if(distance <= threshold):
+            if distance <= threshold:
                 writeLog(["Found a psuedo wall point", index])
                 dist1 = ptapt.distance(mainpt)
                 dist2 = ptbpt.distance(mainpt)
                 closestwallpointnbh = pta
-                if(dist2 > dist1):
+                if dist2 > dist1:
                     closestwallpointnbh = ptb
                 writeLog(["Closest Wall Point Selected", closestwallpointnbh])
-                nbhpt = getPoint(getIndexOf(
-                    wallpointset[closestwallpointnbh], hashtable), globaldata)
+                nbhpt = getPoint(
+                    getIndexOf(wallpointset[closestwallpointnbh], hashtable), globaldata
+                )
                 for index, individualitem in enumerate(globaldata):
-                    globaldata[index] = [nbhpt if x == str(
-                        main_point) else x for x in individualitem]
+                    globaldata[index] = [
+                        nbhpt if x == str(main_point) else x for x in individualitem
+                    ]
                 return globaldata
     return globaldata
 
@@ -817,10 +1064,11 @@ def addNearestWallPoints(index, globaldata, hashtable, wallpoints):
         for idx, _ in enumerate(wallpointset):
             pta = idx
             ptb = idx + 1
-            if(idx == len(wallpointset) - 1):
+            if idx == len(wallpointset) - 1:
                 ptb = 0
             distance = perpendicularDistance(
-                wallpointset[pta], wallpointset[ptb], main_point)
+                wallpointset[pta], wallpointset[ptb], main_point
+            )
             walldist.append([distance, wallpointset[pta], wallpointset[ptb]])
     walldist.sort(key=lambda x: x[0])
     nbh1 = walldist[0][1]
@@ -834,7 +1082,7 @@ def calculateAverageWallPointDistance(globaldata, wallpoints):
         for idx, _ in enumerate(wallpointset):
             pta = idx
             ptb = idx + 1
-            if(idx == len(wallpointset) - 1):
+            if idx == len(wallpointset) - 1:
                 ptb = 0
             ptax = float(wallpointset[pta].split(",")[0])
             ptay = float(wallpointset[pta].split(",")[1])

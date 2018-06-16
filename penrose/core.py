@@ -40,7 +40,7 @@ def getIndexFromPoint(pt, globaldata):
     ptx = float(pt.split(",")[0])
     pty = float(pt.split(",")[1])
     for itm in globaldata:
-        if(itm[1] == str(ptx) and itm[2] == str(pty)):
+        if itm[1] == str(ptx) and itm[2] == str(pty):
             return int(itm[0])
 
 
@@ -79,7 +79,7 @@ def normalCalculation(index, globaldata, wallpoint):
     leftpointy = float(leftpoint.split(",")[1])
     rightpointx = float(rightpoint.split(",")[0])
     rightpointy = float(rightpoint.split(",")[1])
-    if(not wallpoint):
+    if not wallpoint:
         nx1 = leftpointy - cordy
         nx2 = cordy - rightpointy
         ny1 = leftpointx - cordx
@@ -92,7 +92,7 @@ def normalCalculation(index, globaldata, wallpoint):
     nx = (nx1 + nx2) / 2
     ny = (ny1 + ny2) / 2
     det = math.sqrt((nx * nx) + (ny * ny))
-    if(not wallpoint):
+    if not wallpoint:
         nx = nx / det
     else:
         nx = (-nx) / det
@@ -103,21 +103,20 @@ def normalCalculation(index, globaldata, wallpoint):
 def cleanNeighbours(globaldata):
     print("Beginning Duplicate Neighbour Detection")
     for i in range(len(globaldata)):
-        if(i == 0):
+        if i == 0:
             continue
         noneighours = int(globaldata[i][11])
         cordneighbours = globaldata[i][-noneighours:]
         result = []
         for item in cordneighbours:
-            if(int(item) == i):
+            if int(item) == i:
                 continue
             if str(item) not in result:
                 result.append(str(item))
         cordneighbours = result
 
         noneighours = len(cordneighbours)
-        globaldata[i] = globaldata[i][:11] + \
-            [noneighours] + list(cordneighbours)
+        globaldata[i] = globaldata[i][:11] + [noneighours] + list(cordneighbours)
     print("Duplicate Neighbours Removed")
     return globaldata
 
@@ -139,25 +138,24 @@ def deltaY(ycord, orgycord):
     return float(orgycord - ycord)
 
 
-def deltaNeighbourCalculation(
-        currentneighbours, currentcord, isxcord, isnegative):
+def deltaNeighbourCalculation(currentneighbours, currentcord, isxcord, isnegative):
     xpos, xneg, ypos, yneg = 0, 0, 0, 0
     temp = []
     for item in currentneighbours:
-        if((deltaX(float(currentcord.split(",")[0]), float(item.split(",")[0]))) <= 0):
-            if(isxcord and (not isnegative)):
+        if (deltaX(float(currentcord.split(",")[0]), float(item.split(",")[0]))) <= 0:
+            if isxcord and (not isnegative):
                 temp.append(item)
             xpos = xpos + 1
-        if((deltaX(float(currentcord.split(",")[0]), float(item.split(",")[0]))) >= 0):
-            if(isxcord and isnegative):
+        if (deltaX(float(currentcord.split(",")[0]), float(item.split(",")[0]))) >= 0:
+            if isxcord and isnegative:
                 temp.append(item)
             xneg = xneg + 1
-        if((deltaY(float(currentcord.split(",")[1]), float(item.split(",")[1]))) <= 0):
-            if((not isxcord) and (not isnegative)):
+        if (deltaY(float(currentcord.split(",")[1]), float(item.split(",")[1]))) <= 0:
+            if (not isxcord) and (not isnegative):
                 temp.append(item)
             ypos = ypos + 1
-        if((deltaY(float(currentcord.split(",")[1]), float(item.split(",")[1]))) >= 0):
-            if((not isxcord) and isnegative):
+        if (deltaY(float(currentcord.split(",")[1]), float(item.split(",")[1]))) >= 0:
+            if (not isxcord) and isnegative:
                 temp.append(item)
             yneg = yneg + 1
     return xpos, ypos, xneg, yneg, temp
@@ -166,56 +164,64 @@ def deltaNeighbourCalculation(
 def getDXPosPoints(index, globaldata):
     nbhs = convertIndexToPoints(getNeighbours(index, globaldata), globaldata)
     _, _, _, _, mypoints = deltaNeighbourCalculation(
-        nbhs, getPointxy(index, globaldata), True, False)
+        nbhs, getPointxy(index, globaldata), True, False
+    )
     return mypoints
 
 
 def getDXNegPoints(index, globaldata):
     nbhs = convertIndexToPoints(getNeighbours(index, globaldata), globaldata)
     _, _, _, _, mypoints = deltaNeighbourCalculation(
-        nbhs, getPointxy(index, globaldata), True, True)
+        nbhs, getPointxy(index, globaldata), True, True
+    )
     return mypoints
 
 
 def getDYPosPoints(index, globaldata):
     nbhs = convertIndexToPoints(getNeighbours(index, globaldata), globaldata)
     _, _, _, _, mypoints = deltaNeighbourCalculation(
-        nbhs, getPointxy(index, globaldata), False, False)
+        nbhs, getPointxy(index, globaldata), False, False
+    )
     return mypoints
 
 
 def getDYNegPoints(index, globaldata):
     nbhs = convertIndexToPoints(getNeighbours(index, globaldata), globaldata)
     _, _, _, _, mypoints = deltaNeighbourCalculation(
-        nbhs, getPointxy(index, globaldata), False, True)
+        nbhs, getPointxy(index, globaldata), False, True
+    )
     return mypoints
 
 
 def getDXPosPointsFromSet(index, globaldata, points):
     nbhs = convertIndexToPoints(points, globaldata)
     _, _, _, _, mypoints = deltaNeighbourCalculation(
-        nbhs, getPointxy(index, globaldata), True, False)
+        nbhs, getPointxy(index, globaldata), True, False
+    )
     return mypoints
 
 
 def getDXNegPointsFromSet(index, globaldata, points):
     nbhs = convertIndexToPoints(points, globaldata)
     _, _, _, _, mypoints = deltaNeighbourCalculation(
-        nbhs, getPointxy(index, globaldata), True, True)
+        nbhs, getPointxy(index, globaldata), True, True
+    )
     return mypoints
 
 
 def getDYPosPointsFromSet(index, globaldata, points):
     nbhs = convertIndexToPoints(points, globaldata)
     _, _, _, _, mypoints = deltaNeighbourCalculation(
-        nbhs, getPointxy(index, globaldata), False, False)
+        nbhs, getPointxy(index, globaldata), False, False
+    )
     return mypoints
 
 
 def getDYNegPointsFromSet(index, globaldata, points):
     nbhs = convertIndexToPoints(points, globaldata)
     _, _, _, _, mypoints = deltaNeighbourCalculation(
-        nbhs, getPointxy(index, globaldata), False, True)
+        nbhs, getPointxy(index, globaldata), False, True
+    )
     return mypoints
 
 
@@ -227,9 +233,9 @@ def getMoorePenroseMatrix(index, neighbours, globaldata, threshold, power):
         nbhy = float(nbhcord.split(",")[1])
         delx = deltaX(cordx, nbhx)
         dely = deltaY(cordy, nbhy)
-        dist = math.sqrt((delx**2) + (dely**2))
-        w = 1 / dist**power
-        if(len(matrixOrg) == 0):
+        dist = math.sqrt((delx ** 2) + (dely ** 2))
+        w = 1 / dist ** power
+        if len(matrixOrg) == 0:
             matrixOrg = np.array([w * delx, w * dely])
         else:
             matrixOrg = np.vstack((matrixOrg, np.array([w * delx, w * dely])))
@@ -238,32 +244,36 @@ def getMoorePenroseMatrix(index, neighbours, globaldata, threshold, power):
 
 def getXPosPenrose(index, globaldata, threshold, power):
     try:
-        return getMoorePenroseMatrix(index, getDXPosPoints(
-            index, globaldata), globaldata, threshold, power)
+        return getMoorePenroseMatrix(
+            index, getDXPosPoints(index, globaldata), globaldata, threshold, power
+        )
     except BaseException:
         return np.array(["Only 1 Point. Couldn't get MP Inverse"])
 
 
 def getXNegPenrose(index, globaldata, threshold, power):
     try:
-        return getMoorePenroseMatrix(index, getDXNegPoints(
-            index, globaldata), globaldata, threshold, power)
+        return getMoorePenroseMatrix(
+            index, getDXNegPoints(index, globaldata), globaldata, threshold, power
+        )
     except BaseException:
         return np.array(["Only 1 Point. Couldn't get MP Inverse"])
 
 
 def getYPosPenrose(index, globaldata, threshold, power):
     try:
-        return getMoorePenroseMatrix(index, getDYPosPoints(
-            index, globaldata), globaldata, threshold, power)
+        return getMoorePenroseMatrix(
+            index, getDYPosPoints(index, globaldata), globaldata, threshold, power
+        )
     except BaseException:
         return np.array(["Only 1 Point. Couldn't get MP Inverse"])
 
 
 def getYNegPenrose(index, globaldata, threshold, power):
     try:
-        return getMoorePenroseMatrix(index, getDYNegPoints(
-            index, globaldata), globaldata, threshold, power)
+        return getMoorePenroseMatrix(
+            index, getDYNegPoints(index, globaldata), globaldata, threshold, power
+        )
     except BaseException:
         return np.array(["Only 1 Point. Couldn't get MP Inverse"])
 

@@ -30,8 +30,9 @@ def main():
     print("Converting to readable format")
 
     for idx, itm in enumerate(splitdata):
-        printProgressBar(idx, len(splitdata) - 1,
-                         prefix='Progress:', suffix='Complete', length=50)
+        printProgressBar(
+            idx, len(splitdata) - 1, prefix="Progress:", suffix="Complete", length=50
+        )
         itm = itm.split(" ")
         itm.pop(-1)
         entry = itm
@@ -46,32 +47,38 @@ def main():
     print("Point Classification")
 
     for idx, itm in enumerate(globaldata):
-        printProgressBar(idx, len(globaldata) - 1,
-                         prefix='Progress:', suffix='Complete', length=50)
-        if(idx > 0 and getFlag(idx, globaldata) == 2):
+        printProgressBar(
+            idx, len(globaldata) - 1, prefix="Progress:", suffix="Complete", length=50
+        )
+        if idx > 0 and getFlag(idx, globaldata) == 2:
             outerpts.append(idx)
-        elif(idx > 0 and getFlag(idx, globaldata) == 1):
+        elif idx > 0 and getFlag(idx, globaldata) == 1:
             interiorpts.append(idx)
-        elif(idx > 0 and getFlag(idx, globaldata) == 0):
+        elif idx > 0 and getFlag(idx, globaldata) == 0:
             wallpts.append(idx)
 
     print("Triangulating")
 
     interiorpts = convertPointToShapelyPoint(
-        convertIndexToPoints(interiorpts, globaldata))
+        convertIndexToPoints(interiorpts, globaldata)
+    )
     interiorpts = MultiPoint(interiorpts)
     interiortriangles = triangulate(interiorpts)
 
-    wallpts = convertPointToShapelyPoint(
-        convertIndexToPoints(wallpts, globaldata))
+    wallpts = convertPointToShapelyPoint(convertIndexToPoints(wallpts, globaldata))
     wallpts = Polygon2(wallpts)
 
     print("Generating Model")
     polygns = []
     fig, ax = plt.subplots()
     for idx, itm in enumerate(interiortriangles):
-        printProgressBar(idx, len(interiortriangles) - 1,
-                         prefix='Progress:', suffix='Complete', length=50)
+        printProgressBar(
+            idx,
+            len(interiortriangles) - 1,
+            prefix="Progress:",
+            suffix="Complete",
+            length=50,
+        )
         itm = itm.difference(wallpts)
         try:
             theshit = list(zip(*itm.exterior.xy))

@@ -22,8 +22,9 @@ def main():
     print("Converting to readable format")
 
     for idx, itm in enumerate(splitdata):
-        printProgressBar(idx, len(splitdata) - 1,
-                         prefix='Progress:', suffix='Complete', length=50)
+        printProgressBar(
+            idx, len(splitdata) - 1, prefix="Progress:", suffix="Complete", length=50
+        )
         itm = itm.split(" ")
         itm.pop(-1)
         entry = itm
@@ -32,26 +33,26 @@ def main():
     globaldata = cleanNeighbours(globaldata)
 
     for idx, itm in enumerate(globaldata):
-        if(idx > 0 and getFlag(idx, globaldata) == 1):
+        if idx > 0 and getFlag(idx, globaldata) == 1:
             checkConditionNumber(idx, globaldata, 30)
 
     for idx, itm in enumerate(globaldata):
-        if(idx > 0 and getFlag(idx, globaldata) == 1):
+        if idx > 0 and getFlag(idx, globaldata) == 1:
             globaldata = fixXPosMain(idx, globaldata, 30, -1)
     for idx, itm in enumerate(globaldata):
-        if(idx > 0 and getFlag(idx, globaldata) == 1):
+        if idx > 0 and getFlag(idx, globaldata) == 1:
             globaldata = fixXNegMain(idx, globaldata, 30, -1)
     for idx, itm in enumerate(globaldata):
-        if(idx > 0 and getFlag(idx, globaldata) == 1):
+        if idx > 0 and getFlag(idx, globaldata) == 1:
             globaldata = fixYPosMain(idx, globaldata, 30, -1)
     for idx, itm in enumerate(globaldata):
-        if(idx > 0 and getFlag(idx, globaldata) == 1):
+        if idx > 0 and getFlag(idx, globaldata) == 1:
             globaldata = fixYNegMain(idx, globaldata, 30, -1)
 
     print("New")
 
     for idx, itm in enumerate(globaldata):
-        if(idx > 0 and getFlag(idx, globaldata) == 1):
+        if idx > 0 and getFlag(idx, globaldata) == 1:
             checkConditionNumber(idx, globaldata, 30)
 
     # print("Set Flag")

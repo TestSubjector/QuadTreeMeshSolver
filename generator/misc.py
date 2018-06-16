@@ -27,13 +27,14 @@ def cleanNeighbours(globaldata):  # Verified
         noneighours = int(globaldata[i][11])  # Number of neighbours
         cordneighbours = globaldata[i][-noneighours:]
         # TODO - Ask, why get the same thing as above?
-        cordneighbours = [str(float(j.split(",")[0])) + "," +
-                          str(float(j.split(",")[1])) for j in cordneighbours]
+        cordneighbours = [
+            str(float(j.split(",")[0])) + "," + str(float(j.split(",")[1]))
+            for j in cordneighbours
+        ]
 
         cordneighbours = dict.fromkeys(cordneighbours).keys()
         noneighours = len(cordneighbours)
-        globaldata[i] = globaldata[i][:11] + \
-            [noneighours] + list(cordneighbours)
+        globaldata[i] = globaldata[i][:11] + [noneighours] + list(cordneighbours)
         # with open("duplication_removal.txt", "w") as text_file:
         #     for item1 in globaldata:
         #         text_file.writelines(["%s " % item for item in item1])
@@ -97,7 +98,7 @@ def getXCordNeighbours(list):
 
 
 def isPositive(val):
-    if(float(val) >= 0):
+    if float(val) >= 0:
         return True
     else:
         return False
@@ -106,12 +107,15 @@ def isPositive(val):
 def getBiggestXBiggestY(list):
     newlist = []
     for item in list:
-        if(isPositive(float(item.split(",")[0])) == True and isPositive(float(item.split(",")[1])) == True):
+        if (
+            isPositive(float(item.split(",")[0])) == True
+            and isPositive(float(item.split(",")[1])) == True
+        ):
             newlist.append(item)
     getBiggestX = max(getXCordNeighbours(newlist))
     templist = []
     for item in newlist:
-        if(float((item.split(",")[0])) == getBiggestX):
+        if float((item.split(",")[0])) == getBiggestX:
             templist.append(item)
     getBiggestY = max(getYCordNeighbours(templist))
     return str(getBiggestX) + "," + str(getBiggestY)
@@ -120,12 +124,15 @@ def getBiggestXBiggestY(list):
 def getSmallestXBiggestY(list):
     newlist = []
     for item in list:
-        if(isPositive(float(item.split(",")[0])) == False and isPositive(float(item.split(",")[1])) == True):
+        if (
+            isPositive(float(item.split(",")[0])) == False
+            and isPositive(float(item.split(",")[1])) == True
+        ):
             newlist.append(item)
     getSmallestX = min(getXCordNeighbours(newlist))
     templist = []
     for item in newlist:
-        if(float((item.split(",")[0])) == getSmallestX):
+        if float((item.split(",")[0])) == getSmallestX:
             templist.append(item)
     getBiggestY = max(getYCordNeighbours(templist))
     return str(getSmallestX) + "," + str(getBiggestY)
@@ -134,12 +141,15 @@ def getSmallestXBiggestY(list):
 def getBiggestXSmallestY(list):
     newlist = []
     for item in list:
-        if(isPositive(float(item.split(",")[0])) == True and isPositive(float(item.split(",")[1])) == False):
+        if (
+            isPositive(float(item.split(",")[0])) == True
+            and isPositive(float(item.split(",")[1])) == False
+        ):
             newlist.append(item)
     getBiggestX = max(getXCordNeighbours(newlist))
     templist = []
     for item in newlist:
-        if(float((item.split(",")[0])) == getBiggestX):
+        if float((item.split(",")[0])) == getBiggestX:
             templist.append(item)
     getSmallestY = min(getYCordNeighbours(templist))
     return str(getBiggestX) + "," + str(getSmallestY)
@@ -148,12 +158,15 @@ def getBiggestXSmallestY(list):
 def getSmallestXSmallestY(list):
     newlist = []
     for item in list:
-        if(isPositive(float(item.split(",")[0])) == False and isPositive(float(item.split(",")[1])) == False):
+        if (
+            isPositive(float(item.split(",")[0])) == False
+            and isPositive(float(item.split(",")[1])) == False
+        ):
             newlist.append(item)
     getBiggestX = min(getXCordNeighbours(newlist))
     templist = []
     for item in newlist:
-        if(float((item.split(",")[0])) == getBiggestX):
+        if float((item.split(",")[0])) == getBiggestX:
             templist.append(item)
     getSmallestY = min(getYCordNeighbours(templist))
     return str(getBiggestX) + "," + str(getSmallestY)
@@ -163,16 +176,16 @@ def getNeighboursDirectional(direction, maincord, list):
     finallist = []
     xcord = float(maincord.split(",")[0])
     ycord = float(maincord.split(",")[1])
-    if(direction == 1):
+    if direction == 1:
         # All points towards left of X
         finallist = [x for x in list if float(x.split(",")[0]) <= xcord]
-    elif(direction == 2):
+    elif direction == 2:
         # All points towards bottom of Y
         finallist = [x for x in list if float(x.split(",")[1]) <= ycord]
-    elif(direction == 3):
+    elif direction == 3:
         # All points towards right of X
         finallist = [x for x in list if float(x.split(",")[0]) >= xcord]
-    elif(direction == 4):
+    elif direction == 4:
         # All points towar s top of Y
         finallist = [x for x in list if float(x.split(",")[1]) >= ycord]
     return finallist
@@ -181,7 +194,7 @@ def getNeighboursDirectional(direction, maincord, list):
 def getLeftPoint(cord, globaldata, hashtable):
     val = hashtable.index(cord)
     leftpt = globaldata[val - 1][3]
-    if(isinstance(leftpt, int)):
+    if isinstance(leftpt, int):
         return hashtable[leftpt]
     else:
         return hashtable.index(leftpt)
@@ -190,7 +203,7 @@ def getLeftPoint(cord, globaldata, hashtable):
 def getRightPoint(cord, globaldata, hashtable):
     val = hashtable.index(cord)
     rightpt = globaldata[val - 1][4]
-    if(isinstance(rightpt, int)):
+    if isinstance(rightpt, int):
         return hashtable[rightpt]
     else:
         return hashtable.index(rightpt)
@@ -210,7 +223,7 @@ def euclideanDistance(a, b):
     ay = float(a.split(",")[1])
     bx = float(b.split(",")[0])
     by = float(b.split(",")[1])
-    return (float(math.sqrt(((bx - ax)**2) + ((by - ay)**2))), a)
+    return (float(math.sqrt(((bx - ax) ** 2) + ((by - ay) ** 2))), a)
 
 
 def appendNeighbours(neighbours, index, globaldata):
@@ -270,14 +283,12 @@ def isNonAeroDynamic(index, cordpt, globaldata, wallpoints):
     main_pointy = float(main_point.split(",")[1])
     cordptx = float(cordpt.split(",")[0])
     cordpty = float(cordpt.split(",")[1])
-    line = shapely.geometry.LineString(
-        [[main_pointx, main_pointy], [cordptx, cordpty]])
+    line = shapely.geometry.LineString([[main_pointx, main_pointy], [cordptx, cordpty]])
     responselist = []
     for item in wallpoints:
         polygonpts = []
         for item2 in item:
-            polygonpts.append([float(item2.split(",")[0]),
-                               float(item2.split(",")[1])])
+            polygonpts.append([float(item2.split(",")[0]), float(item2.split(",")[1])])
         polygontocheck = shapely.geometry.Polygon(polygonpts)
         merged = linemerge([polygontocheck.boundary, line])
         borders = unary_union(merged)
@@ -285,7 +296,7 @@ def isNonAeroDynamic(index, cordpt, globaldata, wallpoints):
         i = 0
         for p in polygons:
             i = i + 1
-        if(i == 1):
+        if i == 1:
             responselist.append(False)
         else:
             responselist.append(True)
@@ -298,10 +309,9 @@ def isNonAeroDynamic(index, cordpt, globaldata, wallpoints):
 def nonAeroCheck(index, globaldata, wallpoints):
     cordnbhs = getNeighbours(index, globaldata)
     for itm in cordnbhs:
-        if(isNonAeroDynamic(index, itm, globaldata, wallpoints)):
+        if isNonAeroDynamic(index, itm, globaldata, wallpoints):
             print("Warning this point", index, "has a non aerodynamic point")
-            writeLog(["Warning this point", index,
-                      "has a non aerodynamic point"])
+            writeLog(["Warning this point", index, "has a non aerodynamic point"])
 
 
 def perpendicularDistance(pta, ptb, main_point):
@@ -311,12 +321,16 @@ def perpendicularDistance(pta, ptb, main_point):
     ptby = float(ptb.split(",")[1])
     main_pointx = float(main_point.split(",")[0])
     main_pointy = float(main_point.split(",")[1])
-    top = abs(((ptby - ptay) * main_pointx) - ((ptbx - ptax)
-                                               * main_pointy) + (ptbx * ptay) - (ptax * ptby))
+    top = abs(
+        ((ptby - ptay) * main_pointx)
+        - ((ptbx - ptax) * main_pointy)
+        + (ptbx * ptay)
+        - (ptax * ptby)
+    )
     bottom = euclideanDistance(pta, ptb)
     return float(top / bottom[0])
 
 
 def chunks(l, n):
     for i in range(0, len(l), n):
-        yield l[i:i + n]
+        yield l[i : i + n]
