@@ -3,7 +3,8 @@ import numpy as np
 from numpy import linalg as LA
 from misc import *
 
-def normalCalculation(index,hashtable,globaldata,wallpoint):
+
+def normalCalculation(index, hashtable, globaldata, wallpoint):
     nx = 0
     ny = 0
     cordx = float(globaldata[index][1])
@@ -29,19 +30,21 @@ def normalCalculation(index,hashtable,globaldata,wallpoint):
         nx2 = rightpointy - cordy
         ny1 = cordx - leftpointx
         ny2 = rightpointx - cordx
-    nx = (nx1+nx2)/2
-    ny = (ny1+ny2)/2
-    det = math.sqrt((nx*nx) + (ny*ny))
+    nx = (nx1 + nx2) / 2
+    ny = (ny1 + ny2) / 2
+    det = math.sqrt((nx * nx) + (ny * ny))
     if(not wallpoint):
-        nx = nx/det
+        nx = nx / det
     else:
-        nx = (-nx)/det
-    ny = ny/det
+        nx = (-nx) / det
+    ny = ny / det
     # print(nx)
     # print(ny)
-    return nx,ny
+    return nx, ny
 
 # Added new potential neighbour
+
+
 def conditionCheckWithNeighboursWall(index, globaldata, nbh, nx, ny):
     mainptx = float(globaldata[index][1])
     mainpty = float(globaldata[index][2])
@@ -69,20 +72,22 @@ def conditionCheckWithNeighboursWall(index, globaldata, nbh, nx, ny):
     shape = (2, 2)
     random = random.reshape(shape)
     s = np.linalg.svd(random, full_matrices=False, compute_uv=False)
-    if(min(s)<0):
-        print(index,"ITS LOW")
+    if(min(s) < 0):
+        print(index, "ITS LOW")
     s = max(s) / min(s)
     return s
 
 # Original condition number
-def conditionValueDefault(index,globaldata):
+
+
+def conditionValueDefault(index, globaldata):
     mainptx = float(globaldata[index][1])
     mainpty = float(globaldata[index][2])
     deltaSumX = 0
     deltaSumY = 0
     deltaSumXY = 0
     data = []
-    nbh = getNeighbours(index,globaldata)
+    nbh = getNeighbours(index, globaldata)
     for nbhitem in nbh:
         nbhitemX = float(nbhitem.split(",")[0])
         nbhitemY = float(nbhitem.split(",")[1])
@@ -138,7 +143,7 @@ def minConditionValue(index, hashtable, globaldata, nbhs, nx, ny):
 def minCondition(inda, hashtable, globaldata, nbs, threshold, nx, ny):
     nbsMin = []
     for index, item in enumerate(nbs):
-        w = minConditionValue(inda, hashtable, globaldata,[item], nx, ny)
+        w = minConditionValue(inda, hashtable, globaldata, [item], nx, ny)
         # print(" This nbhofnbh reduces condition number by")
         # print(w)
         nbsMin.append([item, index, w])
@@ -147,6 +152,7 @@ def minCondition(inda, hashtable, globaldata, nbs, threshold, nx, ny):
     for item in nbsMin:
         nbsFinalList.append(item[0])
     return nbsFinalList[0]
+
 
 def conditionCheck(index, globaldata):
     mainptx = float(globaldata[index][1])
@@ -173,20 +179,23 @@ def conditionCheck(index, globaldata):
     w = max(w) / min(w)
     s = np.linalg.svd(random, full_matrices=False, compute_uv=False)
     s = max(s) / min(s)
-    return w, s    
+    return w, s
 
-def minDistance(neighbours,cord):
+
+def minDistance(neighbours, cord):
     dists = []
     for item in neighbours:
-        dists.append(euclideanDistance(item,cord))
+        dists.append(euclideanDistance(item, cord))
     dists.sort(key=takeFirst)
     dists2 = []
     for item in dists:
         dists2.append(item[1])
     return dists2
 
-def deltaWallNeighbourCalculation(index,currentneighbours,nx,ny,giveposdelta,globaldata):
-    deltaspos,deltasneg,deltaszero = 0,0,0
+
+def deltaWallNeighbourCalculation(
+        index, currentneighbours, nx, ny, giveposdelta, globaldata):
+    deltaspos, deltasneg, deltaszero = 0, 0, 0
     nx = float(nx)
     ny = float(ny)
     tx = float(ny)
@@ -210,13 +219,15 @@ def deltaWallNeighbourCalculation(index,currentneighbours,nx,ny,giveposdelta,glo
             deltasneg = deltasneg + 1
         if(deltas == 0):
             deltaszero = deltaszero + 1
-    if(getFlag(index,globaldata)==2):
+    if(getFlag(index, globaldata) == 2):
         None
         # print(index,len(currentneighbours),deltaspos,deltasneg,deltaszero)
-    return deltaspos,deltasneg,deltaszero,output
+    return deltaspos, deltasneg, deltaszero, output
 
-def deltaOuterNeighbourCalculation(index,currentneighbours,nx,ny,giveposdelta,globaldata):
-    deltaspos,deltasneg,deltaszero = 0,0,0
+
+def deltaOuterNeighbourCalculation(
+        index, currentneighbours, nx, ny, giveposdelta, globaldata):
+    deltaspos, deltasneg, deltaszero = 0, 0, 0
     nx = -float(nx)
     ny = float(ny)
     tx = float(ny)
@@ -238,8 +249,7 @@ def deltaOuterNeighbourCalculation(index,currentneighbours,nx,ny,giveposdelta,gl
             deltasneg = deltasneg + 1
         if(deltas == 0):
             deltaszero = deltaszero + 1
-    if(getFlag(index,globaldata)==2):
+    if(getFlag(index, globaldata) == 2):
         None
         # print(index,len(currentneighbours),deltaspos,deltasneg,deltaszero)
-    return deltaspos,deltasneg,deltaszero,output 
-  
+    return deltaspos, deltasneg, deltaszero, output

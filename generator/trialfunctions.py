@@ -1,33 +1,38 @@
 import numpy as np
 import math
 
-def getNeighbours(index,globaldata):
+
+def getNeighbours(index, globaldata):
     index = int(index)
     ptdata = globaldata[index]
     ptdata = ptdata[12:]
     return ptdata
 
-def getPoint(index,globaldata):
+
+def getPoint(index, globaldata):
     index = int(index)
     ptdata = globaldata[index]
     ptx = float(ptdata[1])
     pty = float(ptdata[2])
-    return ptx,pty
+    return ptx, pty
 
-def getPointxy(index,globaldata):
+
+def getPointxy(index, globaldata):
     index = int(index)
-    ptx,pty = getPoint(index,globaldata)
+    ptx, pty = getPoint(index, globaldata)
     return str(ptx) + "," + str(pty)
 
-def convertIndexToPoints(indexarray,globaldata):
+
+def convertIndexToPoints(indexarray, globaldata):
     ptlist = []
     for item in indexarray:
         item = int(item)
-        ptx,pty = getPoint(item,globaldata)
+        ptx, pty = getPoint(item, globaldata)
         ptlist.append((str(ptx) + "," + str(pty)))
     return ptlist
 
-def weightedConditionValueForSetOfPoints(index,globaldata,points):
+
+def weightedConditionValueForSetOfPoints(index, globaldata, points):
     index = int(index)
     mainptx = float(globaldata[index][1])
     mainpty = float(globaldata[index][2])
@@ -56,7 +61,7 @@ def weightedConditionValueForSetOfPoints(index,globaldata,points):
     random = random.reshape(shape)
     s = np.linalg.svd(random, full_matrices=False, compute_uv=False)
     s = max(s) / min(s)
-    return s   
+    return s
 
 # def weightedConditionValueForSetOfPoints(index,globaldata,points):
 #     index = int(index)
@@ -66,7 +71,7 @@ def weightedConditionValueForSetOfPoints(index,globaldata,points):
 #     nbhs = points
 #     shape = (len(nbhs), 2)
 #     storage = np.zeros(shape)
-#     count = 0 
+#     count = 0
 #     for nbhitem in nbhs:
 #         nbhitemX = float(nbhitem.split(",")[0])
 #         nbhitemY = float(nbhitem.split(",")[1])
@@ -85,14 +90,18 @@ def weightedConditionValueForSetOfPoints(index,globaldata,points):
 #         s = max(s) / min(s)
 #     return s
 
-def deltaX(xcord,orgxcord):
+
+def deltaX(xcord, orgxcord):
     return float(orgxcord - xcord)
 
-def deltaY(ycord,orgycord):
+
+def deltaY(ycord, orgycord):
     return float(orgycord - ycord)
 
-def deltaNeighbourCalculation(currentneighbours,currentcord,isxcord,isnegative):
-    xpos,xneg,ypos,yneg = 0,0,0,0
+
+def deltaNeighbourCalculation(
+        currentneighbours, currentcord, isxcord, isnegative):
+    xpos, xneg, ypos, yneg = 0, 0, 0, 0
     temp = []
     for item in currentneighbours:
         if((deltaX(float(currentcord.split(",")[0]), float(item.split(",")[0]))) <= 0):
@@ -111,57 +120,74 @@ def deltaNeighbourCalculation(currentneighbours,currentcord,isxcord,isnegative):
             if((not isxcord) and isnegative):
                 temp.append(item)
             yneg = yneg + 1
-    return xpos,ypos,xneg,yneg,temp
+    return xpos, ypos, xneg, yneg, temp
 
-def getWeightedInteriorConditionValueofXPos(index,globaldata):
-    nbhs = convertIndexToPoints(getNeighbours(index,globaldata),globaldata)
-    _,_,_,_,mypoints = deltaNeighbourCalculation(nbhs,getPointxy(index,globaldata),True,False)
-    return weightedConditionValueForSetOfPoints(index,globaldata,mypoints)
 
-def getWeightedInteriorConditionValueofXNeg(index,globaldata):
-    nbhs = convertIndexToPoints(getNeighbours(index,globaldata),globaldata)
-    _,_,_,_,mypoints = deltaNeighbourCalculation(nbhs,getPointxy(index,globaldata),True,True)
-    return weightedConditionValueForSetOfPoints(index,globaldata,mypoints)
+def getWeightedInteriorConditionValueofXPos(index, globaldata):
+    nbhs = convertIndexToPoints(getNeighbours(index, globaldata), globaldata)
+    _, _, _, _, mypoints = deltaNeighbourCalculation(
+        nbhs, getPointxy(index, globaldata), True, False)
+    return weightedConditionValueForSetOfPoints(index, globaldata, mypoints)
 
-def getWeightedInteriorConditionValueofYPos(index,globaldata):
-    nbhs = convertIndexToPoints(getNeighbours(index,globaldata),globaldata)
-    _,_,_,_,mypoints = deltaNeighbourCalculation(nbhs,getPointxy(index,globaldata),False,False)
-    return weightedConditionValueForSetOfPoints(index,globaldata,mypoints)
 
-def getWeightedInteriorConditionValueofYNeg(index,globaldata):
-    nbhs = convertIndexToPoints(getNeighbours(index,globaldata),globaldata)
-    _,_,_,_,mypoints = deltaNeighbourCalculation(nbhs,getPointxy(index,globaldata),False,True)
-    return weightedConditionValueForSetOfPoints(index,globaldata,mypoints)
+def getWeightedInteriorConditionValueofXNeg(index, globaldata):
+    nbhs = convertIndexToPoints(getNeighbours(index, globaldata), globaldata)
+    _, _, _, _, mypoints = deltaNeighbourCalculation(
+        nbhs, getPointxy(index, globaldata), True, True)
+    return weightedConditionValueForSetOfPoints(index, globaldata, mypoints)
 
-def getDXPosPoints(index,globaldata):
-    nbhs = convertIndexToPoints(getNeighbours(index,globaldata),globaldata)
-    _,_,_,_,mypoints = deltaNeighbourCalculation(nbhs,getPointxy(index,globaldata),True,False)
+
+def getWeightedInteriorConditionValueofYPos(index, globaldata):
+    nbhs = convertIndexToPoints(getNeighbours(index, globaldata), globaldata)
+    _, _, _, _, mypoints = deltaNeighbourCalculation(
+        nbhs, getPointxy(index, globaldata), False, False)
+    return weightedConditionValueForSetOfPoints(index, globaldata, mypoints)
+
+
+def getWeightedInteriorConditionValueofYNeg(index, globaldata):
+    nbhs = convertIndexToPoints(getNeighbours(index, globaldata), globaldata)
+    _, _, _, _, mypoints = deltaNeighbourCalculation(
+        nbhs, getPointxy(index, globaldata), False, True)
+    return weightedConditionValueForSetOfPoints(index, globaldata, mypoints)
+
+
+def getDXPosPoints(index, globaldata):
+    nbhs = convertIndexToPoints(getNeighbours(index, globaldata), globaldata)
+    _, _, _, _, mypoints = deltaNeighbourCalculation(
+        nbhs, getPointxy(index, globaldata), True, False)
     return mypoints
 
-def getDXNegPoints(index,globaldata):
-    nbhs = convertIndexToPoints(getNeighbours(index,globaldata),globaldata)
-    _,_,_,_,mypoints = deltaNeighbourCalculation(nbhs,getPointxy(index,globaldata),True,True)
+
+def getDXNegPoints(index, globaldata):
+    nbhs = convertIndexToPoints(getNeighbours(index, globaldata), globaldata)
+    _, _, _, _, mypoints = deltaNeighbourCalculation(
+        nbhs, getPointxy(index, globaldata), True, True)
     return mypoints
 
-def getDYPosPoints(index,globaldata):
-    nbhs = convertIndexToPoints(getNeighbours(index,globaldata),globaldata)
-    _,_,_,_,mypoints = deltaNeighbourCalculation(nbhs,getPointxy(index,globaldata),False,False)
+
+def getDYPosPoints(index, globaldata):
+    nbhs = convertIndexToPoints(getNeighbours(index, globaldata), globaldata)
+    _, _, _, _, mypoints = deltaNeighbourCalculation(
+        nbhs, getPointxy(index, globaldata), False, False)
     return mypoints
 
-def getDYNegPoints(index,globaldata):
-    nbhs = convertIndexToPoints(getNeighbours(index,globaldata),globaldata)
-    _,_,_,_,mypoints = deltaNeighbourCalculation(nbhs,getPointxy(index,globaldata),False,True)
+
+def getDYNegPoints(index, globaldata):
+    nbhs = convertIndexToPoints(getNeighbours(index, globaldata), globaldata)
+    _, _, _, _, mypoints = deltaNeighbourCalculation(
+        nbhs, getPointxy(index, globaldata), False, True)
     return mypoints
+
 
 def checkConditionNumber(index, globaldata, threshold):
-    xpos = getWeightedInteriorConditionValueofXPos(index,globaldata)
-    xneg = getWeightedInteriorConditionValueofXNeg(index,globaldata)
-    ypos = getWeightedInteriorConditionValueofYPos(index,globaldata)
-    yneg = getWeightedInteriorConditionValueofYNeg(index,globaldata)
+    xpos = getWeightedInteriorConditionValueofXPos(index, globaldata)
+    xneg = getWeightedInteriorConditionValueofXNeg(index, globaldata)
+    ypos = getWeightedInteriorConditionValueofYPos(index, globaldata)
+    yneg = getWeightedInteriorConditionValueofYNeg(index, globaldata)
     dSPointXPos = getDXPosPoints(index, globaldata)
     dSPointXNeg = getDXNegPoints(index, globaldata)
     dSPointYPos = getDYPosPoints(index, globaldata)
     dSPointYNeg = getDYNegPoints(index, globaldata)
     if(xneg > threshold or xpos > threshold or ypos > threshold or yneg > threshold):
-        print(index, len(dSPointXPos),xpos,len(dSPointXNeg),xneg,len(dSPointYPos),ypos,len(dSPointYNeg),yneg)
-
+        print(index, len(dSPointXPos), xpos, len(dSPointXNeg),
+              xneg, len(dSPointYPos), ypos, len(dSPointYNeg), yneg)

@@ -5,15 +5,16 @@ from neighbouradder import *
 from broadneighbouraddition import *
 import copy
 
+
 def main():
     # Command Line Arguments
     parser = argparse.ArgumentParser()
-    parser.add_argument("-i","--input",const=str, nargs="?")
+    parser.add_argument("-i", "--input", const=str, nargs="?")
     args = parser.parse_args()
 
     print("Loading Data")
 
-    file1 = open(args.input or "preprocessorfile.txt","r")
+    file1 = open(args.input or "preprocessorfile.txt", "r")
     data = file1.read()
     globaldata = ["start"]
     splitdata = data.split("\n")
@@ -23,16 +24,17 @@ def main():
     print("Converting to readable format")
 
     for idx, itm in enumerate(splitdata):
-        printProgressBar(idx, len(splitdata) - 1, prefix = 'Progress:', suffix = 'Complete', length = 50)
-        itm = itm.split(" ") #Split the gaps
-        itm.pop(-1) #Remove last element
+        printProgressBar(idx, len(splitdata) - 1,
+                         prefix='Progress:', suffix='Complete', length=50)
+        itm = itm.split(" ")  # Split the gaps
+        itm.pop(-1)  # Remove last element
         entry = itm
         globaldata.append(entry)
 
-    file2 = open("removal_points.txt","r")
+    file2 = open("removal_points.txt", "r")
     removalFlags = file2.read()
     file2.close()
-    removalFlags = removalFlags.replace("\t"," ")
+    removalFlags = removalFlags.replace("\t", " ")
     removalFlags = removalFlags.split("\n")
     removalFlags.pop(-1)
     removalFlags = [int(i) for i in removalFlags]
@@ -41,11 +43,13 @@ def main():
     removalFlags = list(set(removalFlags))
 
     globaldata = cleanNeighbours(globaldata)
-    globaldata = addNewPoints(globaldata,removalFlags,100, 1)
+    globaldata = addNewPoints(globaldata, removalFlags, 100, 1)
     globaldata = cleanNeighbours(globaldata)
 
-    aliasArray = [0] * (len(globaldata)) #The New Index (with bad points removed) || 5 --> 4 
-    reverseAliasArray = [0] * (len(globaldata)) # The Old Index from the new || 4 --> 5
+    # The New Index (with bad points removed) || 5 --> 4
+    aliasArray = [0] * (len(globaldata))
+    # The Old Index from the new || 4 --> 5
+    reverseAliasArray = [0] * (len(globaldata))
 
     count = 1
     for individiualPoint in globaldata[1:]:
@@ -79,12 +83,14 @@ def main():
         storage.append(reverseAliasArray[left_point])
         storage.append(reverseAliasArray[right_point])
         # The Flags
-        for i in range(5,11):
+        for i in range(5, 11):
             storage.append(globaldata[aliasArrayIndex][i])
         # The Neighbours
         neighbourCount = 0
         storage.append(0)  # Temporary count of neighbours
-        for neighbourIterate in globaldata[aliasArrayIndex][12:]: # We are skipping the element that has total number of original neighbours
+        # We are skipping the element that has total number of original
+        # neighbours
+        for neighbourIterate in globaldata[aliasArrayIndex][12:]:
             if(int(neighbourIterate) in removalFlags):
                 continue
             else:
@@ -108,23 +114,23 @@ def main():
     print("Writing Removal Points To File")
     print("***********************************")
 
-    problempts  = list(dict.fromkeys(problempts))
+    problempts = list(dict.fromkeys(problempts))
     # print(problempts)
 
     with open("removal_points2.txt", "w") as text_file:
         for item1 in problempts:
             text_file.writelines(["%s " % item1])
             text_file.writelines("\n")
-    
-    newglobaldata.pop(0)  
+
+    newglobaldata.pop(0)
 
     with open("preprocessorfile_pointremoval.txt", "w") as text_file:
         for item1 in newglobaldata:
             text_file.writelines(["%s " % item for item in item1])
             text_file.writelines("\n")
 
-
     print("Data Converted")
+
 
 if __name__ == "__main__":
     main()
