@@ -1,4 +1,4 @@
-from shapely.ops import triangulate,cascaded_union
+from shapely.ops import triangulate, cascaded_union
 from shapely.geometry import MultiPoint
 from shapely.geometry import Polygon as Polygon2
 import argparse
@@ -11,15 +11,16 @@ import matplotlib
 from matplotlib.patches import Polygon
 from matplotlib.collections import PatchCollection
 
+
 def main():
     # Command Line Arguments
     parser = argparse.ArgumentParser()
-    parser.add_argument("-i","--input",const=str, nargs="?")
+    parser.add_argument("-i", "--input", const=str, nargs="?")
     args = parser.parse_args()
 
     print("Loading Data")
 
-    file1 = open(args.input or "preprocessorfile.txt","r")
+    file1 = open(args.input or "preprocessorfile.txt", "r")
     data = file1.read()
     globaldata = ["start"]
     splitdata = data.split("\n")
@@ -29,7 +30,9 @@ def main():
     print("Converting to readable format")
 
     for idx, itm in enumerate(splitdata):
-        printProgressBar(idx, len(splitdata) - 1, prefix = 'Progress:', suffix = 'Complete', length = 50)
+        printProgressBar(
+            idx, len(splitdata) - 1, prefix="Progress:", suffix="Complete", length=50
+        )
         itm = itm.split(" ")
         itm.pop(-1)
         entry = itm
@@ -43,25 +46,26 @@ def main():
 
     print("Point Classification")
 
-    for idx,itm in enumerate(globaldata):
-        printProgressBar(idx, len(globaldata) - 1, prefix = 'Progress:', suffix = 'Complete', length = 50)
-        if(idx > 0 and getFlag(idx,globaldata) == 2):
+    for idx, itm in enumerate(globaldata):
+        printProgressBar(
+            idx, len(globaldata) - 1, prefix="Progress:", suffix="Complete", length=50
+        )
+        if idx > 0 and getFlag(idx, globaldata) == 2:
             outerpts.append(idx)
-        elif(idx > 0 and getFlag(idx,globaldata) == 1):
+        elif idx > 0 and getFlag(idx, globaldata) == 1:
             interiorpts.append(idx)
-        elif(idx > 0 and getFlag(idx,globaldata) == 0):
+        elif idx > 0 and getFlag(idx, globaldata) == 0:
             wallpts.append(idx)
 
-    inflatedWallPolygon(globaldata,wallpts,4*10E-6,interiorpts)
+    inflatedWallPolygon(globaldata, wallpts, 4 * 10E-6, interiorpts)
     # print("Triangulating")
-    
+
     # interiorpts = convertPointToShapelyPoint(convertIndexToPoints(interiorpts,globaldata))
     # interiorpts = MultiPoint(interiorpts)
     # interiortriangles = triangulate(interiorpts)
 
     # wallpts = convertPointToShapelyPoint(convertIndexToPoints(wallpts,globaldata))
     # wallpts = Polygon2(wallpts)
-
 
     # print("Generating Model")
     # polygns = []
@@ -96,8 +100,8 @@ def main():
     #     if(idx > 0 and getFlag(idx,globaldata) == 1):
     #         globaldata = setFlags(idx,globaldata,60)
 
-
     print("Done")
+
 
 if __name__ == "__main__":
     main()
