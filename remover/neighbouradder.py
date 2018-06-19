@@ -226,7 +226,6 @@ def cleanNeighbours(globaldata): # Verified
         noneighours = int(globaldata[i][11]) # Number of neighbours
         cordneighbours = globaldata[i][-noneighours:]
 
-        # TODO - Ask, why get the same thing as above?
         result = []
         for item in cordneighbours:
             if(int(item) == i):

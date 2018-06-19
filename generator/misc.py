@@ -26,7 +26,11 @@ def cleanNeighbours(globaldata): # Verified
         # TODO - Ask, why get the same thing as above?
         cordneighbours = [str(float(j.split(",")[0])) + "," + str(float(j.split(",")[1])) for j in cordneighbours]
         
-        cordneighbours = dict.fromkeys(cordneighbours).keys()
+        result = []
+        for item in cordneighbours:
+            if str(item) not in result:
+                result.append(str(item))
+        cordneighbours = result
         noneighours = len(cordneighbours)
         globaldata[i] = globaldata[i][:11] + [noneighours] + list(cordneighbours)
         # with open("duplication_removal.txt", "w") as text_file:
