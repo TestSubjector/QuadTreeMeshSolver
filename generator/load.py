@@ -1,13 +1,13 @@
 # from progress import *
 
 
-def loadWall(geometrydata):
+def loadWall(geometrydata,hashtable,globaldata,idf):
     print("Beginning Wall Point Processing")
-    hashtable = ["start"]
     wallpoint = []
 
-    index = 1
-    globaldata = []
+    index = len(hashtable)
+    startpt = index
+    lastpt = len(globaldata) + len(geometrydata)
     for i in range(len(geometrydata)):
         # printProgressBar(i, len(geometrydata) - 1, prefix = 'Progress:', suffix = 'Complete', length = 50)
         xcord = float(geometrydata[i].split()[0])
@@ -20,14 +20,14 @@ def loadWall(geometrydata):
 
         walldata = []
         # First Point
-        if index == 1:
+        if index == startpt:
             walldata.append(index)
             walldata.insert(1, xcord)
             walldata.insert(2, ycord)
-            walldata.insert(3, len(geometrydata))
+            walldata.insert(3, lastpt)
             walldata.insert(4, index + 1)
             walldata.insert(5, 0)
-            walldata.insert(6, 1)
+            walldata.insert(6, idf)
             walldata.insert(7, 0)
             walldata.insert(8, 0)
             walldata.insert(9, 0)
@@ -35,14 +35,14 @@ def loadWall(geometrydata):
             globaldata.append(walldata)
             index += 1
         # Last Point
-        elif index == len(geometrydata):
+        elif index == lastpt:
             walldata.append(index)
             walldata.insert(1, xcord)
             walldata.insert(2, ycord)
-            walldata.insert(3, len(geometrydata) - 1)
-            walldata.insert(4, 1)
+            walldata.insert(3, startpt + len(geometrydata) - 2)
+            walldata.insert(4, startpt)
             walldata.insert(5, 0)
-            walldata.insert(6, 1)
+            walldata.insert(6, idf)
             walldata.insert(7, 0)
             walldata.insert(8, 0)
             walldata.insert(9, 0)
@@ -57,7 +57,7 @@ def loadWall(geometrydata):
             walldata.insert(3, index - 1)
             walldata.insert(4, index + 1)
             walldata.insert(5, 0)
-            walldata.insert(6, 1)
+            walldata.insert(6, idf)
             walldata.insert(7, 0)
             walldata.insert(8, 0)
             walldata.insert(9, 0)
@@ -129,7 +129,7 @@ def loadInterior(data, hashtable, globaldata, index):
                 cleandata.insert(0, 0)
                 cleandata.insert(0, 0)
                 cleandata.insert(0, 0)
-                cleandata.insert(0, 1)
+                cleandata.insert(0, 0)
                 cleandata.insert(0, 1)
                 cleandata.insert(0, 0)
                 cleandata.insert(0, 0)
@@ -149,7 +149,7 @@ def loadInterior(data, hashtable, globaldata, index):
                 cleandata.insert(0, 0)
                 cleandata.insert(0, 0)
                 cleandata.insert(0, 0)
-                cleandata.insert(0, 1)
+                cleandata.insert(0, 0)
                 cleandata.insert(0, 1)
                 cleandata.insert(0, 0)
                 cleandata.insert(0, 0)

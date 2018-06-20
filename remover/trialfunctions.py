@@ -1,5 +1,8 @@
 import numpy as np
 import math
+import shapely.geometry
+from shapely import wkt
+from shapely.ops import linemerge, unary_union, polygonize
 
 
 def getFlag(indexval, list):
@@ -189,3 +192,48 @@ def checkConditionNumber(index, globaldata, aliasArray, threshold, problempts):
             len(dSPointYNeg),
             yneg,
         )
+
+# Index of Point,
+# Cord pt = (x,y) point. Use getPointxy function for this
+# wallpoint list can be generated from getWallPointArray
+
+def isNonAeroDynamic(index, cordpt, globaldata, wallpoints):
+    main_pointx,main_pointy = getPoint(index, globaldata)
+    cordptx = float(cordpt.split(",")[0])
+    cordpty = float(cordpt.split(",")[1])
+    line = shapely.geometry.LineString([[main_pointx, main_pointy], [cordptx, cordpty]])
+    responselist = []
+    for item in wallpoints:
+        polygonpts = []
+        for item2 in item:
+            polygonpts.append([float(item2.split(",")[0]), float(item2.split(",")[1])])
+        polygontocheck = shapely.geometry.Polygon(polygonpts)
+        merged = linemerge([polygontocheck.boundary, line])
+        borders = unary_union(merged)
+        polygons = polygonize(borders)
+        i = 0
+        for p in polygons:
+            i = i + 1
+        if i == 1:
+            responselist.append(False)
+        else:
+            responselist.append(True)
+    if True in responselist:
+        return True
+    else:
+        return False
+
+def getWallPointArray(globaldata):
+    wallpointarray = []
+    startgeo = 0
+    newstuff = []
+    for idx,itm in enumerate(globaldata):
+        geoflag = int(itm[6])
+        if(startgeo == geoflag and getFlag(idx,globaldata) == 0):
+            newstuff.append(getPointxy(idx,globaldata))
+        if(startgeo != geoflag and getFlag(idx,globaldata) == 0):
+            newstuff = []
+            wallpointarray.append(newstuff)
+            newstuff.append(getPointxy(idx,globaldata))
+            startgeo = startgeo + 1
+    return wallpointarray

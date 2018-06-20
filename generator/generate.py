@@ -14,7 +14,7 @@ def main():
     # Command Line Arguments
     parser = argparse.ArgumentParser()
     parser.add_argument("-n", "--neighbour", const=str, nargs="?")
-    parser.add_argument("-w", "--wall", const=str, nargs="?")
+    parser.add_argument("-w", "--wall", nargs="+")
     args = parser.parse_args()
     print("Loading Data")
 
@@ -28,26 +28,33 @@ def main():
     data = data.split("\n")
     data.pop(0)  # Pops the first blank line
 
-    file2 = open(args.wall or "airfoil_160.txt", "r")
-    geometrydata = file2.read()
-    file2.close()
-    geometrydata = geometrydata.split("\n")
-
-    print("Loaded Data")
-    silentRemove("log.txt")
-    wallpoints = []
-
     interiorPointsCount = 0
     outerPointsCount = 0
 
-    hashtable, wallpointsdata, globaldata = loadWall(geometrydata)
-    wallpoints.append(wallpointsdata)
+    wallarg = args.wall
+    wallpoints = []
+    hashtable = ["start"]
+    globaldata = []
+
+    silentRemove("log.txt")
+
+    printL(str("Found " + str(len(wallarg)) + " wall geometry files."))
+    for idx,itm in enumerate(wallarg):
+        printL(str("Loading Geometry " + str(itm)))
+        file2 = open(str(itm) or "airfoil_160.txt", "r")
+        geometrydata = file2.read()
+        file2.close()
+        geometrydata = geometrydata.split("\n")
+        hashtable, wallpointsdata, globaldata = loadWall(geometrydata,hashtable,globaldata,idx + 1)
+        wallpoints.append(wallpointsdata)
+
+    printL("Loading Interior and Outer Points")
     hashtable, globaldata = loadInterior(data, hashtable, globaldata, len(hashtable))
     globaldata = cleanNeighbours(globaldata)
     hashtable, globaldata = detectOuter(hashtable, globaldata)
 
-    PSUEDODETECTION = calculateAverageWallPointDistance(globaldata, wallpoints) / 20
-    writeLog(["Auto set PSUEDODETECTION TO", PSUEDODETECTION])
+    # PSUEDODETECTION = calculateAverageWallPointDistance(globaldata, wallpoints) / 20
+    # writeLog(["Auto set PSUEDODETECTION TO", PSUEDODETECTION])
 
     # printL("***********************************")
     # printL("Checking for Non Aerodynamic points")

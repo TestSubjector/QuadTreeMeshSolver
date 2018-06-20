@@ -1,7 +1,6 @@
 import numpy as np
 import math
 from shapely.geometry import Polygon, Point
-import matplotlib.pyplot as plt
 import errno
 import os
 
