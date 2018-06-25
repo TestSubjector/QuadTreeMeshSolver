@@ -5,11 +5,7 @@ import argparse
 from progress import printProgressBar
 from core import *
 import copy
-import matplotlib.pyplot as plt
 import numpy as np
-import matplotlib
-from matplotlib.patches import Polygon
-from matplotlib.collections import PatchCollection
 
 
 def main():
@@ -48,7 +44,7 @@ def main():
             idx, len(globaldata) - 1, prefix="Progress:", suffix="Complete", length=50
         )
         if idx > 0 and getFlag(idx, globaldata) == 1:
-            xpos, xneg, ypos, yneg = getPenrose(idx, globaldata, 1e-3, 2)
+            xpos, xneg, ypos, yneg = getPenrose(idx, globaldata, 1e-3, 0)
             xpos = xpos.tolist()
             xneg = xneg.tolist()
             ypos = ypos.tolist()

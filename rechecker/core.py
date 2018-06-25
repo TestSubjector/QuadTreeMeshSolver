@@ -1,5 +1,8 @@
 import numpy as np
 import math
+import shapely.geometry
+from shapely import wkt
+from shapely.ops import linemerge, unary_union, polygonize
 
 
 def appendNeighbours(index, globaldata, newpts):
@@ -272,7 +275,7 @@ def cleanNeighbours(globaldata):
     return globaldata
 
 
-def fixXPosMain(index, globaldata, threshold, control):
+def fixXPosMain(index, globaldata, threshold, wallpoints, control):
     if control > 0:
         return
     else:
@@ -292,22 +295,23 @@ def fixXPosMain(index, globaldata, threshold, control):
         if len(totalnbhs) > 0:
             conditionSet = []
             for ptcheck in totalnbhs:
-                checkset = [ptcheck] + numberofxpos
-                newcheck = weightedConditionValueForSetOfPoints(
-                    index, globaldata, checkset
-                )
-                if newcheck < conditionNumber:
-                    conditionSet.append([ptcheck, newcheck])
+                if not isNonAeroDynamic(index,ptcheck,globaldata,wallpoints):
+                    checkset = [ptcheck] + numberofxpos
+                    newcheck = weightedConditionValueForSetOfPoints(
+                        index, globaldata, checkset
+                    )
+                    if newcheck < conditionNumber:
+                        conditionSet.append([ptcheck, newcheck])
             if len(conditionSet) > 0:
                 conditionSet.sort(key=lambda x: x[1])
                 globaldata = appendNeighbours(index, globaldata, conditionSet[0][0])
-                fixXPosMain(index, globaldata, threshold, control)
+                fixXPosMain(index, globaldata, threshold, wallpoints, control)
             else:
                 None
     return globaldata
 
 
-def fixXNegMain(index, globaldata, threshold, control):
+def fixXNegMain(index, globaldata, threshold, wallpoints, control):
     if control > 0:
         return
     else:
@@ -327,22 +331,23 @@ def fixXNegMain(index, globaldata, threshold, control):
         if len(totalnbhs) > 0:
             conditionSet = []
             for ptcheck in totalnbhs:
-                checkset = [ptcheck] + numberofxpos
-                newcheck = weightedConditionValueForSetOfPoints(
-                    index, globaldata, checkset
-                )
-                if newcheck < conditionNumber:
-                    conditionSet.append([ptcheck, newcheck])
+                if not isNonAeroDynamic(index,ptcheck,globaldata,wallpoints):
+                    checkset = [ptcheck] + numberofxpos
+                    newcheck = weightedConditionValueForSetOfPoints(
+                        index, globaldata, checkset
+                    )
+                    if newcheck < conditionNumber:
+                        conditionSet.append([ptcheck, newcheck])
             if len(conditionSet) > 0:
                 conditionSet.sort(key=lambda x: x[1])
                 globaldata = appendNeighbours(index, globaldata, conditionSet[0][0])
-                fixXNegMain(index, globaldata, threshold, control)
+                fixXNegMain(index, globaldata, threshold, wallpoints, control)
             else:
                 None
     return globaldata
 
 
-def fixYPosMain(index, globaldata, threshold, control):
+def fixYPosMain(index, globaldata, threshold, wallpoints, control):
     if control > 0:
         return
     else:
@@ -362,22 +367,23 @@ def fixYPosMain(index, globaldata, threshold, control):
         if len(totalnbhs) > 0:
             conditionSet = []
             for ptcheck in totalnbhs:
-                checkset = [ptcheck] + numberofxpos
-                newcheck = weightedConditionValueForSetOfPoints(
-                    index, globaldata, checkset
-                )
-                if newcheck < conditionNumber:
-                    conditionSet.append([ptcheck, newcheck])
+                if not isNonAeroDynamic(index,ptcheck,globaldata,wallpoints):
+                    checkset = [ptcheck] + numberofxpos
+                    newcheck = weightedConditionValueForSetOfPoints(
+                        index, globaldata, checkset
+                    )
+                    if newcheck < conditionNumber:
+                        conditionSet.append([ptcheck, newcheck])
             if len(conditionSet) > 0:
                 conditionSet.sort(key=lambda x: x[1])
                 globaldata = appendNeighbours(index, globaldata, conditionSet[0][0])
-                fixYPosMain(index, globaldata, threshold, control)
+                fixYPosMain(index, globaldata, threshold, wallpoints, control)
             else:
                 None
     return globaldata
 
 
-def fixYNegMain(index, globaldata, threshold, control):
+def fixYNegMain(index, globaldata, threshold, wallpoints, control):
     if control > 0:
         return
     else:
@@ -397,16 +403,17 @@ def fixYNegMain(index, globaldata, threshold, control):
         if len(totalnbhs) > 0:
             conditionSet = []
             for ptcheck in totalnbhs:
-                checkset = [ptcheck] + numberofxpos
-                newcheck = weightedConditionValueForSetOfPoints(
-                    index, globaldata, checkset
-                )
-                if newcheck < conditionNumber:
-                    conditionSet.append([ptcheck, newcheck])
+                if not isNonAeroDynamic(index,ptcheck,globaldata,wallpoints):
+                    checkset = [ptcheck] + numberofxpos
+                    newcheck = weightedConditionValueForSetOfPoints(
+                        index, globaldata, checkset
+                    )
+                    if newcheck < conditionNumber:
+                        conditionSet.append([ptcheck, newcheck])
             if len(conditionSet) > 0:
                 conditionSet.sort(key=lambda x: x[1])
                 globaldata = appendNeighbours(index, globaldata, conditionSet[0][0])
-                fixYNegMain(index, globaldata, threshold, control)
+                fixYNegMain(index, globaldata, threshold, wallpoints, control)
             else:
                 None
     return globaldata
@@ -426,3 +433,44 @@ def setFlags(index, globaldata, threshold):
     if dyneg > threshold:
         globaldata[index][10] = 1
     return globaldata
+
+def isNonAeroDynamic(index, cordpt, globaldata, wallpoints):
+    main_pointx,main_pointy = getPoint(index, globaldata)
+    cordptx = float(cordpt.split(",")[0])
+    cordpty = float(cordpt.split(",")[1])
+    line = shapely.geometry.LineString([[main_pointx, main_pointy], [cordptx, cordpty]])
+    responselist = []
+    for item in wallpoints:
+        polygonpts = []
+        for item2 in item:
+            polygonpts.append([float(item2.split(",")[0]), float(item2.split(",")[1])])
+        polygontocheck = shapely.geometry.Polygon(polygonpts)
+        merged = linemerge([polygontocheck.boundary, line])
+        borders = unary_union(merged)
+        polygons = polygonize(borders)
+        i = 0
+        for p in polygons:
+            i = i + 1
+        if i == 1:
+            responselist.append(False)
+        else:
+            responselist.append(True)
+    if True in responselist:
+        return True
+    else:
+        return False
+
+def getWallPointArray(globaldata):
+    wallpointarray = []
+    startgeo = 0
+    newstuff = []
+    for idx,itm in enumerate(globaldata):
+        geoflag = int(itm[6])
+        if(startgeo == geoflag and getFlag(idx,globaldata) == 0):
+            newstuff.append(getPointxy(idx,globaldata))
+        if(startgeo != geoflag and getFlag(idx,globaldata) == 0):
+            newstuff = []
+            wallpointarray.append(newstuff)
+            newstuff.append(getPointxy(idx,globaldata))
+            startgeo = startgeo + 1
+    return wallpointarray

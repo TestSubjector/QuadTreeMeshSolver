@@ -32,22 +32,24 @@ def main():
 
     globaldata = cleanNeighbours(globaldata)
 
+    wallpoints = getWallPointArray(globaldata[1:])
+
     for idx, itm in enumerate(globaldata):
         if idx > 0 and getFlag(idx, globaldata) == 1:
             checkConditionNumber(idx, globaldata, 30)
 
     for idx, itm in enumerate(globaldata):
         if idx > 0 and getFlag(idx, globaldata) == 1:
-            globaldata = fixXPosMain(idx, globaldata, 30, -1)
+            globaldata = fixXPosMain(idx, globaldata, 30, wallpoints, -1)
     for idx, itm in enumerate(globaldata):
         if idx > 0 and getFlag(idx, globaldata) == 1:
-            globaldata = fixXNegMain(idx, globaldata, 30, -1)
+            globaldata = fixXNegMain(idx, globaldata, 30, wallpoints, -1)
     for idx, itm in enumerate(globaldata):
         if idx > 0 and getFlag(idx, globaldata) == 1:
-            globaldata = fixYPosMain(idx, globaldata, 30, -1)
+            globaldata = fixYPosMain(idx, globaldata, 30, wallpoints, -1)
     for idx, itm in enumerate(globaldata):
         if idx > 0 and getFlag(idx, globaldata) == 1:
-            globaldata = fixYNegMain(idx, globaldata, 30, -1)
+            globaldata = fixYNegMain(idx, globaldata, 30, wallpoints, -1)
 
     print("New")
 
