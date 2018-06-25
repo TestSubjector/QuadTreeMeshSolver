@@ -5,7 +5,7 @@
 #include <math.h>
 #include "bool.h"
 
-#define MAX 30000
+#define MAX 40000 // Sets number of points that can be stored
 
 // A point information
 // Stores x,y and maybe z later (so we get an octree)!

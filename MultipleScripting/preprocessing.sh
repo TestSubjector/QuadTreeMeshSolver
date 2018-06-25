@@ -15,12 +15,14 @@ rm -r ./log.txt
 
 # Point Removal
 python3 ./remover/trial.py 
+python3 ./remover/trial2.py
+python3 ./remover/trial3.py
+
+rm -r ./removal_points.txt
+rm -r ./removal_points2.txt 
+rm -r ./removal_points3.txt
 
 rm -r ./preprocessorfile.txt
-rm -r ./removal_points.txt
 
-# python3 remover/trial.py
-rm -r ./removal_points2.txt
-
-python3 ./rechecker/rechecker.py -i ./preprocessorfile_pointremoval.txt
+python3 ./rechecker/rechecker.py -i ./preprocessorfile_pointremoval2.txt
 rm -r ./preprocessorfile_pointremoval.txt
