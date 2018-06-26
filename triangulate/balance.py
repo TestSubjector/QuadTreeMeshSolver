@@ -66,18 +66,24 @@ def triangleBalance(globaldata,polygonData,wallpoints):
 
 def getNeighboursFromTriangle(index,globaldata,polygonData):
     nbhs = []
+    cordx,cordy = getPoint(index,globaldata)
+    cord = (float(cordx),float(cordy))
     for itm in polygonData:
-        tri = list(itm.exterior.coords)
-        cordx,cordy = getPoint(index,globaldata)
-        cord = (float(cordx),float(cordy))
-        if cord in tri:
-            for itm2 in tri:
+        if cord in itm:
+            for itm2 in itm:
                 if itm2 != cord:
                     nbhcordx = itm2[0]
                     nbhcordy = itm2[1]
                     nbhs.append(str(nbhcordx) + "," + str(nbhcordy))
-    nbhs = list(set(nbhs))
+        nbhs = list(set(nbhs))
     return nbhs
+
+def getPolygon(polygonData):
+    polygon = []
+    for itm in polygonData:
+        tri = list(set(itm.exterior.coords))
+        polygon.append(tri)
+    return polygon
 
 def fixXpos(idx,globaldata,nbhs,control,conditionNumber,aggressive,polygonData,wallpoints):
     if control > 0:
