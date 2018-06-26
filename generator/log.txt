@@ -1,4 +1,0 @@
-Found 2 wall geometry files.
-Loading Geometry .\twoshape\airfoil
-Loading Geometry .\twoshape\flap
-Loading Interior and Outer Points

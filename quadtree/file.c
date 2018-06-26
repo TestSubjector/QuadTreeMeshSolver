@@ -84,10 +84,10 @@ int adaptation_fileinput(coords_t *adapted_list, char *adapted_filename)
 void fileoutput(int append, char *filename, double xcord, double ycord)
 {
     // The if condition checks for blanking points
-    char xcordstr[11];
-    char ycordstr[11];
-    gcvt(xcord, 9, xcordstr);
-    gcvt(ycord, 9, ycordstr);
+    char xcordstr[20];
+    char ycordstr[20];
+    gcvt(xcord, 18, xcordstr);
+    gcvt(ycord, 18, ycordstr);
     if (strstr(xcordstr, ycordstr) != NULL && fabs(xcord) != fabs(ycord))
     {
         printf("\n xcordstr is %s", xcordstr);
@@ -121,12 +121,12 @@ void fileoutput(int append, char *filename, double xcord, double ycord)
 // File output function to calculate valid neighbours for points
 void neighbouroutput(int append, char *filename, double xcord, double ycord)
 {
-    char xcordstr[11];
-    char ycordstr[11];
-    char serialnumstr[11];
-    char neighbourcountstr[11];
-    gcvt(xcord, 9, xcordstr);
-    gcvt(ycord, 9, ycordstr);
+    char xcordstr[20];
+    char ycordstr[20];
+    char serialnumstr[20];
+    char neighbourcountstr[20];
+    gcvt(xcord, 18, xcordstr);
+    gcvt(ycord, 18, ycordstr);
     gcvt(serial_number, 10, serialnumstr);
     FILE *fp = NULL;
     if (append == 1)
@@ -179,10 +179,10 @@ void neighbouroutput(int append, char *filename, double xcord, double ycord)
 void neighbourset(int append, char *filename, double xcord, double ycord)
 {
     // The if condition checks for blanking points
-    char xcordstr[11];
-    char ycordstr[11];
-    gcvt(xcord, 9, xcordstr);
-    gcvt(ycord, 9, ycordstr);
+    char xcordstr[20];
+    char ycordstr[20];
+    gcvt(xcord, 18, xcordstr);
+    gcvt(ycord, 18, ycordstr);
     // double_to_char(xcord,xcordstr);
     // double_to_char(ycord,ycordstr);
     FILE *fp = NULL;
