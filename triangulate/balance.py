@@ -94,14 +94,14 @@ def fixXpos(idx,globaldata,nbhs,control,conditionNumber,aggressive,polygonData,w
         mynbhs = convertIndexToPoints(getNeighbours(idx,globaldata),globaldata)
         finalnbhs = list(set(nbhs) - set(mynbhs))
         finalnbhs = getDXPosPointsFromSetRaw(idx,globaldata,finalnbhs)
-        finalnbhs = getAeroPointsFromSet(idx,finalnbhs,globaldata,wallpoints)
         # print(finalnbhs)
         conditionSet = []
         for itm in finalnbhs:
             checkset = finalnbhs + mynbhs
             newcheck = weightedConditionValueForSetOfPoints(idx,globaldata,checkset)
             if newcheck < conditionNumber:
-                conditionSet.append([itm, newcheck])
+                if not isNonAeroDynamic(idx,itm,globaldata,wallpoints):
+                    conditionSet.append([itm, newcheck])
         if len(conditionSet) > 0:
             conditionSet.sort(key=lambda x: x[1])
             globaldata = appendNeighbours(idx, globaldata, conditionSet[0][0])
@@ -135,7 +135,8 @@ def fixXneg(idx,globaldata,nbhs,control,conditionNumber,aggressive,polygonData,w
             checkset = finalnbhs + mynbhs
             newcheck = weightedConditionValueForSetOfPoints(idx,globaldata,checkset)
             if newcheck < conditionNumber:
-                conditionSet.append([itm, newcheck])
+                if not isNonAeroDynamic(idx,itm,globaldata,wallpoints):
+                    conditionSet.append([itm, newcheck])
         if len(conditionSet) > 0:
             conditionSet.sort(key=lambda x: x[1])
             globaldata = appendNeighbours(idx, globaldata, conditionSet[0][0])
@@ -169,7 +170,8 @@ def fixYpos(idx,globaldata,nbhs,control,conditionNumber,aggressive,polygonData,w
             checkset = finalnbhs + mynbhs
             newcheck = weightedConditionValueForSetOfPoints(idx,globaldata,checkset)
             if newcheck < conditionNumber:
-                conditionSet.append([itm, newcheck])
+                if not isNonAeroDynamic(idx,itm,globaldata,wallpoints):
+                    conditionSet.append([itm, newcheck])
         if len(conditionSet) > 0:
             conditionSet.sort(key=lambda x: x[1])
             globaldata = appendNeighbours(idx, globaldata, conditionSet[0][0])
@@ -203,7 +205,8 @@ def fixYneg(idx,globaldata,nbhs,control,conditionNumber,aggressive,polygonData,w
             checkset = finalnbhs + mynbhs
             newcheck = weightedConditionValueForSetOfPoints(idx,globaldata,checkset)
             if newcheck < conditionNumber:
-                conditionSet.append([itm, newcheck])
+                if not isNonAeroDynamic(idx,itm,globaldata,wallpoints):
+                    conditionSet.append([itm, newcheck])
         if len(conditionSet) > 0:
             conditionSet.sort(key=lambda x: x[1])
             globaldata = appendNeighbours(idx, globaldata, conditionSet[0][0])
