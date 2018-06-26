@@ -3,9 +3,13 @@ from shapely.geometry import MultiPoint
 from shapely.geometry import Polygon as Polygon2
 import argparse
 from progress import printProgressBar
-import copy
 from core import *
+import copy
+import matplotlib.pyplot as plt
 import numpy as np
+import matplotlib
+from matplotlib.patches import Polygon
+from matplotlib.collections import PatchCollection
 
 
 def main():
@@ -25,8 +29,6 @@ def main():
     print("Processed Pre-Processor File")
     print("Converting to readable format")
 
-    silentRemove("psuedopoints.txt")
-
     for idx, itm in enumerate(splitdata):
         printProgressBar(
             idx, len(splitdata) - 1, prefix="Progress:", suffix="Complete", length=50
@@ -40,6 +42,7 @@ def main():
 
     outerpts = []
     interiorpts = []
+    wallpts = []
 
     print("Point Classification")
 
@@ -49,38 +52,45 @@ def main():
         )
         if idx > 0 and getFlag(idx, globaldata) == 2:
             outerpts.append(idx)
-        elif idx > 0 and getFlag(idx, globaldata) == 1:
+        elif (idx > 0 and getFlag(idx, globaldata) == 1) or (idx > 0 and getFlag(idx,globaldata) == 0) or (idx > 0 and getFlag(idx,globaldata) == 2):
             interiorpts.append(idx)
 
     wallpts = getWallPointArray(globaldata[1:])
+
+    print("Triangulating")
+
+    interiorpts = convertPointToShapelyPoint(
+        convertIndexToPoints(interiorpts, globaldata)
+    )
+    interiorpts = MultiPoint(interiorpts)
+    interiortriangles = triangulate(interiorpts)
+
+    wallptsNew = []
     for itm in wallpts:
-        inflatedWallPolygon(globaldata, itm, 5*10E-6, interiorpts)
-    # print("Triangulating")
+        itm = convertPointToShapelyPoint(itm)
+        itm = Polygon2(itm)
+        wallptsNew.append(itm)
 
-    # interiorpts = convertPointToShapelyPoint(convertIndexToPoints(interiorpts,globaldata))
-    # interiorpts = MultiPoint(interiorpts)
-    # interiortriangles = triangulate(interiorpts)
+    print("Generating Model")
+    polygns = []
+    fig, ax = plt.subplots()
+    for idx, itm in enumerate(interiortriangles):
+        printProgressBar(
+            idx,
+            len(interiortriangles) - 1,
+            prefix="Progress:",
+            suffix="Complete",
+            length=50,
+        )
+        theshit = list(zip(*itm.exterior.xy))
+        polygns.append(Polygon(theshit, True))
 
-    # wallpts = convertPointToShapelyPoint(convertIndexToPoints(wallpts,globaldata))
-    # wallpts = Polygon2(wallpts)
-
-    # print("Generating Model")
-    # polygns = []
-    # fig, ax = plt.subplots()
-    # for idx,itm in enumerate(interiortriangles):
-    #     printProgressBar(idx, len(interiortriangles) - 1, prefix = 'Progress:', suffix = 'Complete', length = 50)
-    #     itm = itm.difference(wallpts)
-    #     try:
-    #         theshit = list(zip(*itm.exterior.xy))
-    #         polygns.append(Polygon(theshit, True))
-    #     except AttributeError:
-    #         pass
-    # p = PatchCollection(polygns, cmap=matplotlib.cm.jet, alpha=0.4)
-    # colors = 100*np.random.rand(len(polygns))
-    # p.set_array(np.array(colors))
-    # ax.add_collection(p)
-    # print("Plotting")
-    # plt.show()
+    p = PatchCollection(polygns, cmap=matplotlib.cm.jet, alpha=0.4)
+    colors = 100 * np.random.rand(len(polygns))
+    p.set_array(np.array(colors))
+    ax.add_collection(p)
+    print("Plotting")
+    plt.show()
     # xs, ys = [],[]
     # mergedtriangles = cascaded_union(outertriangles)
     # for triangle in outertriangles:
@@ -98,7 +108,6 @@ def main():
     #         globaldata = setFlags(idx,globaldata,60)
 
     print("Done")
-
 
 
 if __name__ == "__main__":

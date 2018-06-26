@@ -1,6 +1,9 @@
 import numpy as np
 import math
-
+from progress import printProgressBar
+import shapely.geometry
+from shapely import wkt
+from shapely.ops import linemerge, unary_union, polygonize
 
 def appendNeighbours(index, globaldata, newpts):
     pt = getIndexFromPoint(newpts, globaldata)
@@ -23,6 +26,15 @@ def getNeighbours(index, globaldata):
     ptdata = ptdata[12:]
     return ptdata
 
+def getLeftandRightPoint(index,globaldata):
+    index = int(index)
+    ptdata = globaldata[index]
+    leftpt = ptdata[3]
+    rightpt = ptdata[4]
+    nbhs = []
+    nbhs.append(getPointxy(leftpt,globaldata))
+    nbhs.append(getPointxy(rightpt,globaldata))
+    return nbhs
 
 def getIndexFromPoint(pt, globaldata):
     ptx = float(pt.split(",")[0])
@@ -215,6 +227,37 @@ def getDYNegPointsFromSet(index, globaldata, points):
     )
     return mypoints
 
+def getDXPosPointsFromSetRaw(index, globaldata, points):
+    nbhs = points
+    _, _, _, _, mypoints = deltaNeighbourCalculation(
+        nbhs, getPointxy(index, globaldata), True, False
+    )
+    return mypoints
+
+
+def getDXNegPointsFromSetRaw(index, globaldata, points):
+    nbhs = points
+    _, _, _, _, mypoints = deltaNeighbourCalculation(
+        nbhs, getPointxy(index, globaldata), True, True
+    )
+    return mypoints
+
+
+def getDYPosPointsFromSetRaw(index, globaldata, points):
+    nbhs = points
+    _, _, _, _, mypoints = deltaNeighbourCalculation(
+        nbhs, getPointxy(index, globaldata), False, False
+    )
+    return mypoints
+
+
+def getDYNegPointsFromSetRaw(index, globaldata, points):
+    nbhs = points
+    _, _, _, _, mypoints = deltaNeighbourCalculation(
+        nbhs, getPointxy(index, globaldata), False, True
+    )
+    return mypoints
+
 
 def checkConditionNumber(index, globaldata, threshold):
     xpos = getWeightedInteriorConditionValueofXPos(index, globaldata)
@@ -267,3 +310,65 @@ def convertPointToShapelyPoint(pointarry):
         ycord = float(itm.split(",")[1])
         pointnewarry.append((xcord, ycord))
     return pointnewarry
+
+def getWallPointArray(globaldata):
+    wallpointarray = []
+    startgeo = 0
+    newstuff = []
+    for idx,itm in enumerate(globaldata):
+        geoflag = int(itm[6])
+        if(startgeo == geoflag and getFlag(idx,globaldata) == 0):
+            newstuff.append(getPointxy(idx,globaldata))
+        if(startgeo != geoflag and getFlag(idx,globaldata) == 0):
+            newstuff = []
+            wallpointarray.append(newstuff)
+            newstuff.append(getPointxy(idx,globaldata))
+            startgeo = startgeo + 1
+    return wallpointarray
+
+def isNonAeroDynamic(index, cordpt, globaldata, wallpoints):
+    main_pointx,main_pointy = getPoint(index, globaldata)
+    cordptx = float(cordpt.split(",")[0])
+    cordpty = float(cordpt.split(",")[1])
+    line = shapely.geometry.LineString([[main_pointx, main_pointy], [cordptx, cordpty]])
+    responselist = []
+    for item in wallpoints:
+        polygonpts = []
+        for item2 in item:
+            polygonpts.append([float(item2.split(",")[0]), float(item2.split(",")[1])])
+        polygontocheck = shapely.geometry.Polygon(polygonpts)
+        merged = linemerge([polygontocheck.boundary, line])
+        borders = unary_union(merged)
+        polygons = polygonize(borders)
+        i = 0
+        for p in polygons:
+            i = i + 1
+        if i == 1:
+            responselist.append(False)
+        else:
+            responselist.append(True)
+    if True in responselist:
+        return True
+    else:
+        return False
+
+def getAeroPointsFromSet(index,cordlist,globaldata,wallpoints):
+    finallist = []
+    for itm in cordlist:
+        if isNonAeroDynamic(index,itm,globaldata,wallpoints) == False:
+            finallist.append(itm)
+    return finallist
+
+def setFlags(index,globaldata,flags):
+    globaldata[index][7] = flags[0]
+    globaldata[index][8] = flags[1]
+    globaldata[index][9] = flags[2]
+    globaldata[index][10] = flags[3]
+    return globaldata
+
+def getFlags(index,globaldata):
+    flagxpos = globaldata[index][7]
+    flagxneg = globaldata[index][8]
+    flagypos = globaldata[index][9]
+    flagyneg = globaldata[index][10]
+    return flagxpos,flagxneg,flagypos,flagyneg

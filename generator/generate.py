@@ -53,117 +53,117 @@ def main():
     globaldata = cleanNeighbours(globaldata)
     hashtable, globaldata = detectOuter(hashtable, globaldata)
 
-    # PSUEDODETECTION = calculateAverageWallPointDistance(globaldata, wallpoints) / 20
-    # writeLog(["Auto set PSUEDODETECTION TO", PSUEDODETECTION])
+    # # PSUEDODETECTION = calculateAverageWallPointDistance(globaldata, wallpoints) / 20
+    # # writeLog(["Auto set PSUEDODETECTION TO", PSUEDODETECTION])
+
+    # # printL("***********************************")
+    # # printL("Checking for Non Aerodynamic points")
+    # # printL("***********************************")
+
+    # # for index,item in enumerate(hashtable[1:]):
+    # #     printProgressBar(index,len(hashtable[1:])-1, prefix = 'Progress:', suffix = 'Complete', length = 50)
+    # #     if(getFlag(index,globaldata)==1):
+    # #         nonAeroCheck(index,globaldata,wallpoints)
+
+    # # printL("***********************************")
+
+    # # fixPsuedoWallPoints(2295,globaldata,hashtable,wallpoints,PSUEDODETECTION)
+    # # fixPsuedoWallPoints(2296,globaldata,hashtable,wallpoints,PSUEDODETECTION)
+    # # fixPsuedoWallPoints(2297,globaldata,hashtable,wallpoints,PSUEDODETECTION)
+    # # fixPsuedoWallPoints(2298,globaldata,hashtable,wallpoints,PSUEDODETECTION)
+    # # fixPsuedoWallPoints(2299,globaldata,hashtable,wallpoints,PSUEDODETECTION)
+
+    # # exit()
+
+    # printL("****************************************")
+    # printL("Adding Wall Points")
+    # printL("****************************************")
+
+    # # for index,item in enumerate(hashtable[1:]):
+    # #     if(getFlag(index,globaldata)==1):
+    # #         initialConditionValueXPos = getInteriorConditionValueofXPos(index,globaldata,hashtable)
+    # #         initialConditionValueXNeg = getInteriorConditionValueofXNeg(index,globaldata,hashtable)
+    # #         initialConditionValueYPos = getInteriorConditionValueofYPos(index,globaldata,hashtable)
+    # #         initialConditionValueYNeg = getInteriorConditionValueofYNeg(index,globaldata,hashtable)
+    # #         if(math.isinf(initialConditionValueXNeg)):
+    # #             addNearestWallPoints(index,globaldata,hashtable,wallpoints)
+    # #         elif(math.isinf(initialConditionValueXPos)):
+    # #             addNearestWallPoints(index,globaldata,hashtable,wallpoints)
+    # #         elif(math.isinf(initialConditionValueYNeg)):
+    # #             addNearestWallPoints(index,globaldata,hashtable,wallpoints)
+    # #         elif(math.isinf(initialConditionValueYPos)):
+    # #             addNearestWallPoints(index,globaldata,hashtable,wallpoints)
 
     # printL("***********************************")
-    # printL("Checking for Non Aerodynamic points")
+
+    # globaldata = cleanNeighbours(globaldata)
+
+    # for index, _ in enumerate(hashtable[1:]):
+    #     if getFlag(index, globaldata) == 1 or getFlag(index, globaldata) == 3:
+    #         interiorPointsCount = interiorPointsCount + 1
+    #         printPosDeltaConditions(index, globaldata, hashtable, 15)
+
     # printL("***********************************")
 
-    # for index,item in enumerate(hashtable[1:]):
-    #     printProgressBar(index,len(hashtable[1:])-1, prefix = 'Progress:', suffix = 'Complete', length = 50)
-    #     if(getFlag(index,globaldata)==1):
-    #         nonAeroCheck(index,globaldata,wallpoints)
+    # # for index,_ in enumerate(hashtable[1:]):
+    # #     if(getFlag(index,globaldata)==1 or getFlag(index,globaldata)==3):
+    # #         printWeighedPosDeltaConditions(index,globaldata,hashtable,15)
+
+    # for index, item in enumerate(hashtable[1:]):
+    #     if getFlag(index, globaldata) == 0:
+    #         printWallConditionValue(index, globaldata, hashtable)
+    #         printWallConditionValue(index, globaldata, hashtable)
+    #         printWallConditionValue(index, globaldata, hashtable)
+    #         writeLog(
+    #             [
+    #                 index,
+    #                 "Condition Value Wall Point",
+    #                 conditionValueOfPointFull(index, globaldata),
+    #             ]
+    #         )
+
+    # for index, item in enumerate(hashtable[1:]):
+    #     if getFlag(index, globaldata) == 2:
+    #         outerPointsCount = outerPointsCount + 1
+    #         printOuterConditionValue(index, globaldata, hashtable)
+    #         printOuterConditionValue(index, globaldata, hashtable)
+    #         printOuterConditionValue(index, globaldata, hashtable)
 
     # printL("***********************************")
+    # printL("Finding")
+    # printL("***********************************")
 
-    # fixPsuedoWallPoints(2295,globaldata,hashtable,wallpoints,PSUEDODETECTION)
-    # fixPsuedoWallPoints(2296,globaldata,hashtable,wallpoints,PSUEDODETECTION)
-    # fixPsuedoWallPoints(2297,globaldata,hashtable,wallpoints,PSUEDODETECTION)
-    # fixPsuedoWallPoints(2298,globaldata,hashtable,wallpoints,PSUEDODETECTION)
-    # fixPsuedoWallPoints(2299,globaldata,hashtable,wallpoints,PSUEDODETECTION)
+    # problempts = []
 
-    # exit()
+    # for index, item in enumerate(hashtable[1:]):
+    #     if getFlag(index, globaldata) == 1:
+    #         globaldata = setPosDeltaFlags(
+    #             index, globaldata, hashtable, 100, problempts, 1
+    #         )  # Threshold for Flag 3 - 6
 
-    printL("****************************************")
-    printL("Adding Wall Points")
-    printL("****************************************")
+    # printL("***********************************")
+    # printL("Writing Removal Points To File")
+    # printL("***********************************")
 
-    # for index,item in enumerate(hashtable[1:]):
-    #     if(getFlag(index,globaldata)==1):
-    #         initialConditionValueXPos = getInteriorConditionValueofXPos(index,globaldata,hashtable)
-    #         initialConditionValueXNeg = getInteriorConditionValueofXNeg(index,globaldata,hashtable)
-    #         initialConditionValueYPos = getInteriorConditionValueofYPos(index,globaldata,hashtable)
-    #         initialConditionValueYNeg = getInteriorConditionValueofYNeg(index,globaldata,hashtable)
-    #         if(math.isinf(initialConditionValueXNeg)):
-    #             addNearestWallPoints(index,globaldata,hashtable,wallpoints)
-    #         elif(math.isinf(initialConditionValueXPos)):
-    #             addNearestWallPoints(index,globaldata,hashtable,wallpoints)
-    #         elif(math.isinf(initialConditionValueYNeg)):
-    #             addNearestWallPoints(index,globaldata,hashtable,wallpoints)
-    #         elif(math.isinf(initialConditionValueYPos)):
-    #             addNearestWallPoints(index,globaldata,hashtable,wallpoints)
+    # problempts = list(dict.fromkeys(problempts))
+    # problempts = [x + 1 for x in problempts]
+    # print(problempts)
 
-    printL("***********************************")
+    # with open("removal_flags.txt", "w") as text_file:
+    #     for individiualPoint in globaldata:
+    #         index = int(individiualPoint[0])
 
-    globaldata = cleanNeighbours(globaldata)
+    #         if index in problempts:
+    #             text_file.writelines(["%s   1" % str(index)])
+    #             text_file.writelines("\n")
+    #         else:
+    #             text_file.writelines(["%s   0" % str(index)])
+    #             text_file.writelines("\n")
 
-    for index, _ in enumerate(hashtable[1:]):
-        if getFlag(index, globaldata) == 1 or getFlag(index, globaldata) == 3:
-            interiorPointsCount = interiorPointsCount + 1
-            printPosDeltaConditions(index, globaldata, hashtable, 15)
-
-    printL("***********************************")
-
-    # for index,_ in enumerate(hashtable[1:]):
-    #     if(getFlag(index,globaldata)==1 or getFlag(index,globaldata)==3):
-    #         printWeighedPosDeltaConditions(index,globaldata,hashtable,15)
-
-    for index, item in enumerate(hashtable[1:]):
-        if getFlag(index, globaldata) == 0:
-            printWallConditionValue(index, globaldata, hashtable)
-            printWallConditionValue(index, globaldata, hashtable)
-            printWallConditionValue(index, globaldata, hashtable)
-            writeLog(
-                [
-                    index,
-                    "Condition Value Wall Point",
-                    conditionValueOfPointFull(index, globaldata),
-                ]
-            )
-
-    for index, item in enumerate(hashtable[1:]):
-        if getFlag(index, globaldata) == 2:
-            outerPointsCount = outerPointsCount + 1
-            printOuterConditionValue(index, globaldata, hashtable)
-            printOuterConditionValue(index, globaldata, hashtable)
-            printOuterConditionValue(index, globaldata, hashtable)
-
-    printL("***********************************")
-    printL("Setting Pre Balancing Flags for Interior Points")
-    printL("***********************************")
-
-    problempts = []
-
-    for index, item in enumerate(hashtable[1:]):
-        if getFlag(index, globaldata) == 1:
-            globaldata = setPosDeltaFlags(
-                index, globaldata, hashtable, 100, problempts, 1
-            )  # Threshold for Flag 3 - 6
-
-    printL("***********************************")
-    printL("Writing Removal Points To File")
-    printL("***********************************")
-
-    problempts = list(dict.fromkeys(problempts))
-    problempts = [x + 1 for x in problempts]
-    print(problempts)
-
-    with open("removal_flags.txt", "w") as text_file:
-        for individiualPoint in globaldata:
-            index = int(individiualPoint[0])
-
-            if index in problempts:
-                text_file.writelines(["%s   1" % str(index)])
-                text_file.writelines("\n")
-            else:
-                text_file.writelines(["%s   0" % str(index)])
-                text_file.writelines("\n")
-
-    with open("removal_points.txt", "w") as text_file:
-        for item1 in problempts:
-            text_file.writelines(["%s " % item1])
-            text_file.writelines("\n")
+    # with open("removal_points.txt", "w") as text_file:
+    #     for item1 in problempts:
+    #         text_file.writelines(["%s " % item1])
+    #         text_file.writelines("\n")
 
     # print(problempts)
 
