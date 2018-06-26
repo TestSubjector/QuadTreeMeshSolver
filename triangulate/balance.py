@@ -1,6 +1,7 @@
 from core import *
 from progress import printProgressBar
 import inspect
+import collections
 
 def triangleBalance(globaldata,polygonData,wallpoints):
     for idx,itm in enumerate(globaldata):
@@ -64,25 +65,25 @@ def triangleBalance(globaldata,polygonData,wallpoints):
                     globaldata = fixXneg(idx,globaldata,nbhs,-2,30,True,polygonData,wallpoints)
     return globaldata
 
+def convertTupleToCord(tupledata):
+    data = []
+    for itm in tupledata:
+        data.append(str(itm[0]) + "," + str(itm[1]))
+    return data
+
 def getNeighboursFromTriangle(index,globaldata,polygonData):
-    nbhs = []
     cordx,cordy = getPoint(index,globaldata)
-    cord = (float(cordx),float(cordy))
-    for itm in polygonData:
-        if cord in itm:
-            for itm2 in itm:
-                if itm2 != cord:
-                    nbhcordx = itm2[0]
-                    nbhcordy = itm2[1]
-                    nbhs.append(str(nbhcordx) + "," + str(nbhcordy))
-        nbhs = list(set(nbhs))
-    return nbhs
+    return convertTupleToCord(polygonData[(float(cordx),float(cordy))])
 
 def getPolygon(polygonData):
-    polygon = []
+    polygon = collections.defaultdict(set)
+    polygon['key'].add('mykey')
     for itm in polygonData:
-        tri = list(set(itm.exterior.coords))
-        polygon.append(tri)
+        tri = set(itm.exterior.coords)
+        for itm in tri.copy():
+            temptri = tri
+            temptri.remove(itm)
+            polygon[itm] = polygon[itm].union(temptri)
     return polygon
 
 def fixXpos(idx,globaldata,nbhs,control,conditionNumber,aggressive,polygonData,wallpoints):
