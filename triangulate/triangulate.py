@@ -4,12 +4,13 @@ from shapely.geometry import Polygon as Polygon2
 import argparse
 from progress import printProgressBar
 from core import *
-import copy
-import matplotlib.pyplot as plt
+from connectivity import *
+from balance import *
 import numpy as np
 import matplotlib
-from matplotlib.patches import Polygon
+import matplotlib.pyplot as plt
 from matplotlib.collections import PatchCollection
+from matplotlib.patches import Polygon
 
 
 def main():
@@ -40,73 +41,46 @@ def main():
 
     globaldata = cleanNeighbours(globaldata)
 
-    outerpts = []
-    interiorpts = []
-    wallpts = []
-
-    print("Point Classification")
-
-    for idx, itm in enumerate(globaldata):
-        printProgressBar(
-            idx, len(globaldata) - 1, prefix="Progress:", suffix="Complete", length=50
-        )
-        if idx > 0 and getFlag(idx, globaldata) == 2:
-            outerpts.append(idx)
-        elif idx > 0 and getFlag(idx, globaldata) == 1:
-            interiorpts.append(idx)
-        elif idx > 0 and getFlag(idx, globaldata) == 0:
-            wallpts.append(idx)
+    wallpts = getWallPointArray(globaldata[1:])
 
     print("Triangulating")
 
-    interiorpts = convertPointToShapelyPoint(
-        convertIndexToPoints(interiorpts, globaldata)
-    )
+    interiorpts = []
+    interiorpts.extend(range(1, len(globaldata)))
+    interiorpts = convertPointToShapelyPoint(convertIndexToPoints(interiorpts,globaldata))
     interiorpts = MultiPoint(interiorpts)
     interiortriangles = triangulate(interiorpts)
 
-    wallpts = convertPointToShapelyPoint(convertIndexToPoints(wallpts, globaldata))
-    wallpts = Polygon2(wallpts)
+    print("Detected",len(wallpts),"geometry(s).")
 
-    print("Generating Model")
-    polygns = []
-    fig, ax = plt.subplots()
-    for idx, itm in enumerate(interiortriangles):
-        printProgressBar(
-            idx,
-            len(interiortriangles) - 1,
-            prefix="Progress:",
-            suffix="Complete",
-            length=50,
-        )
-        itm = itm.difference(wallpts)
-        try:
-            theshit = list(zip(*itm.exterior.xy))
-            polygns.append(Polygon(theshit, True))
-        except AttributeError:
-            pass
-    p = PatchCollection(polygns, cmap=matplotlib.cm.jet, alpha=0.4)
-    colors = 100 * np.random.rand(len(polygns))
-    p.set_array(np.array(colors))
-    ax.add_collection(p)
-    print("Plotting")
-    plt.show()
-    # xs, ys = [],[]
-    # mergedtriangles = cascaded_union(outertriangles)
-    # for triangle in outertriangles:
-    #     xstemp,ystemp = triangle.exterior.xy
-    #     print(xstemp,ystemp)
-    # xs,ys = mergedtriangles.exterior.xy
-    # fig, axs = plt.subplots()
-    # axs.fill(xs, ys, alpha=0.5, fc='r', ec='none')
-    # plt.show() #if not interactive.
+    print("Generated",len(interiortriangles),"triangle(s).")
+    print("Running Connectivity Check")
+    globaldata = connectivityCheck(globaldata)
+    print("Connectivity Check Done")
+    print("Running Triangulation Balancing")
+    globaldata = triangleBalance(globaldata,interiortriangles,wallpts)
+    print("Triangle Balancing Done")
+    print("Running Connectivity Recheck")
+    globaldata = connectivityCheck(globaldata)
+    print("Connectivity Recheck Done")
+    print("Writing Deletion Points")
+    problempts = findDeletionPoints(globaldata)
+    
+    globaldata = cleanNeighbours(globaldata)
 
-    # print("Set Flag")
+    globaldata.pop(0)
 
-    # for idx,itm in enumerate(globaldata):
-    #     if(idx > 0 and getFlag(idx,globaldata) == 1):
-    #         globaldata = setFlags(idx,globaldata,60)
+    with open("removal_points.txt", "w") as text_file:
+        for item1 in problempts:
+            text_file.writelines(["%s " % item1])
+            text_file.writelines("\n")
 
+    print("Writing Preprocessor File")
+
+    with open("preprocessorfile_triangulate.txt", "w") as text_file:
+        for item1 in globaldata:
+            text_file.writelines(["%s " % item for item in item1])
+            text_file.writelines("\n")
     print("Done")
 
 

@@ -1,8 +1,8 @@
 import numpy as np
 import math
+import os
+import errno
 from shapely.geometry import Polygon, Point
-import matplotlib.pyplot as plt
-
 
 def appendNeighbours(index, globaldata, newpts):
     pt = getIndexFromPoint(newpts, globaldata)
@@ -12,6 +12,14 @@ def appendNeighbours(index, globaldata, newpts):
     globaldata[int(index)][12:] = nbhs
     globaldata[int(index)][11] = len(nbhs)
     return globaldata
+
+def silentRemove(filename):
+    try:
+        os.remove(filename)
+    except OSError as e:  # this would be "except OSError, e:" before Python 2.6
+        if e.errno != errno.ENOENT:  # errno.ENOENT = no such file or directory
+            raise  # re-raise exception if a different error occurred
+
 
 
 def getFlag(indexval, list):
@@ -124,8 +132,9 @@ def inflatedWallPolygon(globaldata, wallpoints, dist, interiorpts):
     print("Creating Inflated Wall Point")
     inflatedWall = []
     for itm in wallpoints:
-        nx, ny = normalCalculation(itm, globaldata, True)
-        orgWallpt = getPointxy(itm, globaldata)
+        idx = getIndexFromPoint(itm,globaldata)
+        orgWallpt = getPointxy(idx, globaldata)
+        nx, ny = normalCalculation(idx, globaldata, True)
         orgWallptx = float(orgWallpt.split(",")[0])
         orgWallpty = float(orgWallpt.split(",")[1])
         normalVector = np.array([nx, ny])
@@ -133,10 +142,8 @@ def inflatedWallPolygon(globaldata, wallpoints, dist, interiorpts):
         newWallpt = orgVector + dist * normalVector
         newWallpt = tuple(newWallpt.tolist())
         inflatedWall.append(newWallpt)
-    wallptsData = convertPointToShapelyPoint(
-        convertIndexToPoints(wallpoints, globaldata)
-    )
-    # wallpointGeo = Polygon(wallptsData)
+    wallptsData = convertPointToShapelyPoint(wallpoints)
+    wallpointGeo = Polygon(wallptsData)
     lastpt = wallptsData[0]
     newpt = (lastpt[0] + dist, lastpt[1])
     inflatedWall.pop(0)
@@ -152,7 +159,7 @@ def inflatedWallPolygon(globaldata, wallpoints, dist, interiorpts):
     # # ax = fig.add_subplot(111)
     # # ax.scatter(x2, y2, color='blue', alpha=0.7, zorder=2)
     # # ax.set_title('Polygon2')
-    # ax = fig.add_subplot(111)
+    # # ax = fig.add_subplot(111)
     # ax.plot(x1, y1, color='red', alpha=0.7, zorder=2)
     # ax.plot(x2, y2, color='blue', alpha=0.7, zorder=2)
     # plt.show()
@@ -163,7 +170,22 @@ def inflatedWallPolygon(globaldata, wallpoints, dist, interiorpts):
         if inflatedwallpointGeo.contains(interiorpoint):
             pseudopts.append(itm)
     print("Found", len(pseudopts), "pseudo points!")
-    with open("psuedopoints.txt", "w") as text_file:
+    with open("psuedopoints.txt", "a") as text_file:
         for item1 in pseudopts:
             text_file.writelines(str(item1))
             text_file.writelines("\t\n")
+
+def getWallPointArray(globaldata):
+    wallpointarray = []
+    startgeo = 0
+    newstuff = []
+    for idx,itm in enumerate(globaldata):
+        geoflag = int(itm[6])
+        if(startgeo == geoflag and getFlag(idx,globaldata) == 0):
+            newstuff.append(getPointxy(idx,globaldata))
+        if(startgeo != geoflag and getFlag(idx,globaldata) == 0):
+            newstuff = []
+            wallpointarray.append(newstuff)
+            newstuff.append(getPointxy(idx,globaldata))
+            startgeo = startgeo + 1
+    return wallpointarray
