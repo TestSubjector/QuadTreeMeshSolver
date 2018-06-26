@@ -86,7 +86,7 @@ def connectivityCheckInteriorPoint(index,globaldata):
 def findDeletionPoints(globaldata):
     deletionpts = []
     for idx,itm in enumerate(globaldata):
-        if idx > 0:
+        if idx > 0 and int(getFlag(idx,globaldata)) == 1:
             xpos,xneg,ypos,yneg = getFlags(idx,globaldata)
             if(xpos == 1 or xneg == 1 or ypos == 1 or yneg == 1):
                 deletionpts.append(idx)
