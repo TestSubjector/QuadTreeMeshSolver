@@ -14,43 +14,27 @@ def triangleBalance(globaldata,polygonData,wallpoints):
             if flag == 1:
                 if xposf == 2:
                     nbhs = getNeighboursFromTriangle(idx,globaldata,polygonData)
-                    nbhs = getDXPosPointsFromSetRaw(idx,globaldata,nbhs)   
-                    nbhs = getAeroPointsFromSet(idx,nbhs,globaldata,wallpoints)
                     globaldata = fixXpos(idx,globaldata,nbhs,-1,30,False,polygonData,wallpoints)
                 elif xposf == 1:
                     nbhs = getNeighboursFromTriangle(idx,globaldata,polygonData)
-                    nbhs = getDXPosPointsFromSetRaw(idx,globaldata,nbhs)       
-                    nbhs = getAeroPointsFromSet(idx,nbhs,globaldata,wallpoints)
                     globaldata = fixXpos(idx,globaldata,nbhs,-2,30,True,polygonData,wallpoints)
                 if xnegf == 2:
                     nbhs = getNeighboursFromTriangle(idx,globaldata,polygonData)
-                    nbhs = getDXNegPointsFromSetRaw(idx,globaldata,nbhs)   
-                    nbhs = getAeroPointsFromSet(idx,nbhs,globaldata,wallpoints)
                     globaldata = fixXneg(idx,globaldata,nbhs,-1,30,False,polygonData,wallpoints)
                 elif xnegf == 1:
                     nbhs = getNeighboursFromTriangle(idx,globaldata,polygonData)
-                    nbhs = getDXNegPointsFromSetRaw(idx,globaldata,nbhs)       
-                    nbhs = getAeroPointsFromSet(idx,nbhs,globaldata,wallpoints)
                     globaldata = fixXneg(idx,globaldata,nbhs,-2,30,True,polygonData,wallpoints)
                 if yposf == 2:
                     nbhs = getNeighboursFromTriangle(idx,globaldata,polygonData)
-                    nbhs = getDYPosPointsFromSetRaw(idx,globaldata,nbhs)   
-                    nbhs = getAeroPointsFromSet(idx,nbhs,globaldata,wallpoints)
                     globaldata = fixYpos(idx,globaldata,nbhs,-1,30,False,polygonData,wallpoints)
                 elif yposf == 1:
                     nbhs = getNeighboursFromTriangle(idx,globaldata,polygonData)
-                    nbhs = getDYPosPointsFromSetRaw(idx,globaldata,nbhs)       
-                    nbhs = getAeroPointsFromSet(idx,nbhs,globaldata,wallpoints)
                     globaldata = fixYpos(idx,globaldata,nbhs,-2,30,True,polygonData,wallpoints)
                 if ynegf == 2:
                     nbhs = getNeighboursFromTriangle(idx,globaldata,polygonData)
-                    nbhs = getDYNegPointsFromSetRaw(idx,globaldata,nbhs)   
-                    nbhs = getAeroPointsFromSet(idx,nbhs,globaldata,wallpoints)
                     globaldata = fixYneg(idx,globaldata,nbhs,-1,30,False,polygonData,wallpoints)
                 elif ynegf == 1:
                     nbhs = getNeighboursFromTriangle(idx,globaldata,polygonData)
-                    nbhs = getDYNegPointsFromSetRaw(idx,globaldata,nbhs)       
-                    nbhs = getAeroPointsFromSet(idx,nbhs,globaldata,wallpoints)
                     globaldata = fixYneg(idx,globaldata,nbhs,-2,30,True,polygonData,wallpoints)
             elif flag == 0:
                 if xposf == 2:
@@ -75,24 +59,29 @@ def triangleBalance(globaldata,polygonData,wallpoints):
                     globaldata = fixXneg(idx,globaldata,nbhs,-2,30,True,polygonData,wallpoints)
             elif flag == 2:
                 if xposf == 2:
-                    nbhs = getNeighboursFromTriangle(idx,globaldata,polygonData)
-                    nbhs = getDXPosPointsFromSetRaw(idx,globaldata,nbhs)   
-                    nbhs = getAeroPointsFromSet(idx,nbhs,globaldata,wallpoints)
+                    nbhs = getNeighboursFromTriangle(idx,globaldata,polygonData) 
                     globaldata = fixXpos(idx,globaldata,nbhs,-1,30,False,polygonData,wallpoints)
                 elif xposf == 1:
-                    nbhs = getNeighboursFromTriangle(idx,globaldata,polygonData)
-                    nbhs = getDXPosPointsFromSetRaw(idx,globaldata,nbhs)       
-                    nbhs = getAeroPointsFromSet(idx,nbhs,globaldata,wallpoints)
+                    nbhs = getNeighboursFromTriangle(idx,globaldata,polygonData)    
                     globaldata = fixXpos(idx,globaldata,nbhs,-2,30,True,polygonData,wallpoints)
                 if xnegf == 2:
                     nbhs = getNeighboursFromTriangle(idx,globaldata,polygonData)
-                    nbhs = getDXNegPointsFromSetRaw(idx,globaldata,nbhs)   
-                    nbhs = getAeroPointsFromSet(idx,nbhs,globaldata,wallpoints)
                     globaldata = fixXneg(idx,globaldata,nbhs,-1,30,False,polygonData,wallpoints)
                 elif xnegf == 1:
+                    nbhs = getNeighboursFromTriangle(idx,globaldata,polygonData) 
+                    globaldata = fixXneg(idx,globaldata,nbhs,-2,30,True,polygonData,wallpoints)
+            elif flag == 2:
+                if xposf == 2:
+                    nbhs = getNeighboursFromTriangle(idx,globaldata,polygonData) 
+                    globaldata = fixXpos(idx,globaldata,nbhs,-1,30,False,polygonData,wallpoints)
+                elif xposf == 1:
+                    nbhs = getNeighboursFromTriangle(idx,globaldata,polygonData)    
+                    globaldata = fixXpos(idx,globaldata,nbhs,-2,30,True,polygonData,wallpoints)
+                if xnegf == 2:
                     nbhs = getNeighboursFromTriangle(idx,globaldata,polygonData)
-                    nbhs = getDXNegPointsFromSetRaw(idx,globaldata,nbhs)       
-                    nbhs = getAeroPointsFromSet(idx,nbhs,globaldata,wallpoints)
+                    globaldata = fixXneg(idx,globaldata,nbhs,-1,30,False,polygonData,wallpoints)
+                elif xnegf == 1:
+                    nbhs = getNeighboursFromTriangle(idx,globaldata,polygonData) 
                     globaldata = fixXneg(idx,globaldata,nbhs,-2,30,True,polygonData,wallpoints)
     return globaldata
 
@@ -119,6 +108,7 @@ def fixXpos(idx,globaldata,nbhs,control,conditionNumber,aggressive,polygonData,w
         mynbhs = convertIndexToPoints(getNeighbours(idx,globaldata),globaldata)
         finalnbhs = list(set(nbhs) - set(mynbhs))
         finalnbhs = getDXPosPointsFromSetRaw(idx,globaldata,finalnbhs)
+        finalnbhs = getAeroPointsFromSet(idx,finalnbhs,globaldata,wallpoints)
         # print(finalnbhs)
         conditionSet = []
         for itm in finalnbhs:
@@ -152,6 +142,7 @@ def fixXneg(idx,globaldata,nbhs,control,conditionNumber,aggressive,polygonData,w
         mynbhs = convertIndexToPoints(getNeighbours(idx,globaldata),globaldata)
         finalnbhs = list(set(nbhs) - set(mynbhs))
         finalnbhs = getDXNegPointsFromSetRaw(idx,globaldata,finalnbhs)
+        finalnbhs = getAeroPointsFromSet(idx,finalnbhs,globaldata,wallpoints)
         # print(finalnbhs)
         conditionSet = []
         for itm in finalnbhs:
@@ -185,6 +176,7 @@ def fixYpos(idx,globaldata,nbhs,control,conditionNumber,aggressive,polygonData,w
         mynbhs = convertIndexToPoints(getNeighbours(idx,globaldata),globaldata)
         finalnbhs = list(set(nbhs) - set(mynbhs))
         finalnbhs = getDYPosPointsFromSetRaw(idx,globaldata,finalnbhs)
+        finalnbhs = getAeroPointsFromSet(idx,finalnbhs,globaldata,wallpoints)
         # print(finalnbhs)
         conditionSet = []
         for itm in finalnbhs:
@@ -218,6 +210,7 @@ def fixYneg(idx,globaldata,nbhs,control,conditionNumber,aggressive,polygonData,w
         mynbhs = convertIndexToPoints(getNeighbours(idx,globaldata),globaldata)
         finalnbhs = list(set(nbhs) - set(mynbhs))
         finalnbhs = getDYNegPointsFromSetRaw(idx,globaldata,finalnbhs)
+        finalnbhs = getAeroPointsFromSet(idx,finalnbhs,globaldata,wallpoints)
         # print(finalnbhs)
         conditionSet = []
         for itm in finalnbhs:
@@ -237,7 +230,6 @@ def fixYneg(idx,globaldata,nbhs,control,conditionNumber,aggressive,polygonData,w
                     layernbhs = getNeighboursFromTriangle(idx,globaldata,polygonData)
                     nbhofnbh = nbhofnbh + layernbhs
                 nbhofnbh = list(set(nbhofnbh))
-                nbhofnbh = getAeroPointsFromSet(idx,nbhofnbh,globaldata,wallpoints)
                 control = control - 1
                 fixYneg(idx,globaldata,nbhofnbh,control,conditionNumber,False,polygonData,wallpoints)
             else:

@@ -52,7 +52,6 @@ def main():
     interiortriangles = triangulate(interiorpts)
 
     print("Detected",len(wallpts),"geometry(s).")
-
     print("Generated",len(interiortriangles),"triangle(s).")
     print("Running Connectivity Check")
     globaldata = connectivityCheck(globaldata)
