@@ -52,7 +52,28 @@ def triangleBalance(globaldata,polygonData,wallpoints):
                     nbhs = getDYNegPointsFromSetRaw(idx,globaldata,nbhs)       
                     nbhs = getAeroPointsFromSet(idx,nbhs,globaldata,wallpoints)
                     globaldata = fixYneg(idx,globaldata,nbhs,-2,30,True,polygonData,wallpoints)
-            elif flag == 0 or flag == 2:
+            elif flag == 0:
+                if xposf == 2:
+                    nbhs = getNeighboursFromTriangle(idx,globaldata,polygonData)
+                    nbhs = getDXPosPointsFromSetRaw(idx,globaldata,nbhs)   
+                    nbhs = getAeroPointsFromSet(idx,nbhs,globaldata,wallpoints)
+                    globaldata = fixXpos(idx,globaldata,nbhs,-2,30,True,polygonData,wallpoints)
+                elif xposf == 1:
+                    nbhs = getNeighboursFromTriangle(idx,globaldata,polygonData)
+                    nbhs = getDXPosPointsFromSetRaw(idx,globaldata,nbhs)       
+                    nbhs = getAeroPointsFromSet(idx,nbhs,globaldata,wallpoints)
+                    globaldata = fixXpos(idx,globaldata,nbhs,-2,30,True,polygonData,wallpoints)
+                if xnegf == 2:
+                    nbhs = getNeighboursFromTriangle(idx,globaldata,polygonData)
+                    nbhs = getDXNegPointsFromSetRaw(idx,globaldata,nbhs)   
+                    nbhs = getAeroPointsFromSet(idx,nbhs,globaldata,wallpoints)
+                    globaldata = fixXneg(idx,globaldata,nbhs,-1,30,False,polygonData,wallpoints)
+                elif xnegf == 1:
+                    nbhs = getNeighboursFromTriangle(idx,globaldata,polygonData)
+                    nbhs = getDXNegPointsFromSetRaw(idx,globaldata,nbhs)       
+                    nbhs = getAeroPointsFromSet(idx,nbhs,globaldata,wallpoints)
+                    globaldata = fixXneg(idx,globaldata,nbhs,-2,30,True,polygonData,wallpoints)
+            elif flag == 2:
                 if xposf == 2:
                     nbhs = getNeighboursFromTriangle(idx,globaldata,polygonData)
                     nbhs = getDXPosPointsFromSetRaw(idx,globaldata,nbhs)   

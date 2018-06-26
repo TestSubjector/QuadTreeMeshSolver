@@ -39,6 +39,10 @@ def main():
             checkConditionNumber(idx, globaldata, 30)
 
     for idx, itm in enumerate(globaldata):
+        if idx > 0 and getFlag(idx, globaldata) == 0:
+            checkConditionNumberWall(idx, globaldata, 30)
+
+    for idx, itm in enumerate(globaldata):
         if idx > 0 and getFlag(idx, globaldata) == 1:
             globaldata = fixXPosMain(idx, globaldata, 30, wallpoints, -1)
     for idx, itm in enumerate(globaldata):

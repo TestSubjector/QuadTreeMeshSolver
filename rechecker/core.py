@@ -250,6 +250,30 @@ def checkConditionNumber(index, globaldata, threshold):
             yneg,
         )
 
+def checkConditionNumberWall(index, globaldata, threshold):
+    xpos = getWeightedInteriorConditionValueofXPos(index, globaldata)
+    xneg = getWeightedInteriorConditionValueofXNeg(index, globaldata)
+    ypos = getWeightedInteriorConditionValueofYPos(index, globaldata)
+    yneg = getWeightedInteriorConditionValueofYNeg(index, globaldata)
+    dSPointXPos = getDXPosPoints(index, globaldata)
+    dSPointXNeg = getDXNegPoints(index, globaldata)
+    dSPointYPos = getDYPosPoints(index, globaldata)
+    dSPointYNeg = getDYNegPoints(index, globaldata)
+    if (
+        index == 1561
+    ):
+        print(
+            index,
+            len(dSPointXPos),
+            xpos,
+            len(dSPointXNeg),
+            xneg,
+            len(dSPointYPos),
+            ypos,
+            len(dSPointYNeg),
+            yneg,
+        )
+
 
 def cleanNeighbours(globaldata):
     print("Beginning Duplicate Neighbour Detection")
