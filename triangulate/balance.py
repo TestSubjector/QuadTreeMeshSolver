@@ -2,67 +2,72 @@ from core import *
 from progress import printProgressBar
 import inspect
 import collections
+from config import getConfig
 
 def triangleBalance(globaldata,polygonData,wallpoints):
-    for idx,itm in enumerate(globaldata):
+    for idx,_ in enumerate(globaldata):
         printProgressBar(
             idx, len(globaldata) - 1, prefix="Progress:", suffix="Complete", length=50
         )
         if idx > 0:
             flag = int(getFlag(idx,globaldata))
             xposf,xnegf,yposf,ynegf = getFlags(idx,globaldata)
+            WALL_OUTER_THRESHOLD = int(getConfig()["triangulate"]["wallandOuterThreshold"])
+            INTERIOR_THRESHOLD = int(getConfig()["triangulate"]["interiorThreshold"])
+            AGGRESSIVE_MAX_NEIGHBOURS = -int(getConfig()["triangulate"]["aggressiveMaxNeighbours"])
+            NORMAL_MAX_NEIGHBOURS = -int(getConfig()["triangulate"]["normalMaxNeighbours"])
             ## Interior Points
             if flag == 1:
                 if xposf == 2:
                     nbhs = getNeighboursFromTriangle(idx,globaldata,polygonData)
-                    globaldata = fixXpos(idx,globaldata,nbhs,-1,30,False,polygonData,wallpoints)
+                    globaldata = fixXpos(idx,globaldata,nbhs,NORMAL_MAX_NEIGHBOURS,INTERIOR_THRESHOLD,False,polygonData,wallpoints)
                 elif xposf == 1:
                     nbhs = getNeighboursFromTriangle(idx,globaldata,polygonData)
-                    globaldata = fixXpos(idx,globaldata,nbhs,-2,30,True,polygonData,wallpoints)
+                    globaldata = fixXpos(idx,globaldata,nbhs,AGGRESSIVE_MAX_NEIGHBOURS,INTERIOR_THRESHOLD,True,polygonData,wallpoints)
                 if xnegf == 2:
                     nbhs = getNeighboursFromTriangle(idx,globaldata,polygonData)
-                    globaldata = fixXneg(idx,globaldata,nbhs,-1,30,False,polygonData,wallpoints)
+                    globaldata = fixXneg(idx,globaldata,nbhs,NORMAL_MAX_NEIGHBOURS,INTERIOR_THRESHOLD,False,polygonData,wallpoints)
                 elif xnegf == 1:
                     nbhs = getNeighboursFromTriangle(idx,globaldata,polygonData)
-                    globaldata = fixXneg(idx,globaldata,nbhs,-2,30,True,polygonData,wallpoints)
+                    globaldata = fixXneg(idx,globaldata,nbhs,AGGRESSIVE_MAX_NEIGHBOURS,INTERIOR_THRESHOLD,True,polygonData,wallpoints)
                 if yposf == 2:
                     nbhs = getNeighboursFromTriangle(idx,globaldata,polygonData)
-                    globaldata = fixYpos(idx,globaldata,nbhs,-1,30,False,polygonData,wallpoints)
+                    globaldata = fixYpos(idx,globaldata,nbhs,NORMAL_MAX_NEIGHBOURS,INTERIOR_THRESHOLD,False,polygonData,wallpoints)
                 elif yposf == 1:
                     nbhs = getNeighboursFromTriangle(idx,globaldata,polygonData)
-                    globaldata = fixYpos(idx,globaldata,nbhs,-2,30,True,polygonData,wallpoints)
+                    globaldata = fixYpos(idx,globaldata,nbhs,AGGRESSIVE_MAX_NEIGHBOURS,INTERIOR_THRESHOLD,True,polygonData,wallpoints)
                 if ynegf == 2:
                     nbhs = getNeighboursFromTriangle(idx,globaldata,polygonData)
-                    globaldata = fixYneg(idx,globaldata,nbhs,-1,30,False,polygonData,wallpoints)
+                    globaldata = fixYneg(idx,globaldata,nbhs,NORMAL_MAX_NEIGHBOURS,INTERIOR_THRESHOLD,False,polygonData,wallpoints)
                 elif ynegf == 1:
                     nbhs = getNeighboursFromTriangle(idx,globaldata,polygonData)
-                    globaldata = fixYneg(idx,globaldata,nbhs,-2,30,True,polygonData,wallpoints)
+                    globaldata = fixYneg(idx,globaldata,nbhs,AGGRESSIVE_MAX_NEIGHBOURS,INTERIOR_THRESHOLD,True,polygonData,wallpoints)
             elif flag == 0:
                 if xposf == 2:
                     nbhs = getNeighboursFromTriangle(idx,globaldata,polygonData) 
-                    globaldata = fixXpos(idx,globaldata,nbhs,-1,30,False,polygonData,wallpoints)
+                    globaldata = fixXpos(idx,globaldata,nbhs,NORMAL_MAX_NEIGHBOURS,WALL_OUTER_THRESHOLD,False,polygonData,wallpoints)
                 elif xposf == 1:
                     nbhs = getNeighboursFromTriangle(idx,globaldata,polygonData)    
-                    globaldata = fixXpos(idx,globaldata,nbhs,-2,30,True,polygonData,wallpoints)
+                    globaldata = fixXpos(idx,globaldata,nbhs,AGGRESSIVE_MAX_NEIGHBOURS,WALL_OUTER_THRESHOLD,True,polygonData,wallpoints)
                 if xnegf == 2:
                     nbhs = getNeighboursFromTriangle(idx,globaldata,polygonData)
-                    globaldata = fixXneg(idx,globaldata,nbhs,-1,30,False,polygonData,wallpoints)
+                    globaldata = fixXneg(idx,globaldata,nbhs,NORMAL_MAX_NEIGHBOURS,WALL_OUTER_THRESHOLD,False,polygonData,wallpoints)
                 elif xnegf == 1:
                     nbhs = getNeighboursFromTriangle(idx,globaldata,polygonData) 
-                    globaldata = fixXneg(idx,globaldata,nbhs,-2,30,True,polygonData,wallpoints)
+                    globaldata = fixXneg(idx,globaldata,nbhs,AGGRESSIVE_MAX_NEIGHBOURS,WALL_OUTER_THRESHOLD,True,polygonData,wallpoints)
             elif flag == 2:
                 if xposf == 2:
                     nbhs = getNeighboursFromTriangle(idx,globaldata,polygonData) 
-                    globaldata = fixXpos(idx,globaldata,nbhs,-1,30,False,polygonData,wallpoints)
+                    globaldata = fixXpos(idx,globaldata,nbhs,NORMAL_MAX_NEIGHBOURS,WALL_OUTER_THRESHOLD,False,polygonData,wallpoints)
                 elif xposf == 1:
                     nbhs = getNeighboursFromTriangle(idx,globaldata,polygonData)    
-                    globaldata = fixXpos(idx,globaldata,nbhs,-2,30,True,polygonData,wallpoints)
+                    globaldata = fixXpos(idx,globaldata,nbhs,AGGRESSIVE_MAX_NEIGHBOURS,WALL_OUTER_THRESHOLD,True,polygonData,wallpoints)
                 if xnegf == 2:
                     nbhs = getNeighboursFromTriangle(idx,globaldata,polygonData)
-                    globaldata = fixXneg(idx,globaldata,nbhs,-1,30,False,polygonData,wallpoints)
+                    globaldata = fixXneg(idx,globaldata,nbhs,NORMAL_MAX_NEIGHBOURS,WALL_OUTER_THRESHOLD,False,polygonData,wallpoints)
                 elif xnegf == 1:
                     nbhs = getNeighboursFromTriangle(idx,globaldata,polygonData) 
-                    globaldata = fixXneg(idx,globaldata,nbhs,-2,30,True,polygonData,wallpoints)
+                    globaldata = fixXneg(idx,globaldata,nbhs,AGGRESSIVE_MAX_NEIGHBOURS,WALL_OUTER_THRESHOLD,True,polygonData,wallpoints)
     return globaldata
 
 def convertTupleToCord(tupledata):
@@ -128,7 +133,6 @@ def fixXneg(idx,globaldata,nbhs,control,conditionNumber,aggressive,polygonData,w
         mynbhs = convertIndexToPoints(getNeighbours(idx,globaldata),globaldata)
         finalnbhs = list(set(nbhs) - set(mynbhs))
         finalnbhs = getDXNegPointsFromSetRaw(idx,globaldata,finalnbhs)
-        finalnbhs = getAeroPointsFromSet(idx,finalnbhs,globaldata,wallpoints)
         # print(finalnbhs)
         conditionSet = []
         for itm in finalnbhs:
@@ -163,7 +167,6 @@ def fixYpos(idx,globaldata,nbhs,control,conditionNumber,aggressive,polygonData,w
         mynbhs = convertIndexToPoints(getNeighbours(idx,globaldata),globaldata)
         finalnbhs = list(set(nbhs) - set(mynbhs))
         finalnbhs = getDYPosPointsFromSetRaw(idx,globaldata,finalnbhs)
-        finalnbhs = getAeroPointsFromSet(idx,finalnbhs,globaldata,wallpoints)
         # print(finalnbhs)
         conditionSet = []
         for itm in finalnbhs:
