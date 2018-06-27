@@ -7,10 +7,12 @@ quadtree_t *tree; // The main tree structure for all our needs
 
 coords_t *coords_list;  // Stores all the input points
 coords_t *adapted_list; // Stores all the adapted points
+coords_t *shape_list;
 
 int leaf_iter = 0;
 int line_count = 0;
 int adapted_line_count = 0;
+int shape_line_count = 0;
 int height_of_tree = 0;
 
 void main_tree(int initial_coord_length, coords_t *coords_list, coords_t *adapted_list, quadtree_node_t *leaf_array)
@@ -76,7 +78,7 @@ void main_tree(int initial_coord_length, coords_t *coords_list, coords_t *adapte
     //     }
     // }
 
-    quadtree_refinementwalk(tree->root, descent_refinement, ascent);
+    // quadtree_refinementwalk(tree->root, descent_refinement, ascent);
     // quadtree_refinementwalk(tree->root, descent_refinement, ascent);
     quadtree_walk(tree->root, descent, ascent);
     printf("\n Max Depth of tree is %d", maxDepth(tree->root));
@@ -157,6 +159,14 @@ int main(int argc, char *argv[])
         printf("\n ERROR : Memory allocation to leaf_array was unsuccessful");
         exit(0);
     }
+
+    shape_list = malloc(sizeof(coords_t) * MAX);
+    if (coords_list == NULL)
+    {
+        printf("\n ERROR : Memory allocation to shape_list was unsuccessful");
+        exit(0);
+    }
+
     char *filename = argv[1];                      // This will be the file from which the input is taken
     line_count = fileinput(coords_list, filename); // Receives total number of input points
 
@@ -168,6 +178,10 @@ int main(int argc, char *argv[])
     }
     char *adapted_filename = argv[2];
     adapted_line_count = adaptation_fileinput(adapted_list, adapted_filename);
+
+    char *shape_filename = argv[3];
+    shape_line_count = fileinput(shape_list, shape_filename);
+    
     // printf("\n %d", adapted_line_count);
 
     main_tree(line_count, coords_list, adapted_list, leaf_array);

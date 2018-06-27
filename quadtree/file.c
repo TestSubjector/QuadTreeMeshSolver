@@ -108,7 +108,7 @@ void fileoutput(int append, char *filename, double xcord, double ycord)
         printf("\n ERROR : File creation of neighbourhood data was unsuccessful");
         exit(1);
     }
-    if (pnpoly(line_count, coords_list, xcord, ycord))
+    if (pnpoly(shape_line_count, shape_list, xcord, ycord))
     {
         fputs(xcordstr, fp);
         fputs(" ", fp);
@@ -194,7 +194,7 @@ void neighbourset(int append, char *filename, double xcord, double ycord)
     {
         fp = fopen(filename, "w");
     }
-    if (pnpoly(line_count, coords_list, xcord, ycord))
+    if (pnpoly(shape_line_count, shape_list, xcord, ycord))
     {
         coords_t neighbour_point;
         neighbour_point.x = xcord;

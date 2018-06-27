@@ -5,7 +5,7 @@
 #include <math.h>
 #include "bool.h"
 
-#define MAX 40000 // Sets number of points that can be stored
+#define MAX 30000
 
 // A point information
 // Stores x,y and maybe z later (so we get an octree)!
@@ -128,10 +128,12 @@ int insert_(quadtree_t *tree, quadtree_node_t *root,
 // For blanking of points
 double main_pointy;
 
-int pnpoly(int nvert, coords_t *coords_list, double testx, double testy);
+int pnpoly(int nvert, coords_t *shape_list, double testx, double testy);
 
 extern coords_t *coords_list;
+extern coords_t *shape_list;
 extern int line_count;
+extern int shape_line_count;
 
 // For finding neighbour_set of points
 

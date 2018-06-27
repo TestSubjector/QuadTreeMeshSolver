@@ -330,7 +330,7 @@ void descent_node(quadtree_node_t *node)
     {
       printf("\n ABC");
     }
-    if (pnpoly(line_count, coords_list, xcord, ycord))
+    if (pnpoly(shape_line_count, shape_list, xcord, ycord))
     {
       if (newneighboursetfile == 1)
       {
@@ -350,7 +350,7 @@ void descent_node(quadtree_node_t *node)
     checker = 0;
     main_coord.x = node->point->x;
     main_coord.y = node->point->y;
-    if (pnpoly(line_count, coords_list, node->point->x, node->point->y))
+    if (pnpoly(shape_line_count, shape_list, node->point->x, node->point->y))
     {
       if (newneighboursetfile == 1)
       {

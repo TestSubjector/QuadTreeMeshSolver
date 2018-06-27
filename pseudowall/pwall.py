@@ -25,7 +25,7 @@ def main():
     print("Processed Pre-Processor File")
     print("Converting to readable format")
 
-    silentRemove("psuedopoints.txt")
+    silentRemove("removal_points.txt")
 
     for idx, itm in enumerate(splitdata):
         printProgressBar(
