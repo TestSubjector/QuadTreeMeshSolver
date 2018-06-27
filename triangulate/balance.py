@@ -1,6 +1,7 @@
 from core import *
 from progress import printProgressBar
 import inspect
+import collections
 
 def triangleBalance(globaldata,polygonData,wallpoints):
     for idx,itm in enumerate(globaldata):
@@ -62,25 +63,25 @@ def triangleBalance(globaldata,polygonData,wallpoints):
                     globaldata = fixXneg(idx,globaldata,nbhs,-2,100,True,polygonData,wallpoints)
     return globaldata
 
+def convertTupleToCord(tupledata):
+    data = []
+    for itm in tupledata:
+        data.append(str(itm[0]) + "," + str(itm[1]))
+    return data
+
 def getNeighboursFromTriangle(index,globaldata,polygonData):
-    nbhs = []
     cordx,cordy = getPoint(index,globaldata)
-    cord = (float(cordx),float(cordy))
-    for itm in polygonData:
-        if cord in itm:
-            for itm2 in itm:
-                if itm2 != cord:
-                    nbhcordx = itm2[0]
-                    nbhcordy = itm2[1]
-                    nbhs.append(str(nbhcordx) + "," + str(nbhcordy))
-        nbhs = list(set(nbhs))
-    return nbhs
+    return convertTupleToCord(polygonData[(float(cordx),float(cordy))])
 
 def getPolygon(polygonData):
-    polygon = []
+    polygon = collections.defaultdict(set)
+    polygon['key'].add('mykey')
     for itm in polygonData:
-        tri = list(set(itm.exterior.coords))
-        polygon.append(tri)
+        tri = set(itm.exterior.coords)
+        for itm in tri.copy():
+            temptri = tri
+            temptri.remove(itm)
+            polygon[itm] = polygon[itm].union(temptri)
     return polygon
 
 def fixXpos(idx,globaldata,nbhs,control,conditionNumber,aggressive,polygonData,wallpoints):
@@ -91,14 +92,14 @@ def fixXpos(idx,globaldata,nbhs,control,conditionNumber,aggressive,polygonData,w
         mynbhs = convertIndexToPoints(getNeighbours(idx,globaldata),globaldata)
         finalnbhs = list(set(nbhs) - set(mynbhs))
         finalnbhs = getDXPosPointsFromSetRaw(idx,globaldata,finalnbhs)
-        finalnbhs = getAeroPointsFromSet(idx,finalnbhs,globaldata,wallpoints)
         # print(finalnbhs)
         conditionSet = []
         for itm in finalnbhs:
             checkset = finalnbhs + mynbhs
             newcheck = weightedConditionValueForSetOfPoints(idx,globaldata,checkset)
             if newcheck < conditionNumber:
-                conditionSet.append([itm, newcheck])
+                if not isNonAeroDynamic(idx,itm,globaldata,wallpoints):
+                    conditionSet.append([itm, newcheck])
         if len(conditionSet) > 0:
             conditionSet.sort(key=lambda x: x[1])
             globaldata = appendNeighbours(idx, globaldata, conditionSet[0][0])
@@ -132,7 +133,8 @@ def fixXneg(idx,globaldata,nbhs,control,conditionNumber,aggressive,polygonData,w
             checkset = finalnbhs + mynbhs
             newcheck = weightedConditionValueForSetOfPoints(idx,globaldata,checkset)
             if newcheck < conditionNumber:
-                conditionSet.append([itm, newcheck])
+                if not isNonAeroDynamic(idx,itm,globaldata,wallpoints):
+                    conditionSet.append([itm, newcheck])
         if len(conditionSet) > 0:
             conditionSet.sort(key=lambda x: x[1])
             globaldata = appendNeighbours(idx, globaldata, conditionSet[0][0])
@@ -166,7 +168,8 @@ def fixYpos(idx,globaldata,nbhs,control,conditionNumber,aggressive,polygonData,w
             checkset = finalnbhs + mynbhs
             newcheck = weightedConditionValueForSetOfPoints(idx,globaldata,checkset)
             if newcheck < conditionNumber:
-                conditionSet.append([itm, newcheck])
+                if not isNonAeroDynamic(idx,itm,globaldata,wallpoints):
+                    conditionSet.append([itm, newcheck])
         if len(conditionSet) > 0:
             conditionSet.sort(key=lambda x: x[1])
             globaldata = appendNeighbours(idx, globaldata, conditionSet[0][0])
@@ -200,7 +203,8 @@ def fixYneg(idx,globaldata,nbhs,control,conditionNumber,aggressive,polygonData,w
             checkset = finalnbhs + mynbhs
             newcheck = weightedConditionValueForSetOfPoints(idx,globaldata,checkset)
             if newcheck < conditionNumber:
-                conditionSet.append([itm, newcheck])
+                if not isNonAeroDynamic(idx,itm,globaldata,wallpoints):
+                    conditionSet.append([itm, newcheck])
         if len(conditionSet) > 0:
             conditionSet.sort(key=lambda x: x[1])
             globaldata = appendNeighbours(idx, globaldata, conditionSet[0][0])

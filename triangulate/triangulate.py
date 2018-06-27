@@ -12,7 +12,6 @@ import matplotlib.pyplot as plt
 from matplotlib.collections import PatchCollection
 from matplotlib.patches import Polygon
 
-
 def main():
     # Command Line Arguments
     parser = argparse.ArgumentParser()
@@ -82,7 +81,6 @@ def main():
             text_file.writelines(["%s " % item for item in item1])
             text_file.writelines("\n")
     print("Done")
-
 
 if __name__ == "__main__":
     main()
