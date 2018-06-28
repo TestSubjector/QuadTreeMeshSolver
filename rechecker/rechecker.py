@@ -54,7 +54,7 @@ def main():
     for idx, itm in enumerate(globaldata):
         if idx > 0 and getFlag(idx, globaldata) == 1:
             globaldata = fixYNegMain(idx, globaldata, 30, wallpoints, -1)
-
+            
     print("New")
 
     for idx, itm in enumerate(globaldata):
