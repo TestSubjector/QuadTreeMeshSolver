@@ -51,8 +51,11 @@ def main():
     interiortriangles = triangulate(interiorpts)
 
     print("Detected",len(wallpts),"geometry(s).")
+    print("Generated",len(interiortriangles),"triangle(s).")
     polydata = getPolygon(interiortriangles)
-    print("Generated",len(polydata),"triangle(s).")
+    print("Generating Wall Polygons for Aerochecks")
+    wallpts = generateWallPolygons(wallpts)
+    print("Wall Polygon Generation Complete")
     print("Running Connectivity Check")
     globaldata = connectivityCheck(globaldata)
     print("Connectivity Check Done")

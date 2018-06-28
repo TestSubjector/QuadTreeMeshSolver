@@ -15,9 +15,10 @@
         "conditionValueThreshold" : 30
     },
     "triangulate":{
-        "interiorThreshold":100,
-        "outerThreshold":100,
-        "wallThreshold":100
+        "interiorThreshold":30,
+        "wallandOuterThreshold":30,
+        "aggressiveMaxNeighbours":2,
+        "normalMaxNeighbours":1
     },
     "global":{
         "weightCondition":-2

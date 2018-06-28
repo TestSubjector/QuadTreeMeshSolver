@@ -1,4 +1,5 @@
 from core import *
+from config import getConfig
 
 def connectivityCheck(globaldata):
     for idx,itm in enumerate(globaldata):
@@ -21,18 +22,19 @@ def connectivityCheck(globaldata):
 
 def connectivityCheckWallandOuterPoint(index,globaldata):
     result = []
+    WALL_OUTER_THRESHOLD = int(getConfig()["triangulate"]["wallandOuterThreshold"])
     xpos = len(getDXPosPoints(index,globaldata))
     xneg = len(getDXNegPoints(index,globaldata))
     xposConditionValue = getWeightedInteriorConditionValueofXPos(index,globaldata)
     xnegConditionValue = getWeightedInteriorConditionValueofXNeg(index,globaldata)
-    if(xposConditionValue < 30):
+    if(xposConditionValue < WALL_OUTER_THRESHOLD):
         if(xpos < 3):
             result.append(2)
         else:
             result.append(0)
     else:
         result.append(1)
-    if(xnegConditionValue < 30):
+    if(xnegConditionValue < WALL_OUTER_THRESHOLD):
         if(xneg < 3):
             result.append(2)
         else:
@@ -45,6 +47,7 @@ def connectivityCheckWallandOuterPoint(index,globaldata):
 
 def connectivityCheckInteriorPoint(index,globaldata):
     result = []
+    INTERIOR_THRESHOLD = int(getConfig()["triangulate"]["interiorThreshold"])
     xpos = len(getDXPosPoints(index,globaldata))
     xneg = len(getDXNegPoints(index,globaldata))
     ypos = len(getDYPosPoints(index,globaldata))
@@ -53,28 +56,28 @@ def connectivityCheckInteriorPoint(index,globaldata):
     xnegConditionValue = getWeightedInteriorConditionValueofXNeg(index,globaldata)
     yposConditionValue = getWeightedInteriorConditionValueofYPos(index,globaldata)
     ynegConditionValue = getWeightedInteriorConditionValueofYNeg(index,globaldata)
-    if(xposConditionValue < 30):
+    if(xposConditionValue < INTERIOR_THRESHOLD):
         if(xpos < 3):
             result.append(2)
         else:
             result.append(0)
     else:
         result.append(1)
-    if(xnegConditionValue < 30):
+    if(xnegConditionValue < INTERIOR_THRESHOLD):
         if(xneg < 3):
             result.append(2)
         else:
             result.append(0)
     else:
         result.append(1)
-    if(yposConditionValue < 30):
+    if(yposConditionValue < INTERIOR_THRESHOLD):
         if(ypos < 3):
             result.append(2)
         else:
             result.append(0)
     else:
         result.append(1)
-    if(ynegConditionValue < 30):
+    if(ynegConditionValue < INTERIOR_THRESHOLD):
         if(yneg < 3):
             result.append(2)
         else:
