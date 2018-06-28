@@ -28,7 +28,7 @@ def main():
 
     print("Loading Data")
 
-    file1 = open(args.input or "preprocessorfile.txt", "r")
+    file1 = open(args.input or "preprocessorfile_rechecker.txt", "r")
     data = file1.read()
     globaldata = ["start"]
     adaptdata = []
@@ -39,7 +39,7 @@ def main():
     pseudopts = []
     globaldata_main = ["start"]
 
-    silentRemove("psuedopoints.txt")
+    silentRemove("pseudopoints.txt")
 
     for idx, itm in enumerate(splitdata):
         printProgressBar(
@@ -73,7 +73,7 @@ def main():
 
     print("Processed Pre-Processor File")
 
-    file2 = open(args.adapt or "sensor.dat")
+    file2 = open(args.adapt or "sensor_flag.dat")
     data2 = file2.read()
     data2 = re.sub(" +", " ", data2)
     data2 = data2.split("\n")

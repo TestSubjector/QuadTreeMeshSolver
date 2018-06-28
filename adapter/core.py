@@ -169,7 +169,7 @@ def adaptInflatedWallPolygon(globaldata, wallpoints, dist, interiorpts, pseudopt
         if inflatedwallpointGeo.contains(interiorpoint):
             pseudopts.append(itm)
     print("Found", len(pseudopts), "pseudo points!")
-    with open("psuedopoints.txt", "a") as text_file:
+    with open("pseudopoints.txt", "a") as text_file:
         for item1 in pseudopts:
             text_file.writelines(str(item1))
             text_file.writelines("\t\n")

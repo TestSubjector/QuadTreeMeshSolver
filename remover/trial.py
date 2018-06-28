@@ -10,6 +10,7 @@ def main():
     # Command Line Arguments
     parser = argparse.ArgumentParser()
     parser.add_argument("-i", "--input", const=str, nargs="?")
+    parser.add_argument("-r", "--removal", const=str, nargs="?")
     args = parser.parse_args()
 
     print("Loading Data")
@@ -32,7 +33,7 @@ def main():
         entry = itm
         globaldata.append(entry)
 
-    file2 = open("removal_points.txt", "r")
+    file2 = open(args.removal or "removal_points.txt", "r")
     removalFlags = file2.read()
     file2.close()
     removalFlags = removalFlags.replace("\t", " ")
