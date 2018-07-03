@@ -7,10 +7,7 @@ from core import *
 from connectivity import *
 from balance import *
 import numpy as np
-import matplotlib
-import matplotlib.pyplot as plt
-from matplotlib.collections import PatchCollection
-from matplotlib.patches import Polygon
+import temp
 
 def main():
     # Command Line Arguments
@@ -50,6 +47,8 @@ def main():
     interiorpts = MultiPoint(interiorpts)
     interiortriangles = triangulate(interiorpts)
 
+    # temp.writeNormalsToText(globaldata)
+
     print("Detected",len(wallpts),"geometry(s).")
     print("Generated",len(interiortriangles),"triangle(s).")
     polydata = getPolygon(interiortriangles)
@@ -69,6 +68,8 @@ def main():
     problempts = findDeletionPoints(globaldata)
     
     globaldata = cleanNeighbours(globaldata)
+
+    # temp.writeConditionValuesForWall(globaldata)
 
     globaldata.pop(0)
 
