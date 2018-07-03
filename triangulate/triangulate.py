@@ -58,18 +58,26 @@ def main():
     print("Running Connectivity Check")
     globaldata = connectivityCheck(globaldata)
     print("Connectivity Check Done")
-    print("Running Triangulation Balancing")
+    print("Running Triangulation Balancing using Nischay's Triangle Neighbours")
     globaldata = triangleBalance(globaldata,polydata,wallpts)
     print("Triangle Balancing Done")
     print("Running Connectivity Recheck")
     globaldata = connectivityCheck(globaldata)
     print("Connectivity Recheck Done")
+    print("Running Triangulation Balancing using Kumar's Neighbours (Left and Right Mode)")
+    globaldata = triangleBalance2(globaldata,polydata,wallpts)
+    print("Running Connectivity Recheck")
+    globaldata = connectivityCheck(globaldata)
+    print("Running Triangulation Balancing using Kumar's Neighbours (General)")
+    globaldata = triangleBalance3(globaldata,polydata,wallpts)
+    print("Running Connectivity Recheck")
+    globaldata = connectivityCheck(globaldata)
     print("Writing Deletion Points")
     problempts = findDeletionPoints(globaldata)
     
     globaldata = cleanNeighbours(globaldata)
 
-    # temp.writeConditionValuesForWall(globaldata)
+    temp.writeConditionValuesForWall(globaldata)
 
     globaldata.pop(0)
 
