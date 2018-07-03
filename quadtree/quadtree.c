@@ -107,8 +107,8 @@ static quadtree_point_t *find_(quadtree_node_t *node, double x, double y)
   }
   else if (quadtree_node_isempty(node))
   {
-    if (fabs((node->bounds->nw->x + node->bounds->se->x) / 2 - x) < FLT_EPSILON &&
-        fabs((node->bounds->nw->y + node->bounds->se->y) / 2 - y) < FLT_EPSILON)
+    if (fabs((node->bounds->nw->x + node->bounds->se->x) / 2 - x) < 0.0000000001 &&
+        fabs((node->bounds->nw->y + node->bounds->se->y) / 2 - y) < 0.0000000001)
     {
       return node;
     }
