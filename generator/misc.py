@@ -10,6 +10,7 @@ from logger import *
 import multiprocessing
 from multiprocessing.pool import ThreadPool
 import time
+import config
 
 
 def silentRemove(filename):
@@ -247,8 +248,10 @@ def generateReplacement(hashtable, globaldata):
     globalchunks = list(chunks(globaldata, coresavail))
     print("Found", coresavail, "available core(s).")
     print("BOOSTU BOOSTU BOOSTU")
+    MAX_CORES = int(config.getConfig()["generator"]["maxCoresForReplacement"])
+    print("Max Cores Allowed",MAX_CORES)
     t1 = time.clock()
-    pool = ThreadPool(coresavail)
+    pool = ThreadPool(min(MAX_CORES,coresavail))
     results = []
     for itm in globalchunks:
         results.append(pool.apply_async(replacer, args=(hashtable, itm)))

@@ -6,6 +6,7 @@ from progress import printProgressBar
 import copy
 from core import *
 import numpy as np
+import config
 
 
 def main():
@@ -54,7 +55,7 @@ def main():
 
     wallpts = getWallPointArray(globaldata[1:])
     for itm in wallpts:
-        inflatedWallPolygon(globaldata, itm, 5*10E-6, interiorpts)
+        inflatedWallPolygon(globaldata, itm, float(config.getConfig()["pseudowall"]["inflatedPolygonDistance"]), interiorpts)
     # print("Triangulating")
 
     # interiorpts = convertPointToShapelyPoint(convertIndexToPoints(interiorpts,globaldata))

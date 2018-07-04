@@ -1,7 +1,6 @@
 {
     "generator":{
-        "conditionValueThreshold": 15,
-        "flagSetConditionValueThreshold": 100
+        "maxCoresForReplacement": 4
     },
     "penrose":{
         "cutoffConditionValue":1E-3,
