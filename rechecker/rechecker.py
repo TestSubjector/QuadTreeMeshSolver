@@ -35,7 +35,7 @@ def main():
     wallpoints = getWallPointArray(globaldata[1:])
 
     print("Deleting Unneeded Wall Points (Except Left and Right Points)")
-    globaldata = cleanWallPoints(globaldata,wallpoints)
+    globaldata = cleanWallPoints(globaldata)
 
     for idx, itm in enumerate(globaldata):
         if idx > 0 and getFlag(idx, globaldata) == 1:

@@ -3,6 +3,7 @@ import math
 import shapely.geometry
 from shapely import wkt
 from shapely.ops import linemerge, unary_union, polygonize
+from progress import printProgressBar
 
 
 def appendNeighbours(index, globaldata, newpts):
@@ -507,37 +508,59 @@ def getWallPointArray(globaldata):
             startgeo = startgeo + 1
     return wallpointarray
 
+def getWallPointArrayIndex(globaldata):
+    wallpointarray = []
+    startgeo = 0
+    newstuff = []
+    for idx,itm in enumerate(globaldata):
+        geoflag = int(itm[6])
+        if(startgeo == geoflag and getFlag(idx,globaldata) == 0):
+            newstuff.append(idx)
+        if(startgeo != geoflag and getFlag(idx,globaldata) == 0):
+            newstuff = []
+            wallpointarray.append(newstuff)
+            newstuff.append(idx)
+            startgeo = startgeo + 1
+    return wallpointarray
+
+
 def getLeftandRightPoint(index,globaldata):
     index = int(index)
     ptdata = globaldata[index]
     leftpt = ptdata[3]
     rightpt = ptdata[4]
     nbhs = []
-    nbhs.append(getPointxy(leftpt,globaldata))
-    nbhs.append(getPointxy(rightpt,globaldata))
+    nbhs.append(leftpt)
+    nbhs.append(rightpt)
     return nbhs
 
 def replaceNeighbours(index,nbhs,globaldata):
     data = globaldata[index]
-    data = data[:10]
+    data = data[:11]
     data.append(len(nbhs))
     data = data + nbhs
     globaldata[index] = data
     return globaldata
 
-def cleanWallPoints(globaldata,wallpoints):
+def cleanWallPoints(globaldata):
+    wallpoints = getWallPointArrayIndex(globaldata[1:])
     wallpointsflat = [item for sublist in wallpoints for item in sublist]
     for idx,itm in enumerate(globaldata):
+        printProgressBar(
+            idx, len(globaldata) - 1, prefix="Progress:", suffix="Complete", length=50
+        )
         if(idx > 0):
             if(getFlag(idx,globaldata) == 0):
-                nbhcords =  convertIndexToPoints(getNeighbours(idx,globaldata),globaldata)
+                nbhcords =  getNeighbours(idx,globaldata)
                 leftright = getLeftandRightPoint(idx,globaldata)
-                finalcords = wallRemovedNeighbours(nbhcords,wallpoints)
+                nbhcords = list(map(int, nbhcords))
+                finalcords = wallRemovedNeighbours(nbhcords,wallpointsflat)
+                leftright = list(map(int,leftright))
                 finalcords = finalcords + leftright
-                finalcords = convertPointsToIndex(finalcords,globaldata)
                 globaldata = replaceNeighbours(idx,finalcords,globaldata)
     return globaldata
 
         
 def wallRemovedNeighbours(points,wallpoints):
-    return list(set(points)-set(wallpoints))
+    new_list = [fruit for fruit in points if fruit not in wallpoints]
+    return new_list
