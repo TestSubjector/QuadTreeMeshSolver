@@ -34,6 +34,13 @@ def getIndexFromPoint(pt, globaldata):
         if itm[1] == str(ptx) and itm[2] == str(pty):
             return int(itm[0])
 
+def convertPointsToIndex(pointarray,globaldata):
+    ptlist = []
+    for itm in pointarray:
+        idx = getIndexFromPoint(itm,globaldata)
+        ptlist.append(idx)
+    return ptlist
+
 
 def getPoint(index, globaldata):
     index = int(index)
@@ -499,3 +506,37 @@ def getWallPointArray(globaldata):
             newstuff.append(getPointxy(idx,globaldata))
             startgeo = startgeo + 1
     return wallpointarray
+
+def getLeftandRightPoint(index,globaldata):
+    index = int(index)
+    ptdata = globaldata[index]
+    leftpt = ptdata[3]
+    rightpt = ptdata[4]
+    nbhs = []
+    nbhs.append(getPointxy(leftpt,globaldata))
+    nbhs.append(getPointxy(rightpt,globaldata))
+    return nbhs
+
+def replaceNeighbours(index,nbhs,globaldata):
+    data = globaldata[index]
+    data = data[:10]
+    data.append(len(nbhs))
+    data = data + nbhs
+    globaldata[index] = data
+    return globaldata
+
+def cleanWallPoints(globaldata,wallpoints):
+    wallpointsflat = [item for sublist in wallpoints for item in sublist]
+    for idx,itm in enumerate(globaldata[1:]):
+        if(getFlag(idx,globaldata) == 0):
+            nbhcords =  convertIndexToPoints(getNeighbours(idx,globaldata),globaldata)
+            leftright = getLeftandRightPoint(idx,globaldata)
+            finalcords = wallRemovedNeighbours(nbhcords,wallpoints)
+            finalcords = finalcords + leftright
+            finalcords = convertPointsToIndex(finalcords,globaldata)
+            globaldata = replaceNeighbours(idx,finalcords,globaldata)
+    return globaldata
+
+        
+def wallRemovedNeighbours(points,wallpoints):
+    return list(set(points)-set(wallpoints))
