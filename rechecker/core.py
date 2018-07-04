@@ -338,8 +338,9 @@ def fixXPosMain(index, globaldata, threshold, wallpoints, control):
                         conditionSet.append([ptcheck, newcheck])
             if len(conditionSet) > 0:
                 conditionSet.sort(key=lambda x: x[1])
-                globaldata = appendNeighbours(index, globaldata, conditionSet[0][0])
-                fixXPosMain(index, globaldata, threshold, wallpoints, control)
+                if not isNonAeroDynamic(index,conditionSet[0][0],globaldata,wallpoints):
+                    globaldata = appendNeighbours(index, globaldata, conditionSet[0][0])
+                    fixXPosMain(index, globaldata, threshold, wallpoints, control)
             else:
                 None
     return globaldata
@@ -374,8 +375,9 @@ def fixXNegMain(index, globaldata, threshold, wallpoints, control):
                         conditionSet.append([ptcheck, newcheck])
             if len(conditionSet) > 0:
                 conditionSet.sort(key=lambda x: x[1])
-                globaldata = appendNeighbours(index, globaldata, conditionSet[0][0])
-                fixXNegMain(index, globaldata, threshold, wallpoints, control)
+                if not isNonAeroDynamic(index,conditionSet[0][0],globaldata,wallpoints):
+                    globaldata = appendNeighbours(index, globaldata, conditionSet[0][0])
+                    fixXNegMain(index, globaldata, threshold, wallpoints, control)
             else:
                 None
     return globaldata
@@ -410,8 +412,9 @@ def fixYPosMain(index, globaldata, threshold, wallpoints, control):
                         conditionSet.append([ptcheck, newcheck])
             if len(conditionSet) > 0:
                 conditionSet.sort(key=lambda x: x[1])
-                globaldata = appendNeighbours(index, globaldata, conditionSet[0][0])
-                fixYPosMain(index, globaldata, threshold, wallpoints, control)
+                if not isNonAeroDynamic(index,conditionSet[0][0],globaldata,wallpoints):
+                    globaldata = appendNeighbours(index, globaldata, conditionSet[0][0])
+                    fixYPosMain(index, globaldata, threshold, wallpoints, control)
             else:
                 None
     return globaldata
@@ -446,8 +449,9 @@ def fixYNegMain(index, globaldata, threshold, wallpoints, control):
                         conditionSet.append([ptcheck, newcheck])
             if len(conditionSet) > 0:
                 conditionSet.sort(key=lambda x: x[1])
-                globaldata = appendNeighbours(index, globaldata, conditionSet[0][0])
-                fixYNegMain(index, globaldata, threshold, wallpoints, control)
+                if not isNonAeroDynamic(index,conditionSet[0][0],globaldata,wallpoints):
+                    globaldata = appendNeighbours(index, globaldata, conditionSet[0][0])
+                    fixYNegMain(index, globaldata, threshold, wallpoints, control)
             else:
                 None
     return globaldata
