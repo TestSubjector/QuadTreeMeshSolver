@@ -527,14 +527,15 @@ def replaceNeighbours(index,nbhs,globaldata):
 
 def cleanWallPoints(globaldata,wallpoints):
     wallpointsflat = [item for sublist in wallpoints for item in sublist]
-    for idx,itm in enumerate(globaldata[1:]):
-        if(getFlag(idx,globaldata) == 0):
-            nbhcords =  convertIndexToPoints(getNeighbours(idx,globaldata),globaldata)
-            leftright = getLeftandRightPoint(idx,globaldata)
-            finalcords = wallRemovedNeighbours(nbhcords,wallpoints)
-            finalcords = finalcords + leftright
-            finalcords = convertPointsToIndex(finalcords,globaldata)
-            globaldata = replaceNeighbours(idx,finalcords,globaldata)
+    for idx,itm in enumerate(globaldata):
+        if(idx > 0):
+            if(getFlag(idx,globaldata) == 0):
+                nbhcords =  convertIndexToPoints(getNeighbours(idx,globaldata),globaldata)
+                leftright = getLeftandRightPoint(idx,globaldata)
+                finalcords = wallRemovedNeighbours(nbhcords,wallpoints)
+                finalcords = finalcords + leftright
+                finalcords = convertPointsToIndex(finalcords,globaldata)
+                globaldata = replaceNeighbours(idx,finalcords,globaldata)
     return globaldata
 
         
