@@ -4,6 +4,7 @@ import shapely.geometry
 from shapely import wkt
 from shapely.ops import linemerge, unary_union, polygonize
 from progress import printProgressBar
+import config
 
 
 def appendNeighbours(index, globaldata, newpts):
@@ -83,7 +84,7 @@ def weightedConditionValueForSetOfPoints(index, globaldata, points):
         d = math.sqrt(deltaX ** 2 + deltaY ** 2)
         if d == 0:
             continue
-        power = -2
+        power = int(config.getConfig()["global"]["weightCondition"])
         w = d ** power
         deltaSumXX = deltaSumXX + w * (deltaX ** 2)
         deltaSumYY = deltaSumYY + w * (deltaY ** 2)
