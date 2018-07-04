@@ -26,7 +26,7 @@ def writeConditionValuesForWall(globaldata):
                 xneg = core.getWeightedNormalConditionValueofWallXNeg(idx,globaldata)
                 xposcount = len(core.getDWallXPosPoints(idx,globaldata))
                 xnegcount = len(core.getDWallXNegPoints(idx,globaldata))
-                if(xpos > 100 or xneg > 100):
+                if(xpos > 100 or xneg > 100 or xposcount < 3 or xnegcount < 3):
                     with open("condition.dat", "a") as text_file:
                         text_file.writelines(str(x) + " " + str(y) + " " + str(xposcount) + " " + str(xpos) + " " + str(xnegcount) + " " + str(xneg))
                         text_file.writelines("\n")

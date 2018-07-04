@@ -2,7 +2,6 @@ import argparse
 from progress import printProgressBar
 from trialfunctions import *
 from neighbouradder import *
-from broadneighbouraddition import *
 import copy
 
 
@@ -45,7 +44,8 @@ def main():
     removalFlags = list(set(removalFlags))
 
     globaldata = cleanNeighbours(globaldata)
-    globaldata = addNewPoints(globaldata, removalFlags, 100, 1)
+    wallpoints = getWallPointArray(globaldata)
+    globaldata = addNewPoints(globaldata, removalFlags, 100, 1, wallpoints)
     globaldata = cleanNeighbours(globaldata)
 
     # The New Index (with bad points removed) || 5 --> 4

@@ -33,7 +33,7 @@ def pointsAffectedFromDeletion(index, globaldata):
     return pts, globaldata
 
 
-def fixXPos(index, globaldata, pts, flag):
+def fixXPos(index, globaldata, pts, flag, wallpoints):
     dxpos = getDXPosPoints(index, globaldata)
     # if(len(dxpos)<3):
     # print("Not enough points - adding")
@@ -62,16 +62,17 @@ def fixXPos(index, globaldata, pts, flag):
         if len(conditionSet) > 0:
             # print("Added")
             conditionSet.sort(key=lambda x: x[1])
-            globaldata = appendNeighbours(index, globaldata, conditionSet[0][0])
-            pts.remove(conditionSet[0][0])
-            fixXPos(index, globaldata, pts, flag)
+            if(not isNonAeroDynamic(index,conditionSet[0][0],globaldata,wallpoints)):
+                globaldata = appendNeighbours(index, globaldata, conditionSet[0][0])
+                pts.remove(conditionSet[0][0])
+                fixXPos(index, globaldata, pts, flag, wallpoints)
         else:
             None
             # print("No Points Available")
     return globaldata
 
 
-def fixXNeg(index, globaldata, pts, flag):
+def fixXNeg(index, globaldata, pts, flag, wallpoints):
     dxneg = getDXNegPoints(index, globaldata)
     # if(len(dxneg)<3):
     # print("Not enough points - adding")
@@ -100,16 +101,17 @@ def fixXNeg(index, globaldata, pts, flag):
         if len(conditionSet) > 0:
             # print("Added")
             conditionSet.sort(key=lambda x: x[1])
-            globaldata = appendNeighbours(index, globaldata, conditionSet[0][0])
-            pts.remove(conditionSet[0][0])
-            fixXNeg(index, globaldata, pts, flag)
+            if(not isNonAeroDynamic(index,conditionSet[0][0],globaldata,wallpoints)):
+                globaldata = appendNeighbours(index, globaldata, conditionSet[0][0])
+                pts.remove(conditionSet[0][0])
+                fixXNeg(index, globaldata, pts, flag, wallpoints)
         else:
             None
             # print("No Points Available")
     return globaldata
 
 
-def fixYPos(index, globaldata, pts, flag):
+def fixYPos(index, globaldata, pts, flag, wallpoints):
     dypos = getDXPosPoints(index, globaldata)
     # if(len(dypos)<3):
     # print("Not enough points - adding")
@@ -138,16 +140,17 @@ def fixYPos(index, globaldata, pts, flag):
         if len(conditionSet) > 0:
             # print("Added")
             conditionSet.sort(key=lambda x: x[1])
-            globaldata = appendNeighbours(index, globaldata, conditionSet[0][0])
-            pts.remove(conditionSet[0][0])
-            fixYPos(index, globaldata, pts, flag)
+            if(not isNonAeroDynamic(index,conditionSet[0][0],globaldata,wallpoints)):
+                globaldata = appendNeighbours(index, globaldata, conditionSet[0][0])
+                pts.remove(conditionSet[0][0])
+                fixYPos(index, globaldata, pts, flag, wallpoints)
         else:
             None
             # print("No Points Available")
     return globaldata
 
 
-def fixYNeg(index, globaldata, pts, flag):
+def fixYNeg(index, globaldata, pts, flag, wallpoints):
     dyneg = getDYNegPoints(index, globaldata)
     # if(len(dyneg)<3):
     # print("Not enough points - adding")
@@ -176,16 +179,17 @@ def fixYNeg(index, globaldata, pts, flag):
         if len(conditionSet) > 0:
             # print("Added")
             conditionSet.sort(key=lambda x: x[1])
-            globaldata = appendNeighbours(index, globaldata, conditionSet[0][0])
-            pts.remove(conditionSet[0][0])
-            fixYNeg(index, globaldata, pts, flag)
+            if(not isNonAeroDynamic(index,conditionSet[0][0],globaldata,wallpoints)):
+                globaldata = appendNeighbours(index, globaldata, conditionSet[0][0])
+                pts.remove(conditionSet[0][0])
+                fixYNeg(index, globaldata, pts, flag, wallpoints)
         else:
             None
             # print("No Points Available")
     return globaldata
 
 
-def addNewPoints(globaldata, problempts, threshold, flag):
+def addNewPoints(globaldata, problempts, threshold, flag, wallpoints):
     # print(problempts)
     for itm in problempts:
         problemptnbhs = getNeighbours(itm, globaldata)
@@ -213,7 +217,7 @@ def addNewPoints(globaldata, problempts, threshold, flag):
                     None
                     # print("No Point can be added")
                 else:
-                    globaldata = fixYPos(ptitm, globaldata, dyposfiltered, flag)
+                    globaldata = fixYPos(ptitm, globaldata, dyposfiltered, flag, wallpoints)
             if yneg > threshold or len(dSPointYNeg) <= 1:
                 _, _, _, _, dynegfiltered = deltaNeighbourCalculation(
                     convertIndexToPoints(problemptnbhs, globaldata),
@@ -225,7 +229,7 @@ def addNewPoints(globaldata, problempts, threshold, flag):
                     None
                     # print("No Point can be added")
                 else:
-                    globaldata = fixYNeg(ptitm, globaldata, dynegfiltered, flag)
+                    globaldata = fixYNeg(ptitm, globaldata, dynegfiltered, flag, wallpoints)
             if xpos > threshold or len(dSPointXPos) <= 1:
                 _, _, _, _, dxposfiltered = deltaNeighbourCalculation(
                     convertIndexToPoints(problemptnbhs, globaldata),
@@ -237,7 +241,7 @@ def addNewPoints(globaldata, problempts, threshold, flag):
                     None
                     # print("No Point can be added")
                 else:
-                    globaldata = fixXPos(ptitm, globaldata, dxposfiltered, flag)
+                    globaldata = fixXPos(ptitm, globaldata, dxposfiltered, flag, wallpoints)
             if xneg > threshold or len(dSPointXNeg) <= 1:
                 _, _, _, _, dxnegfiltered = deltaNeighbourCalculation(
                     convertIndexToPoints(problemptnbhs, globaldata),
@@ -256,7 +260,7 @@ def addNewPoints(globaldata, problempts, threshold, flag):
                 else:
                     # if(int(ptitm) == 1091):
                     #     print("Hello1")
-                    globaldata = fixXNeg(ptitm, globaldata, dxnegfiltered, flag)
+                    globaldata = fixXNeg(ptitm, globaldata, dxnegfiltered, flag, wallpoints)
     return globaldata
 
 
