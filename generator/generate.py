@@ -67,8 +67,8 @@ def main():
             text_file.writelines(["%s " % item for item in item1])
             text_file.writelines("\n")
 
-    log.log("Preprocessor File Generated")
-    log.log("Done")
+    log.info("Preprocessor File Generated")
+    log.info("Done")
 
 
 if __name__ == "__main__":
