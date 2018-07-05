@@ -6,6 +6,7 @@ from balance import *
 import temp
 import logging
 from shapely.geometry import MultiPoint
+from shapely.ops import triangulate
 log = logging.getLogger(__name__)
 log.addHandler(logging.StreamHandler())
 
