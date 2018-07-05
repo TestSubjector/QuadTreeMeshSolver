@@ -4,6 +4,7 @@ from progress import printProgressBar
 import shapely.geometry
 from shapely import wkt
 from shapely.ops import linemerge, unary_union, polygonize
+import config
 
 def appendNeighbours(index, globaldata, newpts):
     pt = getIndexFromPoint(newpts, globaldata)
@@ -84,7 +85,7 @@ def weightedConditionValueForSetOfPoints(index, globaldata, points):
         d = math.sqrt(deltaX ** 2 + deltaY ** 2)
         if d == 0:
             continue
-        power = -2
+        power = int(config.getConfig()["global"]["weightCondition"])
         w = d ** power
         deltaSumXX = deltaSumXX + w * (deltaX ** 2)
         deltaSumYY = deltaSumYY + w * (deltaY ** 2)
@@ -108,6 +109,101 @@ def deltaX(xcord, orgxcord):
 def deltaY(ycord, orgycord):
     return float(orgycord - ycord)
 
+def normalCalculation(index, globaldata, wallpoint):
+    nx = 0
+    ny = 0
+    cordx = float(globaldata[index][1])
+    cordy = float(globaldata[index][2])
+    pointdata = globaldata[index]
+    leftpoint = getPointxy(pointdata[3], globaldata)
+    rightpoint = getPointxy(pointdata[4], globaldata)
+    leftpointx = float(leftpoint.split(",")[0])
+    leftpointy = float(leftpoint.split(",")[1])
+    rightpointx = float(rightpoint.split(",")[0])
+    rightpointy = float(rightpoint.split(",")[1])
+    if not wallpoint:
+        nx1 = leftpointy - cordy
+        nx2 = cordy - rightpointy
+        ny1 = leftpointx - cordx
+        ny2 = cordx - rightpointx
+    else:
+        nx1 = cordy - leftpointy
+        nx2 = rightpointy - cordy
+        ny1 = cordx - leftpointx
+        ny2 = rightpointx - cordx
+    nx = (nx1 + nx2) / 2
+    ny = (ny1 + ny2) / 2
+    det = math.sqrt((nx * nx) + (ny * ny))
+    if not wallpoint:
+        nx = nx / det
+    else:
+        nx = (-nx) / det
+    ny = ny / det
+    return nx, ny
+
+def weightedConditionValueForSetOfPointsNormal(index, globaldata, nbh):
+    nx,ny = normalCalculation(index,globaldata,True)
+    mainptx = float(globaldata[index][1])
+    mainpty = float(globaldata[index][2])
+    nx = float(nx)
+    ny = float(ny)
+    tx = float(ny)
+    ty = -float(nx)
+    deltaSumS = 0
+    deltaSumN = 0
+    deltaSumSN = 0
+    data = []
+    for nbhitem in nbh:
+        nbhitemX = float(nbhitem.split(",")[0])
+        nbhitemY = float(nbhitem.split(",")[1])
+        deltaS = (tx * (nbhitemX - mainptx)) + (ty * (nbhitemY - mainpty))
+        deltaN = (nx * (nbhitemX - mainptx)) + (ny * (nbhitemY - mainpty))
+        d = math.sqrt(deltaS ** 2 + deltaN ** 2)
+        if d == 0:
+            continue
+        power = int(config.getConfig()["global"]["weightCondition"])
+        w = d ** power
+        deltaSumS = deltaSumS + w * (deltaS) ** 2
+        deltaSumN = deltaSumN + w * (deltaN) ** 2
+        deltaSumSN = deltaSumSN + w * (deltaS) * (deltaN)
+    data.append(deltaSumS)
+    data.append(deltaSumSN)
+    data.append(deltaSumSN)
+    data.append(deltaSumN)
+    random = np.array(data)
+    shape = (2, 2)
+    random = random.reshape(shape)
+    s = np.linalg.svd(random, full_matrices=False, compute_uv=False)
+    s = max(s) / min(s)
+    return s
+
+def deltaWallNeighbourCalculation(
+    index, currentneighbours, nx, ny, giveposdelta, globaldata
+):
+    deltaspos, deltasneg, deltaszero = 0, 0, 0
+    nx = float(nx)
+    ny = float(ny)
+    tx = float(ny)
+    ty = -float(nx)
+    xcord = float(globaldata[index][1])
+    ycord = float(globaldata[index][2])
+    output = []
+    for item in currentneighbours:
+        itemx = float(item.split(",")[0])
+        itemy = float(item.split(",")[1])
+        deltas = (tx * (itemx - xcord)) + (ty * (itemy - ycord))
+        if deltas <= 0:
+            if giveposdelta:
+                output.append(item)
+            deltaspos = deltaspos + 1
+        if deltas >= 0:
+            if not giveposdelta:
+                output.append(item)
+            deltasneg = deltasneg + 1
+        if deltas == 0:
+            deltaszero = deltaszero + 1
+    return deltaspos, deltasneg, deltaszero, output
+
 
 def deltaNeighbourCalculation(currentneighbours, currentcord, isxcord, isnegative):
     xpos, xneg, ypos, yneg = 0, 0, 0, 0
@@ -130,6 +226,24 @@ def deltaNeighbourCalculation(currentneighbours, currentcord, isxcord, isnegativ
                 temp.append(item)
             yneg = yneg + 1
     return xpos, ypos, xneg, yneg, temp
+
+def getWeightedNormalConditionValueofWallXPos(index, globaldata):
+    nbhs = convertIndexToPoints(getNeighbours(index, globaldata), globaldata)
+    nx,ny = normalCalculation(index,globaldata,True)
+    _, _, _, mypoints = deltaWallNeighbourCalculation(index,
+        nbhs,nx,ny, True, globaldata
+    )
+    return weightedConditionValueForSetOfPointsNormal(index, globaldata, mypoints)
+
+
+def getWeightedNormalConditionValueofWallXNeg(index, globaldata):
+    nbhs = convertIndexToPoints(getNeighbours(index, globaldata), globaldata)
+    nx,ny = normalCalculation(index,globaldata,True)
+    _, _, _, mypoints = deltaWallNeighbourCalculation(index,
+        nbhs,nx,ny, False, globaldata
+    )
+    return weightedConditionValueForSetOfPointsNormal(index, globaldata, mypoints)
+
 
 
 def getWeightedInteriorConditionValueofXPos(index, globaldata):
@@ -178,6 +292,24 @@ def getDXNegPoints(index, globaldata):
         nbhs, getPointxy(index, globaldata), True, True
     )
     return mypoints
+
+def getDWallXPosPoints(index, globaldata):
+    nbhs = convertIndexToPoints(getNeighbours(index, globaldata), globaldata)
+    nx,ny = normalCalculation(index,globaldata,True)
+    _, _, _, mypoints = deltaWallNeighbourCalculation(index,
+        nbhs,nx,ny, True, globaldata
+    )
+    return mypoints
+
+
+def getDWallXNegPoints(index, globaldata):
+    nbhs = convertIndexToPoints(getNeighbours(index, globaldata), globaldata)
+    nx,ny = normalCalculation(index,globaldata,True)
+    _, _, _, mypoints = deltaWallNeighbourCalculation(index,
+        nbhs,nx,ny, False, globaldata
+    )
+    return mypoints
+
 
 
 def getDYPosPoints(index, globaldata):
@@ -258,8 +390,25 @@ def getDYNegPointsFromSetRaw(index, globaldata, points):
     )
     return mypoints
 
+def getDWallXPosPointsFromSetRaw(index, globaldata, points):
+    nbhs = points
+    nx,ny = normalCalculation(index,globaldata,True)
+    _, _, _, mypoints = deltaWallNeighbourCalculation(index,
+        nbhs,nx,ny, True, globaldata
+    )
+    return mypoints
 
-def getConditionNumber(index, globaldata, threshold):
+
+def getDWallXNegPointsFromSetRaw(index, globaldata, points):
+    nbhs = points
+    nx,ny = normalCalculation(index,globaldata,True)
+    _, _, _, mypoints = deltaWallNeighbourCalculation(index,
+        nbhs,nx,ny, False, globaldata
+    )
+    return mypoints
+
+
+def checkConditionNumber(index, globaldata, threshold):
     xpos = getWeightedInteriorConditionValueofXPos(index, globaldata)
     xneg = getWeightedInteriorConditionValueofXNeg(index, globaldata)
     ypos = getWeightedInteriorConditionValueofYPos(index, globaldata)
@@ -365,12 +514,32 @@ def getAeroPointsFromSet(index,cordlist,globaldata,wallpoints):
             finallist.append(itm)
     return finallist
 
+def setFlags(index,globaldata,flags):
+    globaldata[index][7] = flags[0]
+    globaldata[index][8] = flags[1]
+    globaldata[index][9] = flags[2]
+    globaldata[index][10] = flags[3]
+    return globaldata
+
+def getFlags(index,globaldata):
+    flagxpos = globaldata[index][7]
+    flagxneg = globaldata[index][8]
+    flagypos = globaldata[index][9]
+    flagyneg = globaldata[index][10]
+    return flagxpos,flagxneg,flagypos,flagyneg
+
 def getConditionNumber(index, globaldata):
     xpos = getWeightedInteriorConditionValueofXPos(index, globaldata)
     xneg = getWeightedInteriorConditionValueofXNeg(index, globaldata)
     ypos = getWeightedInteriorConditionValueofYPos(index, globaldata)
     yneg = getWeightedInteriorConditionValueofYNeg(index, globaldata)
     result = {"xpos":xpos,"xneg":xneg,"ypos":ypos,"yneg":yneg}
+    return result
+
+def getConditionNumberNormal(index,globaldata):
+    xpos = getWeightedNormalConditionValueofWallXPos(index,globaldata)
+    xneg = getWeightedNormalConditionValueofWallXPos(index,globaldata)
+    result = {"xpos":xpos,"xneg":xneg,"ypos":"NA","yneg":"NA"}
     return result
 
 def fillNeighboursIndex(index,globaldata,nbhs):
