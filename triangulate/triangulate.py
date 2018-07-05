@@ -5,6 +5,7 @@ from connectivity import *
 from balance import *
 import temp
 import logging
+from shapely.geometry import MultiPoint
 log = logging.getLogger(__name__)
 log.addHandler(logging.StreamHandler())
 
