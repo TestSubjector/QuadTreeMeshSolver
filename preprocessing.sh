@@ -20,13 +20,17 @@ cp -rlf ./preprocessorfile.txt ./files/preprocessorfile.txt
 rm ./output.txt
 rm ./preprocessorfile.txt
 
+python3 ./report/pre.py -i ./files/preprocessorfile.txt
+cp -rlf ./preprocessorfile_cleaned.txt ./files/preprocessorfile_cleaned.txt
+rm ./preprocessorfile_cleaned.txt
+
 # PseudoWall
-python3 ./pseudowall/pwall.py -i ./files/preprocessorfile.txt
+python3 ./pseudowall/pwall.py -i ./files/preprocessorfile_cleaned.txt
 cp -rlf ./removal_points.txt ./files/pseudowall_removal_points.txt
 rm ./removal_points.txt
 
 # PseudoWall Removal
-python3 ./remover/trial.py -i ./files/preprocessorfile.txt -r ./files/pseudowall_removal_points.txt
+python3 ./remover/trial.py -i ./files/preprocessorfile_cleaned.txt -r ./files/pseudowall_removal_points.txt
 rm ./removal_points2.txt
 cp -rlf ./preprocessorfile_pointremoval.txt ./files/preprocessorfile_pseudopointremoval.txt
 rm ./preprocessorfile_pointremoval.txt
