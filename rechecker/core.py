@@ -5,6 +5,9 @@ from shapely import wkt
 from shapely.ops import linemerge, unary_union, polygonize
 from progress import printProgressBar
 import config
+import logging
+log = logging.getLogger(__name__)
+log.addHandler(logging.StreamHandler())
 
 
 def appendNeighbours(index, globaldata, newpts):
@@ -286,7 +289,7 @@ def checkConditionNumberWall(index, globaldata, threshold):
 
 
 def cleanNeighbours(globaldata):
-    print("Beginning Duplicate Neighbour Detection")
+    log.info("Beginning Duplicate Neighbour Detection")
     for i in range(len(globaldata)):
         if i == 0:
             continue
@@ -305,7 +308,7 @@ def cleanNeighbours(globaldata):
 
         noneighours = len(cordneighbours)
         globaldata[i] = globaldata[i][:11] + [noneighours] + list(cordneighbours)
-    print("Duplicate Neighbours Removed")
+    log.info("Duplicate Neighbours Removed")
     return globaldata
 
 

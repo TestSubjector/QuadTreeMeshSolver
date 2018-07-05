@@ -2,6 +2,9 @@ import argparse
 from progress import printProgressBar
 from core import *
 import copy
+import logging
+log = logging.getLogger(__name__)
+log.addHandler(logging.StreamHandler())
 
 
 def main():
@@ -10,7 +13,9 @@ def main():
     parser.add_argument("-i", "--input", const=str, nargs="?")
     args = parser.parse_args()
 
-    print("Loading Data")
+    log.info("Loading Data")
+    log.debug("Arguments")
+    log.debug(args)
 
     file1 = open(args.input or "preprocessorfile_pointremoval.txt", "r")
     data = file1.read()
@@ -18,8 +23,8 @@ def main():
     splitdata = data.split("\n")
     splitdata = splitdata[:-1]
 
-    print("Processed Pre-Processor File")
-    print("Converting to readable format")
+    log.info("Processed Pre-Processor File")
+    log.info("Converting to readable format")
 
     for idx, itm in enumerate(splitdata):
         printProgressBar(
@@ -58,7 +63,7 @@ def main():
         if idx > 0 and getFlag(idx, globaldata) == 1:
             globaldata = fixYNegMain(idx, globaldata, 30, wallpoints, -1)
             
-    print("New")
+    log.info("New")
 
     for idx, itm in enumerate(globaldata):
         if idx > 0 and getFlag(idx, globaldata) == 1:
@@ -79,8 +84,35 @@ def main():
             text_file.writelines(["%s " % item for item in item1])
             text_file.writelines("\n")
 
-    print("Data Converted")
+    log.info("Data Converted")
 
 
 if __name__ == "__main__":
+    import logging
+    import os
+    import json
+    import logging.config
+    import config
+
+    default_path='logging.json'
+    path = default_path
+    level = config.getConfig()["global"]["logger"]["level"]
+
+    if level == "DEBUG":
+        level = logging.DEBUG
+    elif level == "INFO":
+        level = logging.INFO
+    elif level == "WARNING":
+        level = logging.WARNING
+    elif level == "ERROR":
+        level = logging.ERROR
+    else:
+        level = logging.WARNING
+
+    if os.path.exists(path):
+        with open(path, 'rt') as f:
+            config = json.load(f)
+        logging.config.dictConfig(config)
+    else:
+        logging.basicConfig(level=level,filename=config.getConfig()["global"]["logger"]["logPath"],format="%(asctime)s %(name)s %(levelname)s: %(message)s", datefmt="%m/%d/%Y %I:%M:%S %p")
     main()

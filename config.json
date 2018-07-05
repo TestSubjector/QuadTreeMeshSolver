@@ -20,6 +20,10 @@
         "normalMaxNeighbours":1
     },
     "global":{
-        "weightCondition":-2
+        "weightCondition":-2,
+        "logger":{
+            "level":"INFO",
+            "logPath":"log.log"
+        }
     }
 }

@@ -5,6 +5,9 @@ import shapely.geometry
 from shapely import wkt
 from shapely.ops import linemerge, unary_union, polygonize
 import config
+import logging
+log = logging.getLogger(__name__)
+log.addHandler(logging.StreamHandler())
 
 def appendNeighbours(index, globaldata, newpts):
     pt = getIndexFromPoint(newpts, globaldata)

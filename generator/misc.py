@@ -11,6 +11,9 @@ import multiprocessing
 from multiprocessing.pool import ThreadPool
 import time
 import config
+import logging
+log = logging.getLogger(__name__)
+log.addHandler(logging.StreamHandler())
 
 
 def silentRemove(filename):
@@ -22,7 +25,7 @@ def silentRemove(filename):
 
 
 def cleanNeighbours(globaldata):  # Verified
-    print("Beginning Duplicate Neighbour Detection")
+    log.info("Beginning Duplicate Neighbour Detection")
     for i in range(len(globaldata)):
         # printProgressBar(i, len(globaldata) - 1, prefix = 'Progress:', suffix = 'Complete', length = 50)
         noneighours = int(globaldata[i][11])  # Number of neighbours
@@ -41,7 +44,7 @@ def cleanNeighbours(globaldata):  # Verified
         #     for item1 in globaldata:
         #         text_file.writelines(["%s " % item for item in item1])
         #         text_file.writelines("\n")
-    print("Duplicate Neighbours Removed")
+    log.info("Duplicate Neighbours Removed")
     return globaldata
 
 
@@ -235,7 +238,7 @@ def appendNeighbours(neighbours, index, globaldata):
     nbhcount = nbhcount + len(neighbours)
     globaldata[index][11] = nbhcount
     globaldata[index] = globaldata[index][:12] + nbhs
-    return "Done"
+    return globaldata
 
 
 def cleanWallPoints(neighbours, wallpoint):
@@ -243,13 +246,13 @@ def cleanWallPoints(neighbours, wallpoint):
 
 
 def generateReplacement(hashtable, globaldata):
-    print("Beginning Replacement")
+    log.info("Beginning Replacement")
     coresavail = multiprocessing.cpu_count()
     globalchunks = list(chunks(globaldata, coresavail))
-    print("Found", coresavail, "available core(s).")
-    print("BOOSTU BOOSTU BOOSTU")
+    log.info("Found " + str(coresavail) + " available core(s).")
+    log.info("BOOSTU BOOSTU BOOSTU")
     MAX_CORES = int(config.getConfig()["generator"]["maxCoresForReplacement"])
-    print("Max Cores Allowed",MAX_CORES)
+    log.info("Max Cores Allowed " + str(MAX_CORES))
     t1 = time.clock()
     pool = ThreadPool(min(MAX_CORES,coresavail))
     results = []
@@ -264,8 +267,8 @@ def generateReplacement(hashtable, globaldata):
         stuff = stuff + itm
     globaldata = stuff
     t2 = time.clock()
-    print(t2 - t1)
-    print("Replacement Done")
+    log.info(t2 - t1)
+    log.info("Replacement Done")
     return globaldata
 
 

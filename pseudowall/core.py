@@ -3,6 +3,9 @@ import math
 import os
 import errno
 from shapely.geometry import Polygon, Point
+import logging
+log = logging.getLogger(__name__)
+log.addHandler(logging.StreamHandler())
 
 def appendNeighbours(index, globaldata, newpts):
     pt = getIndexFromPoint(newpts, globaldata)
@@ -99,7 +102,7 @@ def normalCalculation(index, globaldata, wallpoint):
 
 
 def cleanNeighbours(globaldata):
-    print("Beginning Duplicate Neighbour Detection")
+    log.info("Beginning Duplicate Neighbour Detection")
     for i in range(len(globaldata)):
         if i == 0:
             continue
@@ -115,7 +118,7 @@ def cleanNeighbours(globaldata):
 
         noneighours = len(cordneighbours)
         globaldata[i] = globaldata[i][:11] + [noneighours] + list(cordneighbours)
-    print("Duplicate Neighbours Removed")
+    log.info("Duplicate Neighbours Removed")
     return globaldata
 
 
@@ -129,7 +132,7 @@ def convertPointToShapelyPoint(pointarry):
 
 
 def inflatedWallPolygon(globaldata, wallpoints, dist, interiorpts):
-    print("Creating Inflated Wall Point")
+    log.info("Creating Inflated Wall Point")
     inflatedWall = []
     for itm in wallpoints:
         idx = getIndexFromPoint(itm,globaldata)
@@ -149,7 +152,7 @@ def inflatedWallPolygon(globaldata, wallpoints, dist, interiorpts):
     inflatedWall.pop(0)
     inflatedWall.insert(0, newpt)
     inflatedwallpointGeo = Polygon(inflatedWall)
-    print("Checking for Pseudo Points")
+    log.info("Checking for Pseudo Points")
     # fig, ax = plt.subplots()
     # x1,y1 = wallpointGeo.exterior.xy
     # x2,y2 = inflatedwallpointGeo.exterior.xy
@@ -169,7 +172,7 @@ def inflatedWallPolygon(globaldata, wallpoints, dist, interiorpts):
         interiorpoint = Point(itmval)
         if inflatedwallpointGeo.contains(interiorpoint):
             pseudopts.append(itm)
-    print("Found", len(pseudopts), "pseudo points!")
+    log.info("Found " + str(len(pseudopts)) + " pseudo points!")
     with open("removal_points.txt", "a") as text_file:
         for item1 in pseudopts:
             text_file.writelines(str(item1))

@@ -1,8 +1,11 @@
 # from progress import *
+import logging
+log = logging.getLogger(__name__)
+log.addHandler(logging.StreamHandler())
 
 
 def loadWall(geometrydata,hashtable,globaldata,idf):
-    print("Beginning Wall Point Processing")
+    log.info("Beginning Wall Point Processing")
     wallpoint = []
 
     index = len(hashtable)
@@ -64,12 +67,12 @@ def loadWall(geometrydata,hashtable,globaldata,idf):
             walldata.insert(10, 0)
             globaldata.append(walldata)
             index += 1
-    print("Wall Point Processed")
+    log.info("Wall Point Processed")
     return hashtable, wallpoint, globaldata
 
 
 def loadInterior(data, hashtable, globaldata, index):
-    print("Beginning Interior Point and Wall Point Neighbour Processing")
+    log.info("Beginning Interior Point and Wall Point Neighbour Processing")
     for i in range(len(data)):
         # printProgressBar(i, len(data) - 1, prefix = 'Progress:', suffix = 'Complete', length = 50)
         cleandata = str(data[i]).split(" ")
@@ -158,5 +161,5 @@ def loadInterior(data, hashtable, globaldata, index):
                 cleandata.insert(0, index)
                 index += 1
                 globaldata.append(cleandata)
-    print("Interior Point and Wall Point Neighbour Processed")
+    log.info("Interior Point and Wall Point Neighbour Processed")
     return hashtable, globaldata

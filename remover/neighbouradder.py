@@ -1,4 +1,7 @@
 from trialfunctions import *
+import logging
+log = logging.getLogger(__name__)
+log.addHandler(logging.StreamHandler())
 
 
 def getIndexFromPoint(pt, globaldata):
@@ -265,7 +268,7 @@ def addNewPoints(globaldata, problempts, threshold, flag, wallpoints):
 
 
 def cleanNeighbours(globaldata):  # Verified
-    print("Beginning Duplicate Neighbour Detection")
+    log.info("Beginning Duplicate Neighbour Detection")
     for i in range(len(globaldata)):
         # printProgressBar(i, len(globaldata) - 1, prefix = 'Progress:', suffix = 'Complete', length = 50)
         if i == 0:
@@ -287,5 +290,5 @@ def cleanNeighbours(globaldata):  # Verified
         #     for item1 in globaldata:
         #         text_file.writelines(["%s " % item for item in item1])
         #         text_file.writelines("\n")
-    print("Duplicate Neighbours Removed")
+    log.info("Duplicate Neighbours Removed")
     return globaldata
