@@ -14,7 +14,6 @@ rm ./neighbour.txt
 
 # Indexing 
 python3 ./generator/generate.py -n ./files/neighbour.txt -w ./generator/twoshape/airfoil ./generator/twoshape/flap
-rm ./log.txt
 cp -rlf ./output.txt ./files/output.txt
 cp -rlf ./preprocessorfile.txt ./files/preprocessorfile.txt
 rm ./output.txt
