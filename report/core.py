@@ -538,7 +538,7 @@ def getConditionNumber(index, globaldata):
 
 def getConditionNumberNormal(index,globaldata):
     xpos = getWeightedNormalConditionValueofWallXPos(index,globaldata)
-    xneg = getWeightedNormalConditionValueofWallXPos(index,globaldata)
+    xneg = getWeightedNormalConditionValueofWallXNeg(index,globaldata)
     result = {"xpos":xpos,"xneg":xneg,"ypos":"NA","yneg":"NA"}
     return result
 
