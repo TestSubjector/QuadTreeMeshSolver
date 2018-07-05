@@ -1,6 +1,9 @@
 import core
 from progress import printProgressBar
 import argparse
+import logging
+log = logging.getLogger(__name__)
+log.addHandler(logging.StreamHandler())
 
 def main():
     # Command Line Arguments
@@ -8,7 +11,7 @@ def main():
     parser.add_argument("-i", "--input", const=str, nargs="?")
     args = parser.parse_args()
 
-    print("Loading Data")
+    log.info("Loading Data")
 
     file1 = open(args.input or "preprocessorfile.txt", "r")
     data = file1.read()
@@ -16,8 +19,8 @@ def main():
     splitdata = data.split("\n")
     splitdata = splitdata[:-1]
 
-    print("Processed Pre-Processor File")
-    print("Converting to readable format")
+    log.info("Processed Pre-Processor File")
+    log.info("Converting to readable format")
 
     for idx, itm in enumerate(splitdata):
         printProgressBar(
@@ -32,7 +35,7 @@ def main():
     wallpoints = core.getWallPointArray(globaldata)
     wallpointsData = core.generateWallPolygons(wallpoints)
 
-    print("Running Non Aero Checks")
+    log.info("Running Non Aero Checks")
 
     for idx in range(1,len(globaldata)):
         printProgressBar(idx, len(globaldata) - 1, prefix="Progress:", suffix="Complete", length=50)    
@@ -45,14 +48,44 @@ def main():
         finalnbhs = list(set(nbhs) - set(nonaeronbhs))
         if(len(nbhs) != len(finalnbhs)):
             globaldata = core.fillNeighboursIndex(idx,globaldata,finalnbhs)
+            log.warn("Point %s has a non aero point with index %s",idx,itm)
 
     globaldata.pop(0)
+
+    log.info("Writing file to disk")
 
     with open("preprocessorfile_cleaned.txt", "w") as text_file:
         for item1 in globaldata:
             text_file.writelines(["%s " % item for item in item1])
             text_file.writelines("\n")
-    print("Done")
+    log.info("Done")
 
 if __name__ == "__main__":
+    import logging
+    import os
+    import json
+    import logging.config
+    import config
+
+    default_path='logging.json'
+    path = default_path
+    level = config.getConfig()["global"]["logger"]["level"]
+
+    if level == "DEBUG":
+        level = logging.DEBUG
+    elif level == "INFO":
+        level = logging.INFO
+    elif level == "WARNING":
+        level = logging.WARNING
+    elif level == "ERROR":
+        level = logging.ERROR
+    else:
+        level = logging.WARNING
+
+    if os.path.exists(path):
+        with open(path, 'rt') as f:
+            config = json.load(f)
+        logging.config.dictConfig(config)
+    else:
+        logging.basicConfig(level=level,filename=config.getConfig()["global"]["logger"]["logPath"],format="%(asctime)s %(name)s %(levelname)s: %(message)s", datefmt="%m/%d/%Y %I:%M:%S %p")
     main()
