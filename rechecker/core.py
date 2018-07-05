@@ -503,14 +503,15 @@ def getWallPointArray(globaldata):
     startgeo = 0
     newstuff = []
     for idx,itm in enumerate(globaldata):
-        geoflag = int(itm[6])
-        if(startgeo == geoflag and getFlag(idx,globaldata) == 0):
-            newstuff.append(getPointxy(idx,globaldata))
-        if(startgeo != geoflag and getFlag(idx,globaldata) == 0):
-            newstuff = []
-            wallpointarray.append(newstuff)
-            newstuff.append(getPointxy(idx,globaldata))
-            startgeo = startgeo + 1
+        if idx > 0:
+            geoflag = int(itm[6])
+            if(startgeo == geoflag and getFlag(idx,globaldata) == 0):
+                newstuff.append(getPointxy(idx,globaldata))
+            if(startgeo != geoflag and getFlag(idx,globaldata) == 0):
+                newstuff = []
+                wallpointarray.append(newstuff)
+                newstuff.append(getPointxy(idx,globaldata))
+                startgeo = startgeo + 1
     return wallpointarray
 
 def getWallPointArrayIndex(globaldata):
@@ -518,14 +519,15 @@ def getWallPointArrayIndex(globaldata):
     startgeo = 0
     newstuff = []
     for idx,itm in enumerate(globaldata):
-        geoflag = int(itm[6])
-        if(startgeo == geoflag and getFlag(idx,globaldata) == 0):
-            newstuff.append(idx)
-        if(startgeo != geoflag and getFlag(idx,globaldata) == 0):
-            newstuff = []
-            wallpointarray.append(newstuff)
-            newstuff.append(idx)
-            startgeo = startgeo + 1
+        if idx > 0:
+            geoflag = int(itm[6])
+            if(startgeo == geoflag and getFlag(idx,globaldata) == 0):
+                newstuff.append(idx)
+            if(startgeo != geoflag and getFlag(idx,globaldata) == 0):
+                newstuff = []
+                wallpointarray.append(newstuff)
+                newstuff.append(idx)
+                startgeo = startgeo + 1
     return wallpointarray
 
 
@@ -548,7 +550,7 @@ def replaceNeighbours(index,nbhs,globaldata):
     return globaldata
 
 def cleanWallPoints(globaldata):
-    wallpoints = getWallPointArrayIndex(globaldata[1:])
+    wallpoints = getWallPointArrayIndex(globaldata)
     wallpointsflat = [item for sublist in wallpoints for item in sublist]
     for idx,itm in enumerate(globaldata):
         printProgressBar(
@@ -561,7 +563,8 @@ def cleanWallPoints(globaldata):
                 nbhcords = list(map(int, nbhcords))
                 finalcords = wallRemovedNeighbours(nbhcords,wallpointsflat)
                 leftright = list(map(int,leftright))
-                finalcords = finalcords + leftright
+                if idx not in getWallEndPoints(globaldata):
+                    finalcords = finalcords + leftright
                 globaldata = replaceNeighbours(idx,finalcords,globaldata)
     return globaldata
 
@@ -569,3 +572,10 @@ def cleanWallPoints(globaldata):
 def wallRemovedNeighbours(points,wallpoints):
     new_list = [fruit for fruit in points if fruit not in wallpoints]
     return new_list
+
+def getWallEndPoints(globaldata):
+    wallIndex = getWallPointArrayIndex(globaldata)
+    endPoints = []
+    for itm in wallIndex:
+        endPoints.append(int(itm[-1]))
+    return endPoints

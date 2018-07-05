@@ -32,7 +32,7 @@ def main():
 
     globaldata = cleanNeighbours(globaldata)
 
-    wallpoints = getWallPointArray(globaldata[1:])
+    wallpoints = getWallPointArray(globaldata)
 
     print("Deleting Unneeded Wall Points (Except Left and Right Points)")
     globaldata = cleanWallPoints(globaldata)

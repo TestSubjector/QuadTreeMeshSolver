@@ -465,14 +465,15 @@ def getWallPointArray(globaldata):
     startgeo = 0
     newstuff = []
     for idx,itm in enumerate(globaldata):
-        geoflag = int(itm[6])
-        if(startgeo == geoflag and getFlag(idx,globaldata) == 0):
-            newstuff.append(getPointxy(idx,globaldata))
-        if(startgeo != geoflag and getFlag(idx,globaldata) == 0):
-            newstuff = []
-            wallpointarray.append(newstuff)
-            newstuff.append(getPointxy(idx,globaldata))
-            startgeo = startgeo + 1
+        if idx > 0:
+            geoflag = int(itm[6])
+            if(startgeo == geoflag and getFlag(idx,globaldata) == 0):
+                newstuff.append(getPointxy(idx,globaldata))
+            if(startgeo != geoflag and getFlag(idx,globaldata) == 0):
+                newstuff = []
+                wallpointarray.append(newstuff)
+                newstuff.append(getPointxy(idx,globaldata))
+                startgeo = startgeo + 1
     return wallpointarray
 
 def isNonAeroDynamic(index, cordpt, globaldata, wallPolygonData):

@@ -83,12 +83,14 @@ def triangleBalance2(globaldata,polygonData,wallpoints):
             if flag == 0:
                 if xposf == 1 or xposf == 2:
                     nbhs = convertIndexToPoints(getNeighbours(idx,globaldata),globaldata)
-                    nbhs = nbhs + getLeftandRightPoint(idx, globaldata)
+                    if idx not in getWallEndPoints(globaldata):
+                        nbhs = nbhs + getLeftandRightPoint(idx, globaldata)
                     nbhs = list(set(nbhs))
                     globaldata = fixWXpos2(idx,globaldata,nbhs,-2,100,True,polygonData,wallpoints)
                 if xnegf == 1 or xnegf == 2:
                     nbhs = convertIndexToPoints(getNeighbours(idx,globaldata),globaldata)
-                    nbhs = nbhs + getLeftandRightPoint(idx, globaldata)
+                    if idx not in getWallEndPoints(globaldata):
+                        nbhs = nbhs + getLeftandRightPoint(idx, globaldata)
                     nbhs = list(set(nbhs))
                     globaldata = fixWXneg2(idx,globaldata,nbhs,-2,100,True,polygonData,wallpoints)
     return globaldata
@@ -105,12 +107,14 @@ def triangleBalance3(globaldata,polygonData,wallpoints):
             if flag == 0:
                 if xposf == 1 or xposf == 2:
                     nbhs = convertIndexToPoints(getNeighbours(idx,globaldata),globaldata)
-                    nbhs = nbhs + getLeftandRightPoint(idx, globaldata)
+                    if idx not in getWallEndPoints(globaldata):
+                        nbhs = nbhs + getLeftandRightPoint(idx, globaldata)
                     nbhs = list(set(nbhs))
                     globaldata = fixWXpos3(idx,globaldata,nbhs,-2,100,True,polygonData,wallpoints)
                 if xnegf == 1 or xnegf == 2:
                     nbhs = convertIndexToPoints(getNeighbours(idx,globaldata),globaldata)
-                    nbhs = nbhs + getLeftandRightPoint(idx, globaldata)
+                    if idx not in getWallEndPoints(globaldata):
+                        nbhs = nbhs + getLeftandRightPoint(idx, globaldata)
                     nbhs = list(set(nbhs))
                     globaldata = fixWXneg3(idx,globaldata,nbhs,-2,100,True,polygonData,wallpoints)
     return globaldata

@@ -29,7 +29,7 @@ def main():
         globaldata.append(entry)
 
     globaldata = core.cleanNeighbours(globaldata)
-    wallpoints = core.getWallPointArray(globaldata[1:])
+    wallpoints = core.getWallPointArray(globaldata)
     wallpointsData = core.generateWallPolygons(wallpoints)
 
     ptidx = input("Which point do you want to check? ")

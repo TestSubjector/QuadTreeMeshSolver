@@ -53,7 +53,7 @@ def main():
         elif idx > 0 and getFlag(idx, globaldata) == 1:
             interiorpts.append(idx)
 
-    wallpts = getWallPointArray(globaldata[1:])
+    wallpts = getWallPointArray(globaldata)
     for itm in wallpts:
         inflatedWallPolygon(globaldata, itm, float(config.getConfig()["pseudowall"]["inflatedPolygonDistance"]), interiorpts)
     # print("Triangulating")

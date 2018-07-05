@@ -465,14 +465,31 @@ def getWallPointArray(globaldata):
     startgeo = 0
     newstuff = []
     for idx,itm in enumerate(globaldata):
-        geoflag = int(itm[6])
-        if(startgeo == geoflag and getFlag(idx,globaldata) == 0):
-            newstuff.append(getPointxy(idx,globaldata))
-        if(startgeo != geoflag and getFlag(idx,globaldata) == 0):
-            newstuff = []
-            wallpointarray.append(newstuff)
-            newstuff.append(getPointxy(idx,globaldata))
-            startgeo = startgeo + 1
+        if idx > 0:
+            geoflag = int(itm[6])
+            if(startgeo == geoflag and getFlag(idx,globaldata) == 0):
+                newstuff.append(getPointxy(idx,globaldata))
+            if(startgeo != geoflag and getFlag(idx,globaldata) == 0):
+                newstuff = []
+                wallpointarray.append(newstuff)
+                newstuff.append(getPointxy(idx,globaldata))
+                startgeo = startgeo + 1
+    return wallpointarray
+
+def getWallPointArrayIndex(globaldata):
+    wallpointarray = []
+    startgeo = 0
+    newstuff = []
+    for idx,itm in enumerate(globaldata):
+        if idx > 0:
+            geoflag = int(itm[6])
+            if(startgeo == geoflag and getFlag(idx,globaldata) == 0):
+                newstuff.append(idx)
+            if(startgeo != geoflag and getFlag(idx,globaldata) == 0):
+                newstuff = []
+                wallpointarray.append(newstuff)
+                newstuff.append(idx)
+                startgeo = startgeo + 1
     return wallpointarray
 
 def isNonAeroDynamic(index, cordpt, globaldata, wallPolygonData):
@@ -527,3 +544,54 @@ def getFlags(index,globaldata):
     flagypos = globaldata[index][9]
     flagyneg = globaldata[index][10]
     return flagxpos,flagxneg,flagypos,flagyneg
+
+def getWallEndPoints(globaldata):
+    wallIndex = getWallPointArrayIndex(globaldata)
+    endPoints = []
+    for itm in wallIndex:
+        endPoints.append(int(itm[-1]))
+    return endPoints
+
+def cleanWallPoints(globaldata):
+    wallpoints = getWallPointArrayIndex(globaldata)
+    wallpointsflat = [item for sublist in wallpoints for item in sublist]
+    for idx,itm in enumerate(globaldata):
+        printProgressBar(
+            idx, len(globaldata) - 1, prefix="Progress:", suffix="Complete", length=50
+        )
+        if(idx > 0):
+            if(getFlag(idx,globaldata) == 0):
+                nbhcords =  getNeighbours(idx,globaldata)
+                leftright = getLeftandRightPoint(idx,globaldata)
+                nbhcords = list(map(int, nbhcords))
+                finalcords = wallRemovedNeighbours(nbhcords,wallpointsflat)
+                leftright = list(map(int,leftright))
+                finalcords = finalcords + leftright
+                globaldata = replaceNeighbours(idx,finalcords,globaldata)
+    return globaldata
+
+def replaceNeighbours(index,nbhs,globaldata):
+    data = globaldata[index]
+    data = data[:11]
+    data.append(len(nbhs))
+    data = data + nbhs
+    globaldata[index] = data
+    return globaldata
+
+def cleanWallPointsSelectivity(globaldata,points):
+    wallpoints = getWallPointArrayIndex(globaldata)
+    wallpointsflat = [item for sublist in wallpoints for item in sublist]
+    for idx in points:
+        if(getFlag(idx,globaldata) == 0):
+            nbhcords =  getNeighbours(idx,globaldata)
+            leftright = getLeftandRightPoint(idx,globaldata)
+            nbhcords = list(map(int, nbhcords))
+            finalcords = wallRemovedNeighbours(nbhcords,wallpointsflat)
+            finalcords = list(set(finalcords))
+            globaldata = replaceNeighbours(idx,finalcords,globaldata)
+    return globaldata
+
+        
+def wallRemovedNeighbours(points,wallpoints):
+    new_list = [fruit for fruit in points if fruit not in wallpoints]
+    return new_list

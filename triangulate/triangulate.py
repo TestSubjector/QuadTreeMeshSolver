@@ -37,7 +37,7 @@ def main():
 
     globaldata = cleanNeighbours(globaldata)
 
-    wallpts = getWallPointArray(globaldata[1:])
+    wallpts = getWallPointArray(globaldata)
 
     print("Triangulating")
 
@@ -46,6 +46,11 @@ def main():
     interiorpts = convertPointToShapelyPoint(convertIndexToPoints(interiorpts,globaldata))
     interiorpts = MultiPoint(interiorpts)
     interiortriangles = triangulate(interiorpts)
+
+    # Removes Traces of Wall Points from the last wallpoint neighbours
+
+    lastWallPoints = getWallEndPoints(globaldata)
+    globaldata = cleanWallPointsSelectivity(globaldata, lastWallPoints)
 
     # temp.writeNormalsToText(globaldata)
 

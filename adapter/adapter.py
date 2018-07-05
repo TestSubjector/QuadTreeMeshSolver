@@ -67,7 +67,7 @@ def main():
         elif idx > 0 and getFlag(idx, globaldata_main) == 1:
             interiorpts.append(idx)
 
-    wallpts = adaptGetWallPointArray(globaldata_main[1:])
+    wallpts = adaptGetWallPointArray(globaldata_main)
     for itm in wallpts:
         adaptInflatedWallPolygon(globaldata_main, itm, 5*10E-6, interiorpts, pseudopts)
 
