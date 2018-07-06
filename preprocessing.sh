@@ -19,6 +19,8 @@ cp -rlf ./preprocessorfile.txt ./files/preprocessorfile.txt
 rm ./output.txt
 rm ./preprocessorfile.txt
 
+# Pre Checks
+
 python3 ./report/pre.py -i ./files/preprocessorfile.txt
 cp -rlf ./preprocessorfile_cleaned.txt ./files/preprocessorfile_cleaned.txt
 rm ./preprocessorfile_cleaned.txt
@@ -36,7 +38,7 @@ rm ./preprocessorfile_pointremoval.txt
 
 # Triangulation
 
-python3 ./triangulate/triangulate.py -i ./files/preprocessorfile_pseudopointremoval.txt
+python3 ./triangulate/triangulate.py -i ./files/preprocessorfile_pseudopointremoval.txt -a True True True
 cp -rlf ./preprocessorfile_triangulate.txt ./files/preprocessorfile_triangulate.txt
 rm ./preprocessorfile_triangulate.txt
 cp -rlf ./removal_points.txt ./files/triangulation_removal_points.txt
@@ -48,7 +50,14 @@ rm ./removal_points2.txt
 cp -rlf ./preprocessorfile_pointremoval.txt ./files/preprocessorfile_triangulationremoval.txt
 rm ./preprocessorfile_pointremoval.txt
 
-# Rechecker
+# Wall Rechecker and Balance
+
+python3 ./triangulate/triangulate.py -i ./files/preprocessorfile_triangulationremoval.txt -a False True True
+cp -rlf ./preprocessorfile_triangulate.txt ./files/preprocessorfile_triangulate.txt
+rm ./preprocessorfile_triangulate.txt
+rm ./removal_points.txt
+
+# Interior Rechecker and Balance
 
 python3 ./rechecker/rechecker.py -i ./files/preprocessorfile_triangulationremoval.txt
 

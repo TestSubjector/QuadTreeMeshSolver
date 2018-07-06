@@ -40,6 +40,16 @@ def getLeftandRightPoint(index,globaldata):
     nbhs.append(getPointxy(rightpt,globaldata))
     return nbhs
 
+def getLeftandRightPointIndex(index,globaldata):
+    index = int(index)
+    ptdata = globaldata[index]
+    leftpt = ptdata[3]
+    rightpt = ptdata[4]
+    nbhs = []
+    nbhs.append(leftpt)
+    nbhs.append(rightpt)
+    return nbhs
+
 def getIndexFromPoint(pt, globaldata):
     ptx = float(pt.split(",")[0])
     pty = float(pt.split(",")[1])
@@ -565,20 +575,12 @@ def cleanWallPoints(globaldata):
         if(idx > 0):
             if(getFlag(idx,globaldata) == 0):
                 nbhcords =  getNeighbours(idx,globaldata)
-                leftright = getLeftandRightPoint(idx,globaldata)
+                leftright = getLeftandRightPointIndex(idx,globaldata)
                 nbhcords = list(map(int, nbhcords))
                 finalcords = wallRemovedNeighbours(nbhcords,wallpointsflat)
                 leftright = list(map(int,leftright))
                 finalcords = finalcords + leftright
                 globaldata = replaceNeighbours(idx,finalcords,globaldata)
-    return globaldata
-
-def replaceNeighbours(index,nbhs,globaldata):
-    data = globaldata[index]
-    data = data[:11]
-    data.append(len(nbhs))
-    data = data + nbhs
-    globaldata[index] = data
     return globaldata
 
 def cleanWallPointsSelectivity(globaldata,points):
@@ -587,7 +589,7 @@ def cleanWallPointsSelectivity(globaldata,points):
     for idx in points:
         if(getFlag(idx,globaldata) == 0):
             nbhcords =  getNeighbours(idx,globaldata)
-            leftright = getLeftandRightPoint(idx,globaldata)
+            leftright = getLeftandRightPointIndex(idx,globaldata)
             nbhcords = list(map(int, nbhcords))
             finalcords = wallRemovedNeighbours(nbhcords,wallpointsflat)
             finalcords = list(set(finalcords))
@@ -598,3 +600,19 @@ def cleanWallPointsSelectivity(globaldata,points):
 def wallRemovedNeighbours(points,wallpoints):
     new_list = [fruit for fruit in points if fruit not in wallpoints]
     return new_list
+
+def replaceNeighbours(index,nbhs,globaldata):
+    data = globaldata[index]
+    data = data[:11]
+    data.append(len(nbhs))
+    data = data + nbhs
+    globaldata[index] = data
+    return globaldata
+
+def str_to_bool(s):
+    if s == 'True':
+         return True
+    elif s == 'False':
+         return False
+    else:
+         raise ValueError

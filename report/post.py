@@ -43,7 +43,7 @@ def main():
         for itm in nbhs:
             cord = core.getPointxy(itm,globaldata)
             if core.isNonAeroDynamic(idx,cord,globaldata,wallpointsData):
-                log.warn("Point %s has a non aero point with index %s",idx,itm)
+                log.warning("Point %s has a non aero point with index %s",idx,itm)
 
     log.info("Done")
 

@@ -13,6 +13,9 @@ def main():
 
     log.info("Loading Data")
 
+    log.debug("Arguments")
+    log.debug(args)
+
     file1 = open(args.input or "preprocessorfile.txt", "r")
     data = file1.read()
     globaldata = ["start"]
@@ -35,15 +38,7 @@ def main():
     wallpoints = core.getWallPointArray(globaldata)
     wallpointsData = core.generateWallPolygons(wallpoints)
 
-    log.info("Running Non Aero Checks")
-
-    for idx in range(1,len(globaldata)):
-        printProgressBar(idx, len(globaldata) - 1, prefix="Progress:", suffix="Complete", length=50)    
-        nbhs = core.getNeighbours(idx,globaldata)
-        for itm in nbhs:
-            cord = core.getPointxy(itm,globaldata)
-            if core.isNonAeroDynamic(idx,cord,globaldata,wallpointsData):
-                log.warn("Point %s has a non aero point with index %s",idx,itm)
+    log.info("Finding average distance")
 
     log.info("Done")
 

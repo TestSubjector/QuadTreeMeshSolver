@@ -1,29 +1,40 @@
 {
-    "generator":{
+    "generator": {
         "maxCoresForReplacement": 4
     },
-    "penrose":{
-        "cutoffConditionValue":1E-3,
-        "power":2
+    "penrose": {
+        "cutoffConditionValue": 1E-3,
+        "power": 2
     },
-    "pseudowall":{
-        "inflatedPolygonDistance":10E-6
+    "pseudowall": {
+        "inflatedPolygonDistance": 10E-6
     },
-    "rechecker":{
+    "rechecker": {
         "maxPoints": 2,
-        "conditionValueThreshold" : 30
+        "conditionValueThreshold": 30
     },
-    "triangulate":{
-        "interiorThreshold":30,
-        "wallandOuterThreshold":30,
-        "aggressiveMaxNeighbours":2,
-        "normalMaxNeighbours":1
+    "triangulate": {
+        "triangle": {
+            "interiorThreshold": 30,
+            "wallandOuterThreshold": 30,
+            "aggressiveMaxNeighbours": 2,
+            "normalMaxNeighbours": 1
+        },
+        "leftright":{
+            "wallThreshold": 30,
+            "aggressiveMaxNeighbours": 2,
+            "normalMaxNeighbours": 1  
+        },
+        "general":{
+            "wallThreshold": 30,
+            "aggressiveMaxNeighbours": 2    
+        }
     },
-    "global":{
-        "weightCondition":-2,
-        "logger":{
-            "level":"INFO",
-            "logPath":"log.log"
+    "global": {
+        "weightCondition": -2,
+        "logger": {
+            "level": "INFO",
+            "logPath": "log.log"
         }
     }
 }

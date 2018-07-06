@@ -12,10 +12,10 @@ def triangleBalance(globaldata,polygonData,wallpoints):
         if idx > 0:
             flag = int(getFlag(idx,globaldata))
             xposf,xnegf,yposf,ynegf = getFlags(idx,globaldata)
-            WALL_OUTER_THRESHOLD = int(getConfig()["triangulate"]["wallandOuterThreshold"])
-            INTERIOR_THRESHOLD = int(getConfig()["triangulate"]["interiorThreshold"])
-            AGGRESSIVE_MAX_NEIGHBOURS = -int(getConfig()["triangulate"]["aggressiveMaxNeighbours"])
-            NORMAL_MAX_NEIGHBOURS = -int(getConfig()["triangulate"]["normalMaxNeighbours"])
+            WALL_OUTER_THRESHOLD = int(getConfig()["triangulate"]["triangle"]["wallandOuterThreshold"])
+            INTERIOR_THRESHOLD = int(getConfig()["triangulate"]["triangle"]["interiorThreshold"])
+            AGGRESSIVE_MAX_NEIGHBOURS = -int(getConfig()["triangulate"]["triangle"]["aggressiveMaxNeighbours"])
+            NORMAL_MAX_NEIGHBOURS = -int(getConfig()["triangulate"]["triangle"]["normalMaxNeighbours"])
             ## Interior Points
             if flag == 1:
                 if xposf == 2:
@@ -71,7 +71,10 @@ def triangleBalance(globaldata,polygonData,wallpoints):
                     globaldata = fixXneg(idx,globaldata,nbhs,AGGRESSIVE_MAX_NEIGHBOURS,WALL_OUTER_THRESHOLD,True,polygonData,wallpoints)
     return globaldata
 
-def triangleBalance2(globaldata,polygonData,wallpoints):
+def triangleBalance2(globaldata,wallpoints):
+    WALL_THRESHOLD = int(getConfig()["triangulate"]["leftright"]["wallThreshold"])
+    AGGRESSIVE_MAX_NEIGHBOURS = -int(getConfig()["triangulate"]["leftright"]["aggressiveMaxNeighbours"])
+    NORMAL_MAX_NEIGHBOURS = -int(getConfig()["triangulate"]["leftright"]["normalMaxNeighbours"])
     for idx,_ in enumerate(globaldata):
         printProgressBar(
             idx, len(globaldata) - 1, prefix="Progress:", suffix="Complete", length=50
@@ -81,21 +84,35 @@ def triangleBalance2(globaldata,polygonData,wallpoints):
             xposf,xnegf,yposf,ynegf = getFlags(idx,globaldata)
             ## Wall Points
             if flag == 0:
-                if xposf == 1 or xposf == 2:
+                if xposf == 1:
                     nbhs = convertIndexToPoints(getNeighbours(idx,globaldata),globaldata)
                     if idx not in getWallEndPoints(globaldata):
                         nbhs = nbhs + getLeftandRightPoint(idx, globaldata)
                     nbhs = list(set(nbhs))
-                    globaldata = fixWXpos2(idx,globaldata,nbhs,-2,100,True,polygonData,wallpoints)
-                if xnegf == 1 or xnegf == 2:
+                    globaldata = fixWXpos2(idx,globaldata,nbhs,AGGRESSIVE_MAX_NEIGHBOURS,WALL_THRESHOLD,True,wallpoints)
+                elif xposf == 2:
                     nbhs = convertIndexToPoints(getNeighbours(idx,globaldata),globaldata)
                     if idx not in getWallEndPoints(globaldata):
                         nbhs = nbhs + getLeftandRightPoint(idx, globaldata)
                     nbhs = list(set(nbhs))
-                    globaldata = fixWXneg2(idx,globaldata,nbhs,-2,100,True,polygonData,wallpoints)
+                    globaldata = fixWXpos2(idx,globaldata,nbhs,NORMAL_MAX_NEIGHBOURS,WALL_THRESHOLD,False,wallpoints)
+                if xnegf == 1:
+                    nbhs = convertIndexToPoints(getNeighbours(idx,globaldata),globaldata)
+                    if idx not in getWallEndPoints(globaldata):
+                        nbhs = nbhs + getLeftandRightPoint(idx, globaldata)
+                    nbhs = list(set(nbhs))
+                    globaldata = fixWXneg2(idx,globaldata,nbhs,AGGRESSIVE_MAX_NEIGHBOURS,WALL_THRESHOLD,True,wallpoints)
+                elif xnegf == 2:
+                    nbhs = convertIndexToPoints(getNeighbours(idx,globaldata),globaldata)
+                    if idx not in getWallEndPoints(globaldata):
+                        nbhs = nbhs + getLeftandRightPoint(idx, globaldata)
+                    nbhs = list(set(nbhs))
+                    globaldata = fixWXneg2(idx,globaldata,nbhs,NORMAL_MAX_NEIGHBOURS,WALL_THRESHOLD,False,wallpoints)
     return globaldata
 
-def triangleBalance3(globaldata,polygonData,wallpoints):
+def triangleBalance3(globaldata,wallpoints):
+    WALL_THRESHOLD = int(getConfig()["triangulate"]["leftright"]["wallThreshold"])
+    AGGRESSIVE_MAX_NEIGHBOURS = -int(getConfig()["triangulate"]["leftright"]["aggressiveMaxNeighbours"])
     for idx,_ in enumerate(globaldata):
         printProgressBar(
             idx, len(globaldata) - 1, prefix="Progress:", suffix="Complete", length=50
@@ -110,13 +127,13 @@ def triangleBalance3(globaldata,polygonData,wallpoints):
                     if idx not in getWallEndPoints(globaldata):
                         nbhs = nbhs + getLeftandRightPoint(idx, globaldata)
                     nbhs = list(set(nbhs))
-                    globaldata = fixWXpos3(idx,globaldata,nbhs,-2,100,True,polygonData,wallpoints)
+                    globaldata = fixWXpos3(idx,globaldata,nbhs,AGGRESSIVE_MAX_NEIGHBOURS,WALL_THRESHOLD,True,wallpoints)
                 if xnegf == 1 or xnegf == 2:
                     nbhs = convertIndexToPoints(getNeighbours(idx,globaldata),globaldata)
                     if idx not in getWallEndPoints(globaldata):
                         nbhs = nbhs + getLeftandRightPoint(idx, globaldata)
                     nbhs = list(set(nbhs))
-                    globaldata = fixWXneg3(idx,globaldata,nbhs,-2,100,True,polygonData,wallpoints)
+                    globaldata = fixWXneg3(idx,globaldata,nbhs,AGGRESSIVE_MAX_NEIGHBOURS,WALL_THRESHOLD,True,wallpoints)
     return globaldata
 
 def convertTupleToCord(tupledata):
@@ -351,7 +368,7 @@ def fixWXneg(idx,globaldata,nbhs,control,conditionNumber,aggressive,polygonData,
                 return globaldata
     return globaldata
 
-def fixWXpos2(idx,globaldata,nbhs,control,conditionNumber,aggressive,polygonData,wallpoints):
+def fixWXpos2(idx,globaldata,nbhs,control,conditionNumber,aggressive,wallpoints):
     if control > 0:
         return globaldata
     else:
@@ -371,7 +388,7 @@ def fixWXpos2(idx,globaldata,nbhs,control,conditionNumber,aggressive,polygonData
         if len(conditionSet) > 0:
             conditionSet.sort(key=lambda x: x[1])
             globaldata = appendNeighbours(idx, globaldata, conditionSet[0][0])
-            fixWXpos2(idx,globaldata,nbhs,control,conditionNumber,aggressive,polygonData,wallpoints)
+            fixWXpos2(idx,globaldata,nbhs,control,conditionNumber,aggressive,wallpoints)
         else:
             if aggressive == True:
                 leftright = getLeftandRightPoint(idx,globaldata)
@@ -381,12 +398,12 @@ def fixWXpos2(idx,globaldata,nbhs,control,conditionNumber,aggressive,polygonData
                     layernbhs = convertIndexToPoints(getNeighbours(itm_real,globaldata),globaldata)
                     nbhofnbh = nbhofnbh + layernbhs
                 nbhofnbh = list(set(nbhofnbh) - set([getPointxy(idx,globaldata)]))
-                fixWXpos2(idx,globaldata,nbhofnbh,control,conditionNumber,False,polygonData,wallpoints)
+                fixWXpos2(idx,globaldata,nbhofnbh,control,conditionNumber,False,wallpoints)
             else:
                 return globaldata
     return globaldata
 
-def fixWXneg2(idx,globaldata,nbhs,control,conditionNumber,aggressive,polygonData,wallpoints):
+def fixWXneg2(idx,globaldata,nbhs,control,conditionNumber,aggressive,wallpoints):
     if control > 0:
         return globaldata
     else:
@@ -406,7 +423,7 @@ def fixWXneg2(idx,globaldata,nbhs,control,conditionNumber,aggressive,polygonData
         if len(conditionSet) > 0:
             conditionSet.sort(key=lambda x: x[1])
             globaldata = appendNeighbours(idx, globaldata, conditionSet[0][0])
-            fixWXneg2(idx,globaldata,nbhs,control,conditionNumber,aggressive,polygonData,wallpoints)
+            fixWXneg2(idx,globaldata,nbhs,control,conditionNumber,aggressive,wallpoints)
         else:
             if aggressive == True:
                 leftright = getLeftandRightPoint(idx,globaldata)
@@ -416,12 +433,12 @@ def fixWXneg2(idx,globaldata,nbhs,control,conditionNumber,aggressive,polygonData
                     layernbhs = convertIndexToPoints(getNeighbours(itm_real,globaldata),globaldata)
                     nbhofnbh = nbhofnbh + layernbhs
                 nbhofnbh = list(set(nbhofnbh) - set([getPointxy(idx,globaldata)]))
-                fixWXneg2(idx,globaldata,nbhofnbh,control,conditionNumber,False,polygonData,wallpoints)
+                fixWXneg2(idx,globaldata,nbhofnbh,control,conditionNumber,False,wallpoints)
             else:
                 return globaldata
     return globaldata
 
-def fixWXpos3(idx,globaldata,nbhs,control,conditionNumber,aggressive,polygonData,wallpoints):
+def fixWXpos3(idx,globaldata,nbhs,control,conditionNumber,aggressive,wallpoints):
     if control > 0:
         return globaldata
     else:
@@ -441,7 +458,7 @@ def fixWXpos3(idx,globaldata,nbhs,control,conditionNumber,aggressive,polygonData
         if len(conditionSet) > 0:
             conditionSet.sort(key=lambda x: x[1])
             globaldata = appendNeighbours(idx, globaldata, conditionSet[0][0])
-            fixWXpos3(idx,globaldata,nbhs,control,conditionNumber,aggressive,polygonData,wallpoints)
+            fixWXpos3(idx,globaldata,nbhs,control,conditionNumber,aggressive,wallpoints)
         else:
             if aggressive == True:
                 leftright = getLeftandRightPoint(idx,globaldata)
@@ -453,12 +470,12 @@ def fixWXpos3(idx,globaldata,nbhs,control,conditionNumber,aggressive,polygonData
                     layernbhs = convertIndexToPoints(getNeighbours(itm_real,globaldata),globaldata)
                     nbhofnbh = nbhofnbh + layernbhs
                 nbhofnbh = list(set(nbhofnbh) - set([getPointxy(idx,globaldata)]))
-                fixWXpos3(idx,globaldata,nbhofnbh,control,conditionNumber,False,polygonData,wallpoints)
+                fixWXpos3(idx,globaldata,nbhofnbh,control,conditionNumber,False,wallpoints)
             else:
                 return globaldata
     return globaldata
 
-def fixWXneg3(idx,globaldata,nbhs,control,conditionNumber,aggressive,polygonData,wallpoints):
+def fixWXneg3(idx,globaldata,nbhs,control,conditionNumber,aggressive,wallpoints):
     if control > 0:
         return globaldata
     else:
@@ -478,7 +495,7 @@ def fixWXneg3(idx,globaldata,nbhs,control,conditionNumber,aggressive,polygonData
         if len(conditionSet) > 0:
             conditionSet.sort(key=lambda x: x[1])
             globaldata = appendNeighbours(idx, globaldata, conditionSet[0][0])
-            fixWXneg3(idx,globaldata,nbhs,control,conditionNumber,aggressive,polygonData,wallpoints)
+            fixWXneg3(idx,globaldata,nbhs,control,conditionNumber,aggressive,wallpoints)
         else:
             if aggressive == True:
                 leftright = getLeftandRightPoint(idx,globaldata)
@@ -490,7 +507,7 @@ def fixWXneg3(idx,globaldata,nbhs,control,conditionNumber,aggressive,polygonData
                     layernbhs = convertIndexToPoints(getNeighbours(itm_real,globaldata),globaldata)
                     nbhofnbh = nbhofnbh + layernbhs
                 nbhofnbh = list(set(nbhofnbh) - set([getPointxy(idx,globaldata)]))
-                fixWXneg3(idx,globaldata,nbhofnbh,control,conditionNumber,False,polygonData,wallpoints)
+                fixWXneg3(idx,globaldata,nbhofnbh,control,conditionNumber,False,wallpoints)
             else:
                 return globaldata
     return globaldata

@@ -14,6 +14,7 @@ def main():
     # Command Line Arguments
     parser = argparse.ArgumentParser()
     parser.add_argument("-i", "--input", const=str, nargs="?")
+    parser.add_argument("-a", "--algorithm", nargs="+")
     args = parser.parse_args()
 
     log.info("Loading Data")
@@ -25,6 +26,14 @@ def main():
     globaldata = ["start"]
     splitdata = data.split("\n")
     splitdata = splitdata[:-1]
+
+    algo1,algo2,algo3 = True,True,True
+
+    if len(args.algorithm) == 3:
+        algo = list(map(str_to_bool,args.algorithm))
+        algo1 = algo[0]
+        algo2 = algo[1]
+        algo3 = algo[2]
 
     log.info("Processed Pre-Processor File")
     log.info("Converting to readable format")
@@ -42,42 +51,47 @@ def main():
 
     wallpts = getWallPointArray(globaldata)
 
-    log.info("Triangulating")
-
-    interiorpts = []
-    interiorpts.extend(range(1, len(globaldata)))
-    interiorpts = convertPointToShapelyPoint(convertIndexToPoints(interiorpts,globaldata))
-    interiorpts = MultiPoint(interiorpts)
-    interiortriangles = triangulate(interiorpts)
-
     # Removes Traces of Wall Points from the last wallpoint neighbours
 
     lastWallPoints = getWallEndPoints(globaldata)
     globaldata = cleanWallPointsSelectivity(globaldata, lastWallPoints)
 
-    # temp.writeNormalsToText(globaldata)
-
-    log.info("Detected " + str(len(wallpts)) + " geometry(s).")
-    log.info("Generated " + str(len(interiortriangles)) + " triangle(s).")
-    polydata = getPolygon(interiortriangles)
     log.info("Generating Wall Polygons for Aerochecks")
     wallpts = generateWallPolygons(wallpts)
+    log.info("Detected " + str(len(wallpts)) + " geometry(s).")
     log.info("Wall Polygon Generation Complete")
-    log.info("Running Connectivity Check")
-    globaldata = connectivityCheck(globaldata)
-    log.info("Connectivity Check Done")
-    log.info("Running Triangulation Balancing using Nischay's Triangle Neighbours")
-    globaldata = triangleBalance(globaldata,polydata,wallpts)
-    log.info("Triangle Balancing Done")
-    log.info("Running Connectivity Recheck")
-    globaldata = connectivityCheck(globaldata)
-    log.info("Connectivity Recheck Done")
-    log.info("Running Triangulation Balancing using Kumar's Neighbours (Left and Right Mode)")
-    globaldata = triangleBalance2(globaldata,polydata,wallpts)
-    log.info("Running Connectivity Recheck")
-    globaldata = connectivityCheck(globaldata)
-    log.info("Running Triangulation Balancing using Kumar's Neighbours (General)")
-    globaldata = triangleBalance3(globaldata,polydata,wallpts)
+    print("Deleting Unneeded Wall Points (Except Left and Right Points)")
+    globaldata = cleanWallPoints(globaldata)
+
+    if algo1 == True:
+
+        log.info("Triangulating")
+
+        interiorpts = []
+        interiorpts.extend(range(1, len(globaldata)))
+        interiorpts = convertPointToShapelyPoint(convertIndexToPoints(interiorpts,globaldata))
+        interiorpts = MultiPoint(interiorpts)
+        interiortriangles = triangulate(interiorpts)
+
+        log.info("Generated " + str(len(interiortriangles)) + " triangle(s).")
+        polydata = getPolygon(interiortriangles)
+        log.info("Running Connectivity Check")
+        globaldata = connectivityCheck(globaldata)
+        log.info("Connectivity Check Done")
+        log.info("Running Triangulation Balancing using Nischay's Triangle Neighbours")
+        globaldata = triangleBalance(globaldata,polydata,wallpts)
+        log.info("Triangle Balancing Done")
+    if algo2 == True:
+        log.info("Running Connectivity Check")
+        globaldata = connectivityCheck(globaldata)
+        log.info("Connectivity Recheck Done")
+        log.info("Running Triangulation Balancing using Kumar's Neighbours (Left and Right Mode)")
+        globaldata = triangleBalance2(globaldata,wallpts)
+    if algo3 == True:
+        log.info("Running Connectivity Check")
+        globaldata = connectivityCheck(globaldata)
+        log.info("Running Triangulation Balancing using Kumar's Neighbours (General)")
+        globaldata = triangleBalance3(globaldata,wallpts)
     log.info("Running Connectivity Recheck")
     globaldata = connectivityCheck(globaldata)
     log.info("Writing Deletion Points")

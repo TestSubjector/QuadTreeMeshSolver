@@ -548,3 +548,12 @@ def fillNeighboursIndex(index,globaldata,nbhs):
     globaldata[int(index)][12:] = nbhs
     globaldata[int(index)][11] = len(nbhs)
     return globaldata
+
+def getAverageDistances(globaldata):
+    interior,wall,interiortot,walltot = 0,0,0,0
+    for idx,_ in enumerate(globaldata):
+        if idx > 0:
+            flag = int(getFlag(idx,globaldata))
+            if flag == 0:
+                cordpt = getPointxy(idx,globaldata)
+                leftright = getLeftandRightPoint()

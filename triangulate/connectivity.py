@@ -23,7 +23,7 @@ def connectivityCheck(globaldata):
 
 def connectivityCheckWallandOuterPoint(index,globaldata):
     result = []
-    WALL_OUTER_THRESHOLD = int(getConfig()["triangulate"]["wallandOuterThreshold"])
+    WALL_OUTER_THRESHOLD = int(getConfig()["triangulate"]["triangle"]["wallandOuterThreshold"])
     xpos = len(getDWallXPosPoints(index,globaldata))
     xneg = len(getDWallXNegPoints(index,globaldata))
     xposConditionValue = getWeightedNormalConditionValueofWallXPos(index,globaldata)
@@ -48,7 +48,7 @@ def connectivityCheckWallandOuterPoint(index,globaldata):
 
 def connectivityCheckInteriorPoint(index,globaldata):
     result = []
-    INTERIOR_THRESHOLD = int(getConfig()["triangulate"]["interiorThreshold"])
+    INTERIOR_THRESHOLD = int(getConfig()["triangulate"]["triangle"]["interiorThreshold"])
     xpos = len(getDXPosPoints(index,globaldata))
     xneg = len(getDXNegPoints(index,globaldata))
     ypos = len(getDYPosPoints(index,globaldata))
