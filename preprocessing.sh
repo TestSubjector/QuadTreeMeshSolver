@@ -56,6 +56,8 @@ python3 ./rechecker/rechecker.py -i ./files/preprocessorfile_triangulationremova
 
 # Wall Rechecker and Balance
 
-python3 ./triangulate/triangulate.py -i ./files/preprocessorfile_rechecker.txt -a True True True
+python3 ./triangulate/triangulate.py -i ./preprocessorfile_rechecker.txt -a True True True
 cp -rlf ./preprocessorfile_triangulate.txt ./files/preprocessorfile_triangulate.txt
 rm ./removal_points.txt
+rm ./preprocessorfile_rechecker.txt
+mv ./preprocessorfile_triangulate.txt ./preprocessorfile_rechecker.txt

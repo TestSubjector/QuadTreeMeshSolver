@@ -5,6 +5,8 @@ temp
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
+preprocessor*.txt
+condition.dat
 
 # C extensions
 *.so
