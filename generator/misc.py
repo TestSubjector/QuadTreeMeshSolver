@@ -17,6 +17,15 @@ log.addHandler(logging.StreamHandler())
 
 
 def silentRemove(filename):
+    """Silently removes a file from the operating system.
+    
+    Arguments:
+        filename {string} -- File path to the file you want to remove.
+    
+    Raises:
+        exception -- Raises OSError exception if deletion failed.
+    """
+
     try:
         os.remove(filename)
     except OSError as e:  # this would be "except OSError, e:" before Python 2.6
