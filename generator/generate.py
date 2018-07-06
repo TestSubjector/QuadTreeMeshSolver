@@ -45,7 +45,7 @@ def main():
     globaldata = []
 
     log.info("Found " + str(len(wallarg)) + " wall geometry files.")
-    for _,itm in enumerate(wallarg):
+    for idx,itm in enumerate(wallarg):
         log.info("Loading Geometry " + str(itm))
         file2 = open(str(itm) or "airfoil_160.txt", "r")
         geometrydata = file2.read()
