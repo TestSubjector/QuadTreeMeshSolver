@@ -48,7 +48,7 @@ def main():
         finalnbhs = list(set(nbhs) - set(nonaeronbhs))
         if(len(nbhs) != len(finalnbhs)):
             globaldata = core.fillNeighboursIndex(idx,globaldata,finalnbhs)
-            log.warning("Point %s has a non aero point with index %s",idx,itm)
+            log.debug("Point %s has a non aero point with index %s",idx,itm)
 
     globaldata.pop(0)
 

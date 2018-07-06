@@ -50,14 +50,12 @@ rm ./removal_points2.txt
 cp -rlf ./preprocessorfile_pointremoval.txt ./files/preprocessorfile_triangulationremoval.txt
 rm ./preprocessorfile_pointremoval.txt
 
-# Wall Rechecker and Balance
-
-python3 ./triangulate/triangulate.py -i ./files/preprocessorfile_triangulationremoval.txt -a False True True
-cp -rlf ./preprocessorfile_triangulate.txt ./files/preprocessorfile_triangulate.txt
-rm ./preprocessorfile_triangulate.txt
-rm ./removal_points.txt
-
 # Interior Rechecker and Balance
 
 python3 ./rechecker/rechecker.py -i ./files/preprocessorfile_triangulationremoval.txt
 
+# Wall Rechecker and Balance
+
+python3 ./triangulate/triangulate.py -i ./files/preprocessorfile_rechecker.txt -a True True True
+cp -rlf ./preprocessorfile_triangulate.txt ./files/preprocessorfile_triangulate.txt
+rm ./removal_points.txt
