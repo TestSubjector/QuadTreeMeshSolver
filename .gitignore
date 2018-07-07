@@ -54,3 +54,7 @@ coverage.xml
 
 # Sphinx documentation
 docs/_build/
+removal_points.txt
+removal_points.txt
+sensor_flag.dat
+adapted.txt

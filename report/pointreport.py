@@ -32,36 +32,40 @@ def main():
     wallpoints = core.getWallPointArray(globaldata)
     wallpointsData = core.generateWallPolygons(wallpoints)
 
-    ptidx = input("Which point do you want to check? ")
-    ptidx = int(ptidx)
+    while True:
+        ptidx = input("Which point do you want to check? ")
+        ptidx = int(ptidx)
 
-    print("Point Index:",ptidx)
-    print("Point Co ordinate:",core.getPointxy(ptidx,globaldata))
-    flag = core.getFlag(ptidx,globaldata)
-    flag = int(flag)
-    if flag == 0:
-        flagd = "Wall Point"
-    elif flag == 1:
-        flagd = "Interior Point"
-    else:
-        flagd = "Outer Point"
-    print("Point Type:",flagd)
-    nbhs = core.getNeighbours(ptidx,globaldata)
-    print("Total Number of Neighbours:",len(nbhs))
-    print("Neighbour Array")
-    print(nbhs)
-    if(flag==0):
-        print(core.getConditionNumberNormal(ptidx,globaldata))
-        xpos = core.getDWallXPosPoints(ptidx,globaldata)
-        xneg = core.getDWallXNegPoints(ptidx,globaldata)
-        print("xpos",len(xpos),"xneg",len(xneg))
-    else:
-        print(core.getConditionNumber(ptidx,globaldata))
-        xpos = core.getDXPosPoints(ptidx,globaldata)
-        xneg = core.getDXNegPoints(ptidx,globaldata)
-        ypos = core.getDYPosPoints(ptidx,globaldata)
-        yneg = core.getDYNegPoints(ptidx,globaldata)
-        print("xpos",len(xpos),"xneg",len(xneg),"ypos",len(ypos),"yneg",len(yneg))
+        if ptidx == "exit":
+            break
+
+        print("Point Index:",ptidx)
+        print("Point Co ordinate:",core.getPointxy(ptidx,globaldata))
+        flag = core.getFlag(ptidx,globaldata)
+        flag = int(flag)
+        if flag == 0:
+            flagd = "Wall Point"
+        elif flag == 1:
+            flagd = "Interior Point"
+        else:
+            flagd = "Outer Point"
+        print("Point Type:",flagd)
+        nbhs = core.getNeighbours(ptidx,globaldata)
+        print("Total Number of Neighbours:",len(nbhs))
+        print("Neighbour Array")
+        print(nbhs)
+        if(flag==0):
+            print(core.getConditionNumberNormal(ptidx,globaldata))
+            xpos = core.getDWallXPosPoints(ptidx,globaldata)
+            xneg = core.getDWallXNegPoints(ptidx,globaldata)
+            print("xpos",len(xpos),"xneg",len(xneg))
+        else:
+            print(core.getConditionNumber(ptidx,globaldata))
+            xpos = core.getDXPosPoints(ptidx,globaldata)
+            xneg = core.getDXNegPoints(ptidx,globaldata)
+            ypos = core.getDYPosPoints(ptidx,globaldata)
+            yneg = core.getDYNegPoints(ptidx,globaldata)
+            print("xpos",len(xpos),"xneg",len(xneg),"ypos",len(ypos),"yneg",len(yneg))
 
 if __name__ == "__main__":
     main()
