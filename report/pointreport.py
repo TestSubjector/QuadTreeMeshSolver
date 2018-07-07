@@ -34,10 +34,9 @@ def main():
 
     while True:
         ptidx = input("Which point do you want to check? ")
-        ptidx = int(ptidx)
-
         if ptidx == "exit":
             break
+        ptidx = int(ptidx)
 
         print("Point Index:",ptidx)
         print("Point Co ordinate:",core.getPointxy(ptidx,globaldata))
