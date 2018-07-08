@@ -557,3 +557,9 @@ def convertPointsToIndex(pointarray,globaldata):
         idx = getIndexFromPoint(itm,globaldata)
         ptlist.append(idx)
     return ptlist
+
+def fillNeighboursIndex(index,globaldata,nbhs):
+    nbhs = list(set(nbhs))
+    globaldata[int(index)][12:] = nbhs
+    globaldata[int(index)][11] = len(nbhs)
+    return globaldata
