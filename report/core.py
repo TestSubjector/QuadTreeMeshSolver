@@ -543,8 +543,17 @@ def getConditionNumberNormal(index,globaldata):
     result = {"xpos":xpos,"xneg":xneg,"ypos":"NA","yneg":"NA"}
     return result
 
-def fillNeighboursIndex(index,globaldata,nbhs):
-    nbhs = list(set(nbhs))
-    globaldata[int(index)][12:] = nbhs
-    globaldata[int(index)][11] = len(nbhs)
+def replaceNeighbours(index,nbhs,globaldata):
+    data = globaldata[index]
+    data = data[:11]
+    data.append(len(nbhs))
+    data = data + nbhs
+    globaldata[index] = data
     return globaldata
+
+def convertPointsToIndex(pointarray,globaldata):
+    ptlist = []
+    for itm in pointarray:
+        idx = getIndexFromPoint(itm,globaldata)
+        ptlist.append(idx)
+    return ptlist
