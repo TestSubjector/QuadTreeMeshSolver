@@ -265,6 +265,7 @@ def generateReplacement(hashtable, globaldata):
     t1 = time.clock()
     pool = ThreadPool(min(MAX_CORES,coresavail))
     results = []
+    hashtable = {k:v for v,k in enumerate(hashtable)}
     for itm in globalchunks:
         results.append(pool.apply_async(replacer, args=(hashtable, itm)))
     pool.close()
@@ -285,8 +286,8 @@ def replacer(hashtable, globaldata):
     for index, individualitem in enumerate(globaldata):
         for index2, morestuff in enumerate(individualitem):
             try:
-                b = hashtable.index(morestuff)
-            except ValueError:
+                b = hashtable[morestuff]
+            except KeyError:
                 "Do nothing"
             else:
                 globaldata[index][index2] = b
