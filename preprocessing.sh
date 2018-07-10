@@ -21,7 +21,7 @@ rm ./preprocessorfile.txt
 
 # Pre Checks
 
-python3 ./report/pre.py -i ./files/preprocessorfile.txt
+python3 ./tools/pre.py -i ./files/preprocessorfile.txt
 cp -rlf ./preprocessorfile_cleaned.txt ./files/preprocessorfile_cleaned.txt
 rm ./preprocessorfile_cleaned.txt
 
