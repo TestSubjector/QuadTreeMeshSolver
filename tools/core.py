@@ -602,7 +602,7 @@ def checkAeroGlobal2(globaldata,wallpointsData):
 
 def checkAeroGlobal(chunk,globaldata,wallpointsData):
     # t1 = time.clock()
-    for itm in chunk:
+    for index,itm in enumerate(chunk):
         if itm is not "start":
             idx = itm[0]
             # printProgressBar(idx, len(globaldata) - 1, prefix="Progress:", suffix="Complete", length=50)    
@@ -614,8 +614,8 @@ def checkAeroGlobal(chunk,globaldata,wallpointsData):
                     nonaeronbhs.append(itm)
             finalnbhs = list(set(nbhs) - set(nonaeronbhs))
             if(len(nbhs) != len(finalnbhs)):
-                globaldata = fillNeighboursIndex(idx,globaldata,finalnbhs)
+                chunk = fillNeighboursIndex(index,chunk,finalnbhs)
                 log.debug("Point %s has a non aero point with index %s",idx,itm)
     # t2 = time.clock()
     # log.info(t2 - t1)
-    return globaldata
+    return chunk
