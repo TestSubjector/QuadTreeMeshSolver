@@ -257,7 +257,6 @@ def cleanWallPoints(neighbours, wallpoint):
 def generateReplacement(hashtable, globaldata):
     log.info("Beginning Replacement")
     coresavail = multiprocessing.cpu_count()
-    globalchunks = list(chunks(globaldata, coresavail))
     log.info("Found " + str(coresavail) + " available core(s).")
     log.info("BOOSTU BOOSTU BOOSTU")
     MAX_CORES = int(config.getConfig()["generator"]["maxCoresForReplacement"])
@@ -265,7 +264,10 @@ def generateReplacement(hashtable, globaldata):
     t1 = time.clock()
     pool = ThreadPool(min(MAX_CORES,coresavail))
     results = []
+    chunksize = math.ceil(len(globaldata)/min(MAX_CORES,coresavail))
+    globalchunks = list(chunks(globaldata,chunksize))
     hashtable = {k:v for v,k in enumerate(hashtable)}
+    globalchunks = list(chunks(globaldata, chunksize))
     for itm in globalchunks:
         results.append(pool.apply_async(replacer, args=(hashtable, itm)))
     pool.close()

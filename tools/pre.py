@@ -38,7 +38,8 @@ def main():
 
     log.info("Running Non Aero Checks")
 
-    globaldata = core.checkAeroGlobal(globaldata,wallpointsData)
+    # globaldata = core.checkAeroGlobal(globaldata,globaldata,wallpointsData)
+    globaldata = core.checkAeroGlobal2(globaldata,wallpointsData)
 
     globaldata.pop(0)
 

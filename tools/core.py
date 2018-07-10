@@ -6,6 +6,9 @@ from shapely import wkt
 from shapely.ops import linemerge, unary_union, polygonize
 import config
 import logging
+import multiprocessing
+from multiprocessing.pool import ThreadPool
+import time
 log = logging.getLogger(__name__)
 log.addHandler(logging.StreamHandler())
 
@@ -107,6 +110,10 @@ def weightedConditionValueForSetOfPoints(index, globaldata, points):
 
 def deltaX(xcord, orgxcord):
     return float(orgxcord - xcord)
+
+def chunks(l, n):
+    for i in range(0, len(l), n):
+        yield l[i : i + n]
 
 
 def deltaY(ycord, orgycord):
@@ -567,17 +574,48 @@ def fillNeighboursIndex(index,globaldata,nbhs):
     globaldata[int(index)][11] = len(nbhs)
     return globaldata
 
-def checkAeroGlobal(globaldata,wallpointsData):
-    for idx in range(1,len(globaldata)):
-        printProgressBar(idx, len(globaldata) - 1, prefix="Progress:", suffix="Complete", length=50)    
-        nbhs = getNeighbours(idx,globaldata)
-        nonaeronbhs = []
-        for itm in nbhs:
-            cord = getPointxy(itm,globaldata)
-            if isNonAeroDynamic(idx,cord,globaldata,wallpointsData):
-                nonaeronbhs.append(itm)
-        finalnbhs = list(set(nbhs) - set(nonaeronbhs))
-        if(len(nbhs) != len(finalnbhs)):
-            globaldata = fillNeighboursIndex(idx,globaldata,finalnbhs)
-            log.debug("Point %s has a non aero point with index %s",idx,itm)
+def checkAeroGlobal2(globaldata,wallpointsData):
+    coresavail = multiprocessing.cpu_count()
+    log.info("Found " + str(coresavail) + " available core(s).")
+    log.info("BOOSTU BOOSTU BOOSTU")
+    MAX_CORES = int(config.getConfig()["generator"]["maxCoresForReplacement"])
+    log.info("Max Cores Allowed " + str(MAX_CORES))
+    t1 = time.clock()
+    pool = ThreadPool(min(MAX_CORES,coresavail))
+    results = []
+    chunksize = math.ceil(len(globaldata)/min(MAX_CORES,coresavail))
+    globalchunks = list(chunks(globaldata,chunksize))
+    for itm in globalchunks:
+        results.append(pool.apply_async(checkAeroGlobal, args=(itm, globaldata,wallpointsData)))
+    pool.close()
+    pool.join()
+    results = [r.get() for r in results]
+    globaldata = []
+    stuff = []
+    for itm in results:
+        stuff = stuff + itm
+    globaldata = stuff
+    t2 = time.clock()
+    log.info(t2 - t1)
+    log.info("Replacement Done")
+    return globaldata
+
+def checkAeroGlobal(chunk,globaldata,wallpointsData):
+    # t1 = time.clock()
+    for itm in chunk:
+        if itm is not "start":
+            idx = itm[0]
+            # printProgressBar(idx, len(globaldata) - 1, prefix="Progress:", suffix="Complete", length=50)    
+            nbhs = getNeighbours(idx,globaldata)
+            nonaeronbhs = []
+            for itm in nbhs:
+                cord = getPointxy(itm,globaldata)
+                if isNonAeroDynamic(idx,cord,globaldata,wallpointsData):
+                    nonaeronbhs.append(itm)
+            finalnbhs = list(set(nbhs) - set(nonaeronbhs))
+            if(len(nbhs) != len(finalnbhs)):
+                globaldata = fillNeighboursIndex(idx,globaldata,finalnbhs)
+                log.debug("Point %s has a non aero point with index %s",idx,itm)
+    # t2 = time.clock()
+    # log.info(t2 - t1)
     return globaldata
