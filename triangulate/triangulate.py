@@ -9,6 +9,7 @@ from shapely.geometry import MultiPoint
 from shapely.ops import triangulate
 log = logging.getLogger(__name__)
 log.addHandler(logging.StreamHandler())
+import pyximport; pyximport.install(pyimport = True)
 
 def main():
     # Command Line Arguments

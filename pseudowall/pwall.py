@@ -10,6 +10,7 @@ import config
 import logging
 log = logging.getLogger(__name__)
 log.addHandler(logging.StreamHandler())
+import pyximport; pyximport.install(pyimport = True)
 
 
 def main():

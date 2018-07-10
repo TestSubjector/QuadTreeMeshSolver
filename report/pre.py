@@ -4,6 +4,7 @@ import argparse
 import logging
 log = logging.getLogger(__name__)
 log.addHandler(logging.StreamHandler())
+import pyximport; pyximport.install(pyimport = True)
 
 def main():
     # Command Line Arguments
@@ -37,18 +38,7 @@ def main():
 
     log.info("Running Non Aero Checks")
 
-    for idx in range(1,len(globaldata)):
-        printProgressBar(idx, len(globaldata) - 1, prefix="Progress:", suffix="Complete", length=50)    
-        nbhs = core.getNeighbours(idx,globaldata)
-        nonaeronbhs = []
-        for itm in nbhs:
-            cord = core.getPointxy(itm,globaldata)
-            if core.isNonAeroDynamic(idx,cord,globaldata,wallpointsData):
-                nonaeronbhs.append(itm)
-        finalnbhs = list(set(nbhs) - set(nonaeronbhs))
-        if(len(nbhs) != len(finalnbhs)):
-            globaldata = core.fillNeighboursIndex(idx,globaldata,finalnbhs)
-            log.debug("Point %s has a non aero point with index %s",idx,itm)
+    globaldata = core.checkAeroGlobal(globaldata,wallpointsData)
 
     globaldata.pop(0)
 

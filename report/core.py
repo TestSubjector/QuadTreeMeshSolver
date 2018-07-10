@@ -5,6 +5,9 @@ import shapely.geometry
 from shapely import wkt
 from shapely.ops import linemerge, unary_union, polygonize
 import config
+import logging
+log = logging.getLogger(__name__)
+log.addHandler(logging.StreamHandler())
 
 def appendNeighbours(index, globaldata, newpts):
     pt = getIndexFromPoint(newpts, globaldata)
@@ -562,4 +565,19 @@ def fillNeighboursIndex(index,globaldata,nbhs):
     nbhs = list(set(nbhs))
     globaldata[int(index)][12:] = nbhs
     globaldata[int(index)][11] = len(nbhs)
+    return globaldata
+
+def checkAeroGlobal(globaldata,wallpointsData):
+    for idx in range(1,len(globaldata)):
+        printProgressBar(idx, len(globaldata) - 1, prefix="Progress:", suffix="Complete", length=50)    
+        nbhs = getNeighbours(idx,globaldata)
+        nonaeronbhs = []
+        for itm in nbhs:
+            cord = getPointxy(itm,globaldata)
+            if isNonAeroDynamic(idx,cord,globaldata,wallpointsData):
+                nonaeronbhs.append(itm)
+        finalnbhs = list(set(nbhs) - set(nonaeronbhs))
+        if(len(nbhs) != len(finalnbhs)):
+            globaldata = fillNeighboursIndex(idx,globaldata,finalnbhs)
+            log.debug("Point %s has a non aero point with index %s",idx,itm)
     return globaldata
