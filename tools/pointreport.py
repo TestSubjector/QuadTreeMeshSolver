@@ -1,6 +1,7 @@
 import core
 from progress import printProgressBar
 import argparse
+import temp
 
 def main():
     # Command Line Arguments
@@ -29,6 +30,10 @@ def main():
         globaldata.append(entry)
 
     globaldata = core.cleanNeighbours(globaldata)
+
+    temp.createAdaptedFull(globaldata)
+    exit()
+
     wallpoints = core.getWallPointArray(globaldata)
     wallpointsData = core.generateWallPolygons(wallpoints)
 
