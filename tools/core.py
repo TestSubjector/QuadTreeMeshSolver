@@ -4,6 +4,7 @@ from progress import printProgressBar
 import shapely.geometry
 from shapely import wkt
 from shapely.ops import linemerge, unary_union, polygonize
+from shapely.geometry import Polygon,Point
 import config
 import logging
 import multiprocessing
@@ -619,3 +620,46 @@ def checkAeroGlobal(chunk,globaldata,wallpointsData):
     # t2 = time.clock()
     # log.info(t2 - t1)
     return chunk
+
+def getSquarePlot(x, y, side):
+    return [(x+(side/2), y+(side/2)), (x-(side/2), y+(side/2)), (x-(side/2), y-(side/2)), (x+(side/2), y-(side/2))]
+
+def findHeadOfWall(wallpoints):
+    headPts = []
+    for wallptset in wallpoints:
+        minx = 1000
+        currpt = 0
+        for pt in wallptset:
+            ptx = float(pt.split(",")[0])
+            pty = float(pt.split(",")[1])
+            if minx > ptx:
+                minx = ptx
+                currpt = pt
+        headPts.append(currpt)
+    return headPts
+
+def createBoxPolygon(wallpoints):
+    BOX_SIDE_SIZE = float(config.getConfig()["box"]["boxSideLength"])
+    headData = findHeadOfWall(wallpoints)
+    boxData = []
+    for itm in headData:
+        x = float(itm.split(",")[0])
+        y = float(itm.split(",")[1])
+        squareData = getSquarePlot(x,y,BOX_SIDE_SIZE)
+        squarePoly = Polygon(squareData)
+        boxData.append(squarePoly)
+    return boxData
+
+def findBoxAdaptPoints(globaldata,wallpoints):
+    boxPoly = createBoxPolygon(wallpoints)
+    adaptPoints = []
+    for idx,_ in enumerate(globaldata):
+        if idx > 0:
+            ptx,pty = getPoint(idx,globaldata)
+            pt = (ptx,pty)
+            pt = Point(pt)
+            for boxP in boxPoly:
+                if boxP.intersects(pt):
+                    adaptPoints.append(idx)
+    return adaptPoints
+

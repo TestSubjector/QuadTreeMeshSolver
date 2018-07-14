@@ -2,6 +2,9 @@
     "generator": {
         "maxCoresForReplacement": 4
     },
+    "box":{
+        "boxSideLength":0.2
+    },
     "penrose": {
         "cutoffConditionValue": 1E-3,
         "power": 2
