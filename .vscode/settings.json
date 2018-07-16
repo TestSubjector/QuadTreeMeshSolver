@@ -3,5 +3,6 @@
         "quadtree.h": "c",
         "stdio.h": "c",
         "assert.h": "c"
-    }
+    },
+    "python.pythonPath": "C:\\Users\\Nischay Mamidi\\AppData\\Local\\Programs\\Python\\Python37\\python.exe"
 }

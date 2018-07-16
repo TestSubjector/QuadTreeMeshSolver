@@ -3,7 +3,9 @@
         "maxCoresForReplacement": 4
     },
     "box":{
-        "boxSideLength":0.2
+        "boxSideLength":0.4,
+        "XRange":[-0.5,1.6],
+        "YRange":[-1.0,0.5]
     },
     "penrose": {
         "cutoffConditionValue": 1E-3,

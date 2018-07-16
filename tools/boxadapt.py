@@ -10,6 +10,7 @@ def main():
     # Command Line Arguments
     parser = argparse.ArgumentParser()
     parser.add_argument("-i", "--input", const=str, nargs="?")
+    parser.add_argument("-a", "--headadapt", const=str, nargs="?")
     args = parser.parse_args()
 
     log.info("Loading Data")
@@ -19,6 +20,8 @@ def main():
     globaldata = ["start"]
     splitdata = data.split("\n")
     splitdata = splitdata[:-1]
+
+    headAdpt = core.str_to_bool(args.headadapt) 
 
     log.info("Processed Pre-Processor File")
     log.info("Converting to readable format")
@@ -34,12 +37,15 @@ def main():
 
     globaldata = core.cleanNeighbours(globaldata)
     wallpoints = core.getWallPointArray(globaldata)
-
-    log.info("Find Points inside the Box")
-
-    result = core.findBoxAdaptPoints(globaldata,wallpoints)
-
-    log.info("Writing file to disk")
+    
+    if headAdpt:
+        log.info("Find Points inside the Box (Head Adaptation)")
+        result = core.findBoxAdaptPoints(globaldata,wallpoints)
+        log.info("Writing file to disk")
+    else:
+        log.info("Find Points inside the Box (General Box Adaptation)")
+        result = core.findGeneralBoxAdaptPoints(globaldata)
+        log.info("Writing file to disk")
 
     with open("adapted.txt", "a") as text_file:
         for item1 in result:

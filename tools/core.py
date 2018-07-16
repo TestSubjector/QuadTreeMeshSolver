@@ -487,6 +487,22 @@ def getWallPointArray(globaldata):
                 startgeo = startgeo + 1
     return wallpointarray
 
+def getWallPointArrayIndex(globaldata):
+    wallpointarray = []
+    startgeo = 0
+    newstuff = []
+    for idx,itm in enumerate(globaldata):
+        if idx > 0:
+            geoflag = int(itm[6])
+            if(startgeo == geoflag and getFlag(idx,globaldata) == 0):
+                newstuff.append(idx)
+            if(startgeo != geoflag and getFlag(idx,globaldata) == 0):
+                newstuff = []
+                wallpointarray.append(newstuff)
+                newstuff.append(idx)
+                startgeo = startgeo + 1
+    return wallpointarray
+
 def isNonAeroDynamic(index, cordpt, globaldata, wallPolygonData):
     main_pointx,main_pointy = getPoint(index, globaldata)
     cordptx = float(cordpt.split(",")[0])
@@ -648,13 +664,14 @@ def createBoxPolygon(wallpoints):
         squareData = getSquarePlot(x,y,BOX_SIDE_SIZE)
         squarePoly = Polygon(squareData)
         boxData.append(squarePoly)
-    return boxData
+    return boxData[:1]
 
 def findBoxAdaptPoints(globaldata,wallpoints):
     boxPoly = createBoxPolygon(wallpoints)
     adaptPoints = []
     for idx,_ in enumerate(globaldata):
         if idx > 0:
+            flag = getFlag(idx,globaldata)
             ptx,pty = getPoint(idx,globaldata)
             pt = (ptx,pty)
             pt = Point(pt)
@@ -663,3 +680,57 @@ def findBoxAdaptPoints(globaldata,wallpoints):
                     adaptPoints.append(idx)
     return adaptPoints
 
+def getBoxPlot(XRange,YRange):
+    return [(XRange[0],YRange[0]),(XRange[0],YRange[1]),(XRange[1],YRange[1]),(XRange[1],YRange[0])]
+
+def findGeneralBoxAdaptPoints(globaldata):
+    XRange = tuple(config.getConfig()["box"]["XRange"])
+    YRange = tuple(config.getConfig()["box"]["YRange"])
+    boxPoly = getBoxPlot(XRange,YRange)
+    boxPoly = Polygon(boxPoly)
+    adaptPoints = []
+    for idx,_ in enumerate(globaldata):
+        if idx > 0:
+            flag = getFlag(idx,globaldata)
+            ptx,pty = getPoint(idx,globaldata)
+            pt = (ptx,pty)
+            pt = Point(pt)
+            if boxPoly.intersects(pt):
+                adaptPoints.append(idx)
+    return adaptPoints
+
+def str_to_bool(s):
+    if s == 'True':
+         return True
+    elif s == 'False':
+         return False
+    else:
+         raise ValueError
+
+def findAverageWallDistance(globaldata,wallpoints):
+    result = {"max":0,"min":100000000,"total":0,"sum":0,"avg":0}
+    flat_list = (item for sublist in wallpoints for item in sublist)
+    flat_list = tuple(map(int,flat_list))
+    for idx,_ in enumerate(globaldata):
+        if idx > 0:
+            nbhs = tuple(getNeighbours(idx,globaldata))
+            nbhs = tuple(map(int,nbhs))
+            nbhs = set(nbhs).intersection(set(flat_list))
+            for itm in nbhs:
+                dist = getDistance(idx,itm,globaldata)
+                result["total"] = result["total"] + 1
+                result["sum"] = result["sum"] + dist
+                if dist < result["min"]:
+                    result["min"] = dist
+                if dist > result["max"]:
+                    result["max"] = dist
+    result["avg"] = result["sum"] / result["total"]
+    return result
+
+def getDistance(point1,point2,globaldata):
+    ptax,ptay = getPoint(point1,globaldata)
+    ptbx,ptby = getPoint(point2,globaldata)
+    ptx = deltaX(ptax,ptbx)**2
+    pty = deltaY(ptay,ptby)**2
+    result = math.sqrt(ptx + pty)
+    return result
