@@ -50,7 +50,7 @@ def main():
 
     globaldata = cleanNeighbours(globaldata)
     wallpoints = getWallPointArray(globaldata)
-    globaldata = addNewPoints(globaldata, removalFlags, 100, 1, wallpoints)
+    globaldata = addNewPoints(globaldata, removalFlags, int(config.getConfig()["remover"]["conditionValueAdditionThreshold"]), 1, wallpoints)
     globaldata = cleanNeighbours(globaldata)
 
     # The New Index (with bad points removed) || 5 --> 4
@@ -115,7 +115,7 @@ def main():
         if int(individiualPoint[5]) != 1:
             continue
         index = int(individiualPoint[0])
-        checkConditionNumber(index, newglobaldata, aliasArray, 80, problempts)
+        checkConditionNumber(index, newglobaldata, aliasArray, int(config.getConfig()["remover"]["conditionValueDeletionThreshold"]), problempts)
 
     print("***********************************")
     log.info("Writing Removal Points To File")

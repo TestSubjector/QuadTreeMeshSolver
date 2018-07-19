@@ -169,7 +169,7 @@ def nonAdaptWallPolygon(globaldata, wallpoints, dist, interiorpts):
         interiorpoint = Point(itmval)
         if inflatedwallpointGeo.contains(interiorpoint):
             pseudopts.append(itm)
-    print("Found", len(pseudopts), " points which aren't gonna be adapted!")
+    print("Found", len(pseudopts), "points which aren't gonna be adapted!")
     with open("pseudopoints.txt", "a") as text_file:
         for item1 in pseudopts:
             text_file.writelines(str(item1))

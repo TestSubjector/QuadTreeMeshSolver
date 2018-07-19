@@ -6,6 +6,7 @@ from shapely.geometry import Polygon, Point
 import logging
 log = logging.getLogger(__name__)
 log.addHandler(logging.StreamHandler())
+from matplotlib import pyplot as plt
 
 def appendNeighbours(index, globaldata, newpts):
     pt = getIndexFromPoint(newpts, globaldata)
@@ -148,24 +149,24 @@ def inflatedWallPolygon(globaldata, wallpoints, dist, interiorpts):
     wallptsData = convertPointToShapelyPoint(wallpoints)
     wallpointGeo = Polygon(wallptsData)
     lastpt = wallptsData[0]
-    newpt = (lastpt[0] + dist, lastpt[1])
+    newpt = (lastpt[0], lastpt[1])
     inflatedWall.pop(0)
     inflatedWall.insert(0, newpt)
     inflatedwallpointGeo = Polygon(inflatedWall)
     log.info("Checking for Pseudo Points")
-    # fig, ax = plt.subplots()
-    # x1,y1 = wallpointGeo.exterior.xy
-    # x2,y2 = inflatedwallpointGeo.exterior.xy
-    # # ax = fig.add_subplot(111)
-    # # ax.scatter(x1, y1, color='red', alpha=0.7, zorder=2)
-    # # ax.set_title('Polygon')
-    # # ax = fig.add_subplot(111)
-    # # ax.scatter(x2, y2, color='blue', alpha=0.7, zorder=2)
-    # # ax.set_title('Polygon2')
-    # # ax = fig.add_subplot(111)
-    # ax.plot(x1, y1, color='red', alpha=0.7, zorder=2)
-    # ax.plot(x2, y2, color='blue', alpha=0.7, zorder=2)
-    # plt.show()
+    fig, ax = plt.subplots()
+    x1,y1 = wallpointGeo.exterior.xy
+    x2,y2 = inflatedwallpointGeo.exterior.xy
+    # ax = fig.add_subplot(111)
+    # ax.scatter(x1, y1, color='red', alpha=0.7, zorder=2)
+    # ax.set_title('Polygon')
+    # ax = fig.add_subplot(111)
+    # ax.scatter(x2, y2, color='blue', alpha=0.7, zorder=2)
+    # ax.set_title('Polygon2')
+    # ax = fig.add_subplot(111)
+    ax.plot(x1, y1, color='red', alpha=0.7, zorder=2)
+    ax.plot(x2, y2, color='blue', alpha=0.7, zorder=2)
+    plt.show()
     pseudopts = []
     for itm in interiorpts:
         itmval = convertPointToShapelyPoint(convertIndexToPoints([itm], globaldata))[0]

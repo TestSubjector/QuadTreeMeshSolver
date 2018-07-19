@@ -18,6 +18,10 @@
         "maxPoints": 2,
         "conditionValueThreshold": 30
     },
+    "remover":{
+        "conditionValueAdditionThreshold": 30,
+        "conditionValueDeletionThreshold": 30
+    },
     "triangulate": {
         "triangle": {
             "interiorThreshold": 30,
