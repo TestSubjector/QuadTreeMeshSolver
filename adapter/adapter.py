@@ -58,20 +58,29 @@ def main():
         itm.pop(-1)
         entry = itm
         globaldata_main.append(entry)
-
+        generalpts = []
     for idx, itm in enumerate(globaldata_main):
         printProgressBar(
             idx, len(globaldata_main) - 1, prefix="Progress:", suffix="Complete", length=50
         )
         if idx > 0 and getFlag(idx, globaldata_main) == 2:
+            generalpts.append(idx)
             outerpts.append(idx)
         elif idx > 0 and getFlag(idx, globaldata_main) == 1:
             interiorpts.append(idx)
+            generalpts.append(idx)
+        elif idx > 0 and getFlag(idx, globaldata_main) == 0:
+            generalpts.append(idx)
 
     wallpts = adaptGetWallPointArray(globaldata_main)
     for itm in wallpts:
-        pseudopts.extend(nonAdaptWallPolygon(globaldata_main, itm, float(config.getConfig()["global"]["nonAdaptRegion"]), interiorpts))
+        pseudopts.extend(nonAdaptWallPolygon(globaldata_main, itm, float(config.getConfig()["global"]["nonAdaptRegion"]), generalpts))
 
+    edgePts = tuple(config.getConfig()["global"]["edgePoints"])
+
+    pseudopts.extend(createEdgeCircle(globaldata_main,edgePts,config.getConfig()["global"]["nonAdaptEdgePointRadius"],generalpts))
+
+    print("Freeze Points",len(pseudopts))
     print("Processed Pre-Processor File")
 
     file2 = open(args.adapt or "sensor_flag.dat")

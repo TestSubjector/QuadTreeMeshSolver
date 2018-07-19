@@ -176,6 +176,24 @@ def nonAdaptWallPolygon(globaldata, wallpoints, dist, interiorpts):
             text_file.writelines("\t\n")
     return pseudopts
 
+
+def createEdgeCircle(globaldata, edgePoints, dist, interiorpts):
+    pseudopts = []
+    for itm in edgePoints:
+        ptx,pty = getPoint(itm,globaldata)
+        circle = Point(ptx,pty).buffer(dist)
+    for itm in interiorpts:
+        itmval = convertPointToShapelyPoint(convertIndexToPoints([itm], globaldata))[0]
+        interiorpoint = Point(itmval)
+        if circle.contains(interiorpoint):
+            pseudopts.append(itm)
+    print("Found", len(pseudopts), "points which aren't gonna be adapted!")
+    with open("pseudopoints.txt", "a") as text_file:
+        for item1 in pseudopts:
+            text_file.writelines(str(item1))
+            text_file.writelines("\t\n")
+    return pseudopts
+
 def adaptGetWallPointArray(globaldata):
     wallpointarray = []
     startgeo = 0

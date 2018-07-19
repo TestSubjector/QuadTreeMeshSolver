@@ -45,6 +45,8 @@
             "level": "INFO",
             "logPath": "log.log"
         },
-        "nonAdaptRegion":1E-3
+        "nonAdaptRegion":1E-3,
+        "nonAdaptEdgePointRadius":1E-3,
+        "edgePoints":[321]
     }
 }
