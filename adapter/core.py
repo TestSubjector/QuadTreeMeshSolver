@@ -182,11 +182,11 @@ def createEdgeCircle(globaldata, edgePoints, dist, interiorpts):
     for itm in edgePoints:
         ptx,pty = getPoint(itm,globaldata)
         circle = Point(ptx,pty).buffer(dist)
-    for itm in interiorpts:
-        itmval = convertPointToShapelyPoint(convertIndexToPoints([itm], globaldata))[0]
-        interiorpoint = Point(itmval)
-        if circle.contains(interiorpoint):
-            pseudopts.append(itm)
+        for itm in interiorpts:
+            itmval = convertPointToShapelyPoint(convertIndexToPoints([itm], globaldata))[0]
+            interiorpoint = Point(itmval)
+            if circle.contains(interiorpoint):
+                pseudopts.append(itm)
     print("Found", len(pseudopts), "points which aren't gonna be adapted!")
     with open("pseudopoints.txt", "a") as text_file:
         for item1 in pseudopts:
