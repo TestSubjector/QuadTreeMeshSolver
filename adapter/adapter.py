@@ -70,7 +70,7 @@ def main():
 
     wallpts = adaptGetWallPointArray(globaldata_main)
     for itm in wallpts:
-        pseudopts.extend(nonAdaptWallPolygon(globaldata_main, itm, float(getConfig()["global"]["nonAdaptRegion"]), interiorpts))
+        pseudopts.extend(nonAdaptWallPolygon(globaldata_main, itm, float(config.getConfig()["global"]["nonAdaptRegion"]), interiorpts))
 
     print("Processed Pre-Processor File")
 
