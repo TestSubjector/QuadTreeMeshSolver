@@ -82,6 +82,8 @@ def main():
 
     print("Freeze Points",len(pseudopts))
     print("Processed Pre-Processor File")
+    print(len(pseudopts))
+    print(pseudopts)
 
     file2 = open(args.adapt or "sensor_flag.dat")
     data2 = file2.read()
@@ -90,19 +92,20 @@ def main():
     data2 = data2[:-1]
 
     print("Reading Adaptation File")
-    print(len(pseudopts))
 
     for idx2, itm2 in enumerate(data2):
         printProgressBar(
             idx2, len(data2) - 1, prefix="Progress:", suffix="Complete", length=50
         )
         adaptpoint = itm2.split(" ")
-        if int(idx2) not in pseudopts:
-            adaptpoint.pop(0)
-            if int(adaptpoint[1]) == 1:
+        adaptpoint.pop(0)
+        if int(adaptpoint[1]) == 1:
+            if int(idx2) not in pseudopts:
                 xcord = globaldata[int(adaptpoint[0])][1]
                 ycord = globaldata[int(adaptpoint[0])][2]
                 adaptdata.append([xcord, ycord])
+
+    print(len(adaptdata))
 
     print("Adaptation File Data Processed")
     print("Writing adapted.txt")
