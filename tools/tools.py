@@ -86,6 +86,7 @@ def main():
         print("(2) Delete Connectivity and reinstate connectivity using Triangle Data and balance the remaining using Kumar's Connectivity.")
         print("(3) Delete Connectivity and reinstate connectivity using Triangle Data and balance the remaining using Nischay's Connectivity.")
         print("(4) Balance Connectivity using Triangle Data.")
+        print("(5) Balance Connectivity using Triangle Data.")
         print("(5) Exit")
         print("(6) Exit without saving any changes")
         print("(7) Go Back")
@@ -95,6 +96,12 @@ def main():
             tris = core.getAeroPointsFromSet(ptidx,tris,globaldata,wallpointsData)
             tris = core.convertPointsToIndex(tris,globaldata)
             globaldata = core.replaceNeighbours(ptidx,tris,globaldata)
+        elif whatkind == 2:
+            tris = balance.getNeighboursFromTriangle(ptidx,globaldata,polydata)
+            tris = core.getAeroPointsFromSet(ptidx,tris,globaldata,wallpointsData)
+            tris = core.convertPointsToIndex(tris,globaldata)
+            globaldata = core.replaceNeighbours(ptidx,tris,globaldata)
+            globadata = balance.fixXneg
         elif whatkind == 3:
             tris = balance.getNeighboursFromTriangle(ptidx,globaldata,polydata)
             tris = core.getAeroPointsFromSet(ptidx,tris,globaldata,wallpointsData)

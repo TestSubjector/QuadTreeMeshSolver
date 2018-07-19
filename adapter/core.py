@@ -128,8 +128,9 @@ def convertPointToShapelyPoint(pointarry):
     return pointnewarry
 
 
-def adaptInflatedWallPolygon(globaldata, wallpoints, dist, interiorpts, pseudopts):
+def nonAdaptWallPolygon(globaldata, wallpoints, dist, interiorpts):
     print("Creating Inflated Wall Point")
+    pseudopts = []
     inflatedWall = []
     for itm in wallpoints:
         idx = getIndexFromPoint(itm,globaldata)
@@ -168,11 +169,12 @@ def adaptInflatedWallPolygon(globaldata, wallpoints, dist, interiorpts, pseudopt
         interiorpoint = Point(itmval)
         if inflatedwallpointGeo.contains(interiorpoint):
             pseudopts.append(itm)
-    print("Found", len(pseudopts), "pseudo points!")
+    print("Found", len(pseudopts), " points which aren't gonna be adapted!")
     with open("pseudopoints.txt", "a") as text_file:
         for item1 in pseudopts:
             text_file.writelines(str(item1))
             text_file.writelines("\t\n")
+    return pseudopts
 
 def adaptGetWallPointArray(globaldata):
     wallpointarray = []
@@ -187,5 +189,45 @@ def adaptGetWallPointArray(globaldata):
                 newstuff = []
                 wallpointarray.append(newstuff)
                 newstuff.append(getPointxy(idx,globaldata))
+                startgeo = startgeo + 1
+    return wallpointarray
+
+def getDistance(point1,point2,globaldata):
+    ptax,ptay = getPoint(point1,globaldata)
+    ptbx,ptby = getPoint(point2,globaldata)
+    ptx = deltaX(ptax,ptbx)**2
+    pty = deltaY(ptay,ptby)**2
+    result = math.sqrt(ptx + pty)
+    return result
+
+def getWallPointArray(globaldata):
+    wallpointarray = []
+    startgeo = 0
+    newstuff = []
+    for idx,itm in enumerate(globaldata):
+        if idx > 0:
+            geoflag = int(itm[6])
+            if(startgeo == geoflag and getFlag(idx,globaldata) == 0):
+                newstuff.append(getPointxy(idx,globaldata))
+            if(startgeo != geoflag and getFlag(idx,globaldata) == 0):
+                newstuff = []
+                wallpointarray.append(newstuff)
+                newstuff.append(getPointxy(idx,globaldata))
+                startgeo = startgeo + 1
+    return wallpointarray
+
+def getWallPointArrayIndex(globaldata):
+    wallpointarray = []
+    startgeo = 0
+    newstuff = []
+    for idx,itm in enumerate(globaldata):
+        if idx > 0:
+            geoflag = int(itm[6])
+            if(startgeo == geoflag and getFlag(idx,globaldata) == 0):
+                newstuff.append(idx)
+            if(startgeo != geoflag and getFlag(idx,globaldata) == 0):
+                newstuff = []
+                wallpointarray.append(newstuff)
+                newstuff.append(idx)
                 startgeo = startgeo + 1
     return wallpointarray

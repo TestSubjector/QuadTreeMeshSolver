@@ -6,6 +6,7 @@ from shapely.geometry import Polygon as Polygon2
 import copy
 from core import *
 import numpy as np
+import config
 
 
 def printProgressBar(
@@ -69,7 +70,7 @@ def main():
 
     wallpts = adaptGetWallPointArray(globaldata_main)
     for itm in wallpts:
-        adaptInflatedWallPolygon(globaldata_main, itm, 5*10E-6, interiorpts, pseudopts)
+        pseudopts.extend(nonAdaptWallPolygon(globaldata_main, itm, float(getConfig()["global"]["nonAdaptRegion"]), interiorpts))
 
     print("Processed Pre-Processor File")
 
@@ -80,14 +81,14 @@ def main():
     data2 = data2[:-1]
 
     print("Reading Adaptation File")
-    print(pseudopts)
+    print(len(pseudopts))
 
     for idx2, itm2 in enumerate(data2):
         printProgressBar(
             idx2, len(data2) - 1, prefix="Progress:", suffix="Complete", length=50
         )
         adaptpoint = itm2.split(" ")
-        if str(idx2) not in pseudopts:
+        if int(idx2) not in pseudopts:
             adaptpoint.pop(0)
             if int(adaptpoint[1]) == 1:
                 xcord = globaldata[int(adaptpoint[0])][1]
