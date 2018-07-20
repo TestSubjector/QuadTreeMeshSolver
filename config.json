@@ -46,7 +46,7 @@
             "logPath": "log.log"
         },
         "nonAdaptRegion":1E-3,
-        "nonAdaptEdgePointRadius":1E-3,
-        "edgePoints":[321]
+        "nonAdaptEdgePointRadius":[5E-3,3E-3],
+        "edgePoints":[1,321]
     }
 }

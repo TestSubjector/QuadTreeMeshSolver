@@ -179,9 +179,9 @@ def nonAdaptWallPolygon(globaldata, wallpoints, dist, interiorpts):
 
 def createEdgeCircle(globaldata, edgePoints, dist, interiorpts):
     pseudopts = []
-    for edge in edgePoints:
+    for idx,edge in enumerate(edgePoints):
         ptx,pty = getPoint(edge,globaldata)
-        circle = Point(ptx,pty).buffer(dist)
+        circle = Point(ptx,pty).buffer(dist[idx])
         for itm in interiorpts:
             itmval = convertPointToShapelyPoint(convertIndexToPoints([itm], globaldata))[0]
             interiorpoint = Point(itmval)
