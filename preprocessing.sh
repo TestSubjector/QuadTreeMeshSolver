@@ -3,17 +3,17 @@
 set -e
 
 # Adaptation Points
-python3 ./adapter/adapter.py -i ./files/preprocessorfile_rechecker.txt -a ./sensor_flag.dat
-cp -rlf ./pseudopoints.txt ./files/pseudopoints.txt
-rm ./pseudopoints.txt
+# python3 ./adapter/adapter.py -i ./files/preprocessorfile_rechecker.txt -a ./sensor_flag.dat
+# cp -rlf ./pseudopoints.txt ./files/pseudopoints.txt
+# rm ./pseudopoints.txt
 
 # Neighbour Generation
-./quadtree/main ./quadtree/input/airfoil_flap.txt ./adapted.txt ./quadtree/input/shape_airfoil_flap.txt
+./quadtree_doublewedge/main ./quadtree_doublewedge/input/double_wedge_740.txt ./adapted.txt ./quadtree_doublewedge/input/shape_double_wedge_740.txt
 cp -rlf ./neighbour.txt ./files/neighbour.txt
 rm ./neighbour.txt
 
 # Indexing 
-python3 ./generator/generate.py -n ./files/neighbour.txt -w ./generator/twoshape/airfoil ./generator/twoshape/flap
+python3 ./generator/generate.py -n ./files/neighbour.txt -w ./generator/double_wedge_740/double_wedge_740
 cp -rlf ./output.txt ./files/output.txt
 cp -rlf ./preprocessorfile.txt ./files/preprocessorfile.txt
 rm ./output.txt
