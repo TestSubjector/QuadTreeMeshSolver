@@ -4,6 +4,7 @@ import os
 import errno
 from shapely.geometry import Polygon, Point
 import logging
+import config
 log = logging.getLogger(__name__)
 log.addHandler(logging.StreamHandler())
 #from matplotlib import pyplot as plt
