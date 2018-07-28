@@ -7,6 +7,8 @@ __pycache__/
 *.py[cod]
 preprocessor*.txt
 condition.dat
+.vscode
+.vs
 
 # C extensions
 *.so
