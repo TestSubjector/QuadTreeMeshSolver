@@ -97,7 +97,11 @@ def normalCalculation(index, globaldata, wallpoint):
     if not wallpoint:
         nx = nx / det
     else:
-        nx = (-nx) / det
+        direction = config.getConfig()["general"]["wallPointOrientation"]
+        if direction == "ccw":
+            nx = (-nx) / det
+        elif direction == "cw":
+            nx = nx / det
     ny = ny / det
     return nx, ny
 

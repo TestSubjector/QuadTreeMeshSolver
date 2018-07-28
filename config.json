@@ -45,6 +45,7 @@
             "level": "INFO",
             "logPath": "log.log"
         },
+        "wallPointOrientation":"ccw",
         "nonAdaptRegion":1E-3,
         "nonAdaptEdgePointRadius":[5E-3,3E-3],
         "edgePoints":[1,321]
