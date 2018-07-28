@@ -33,10 +33,10 @@ def main():
     wallpoints = core.getWallPointArray(globaldata)
     wallpointsIndex = core.getWallPointArrayIndex(globaldata)
 
-    result = core.findAverageWallDistance(globaldata,wallpointsIndex)
-    print(result)
+    # result = core.findAverageWallDistance(globaldata,wallpointsIndex)
+    # print(result)
 
-    temp.createAdaptedFull(globaldata)
+    temp.writeNormalsToText(globaldata)
     exit()
 
     wallpointsData = core.generateWallPolygons(wallpoints)

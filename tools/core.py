@@ -654,6 +654,19 @@ def findHeadOfWall(wallpoints):
         headPts.append(currpt)
     return headPts
 
+def returnPointDist(globaldata):
+    stats = {"interior":0,"outer":0,"wall":0}
+    for idx,itm in enumerate(globaldata):
+        if idx > 0:
+            flag = getFlag(idx,globaldata)
+            if flag == 1:
+                stats["interior"] = stats["interior"] + 1
+            elif flag == 2:
+                stats["outer"] = stats["outer"] + 1
+            else:
+                stats["wall"] = stats["wall"] + 1
+    return stats
+
 def createBoxPolygon(wallpoints):
     BOX_SIDE_SIZE = float(config.getConfig()["box"]["boxSideLength"])
     headData = findHeadOfWall(wallpoints)
