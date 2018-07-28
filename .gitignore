@@ -9,6 +9,7 @@ preprocessor*.txt
 condition.dat
 .vscode
 .vs
+file.dat
 
 # C extensions
 *.so
