@@ -2,6 +2,7 @@ import numpy as np
 import math
 import os
 import errno
+import config
 from shapely.geometry import Polygon, Point
 
 def appendNeighbours(index, globaldata, newpts):
