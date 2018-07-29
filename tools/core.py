@@ -554,10 +554,10 @@ def setFlags(index,globaldata,flags):
     return globaldata
 
 def getFlags(index,globaldata):
-    flagxpos = globaldata[index][7]
-    flagxneg = globaldata[index][8]
-    flagypos = globaldata[index][9]
-    flagyneg = globaldata[index][10]
+    flagxpos = int(globaldata[index][7])
+    flagxneg = int(globaldata[index][8])
+    flagypos = int(globaldata[index][9])
+    flagyneg = int(globaldata[index][10])
     return flagxpos,flagxneg,flagypos,flagyneg
 
 def getConditionNumber(index, globaldata):
@@ -751,3 +751,12 @@ def getDistance(point1,point2,globaldata):
     pty = deltaY(ptay,ptby)**2
     result = math.sqrt(ptx + pty)
     return result
+
+def wallConnectivityCheck(globaldata):
+    for idx,_ in enumerate(globaldata):
+        if idx > 0:
+            flag = getFlag(idx,globaldata)
+            if flag == 0:
+                xpos,xneg,_,_ = getFlags(idx,globaldata)
+                if xpos == 1 or xneg == 1:
+                    print(idx) 

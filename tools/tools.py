@@ -47,77 +47,89 @@ def main():
 
 
     while True:
-        print("Type exit to quit.")
+        print("Type 'exit' to quit (Saves changes).")
+        print("Type 'exit! to quit (Does not save changes).")
+        print("Type 'wcc' to run Wall Connectivity Check on all Wall Points.")
         ptidx = input("Which point do you want to fix? ")
         if ptidx == "exit":
             break
-        ptidx = int(ptidx)
-
-        print("Point Index:",ptidx)
-        print("Point Co ordinate:",core.getPointxy(ptidx,globaldata))
-        flag = core.getFlag(ptidx,globaldata)
-        flag = int(flag)
-        if flag == 0:
-            flagd = "Wall Point"
-        elif flag == 1:
-            flagd = "Interior Point"
-        else:
-            flagd = "Outer Point"
-        print("Point Type:",flagd)
-        nbhs = core.getNeighbours(ptidx,globaldata)
-        print("Total Number of Neighbours:",len(nbhs))
-        print("Neighbour Array")
-        print(nbhs)
-        if(flag==0):
-            print(core.getConditionNumberNormal(ptidx,globaldata))
-            xpos = core.getDWallXPosPoints(ptidx,globaldata)
-            xneg = core.getDWallXNegPoints(ptidx,globaldata)
-            print("xpos",len(xpos),"xneg",len(xneg))
-        else:
-            print(core.getConditionNumber(ptidx,globaldata))
-            xpos = core.getDXPosPoints(ptidx,globaldata)
-            xneg = core.getDXNegPoints(ptidx,globaldata)
-            ypos = core.getDYPosPoints(ptidx,globaldata)
-            yneg = core.getDYNegPoints(ptidx,globaldata)
-            print("xpos",len(xpos),"xneg",len(xneg),"ypos",len(ypos),"yneg",len(yneg))
-
-        print("Select Point Repair Option")
-        print("(1) Delete Connectivity and reinstate connectivity using Triangle Data.")
-        print("(2) Delete Connectivity and reinstate connectivity using Triangle Data and balance the remaining using Kumar's Connectivity.")
-        print("(3) Delete Connectivity and reinstate connectivity using Triangle Data and balance the remaining using Nischay's Connectivity.")
-        print("(4) Balance Connectivity using Triangle Data.")
-        print("(5) Balance Connectivity using Triangle Data.")
-        print("(5) Exit")
-        print("(6) Exit without saving any changes")
-        print("(7) Go Back")
-        whatkind = int(input("What option do you want to select? "))
-        if whatkind == 1:
-            tris = balance.getNeighboursFromTriangle(ptidx,globaldata,polydata)
-            tris = core.getAeroPointsFromSet(ptidx,tris,globaldata,wallpointsData)
-            tris = core.convertPointsToIndex(tris,globaldata)
-            globaldata = core.replaceNeighbours(ptidx,tris,globaldata)
-        elif whatkind == 2:
-            tris = balance.getNeighboursFromTriangle(ptidx,globaldata,polydata)
-            tris = core.getAeroPointsFromSet(ptidx,tris,globaldata,wallpointsData)
-            tris = core.convertPointsToIndex(tris,globaldata)
-            globaldata = core.replaceNeighbours(ptidx,tris,globaldata)
-            globadata = balance.fixXneg
-        elif whatkind == 3:
-            tris = balance.getNeighboursFromTriangle(ptidx,globaldata,polydata)
-            tris = core.getAeroPointsFromSet(ptidx,tris,globaldata,wallpointsData)
-            tris = core.convertPointsToIndex(tris,globaldata)
-            globaldata = core.replaceNeighbours(ptidx,tris,globaldata)
-            globaldata = balance.triangleBalance(globaldata,polydata,wallpointsData,ptidx)
-        elif whatkind == 4:
-            globaldata = balance.triangleBalance(globaldata,polydata,wallpointsData,ptidx)
-        elif whatkind == 5:
-            break
-        elif whatkind == 6:
+        elif ptidx == "exit!":
             exit()
-        elif whatkind == 7:
-            None
-        else:
-            break
+        elif ptidx == "wcc":
+            core.wallConnectivityCheck(globaldata)
+        isPointIndex = False
+        try:
+            ptidx = int(ptidx)
+            isPointIndex = True
+        except ValueError:
+            isPointIndex = False
+            pass
+        if isPointIndex == True:
+            print("Point Index:",ptidx)
+            print("Point Co ordinate:",core.getPointxy(ptidx,globaldata))
+            flag = core.getFlag(ptidx,globaldata)
+            flag = int(flag)
+            if flag == 0:
+                flagd = "Wall Point"
+            elif flag == 1:
+                flagd = "Interior Point"
+            else:
+                flagd = "Outer Point"
+            print("Point Type:",flagd)
+            nbhs = core.getNeighbours(ptidx,globaldata)
+            print("Total Number of Neighbours:",len(nbhs))
+            print("Neighbour Array")
+            print(nbhs)
+            if(flag==0):
+                print(core.getConditionNumberNormal(ptidx,globaldata))
+                xpos = core.getDWallXPosPoints(ptidx,globaldata)
+                xneg = core.getDWallXNegPoints(ptidx,globaldata)
+                print("xpos",len(xpos),"xneg",len(xneg))
+            else:
+                print(core.getConditionNumber(ptidx,globaldata))
+                xpos = core.getDXPosPoints(ptidx,globaldata)
+                xneg = core.getDXNegPoints(ptidx,globaldata)
+                ypos = core.getDYPosPoints(ptidx,globaldata)
+                yneg = core.getDYNegPoints(ptidx,globaldata)
+                print("xpos",len(xpos),"xneg",len(xneg),"ypos",len(ypos),"yneg",len(yneg))
+
+            print("Select Point Repair Option")
+            print("(1) Delete Connectivity and reinstate connectivity using Triangle Data.")
+            print("(2) Delete Connectivity and reinstate connectivity using Triangle Data and balance the remaining using Kumar's Connectivity.")
+            print("(3) Delete Connectivity and reinstate connectivity using Triangle Data and balance the remaining using Nischay's Connectivity.")
+            print("(4) Balance Connectivity using Triangle Data.")
+            print("(5) Balance Connectivity using Triangle Data.")
+            print("(6) Exit")
+            print("(7) Exit without saving any changes")
+            print("(8) Go Back")
+            whatkind = int(input("What option do you want to select? "))
+            if whatkind == 1:
+                tris = balance.getNeighboursFromTriangle(ptidx,globaldata,polydata)
+                tris = core.getAeroPointsFromSet(ptidx,tris,globaldata,wallpointsData)
+                tris = core.convertPointsToIndex(tris,globaldata)
+                globaldata = core.replaceNeighbours(ptidx,tris,globaldata)
+            elif whatkind == 2:
+                tris = balance.getNeighboursFromTriangle(ptidx,globaldata,polydata)
+                tris = core.getAeroPointsFromSet(ptidx,tris,globaldata,wallpointsData)
+                tris = core.convertPointsToIndex(tris,globaldata)
+                globaldata = core.replaceNeighbours(ptidx,tris,globaldata)
+                globadata = balance.fixXneg
+            elif whatkind == 3:
+                tris = balance.getNeighboursFromTriangle(ptidx,globaldata,polydata)
+                tris = core.getAeroPointsFromSet(ptidx,tris,globaldata,wallpointsData)
+                tris = core.convertPointsToIndex(tris,globaldata)
+                globaldata = core.replaceNeighbours(ptidx,tris,globaldata)
+                globaldata = balance.triangleBalance(globaldata,polydata,wallpointsData,ptidx)
+            elif whatkind == 4:
+                globaldata = balance.triangleBalance(globaldata,polydata,wallpointsData,ptidx)
+            elif whatkind == 5:
+                None
+            elif whatkind == 6:
+                break
+            elif whatkind == 7:
+                exit()
+            else:
+                break
 
     globaldata.pop(0)
     
