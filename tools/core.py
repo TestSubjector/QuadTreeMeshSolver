@@ -762,6 +762,7 @@ def getDistance(point1,point2,globaldata):
     return result
 
 def wallConnectivityCheck(globaldata):
+    madechanges = False
     for idx,_ in enumerate(globaldata):
         if idx > 0:
             flag = getFlag(idx,globaldata)
@@ -769,9 +770,11 @@ def wallConnectivityCheck(globaldata):
                 xpos,xneg,_,_ = getFlags(idx,globaldata)
                 if xpos == 1 or xneg == 1:
                     print(idx) 
+                    madechanges = True
                     ptcordx, ptcordy = getPoint(idx,globaldata)
                     with open("adapted.txt", "a+") as text_file:
                         text_file.writelines(["%s %s " % (ptcordx, ptcordy)])
                         text_file.writelines("\n")
-    with open("adapted.txt", "a+") as text_file:
-        text_file.writelines("1000 1000\n")
+    if madechanges == True:
+        with open("adapted.txt", "a+") as text_file:
+            text_file.writelines("1000 1000\n")
