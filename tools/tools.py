@@ -45,7 +45,6 @@ def main():
     interiortriangles = triangulate(interiorpts)
     polydata = balance.getPolygon(interiortriangles)
 
-
     while True:
         print("Type 'exit' to quit (Saves changes).")
         print("Type 'exit! to quit (Does not save changes).")

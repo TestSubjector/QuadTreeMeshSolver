@@ -10,6 +10,8 @@ import logging
 import multiprocessing
 from multiprocessing.pool import ThreadPool
 import time
+import os
+import errno
 log = logging.getLogger(__name__)
 log.addHandler(logging.StreamHandler())
 
@@ -641,6 +643,13 @@ def checkAeroGlobal(chunk,globaldata,wallpointsData):
     # log.info(t2 - t1)
     return chunk
 
+def silentRemove(filename):
+    try:
+        os.remove(filename)
+    except OSError as e:  # this would be "except OSError, e:" before Python 2.6
+        if e.errno != errno.ENOENT:  # errno.ENOENT = no such file or directory
+            raise  # re-raise exception if a different error occurred
+
 def getSquarePlot(x, y, side):
     return [(x+(side/2), y+(side/2)), (x-(side/2), y+(side/2)), (x-(side/2), y-(side/2)), (x+(side/2), y-(side/2))]
 
@@ -760,3 +769,9 @@ def wallConnectivityCheck(globaldata):
                 xpos,xneg,_,_ = getFlags(idx,globaldata)
                 if xpos == 1 or xneg == 1:
                     print(idx) 
+                    ptcordx, ptcordy = getPoint(idx,globaldata)
+                    with open("adapted.txt", "a+") as text_file:
+                        text_file.writelines(["%s %s " % (ptcordx, ptcordy)])
+                        text_file.writelines("\n")
+    with open("adapted.txt", "a+") as text_file:
+        text_file.writelines("1000 1000\n")
