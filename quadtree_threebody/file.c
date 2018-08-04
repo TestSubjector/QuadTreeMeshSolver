@@ -125,8 +125,8 @@ void neighbouroutput(int append, char *filename, double xcord, double ycord)
     char ycordstr[20];
     char serialnumstr[20];
     char neighbourcountstr[20];
-    gcvt(xcord, 18, xcordstr);
-    gcvt(ycord, 18, ycordstr);
+    gcvt(xcord, 9, xcordstr);
+    gcvt(ycord, 9, ycordstr);
     gcvt(serial_number, 10, serialnumstr);
     FILE *fp = NULL;
     if (append == 1)
@@ -181,8 +181,8 @@ void neighbourset(int append, char *filename, double xcord, double ycord)
     // The if condition checks for blanking points
     char xcordstr[20];
     char ycordstr[20];
-    gcvt(xcord, 18, xcordstr);
-    gcvt(ycord, 18, ycordstr);
+    gcvt(xcord, 9, xcordstr);
+    gcvt(ycord, 9, ycordstr);
     // double_to_char(xcord,xcordstr);
     // double_to_char(ycord,ycordstr);
     FILE *fp = NULL;

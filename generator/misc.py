@@ -37,7 +37,13 @@ def cleanNeighbours(globaldata):  # Verified
     log.info("Beginning Duplicate Neighbour Detection")
     for i in range(len(globaldata)):
         # printProgressBar(i, len(globaldata) - 1, prefix = 'Progress:', suffix = 'Complete', length = 50)
-        noneighours = int(globaldata[i][11])  # Number of neighbours
+        try:
+            noneighours = int(globaldata[i][11])  # Number of neighbours
+        except IndexError:
+            print(i)
+            print(globaldata[i])
+            exit()
+        # noneighours = int(globaldata[i][11])  # Number of neighbours
         cordneighbours = globaldata[i][-noneighours:]
         # TODO - Ask, why get the same thing as above?
         cordneighbours = [str(float(j.split(",")[0])) + "," + str(float(j.split(",")[1])) for j in cordneighbours]
