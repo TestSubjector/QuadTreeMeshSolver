@@ -457,8 +457,14 @@ def cleanNeighbours(globaldata):
         cordneighbours = globaldata[i][-noneighours:]
         result = []
         for item in cordneighbours:
-            if int(item) == i:
-                continue
+            try:
+                if int(item) == i:
+                    continue
+            except ValueError:
+                print(i)
+                print(noneighours)
+                print(globaldata[i])
+                exit()
             if str(item) not in result:
                 result.append(str(item))
         cordneighbours = result
