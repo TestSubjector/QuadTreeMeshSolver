@@ -158,7 +158,7 @@ void quadtree_free(quadtree_t *tree)
   free(tree);
 }
 
-// Create quadtree_poit from an input point and use helper_function to insert into the tree
+// Create quadtree_point from an input point and use helper_function to insert into the tree
 int quadtree_insert(quadtree_t *tree, double x, double y)
 {
   quadtree_point_t *point;
