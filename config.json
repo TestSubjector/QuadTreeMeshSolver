@@ -7,6 +7,10 @@
         "XRange":[-0.5,1.6],
         "YRange":[-1.0,0.5]
     },
+    "bspline":{
+        "threshold":30,
+        "pointControl":3
+    },
     "penrose": {
         "cutoffConditionValue": 1E-3,
         "power": 2
@@ -40,7 +44,7 @@
         }
     },
     "global": {
-        "weightCondition": -2,
+        "weightCondition": 0,
         "logger": {
             "level": "INFO",
             "logPath": "log.log"
