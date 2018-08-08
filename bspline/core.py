@@ -11,6 +11,7 @@ from scipy.interpolate import splprep, splev
 import logging
 import itertools
 import bsplinegen
+import pickle
 log = logging.getLogger(__name__)
 log.addHandler(logging.StreamHandler())
 
@@ -256,6 +257,8 @@ def checkConditionNumber(index, globaldata, threshold):
         or yneg > threshold
         or math.isnan(yneg)
     ):
+        # print(index)
+        # print(xpos,xneg,ypos,yneg)
         return True
     else:
         return False
@@ -585,6 +588,7 @@ def getWallEndPoints(globaldata):
 
 def checkPoints(globaldata):
     wallptData = getWallPointArray(globaldata)
+    wallptDataOr = wallptData
     wallptData = flattenList(wallptData)
     threshold = int(config.getConfig()["bspline"]["threshold"])
     ptsToBeAdded = int(config.getConfig()["bspline"]["pointControl"])
@@ -596,29 +600,32 @@ def checkPoints(globaldata):
             if flag == 1:
                 result = checkConditionNumber(idx,globaldata,threshold)
                 if(result):
-                    ptList = findNearestNeighbourWallPoints(idx,globaldata,wallptData)
+                    # print(idx)
+                    ptList = findNearestNeighbourWallPoints(idx,globaldata,wallptData,wallptDataOr)
                     ptListArray.append(ptList)
     return ptListArray
 
-def findNearestNeighbourWallPoints(idx,globaldata,wallptData):
+def findNearestNeighbourWallPoints(idx,globaldata,wallptData,wallptDataOr):
     ptx,pty = getPoint(idx,globaldata)
     leastdt,leastidx = 1000,1000
     for itm in wallptData:
-        itmx = float(itm.split(",")[0])
-        itmy = float(itm.split(",")[1])
-        ptDist = math.sqrt((deltaX(itmx,ptx) ** 2) + (deltaY(itmy,pty) ** 2))
-        if leastdt > ptDist:
-            leastdt = ptDist
-            leastidx = getIndexFromPoint(itm,globaldata)
+        if not isNonAeroDynamic(idx,itm,globaldata,wallptDataOr):
+            itmx = float(itm.split(",")[0])
+            itmy = float(itm.split(",")[1])
+            ptDist = math.sqrt((deltaX(itmx,ptx) ** 2) + (deltaY(itmy,pty) ** 2))
+            if leastdt > ptDist:
+                leastdt = ptDist
+                leastidx = getIndexFromPoint(itm,globaldata)
     ptsToCheck = convertIndexToPoints(getLeftandRightPoint(leastidx,globaldata),globaldata)
     leastdt2,leastidx2 = 1000,1000
     for itm in ptsToCheck:
-        itmx = float(itm.split(",")[0])
-        itmy = float(itm.split(",")[1])
-        ptDist = math.sqrt((deltaX(itmx,ptx) ** 2) + (deltaY(itmy,pty) ** 2))
-        if leastdt2 > ptDist:
-            leastdt2 = ptDist
-            leastidx2 = getIndexFromPoint(itm,globaldata)
+        if not isNonAeroDynamic(idx,itm,globaldata,wallptDataOr):
+            itmx = float(itm.split(",")[0])
+            itmy = float(itm.split(",")[1])
+            ptDist = math.sqrt((deltaX(itmx,ptx) ** 2) + (deltaY(itmy,pty) ** 2))
+            if leastdt2 > ptDist:
+                leastdt2 = ptDist
+                leastidx2 = getIndexFromPoint(itm,globaldata)
     if leastidx > leastidx2:
         leastidx,leastidx2 = leastidx2,leastidx
     if leastidx == 1:
@@ -639,3 +646,11 @@ def undelimitXY(a):
         cord.append(float(itm.split(",")[1]))
         finallist.append(cord)
     return finallist
+
+def save_obj(obj, name ):
+    with open(name + '.pkl', 'wb') as f:
+        pickle.dump(obj, f, protocol=0)
+
+def load_obj(name ):
+    with open(name + '.pkl', 'rb') as f:
+        return pickle.load(f)

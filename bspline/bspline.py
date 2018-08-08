@@ -45,21 +45,32 @@ def main():
     problempts = core.checkPoints(globaldata)
     wallPts = core.getWallPointArray(globaldata)
     additionPts = []
+    try:
+        writingDict = dict(core.load_obj("wall"))
+    except IOError:
+        writingDict = {}
+    print(writingDict)
     print("Bsplining", len(problempts), "points.")
     for idx,itm in enumerate(problempts): 
         data = core.feederData(itm,wallPts)
         # print(data[0],data[1])
         newpts = bsplinegen.bsplineCall(np.array(core.undelimitXY(data[2])),int(config.getConfig()["bspline"]["pointControl"]),data[0],data[1])
-        printProgressBar(idx + 1, len(problempts), prefix="Progress:", suffix="Complete", length=50)   
+        printProgressBar(idx + 1, len(problempts), prefix="Progress:", suffix="Complete", length=50)
+        try:
+            writingDict[data[2][int(data[0])]] = writingDict[data[2][int(data[0])]] + newpts
+        except KeyError:
+            writingDict[data[2][int(data[0])]] = newpts
         additionPts.append(newpts)
     additionPts = list(itertools.chain.from_iterable(additionPts))
+    print(writingDict)
     with open("adapted.txt", "a+") as text_file:
         text_file.writelines("1000 1000\n2000 2000\n")
         for item1 in additionPts:
             text_file.writelines(["%s " % item for item in item1])
             text_file.writelines("\n")
         text_file.writelines("1000 1000\n")
-
+    core.save_obj(writingDict,"wall")
+    
 if __name__ == "__main__":
     import logging
     import os

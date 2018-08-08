@@ -1,5 +1,6 @@
 # from progress import *
 import logging
+import pickle
 log = logging.getLogger(__name__)
 log.addHandler(logging.StreamHandler())
 
@@ -163,3 +164,21 @@ def loadInterior(data, hashtable, globaldata, index):
                 globaldata.append(cleandata)
     log.info("Interior Point and Wall Point Neighbour Processed")
     return hashtable, globaldata
+
+
+def save_obj(obj, name ):
+    with open(name + '.pkl', 'wb') as f:
+        pickle.dump(obj, f, protocol=0)
+
+def load_obj(name ):
+    with open(name + '.pkl', 'rb') as f:
+        return pickle.load(f)
+
+def checkIfInside(xcord,ycord,wallData):
+    for idx,itm in enumerate(wallData):
+        compare = itm.split("\t")
+        compareValX = float(compare[0])
+        compareValY = float(compare[1])
+        if xcord == compareValX and ycord == compareValY:
+            return True,idx
+    return False,0
