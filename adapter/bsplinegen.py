@@ -43,6 +43,7 @@ def typeObtuseRightAcute(x1, y1, x2, y2, x3, y3):
         return 0
 
 def bsplineCall(cv, point_division, index1, index2):
+    cv = np.concatenate((cv, [cv[0]]), axis = 0)
     plt.plot(cv[:,0],cv[:,1], 'o-', label='Control Points')
 
     if(index1 > len(cv) or index2 > len(cv)):
@@ -733,6 +734,4 @@ if __name__ == "__main__":
     [0.99978383E+00, 0.30665313E-04],
     [0.99990392E+00, 0.13630605E-04]])
 
-    cv = np.concatenate((cv, [cv[0]]), axis = 0)
-
-    print(bsplineCall(cv, 4, 1, 2))
+    # print(bsplineCall(cv, 4, 1, 2))

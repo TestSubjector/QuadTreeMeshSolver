@@ -6,6 +6,8 @@ import logging
 import bsplinegen
 import config
 import numpy as np
+import math
+import itertools
 log = logging.getLogger(__name__)
 log.addHandler(logging.StreamHandler())
 import pyximport; pyximport.install(pyimport = True)
@@ -43,13 +45,20 @@ def main():
     problempts = core.checkPoints(globaldata)
     wallPts = core.getWallPointArray(globaldata)
     additionPts = []
-    for idx,itm in enumerate(problempts):
-        printProgressBar(idx, len(problempts) - 1, prefix="Progress:", suffix="Complete", length=50)    
+    print("Bsplining", len(problempts), "points.")
+    for idx,itm in enumerate(problempts): 
         data = core.feederData(itm,wallPts)
-        print(data[0],data[1])
+        # print(data[0],data[1])
         newpts = bsplinegen.bsplineCall(np.array(core.undelimitXY(data[2])),int(config.getConfig()["bspline"]["pointControl"]),data[0],data[1])
+        printProgressBar(idx + 1, len(problempts), prefix="Progress:", suffix="Complete", length=50)   
         additionPts.append(newpts)
-    # print(additionPts)
+    additionPts = list(itertools.chain.from_iterable(additionPts))
+    with open("adapted.txt", "a+") as text_file:
+        text_file.writelines("1000 1000\n2000 2000\n")
+        for item1 in additionPts:
+            text_file.writelines(["%s " % item for item in item1])
+            text_file.writelines("\n")
+        text_file.writelines("1000 1000\n")
 
 if __name__ == "__main__":
     import logging
