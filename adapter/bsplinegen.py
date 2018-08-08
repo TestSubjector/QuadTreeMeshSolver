@@ -8,6 +8,19 @@ from scipy.interpolate import splprep, splev
 # index1: First point index
 # index2: Second point index
 
+def angle(x1, y1, x2, y2, x3, y3):
+    a = np.array([x1, y1])
+    b = np.array([x2, y2])
+    c = np.array([x3, y3])
+
+    ba = a - b
+    bc = c - b
+
+    cosine_angle = np.dot(ba, bc) / (np.linalg.norm(ba) * np.linalg.norm(bc))
+    angle = np.arccos(cosine_angle)
+
+    return np.degrees(angle)
+
 def distance(ax,ay,bx,by):
     return math.sqrt((ax - bx)**2 + (ay - by)**2)
 
@@ -24,12 +37,10 @@ def typeObtuseRightAcute(x1, y1, x2, y2, x3, y3):
 
     [var1, var2, largest] = sorted([sideAB, sideBC, sideAC])
 
-    if abs((largest) ** 2-((var1 ** 2 + (var2) ** 2))) < epsilon:
+    if largest == sideAC and (largest) ** 2 > ((var1 ** 2 + (var2) ** 2)):
         return 1
-    elif (largest) ** 2 > ((var1 ** 2 + (var2) ** 2)):
-        return 0
     else:
-        return 1
+        return 0
 
 def bsplineCall(cv, point_division, index1, index2):
     plt.plot(cv[:,0],cv[:,1], 'o-', label='Control Points')
@@ -44,9 +55,10 @@ def bsplineCall(cv, point_division, index1, index2):
     generated_points = [] 
     update = 0
     while len(generated_points) < point_division and update < 10000:
+        print(update)
         generated_points.clear()
         u_new = np.linspace(u.min(), u.max(), (update + point_division)*(len(cv))*(1/len(str(len(cv)))))
-        if update < 1000:
+        if update < 300:
             update = update + 1
         elif update < 2000:
             update = update + 100
@@ -57,8 +69,10 @@ def bsplineCall(cv, point_division, index1, index2):
         for i in range(len(new_points[0])):
             # The cv[x] represents point index (subtracted by one) in between which the new generated points are found 
             if (typeObtuseRightAcute(cv[index1][0], cv[index1][1], new_points[0][i],new_points[1][i], cv[index2][0], cv[index2][1])== 1):
-                generated_points.append([new_points[0][i], new_points[1][i]])
-                # print(new_points[0][i], new_points[1][i])
+                if(angle(cv[index1][0], cv[index1][1], new_points[0][i],new_points[1][i], cv[index2][0], cv[index2][1]) > 175 and 
+                    angle(cv[index1][0], cv[index1][1], new_points[0][i],new_points[1][i], cv[index2][0], cv[index2][1]) < 185):
+                    generated_points.append([new_points[0][i], new_points[1][i]])
+                    # print(new_points[0][i], new_points[1][i])
     else:
         print(update)
 
@@ -73,7 +87,6 @@ def bsplineCall(cv, point_division, index1, index2):
     # plt.gca().set_aspect('equal', adjustable='box')
     plt.show()
     return generated_points
-    
     
 
 if __name__ == "__main__":
@@ -722,4 +735,4 @@ if __name__ == "__main__":
 
     cv = np.concatenate((cv, [cv[0]]), axis = 0)
 
-    print(bsplineCall(cv, 4, 115, 116))
+    print(bsplineCall(cv, 4, 1, 2))
