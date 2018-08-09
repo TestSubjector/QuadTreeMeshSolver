@@ -165,14 +165,13 @@ def loadInterior(data, hashtable, globaldata, index):
     log.info("Interior Point and Wall Point Neighbour Processed")
     return hashtable, globaldata
 
-
 def save_obj(obj, name ):
-    with open(name + '.pkl', 'wb') as f:
-        pickle.dump(obj, f, protocol=0)
+    with open(name + '.json', 'w') as f:
+        json.dump(obj, f)
 
 def load_obj(name ):
-    with open(name + '.pkl', 'rb') as f:
-        return pickle.load(f)
+    with open(name + '.json', 'r') as f:
+        return json.load(f)
 
 def checkIfInside(xcord,ycord,wallData):
     for idx,itm in enumerate(wallData):

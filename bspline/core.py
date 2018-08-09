@@ -12,6 +12,7 @@ import logging
 import itertools
 import bsplinegen
 import pickle
+import json
 log = logging.getLogger(__name__)
 log.addHandler(logging.StreamHandler())
 
@@ -648,9 +649,9 @@ def undelimitXY(a):
     return finallist
 
 def save_obj(obj, name ):
-    with open(name + '.pkl', 'wb') as f:
-        pickle.dump(obj, f, protocol=0)
+    with open(name + '.json', 'w') as f:
+        json.dump(obj, f)
 
 def load_obj(name ):
-    with open(name + '.pkl', 'rb') as f:
-        return pickle.load(f)
+    with open(name + '.json', 'r') as f:
+        return json.load(f)

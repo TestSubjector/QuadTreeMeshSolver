@@ -47,7 +47,7 @@ def main():
 
     log.info("Found " + str(len(wallarg)) + " wall geometry files.")
     try:
-        bsplineWallData = load_obj("wall")
+        bsplineWallData = dict(load_obj("wall"))
     except IOError:
         bsplineWallData = "None"
     for idx,itm in enumerate(wallarg):
