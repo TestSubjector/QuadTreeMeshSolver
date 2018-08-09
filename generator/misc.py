@@ -40,9 +40,8 @@ def cleanNeighbours(globaldata):  # Verified
         try:
             noneighours = int(globaldata[i][11])  # Number of neighbours
         except IndexError:
-            print(i)
-            print(globaldata[i])
-            exit()
+            log.warn("No neighbours found for index " + str(i))
+            noneighbours = 0
         # noneighours = int(globaldata[i][11])  # Number of neighbours
         cordneighbours = globaldata[i][-noneighours:]
         # TODO - Ask, why get the same thing as above?

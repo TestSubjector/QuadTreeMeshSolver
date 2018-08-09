@@ -64,7 +64,7 @@ def main():
                 resultMan,insertionidx = checkIfInside(float(itm.split(",")[0]),float(itm.split(",")[1]),geometrydata)
                 if resultMan:
                     ptsToBeAdded = bsplineWallData[itm]
-                    for ptCordItm in ptsToBeAdded:
+                    for ptCordItm in reversed(ptsToBeAdded):
                         dataInsert = str(ptCordItm[0]) + "\t" + str(ptCordItm[1])
                         geometrydata.insert(insertionidx + 1,dataInsert)
         hashtable, wallpointsdata, globaldata = loadWall(geometrydata,hashtable,globaldata,idx + 1)
