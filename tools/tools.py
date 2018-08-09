@@ -49,6 +49,7 @@ def main():
         print("Type 'exit' to quit (Saves changes).")
         print("Type 'exit! to quit (Does not save changes).")
         print("Type 'wcc' to run Wall Connectivity Check on all Wall Points.")
+        print("Type 'icc' to run Interior Connectivity Check on all Interior Points.")
         ptidx = input("Which point do you want to fix? ")
         if ptidx == "exit":
             break
@@ -56,6 +57,8 @@ def main():
             exit()
         elif ptidx == "wcc":
             core.wallConnectivityCheck(globaldata)
+        elif ptidx == "icc":
+            core.interiorConnectivityCheck(globaldata)
         isPointIndex = False
         try:
             ptidx = int(ptidx)

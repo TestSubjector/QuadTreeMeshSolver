@@ -784,3 +784,10 @@ def wallConnectivityCheck(globaldata):
     if madechanges == True:
         with open("adapted.txt", "a+") as text_file:
             text_file.writelines("1000 1000\n")
+
+def interiorConnectivityCheck(globaldata):
+    for idx,_ in enumerate(globaldata):
+        if idx > 0:
+            flag = getFlag(idx,globaldata)
+            if flag == 1:
+                checkConditionNumber(idx,globaldata,int(config.getConfig()["bspline"]["threshold"]))
