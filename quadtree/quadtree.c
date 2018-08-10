@@ -318,18 +318,7 @@ void descent_node(quadtree_node_t *node)
     main_coord.x = xcord;
     main_coord.y = ycord;
     // The commented out code below is to check for specific points
-    // if(xcord == 8.75 && ycord == 8.75)
-    // {
-    //   checker = 1;
-    // }
-    // else
-    // {
-    //   checker = 0;
-    // }
-    if (checker == 1)
-    {
-      printf("\n ABC");
-    }
+    checker = 0;
     if (pnpoly(shape_line_count, shape_list, xcord, ycord))
     {
       if (newneighboursetfile == 1)
@@ -350,6 +339,18 @@ void descent_node(quadtree_node_t *node)
     checker = 0;
     main_coord.x = node->point->x;
     main_coord.y = node->point->y;
+    if(main_coord.x > 0.88372137 && main_coord.x < 0.88372140 && main_coord.y < -0.015379013 && main_coord.y > -0.015379017)
+    {
+      checker = 1;
+    }
+    else
+    {
+      checker = 0;
+    }
+    if (checker == 1)
+    {
+      printf("\n ABC");
+    }
     if (pnpoly(shape_line_count, shape_list, node->point->x, node->point->y))
     {
       if (newneighboursetfile == 1)

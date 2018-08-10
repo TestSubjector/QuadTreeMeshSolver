@@ -112,7 +112,6 @@ int notaero_blank(int nvert, coords_t *coords_list, coords_t main_point, coords_
 {
     int i, j, k, l;
     // printf(" \n It's running atleast");
-    int checker = 0;
     // if(fabs(main_point.x - 0.999298096) < 0.00001 && fabs(main_point.y + 0.000457763672) < 0.00001  && neighbour_point.x == 0.9991382 && neighbour_point.y == 0.00012220342)
     // {
     //     checker = 1;
