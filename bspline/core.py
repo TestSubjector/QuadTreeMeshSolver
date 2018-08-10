@@ -594,6 +594,7 @@ def checkPoints(globaldata):
     threshold = int(config.getConfig()["bspline"]["threshold"])
     ptsToBeAdded = int(config.getConfig()["bspline"]["pointControl"])
     ptListArray = []
+    perpendicularListArray = []
     for idx,_ in enumerate(globaldata):
         printProgressBar(idx, len(globaldata) - 1, prefix="Progress:", suffix="Complete", length=50)
         if idx > 0:
@@ -603,8 +604,10 @@ def checkPoints(globaldata):
                 if(result):
                     # print(idx)
                     ptList = findNearestNeighbourWallPoints(idx,globaldata,wallptData,wallptDataOr)
+                    perpendicularPt = getPerpendicularPoint(idx,globaldata)
                     ptListArray.append(ptList)
-    return ptListArray
+                    perpendicularListArray.append((perpendicularPt))
+    return ptListArray,perpendicularListArray
 
 def findNearestNeighbourWallPoints(idx,globaldata,wallptData,wallptDataOr):
     ptx,pty = getPoint(idx,globaldata)
@@ -655,3 +658,42 @@ def save_obj(obj, name ):
 def load_obj(name ):
     with open(name + '.json', 'r') as f:
         return json.load(f)
+
+
+def getPerpendicularPoint(idx,globaldata):
+    wallptData = getWallPointArray(globaldata)
+    wallptDataOr = wallptData
+    wallptData = flattenList(wallptData)
+    pts = findNearestNeighbourWallPoints(idx,globaldata,wallptData,wallptDataOr)
+    mainpt = getPointxy(idx,globaldata)
+    mainptx = float(mainpt.split(",")[0])
+    mainpty = float(mainpt.split(",")[1])
+    pts1x = float(pts[0].split(",")[0])
+    pts1y = float(pts[0].split(",")[1])
+    pts2x = float(pts[1].split(",")[0])
+    pts2y = float(pts[1].split(",")[1])
+    return perpendicularPt(pts1x,pts2x,mainptx,pts1y,pts2y,mainpty)
+
+def perpendicularPt(x1,x2,x3,y1,y2,y3):
+    k = ((y2-y1) * (x3-x1) - (x2-x1) * (y3-y1)) / ((y2-y1)**2 + (x2-x1)**2)
+    x4 = x3 - k * (y2-y1)
+    y4 = y3 + k * (x2-x1)
+    return x4,y4
+
+def distance(ax,ay,bx,by):
+    return math.sqrt((ax - bx)**2 + (ay - by)**2)
+
+def findNearestPoint(ptAtt,splineArray):
+    ptdist = 10000
+    pt = {"x":0,"y":0}
+    ptAttx = float(ptAtt[0])
+    ptAtty = float(ptAtt[1])
+    for itm in splineArray:
+        itmx = float(itm[0])
+        itmy = float(itm[1])
+        dist = distance(ptAttx,ptAtty,itmx,itmy)
+        if dist < ptdist:
+            ptdist = dist
+            pt["x"] = itmx
+            pt["y"] = itmy
+    return [pt["x"],pt["y"]]

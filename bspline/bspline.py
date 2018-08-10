@@ -42,7 +42,7 @@ def main():
         globaldata.append(entry)
 
     globaldata = core.cleanNeighbours(globaldata)
-    problempts = core.checkPoints(globaldata)
+    problempts,perpendicularpts = core.checkPoints(globaldata)
     wallPts = core.getWallPointArray(globaldata)
     additionPts = []
     try:
@@ -55,6 +55,7 @@ def main():
         data = core.feederData(itm,wallPts)
         # print(data[0],data[1])
         newpts = bsplinegen.bsplineCall(np.array(core.undelimitXY(data[2])),int(config.getConfig()["bspline"]["pointControl"]),data[0],data[1])
+        newpts = [core.findNearestPoint(perpendicularpts[idx],newpts)]
         printProgressBar(idx + 1, len(problempts), prefix="Progress:", suffix="Complete", length=50)
         try:
             writingDict[data[2][int(data[0])]] = writingDict[data[2][int(data[0])]] + newpts

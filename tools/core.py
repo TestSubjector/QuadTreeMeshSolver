@@ -12,6 +12,7 @@ from multiprocessing.pool import ThreadPool
 import time
 import os
 import errno
+import itertools
 log = logging.getLogger(__name__)
 log.addHandler(logging.StreamHandler())
 
@@ -791,3 +792,54 @@ def interiorConnectivityCheck(globaldata):
             flag = getFlag(idx,globaldata)
             if flag == 1:
                 checkConditionNumber(idx,globaldata,int(config.getConfig()["bspline"]["threshold"]))
+
+def flattenList(ptdata):
+    return list(itertools.chain.from_iterable(ptdata))
+
+def getPerpendicularPoint(idx,globaldata):
+    wallptData = getWallPointArray(globaldata)
+    wallptDataOr = wallptData
+    wallptData = flattenList(wallptData)
+    pts = findNearestNeighbourWallPoints(idx,globaldata,wallptData,wallptDataOr)
+    mainpt = getPointxy(idx,globaldata)
+    mainptx = float(mainpt.split(",")[0])
+    mainpty = float(mainpt.split(",")[1])
+    pts1x = float(pts[0].split(",")[0])
+    pts1y = float(pts[0].split(",")[1])
+    pts2x = float(pts[1].split(",")[0])
+    pts2y = float(pts[1].split(",")[1])
+    return perpendicularPt(pts1x,pts2x,mainptx,pts1y,pts2y,mainpty)
+
+def perpendicularPt(x1,x2,x3,y1,y2,y3):
+    k = ((y2-y1) * (x3-x1) - (x2-x1) * (y3-y1)) / ((y2-y1)**2 + (x2-x1)**2)
+    x4 = x3 - k * (y2-y1)
+    y4 = y3 + k * (x2-x1)
+    return x4,y4
+
+def findNearestNeighbourWallPoints(idx,globaldata,wallptData,wallptDataOr):
+    wallptDataOr = generateWallPolygons(wallptDataOr)
+    ptx,pty = getPoint(idx,globaldata)
+    leastdt,leastidx = 1000,1000
+    for itm in wallptData:
+        if not isNonAeroDynamic(idx,itm,globaldata,wallptDataOr):
+            itmx = float(itm.split(",")[0])
+            itmy = float(itm.split(",")[1])
+            ptDist = math.sqrt((deltaX(itmx,ptx) ** 2) + (deltaY(itmy,pty) ** 2))
+            if leastdt > ptDist:
+                leastdt = ptDist
+                leastidx = getIndexFromPoint(itm,globaldata)
+    ptsToCheck = getLeftandRightPoint(leastidx,globaldata)
+    leastdt2,leastidx2 = 1000,1000
+    for itm in ptsToCheck:
+        if not isNonAeroDynamic(idx,itm,globaldata,wallptDataOr):
+            itmx = float(itm.split(",")[0])
+            itmy = float(itm.split(",")[1])
+            ptDist = math.sqrt((deltaX(itmx,ptx) ** 2) + (deltaY(itmy,pty) ** 2))
+            if leastdt2 > ptDist:
+                leastdt2 = ptDist
+                leastidx2 = getIndexFromPoint(itm,globaldata)
+    if leastidx > leastidx2:
+        leastidx,leastidx2 = leastidx2,leastidx
+    if leastidx == 1:
+        leastidx,leastidx2 = leastidx2,leastidx
+    return convertIndexToPoints([leastidx,leastidx2],globaldata)

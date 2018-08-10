@@ -55,7 +55,7 @@ def bsplineCall(cv, point_division, index1, index2):
     tck, u = splprep([cv[:,0], cv[:,1]], s=0)
 
     generated_points = [] 
-    update = 0
+    update = 2000
     while len(generated_points) < point_division and update < 10000:
         # print(update)
         generated_points.clear()
