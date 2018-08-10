@@ -10,6 +10,8 @@ condition.dat
 .vscode
 .vs
 file.dat
+wall.pkl
+wall.json
 
 # C extensions
 *.so
