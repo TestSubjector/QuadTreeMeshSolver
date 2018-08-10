@@ -1,6 +1,7 @@
 import core
 from progress import printProgressBar
 import argparse
+import connectivity
 from shapely.geometry import MultiPoint
 from shapely.ops import triangulate
 import balance
@@ -56,6 +57,7 @@ def main():
         elif ptidx == "exit!":
             exit()
         elif ptidx == "wcc":
+            globaldata = connectivity.connectivityCheck(globaldata)
             core.wallConnectivityCheck(globaldata)
         elif ptidx == "icc":
             core.interiorConnectivityCheck(globaldata)
