@@ -50,6 +50,7 @@ def main():
         print("Type 'exit' to quit (Saves changes).")
         print("Type 'exit! to quit (Does not save changes).")
         print("Type 'wcc' to run Wall Connectivity Check on all Wall Points.")
+        print("Type 'wcc!' to run Wall Connectivity Check on all Wall Points and return nearest point.")
         print("Type 'icc' to run Interior Connectivity Check on all Interior Points.")
         ptidx = input("Which point do you want to fix? ")
         if ptidx == "exit":
@@ -59,6 +60,9 @@ def main():
         elif ptidx == "wcc":
             globaldata = connectivity.connectivityCheck(globaldata)
             core.wallConnectivityCheck(globaldata)
+        elif ptidx == "wcc!":
+            globaldata = connectivity.connectivityCheck(globaldata)
+            core.wallConnectivityCheckNearest(globaldata)
         elif ptidx == "icc":
             core.interiorConnectivityCheck(globaldata)
         isPointIndex = False

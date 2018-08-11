@@ -786,6 +786,27 @@ def wallConnectivityCheck(globaldata):
         with open("adapted.txt", "a+") as text_file:
             text_file.writelines("1000 1000\n")
 
+def wallConnectivityCheckNearest(globaldata):
+    madechanges = False
+    for idx,_ in enumerate(globaldata):
+        if idx > 0:
+            flag = getFlag(idx,globaldata)
+            if flag == 0:
+                xpos,xneg,_,_ = getFlags(idx,globaldata)
+                if xpos == 1 or xneg == 1:
+                    print(idx) 
+                    madechanges = True
+                    ptcord = getNearestProblemPoint(idx,globaldata)
+                    if ptcord != 0:
+                        ptcordx = float(ptcord.split(",")[0])
+                        ptcordy = float(ptcord.split(",")[1])
+                    with open("adapted.txt", "a+") as text_file:
+                        text_file.writelines(["%s %s " % (ptcordx, ptcordy)])
+                        text_file.writelines("\n")
+    if madechanges == True:
+        with open("adapted.txt", "a+") as text_file:
+            text_file.writelines("1000 1000\n")   
+
 def interiorConnectivityCheck(globaldata):
     for idx,_ in enumerate(globaldata):
         if idx > 0:
@@ -843,3 +864,59 @@ def findNearestNeighbourWallPoints(idx,globaldata,wallptData,wallptDataOr):
     if leastidx == 1:
         leastidx,leastidx2 = leastidx2,leastidx
     return convertIndexToPoints([leastidx,leastidx2],globaldata)
+
+def angle(x1, y1, x2, y2, x3, y3):
+    a = np.array([x1, y1])
+    b = np.array([x2, y2])
+    c = np.array([x3, y3])
+
+    ba = a - b
+    bc = c - b
+
+    cosine_angle = np.dot(ba, bc) / (np.linalg.norm(ba) * np.linalg.norm(bc))
+    angle = np.arccos(cosine_angle)
+
+    return np.degrees(angle)
+
+
+def getNearestProblemPoint(idx,globaldata):
+    xpos = getDWallXPosPoints(idx,globaldata)
+    xneg = getDWallXNegPoints(idx,globaldata)
+    leftright = getLeftandRightPoint(idx,globaldata)
+    mainptx,mainpty = getPoint(idx,globaldata)
+    mainpt = (mainptx,mainpty)
+    currang = 0
+    currpt = 0
+    if len(xpos) == 1:
+        leftright.remove(xpos[0])
+        wallx = float(leftright[0].split(",")[0])
+        wally = float(leftright[0].split(",")[1])
+        wallpt = (wallx,wally)
+        for itm in xneg:
+            itmx = float(itm.split(",")[0])
+            itmy = float(itm.split(",")[1])
+            itmpt = (itmx,itmy)
+            try:
+                angitm = angle(wallx,wally,mainptx,mainpty,itmx,itmy)
+            except:
+                print(wallx,wally,mainptx,mainpty,itmx,itmy)
+            if currang < angitm:
+                curang = angitm
+                currpt = itm
+    if len(xneg) == 1:
+        leftright.remove(xneg[0])
+        wallx = float(leftright[0].split(",")[0])
+        wally = float(leftright[0].split(",")[1])
+        wallpt = (wallx,wally)
+        for itm in xpos:
+            itmx = float(itm.split(",")[0])
+            itmy = float(itm.split(",")[1])
+            itmpt = (itmx,itmy)
+            try:
+                angitm = angle(wallx,wally,mainptx,mainpty,itmx,itmy)
+            except:
+                print(wallx,wally,mainptx,mainpty,itmx,itmy)
+            if currang < angitm:
+                curang = angitm
+                currpt = itm
+    return currpt
