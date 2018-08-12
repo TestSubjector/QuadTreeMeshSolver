@@ -672,13 +672,19 @@ def getPerpendicularPoint(idx,globaldata):
     pts1y = float(pts[0].split(",")[1])
     pts2x = float(pts[1].split(",")[0])
     pts2y = float(pts[1].split(",")[1])
-    return perpendicularPt(pts1x,pts2x,mainptx,pts1y,pts2y,mainpty)
+    return midPt(pts1x,pts2x,pts1y,pts2y)
+    # return perpendicularPt(pts1x,pts2x,mainptx,pts1y,pts2y,mainpty)
 
 def perpendicularPt(x1,x2,x3,y1,y2,y3):
     k = ((y2-y1) * (x3-x1) - (x2-x1) * (y3-y1)) / ((y2-y1)**2 + (x2-x1)**2)
     x4 = x3 - k * (y2-y1)
     y4 = y3 + k * (x2-x1)
     return x4,y4
+
+def midPt(x1,x2,y1,y2):
+    x3 = x1+x2/2
+    y3 = y1+y2/2
+    return x3,y3
 
 def distance(ax,ay,bx,by):
     return math.sqrt((ax - bx)**2 + (ay - by)**2)
