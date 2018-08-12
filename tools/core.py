@@ -435,8 +435,18 @@ def checkConditionNumber(index, globaldata, threshold):
     dSPointXNeg = getDXNegPoints(index, globaldata)
     dSPointYPos = getDYPosPoints(index, globaldata)
     dSPointYNeg = getDYNegPoints(index, globaldata)
-    if xneg > threshold or xpos > threshold or ypos > threshold or yneg > threshold:
-        print(
+    if (
+        xneg > threshold
+        or len(dSPointXNeg) < 2 or len(dSPointXPos) < 2 or len(dSPointYNeg) < 2 or len(dSPointYPos) < 2 
+        or math.isnan(xneg)
+        or xpos > threshold
+        or math.isnan(xpos)
+        or ypos > threshold
+        or math.isnan(ypos)
+        or yneg > threshold
+        or math.isnan(yneg)
+    ):
+            print(
             index,
             len(dSPointXPos),
             xpos,
