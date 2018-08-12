@@ -9,6 +9,7 @@ int newoutputfile = 1;
 int newneighboursetfile = 1;
 coords_t main_coord;
 int checker = 0;
+int is_leafpoint = 0;
 
 // Declarations
 static int split_leafnode_(quadtree_t *tree, quadtree_node_t *node);
@@ -331,6 +332,7 @@ void descent_node(quadtree_node_t *node)
         neighbouroutput(1, filename, xcord, ycord);
       }
       // printf("\n %lf %lf has neighbours\t", xcord, ycord);
+      is_leafpoint = 0;
       find_neighbourset(common_treeroute(tree->root, node), node);
     }
   }
@@ -339,14 +341,14 @@ void descent_node(quadtree_node_t *node)
     checker = 0;
     main_coord.x = node->point->x;
     main_coord.y = node->point->y;
-    if(main_coord.x > 0.88372137 && main_coord.x < 0.88372140 && main_coord.y < -0.015379013 && main_coord.y > -0.015379017)
-    {
-      checker = 1;
-    }
-    else
-    {
-      checker = 0;
-    }
+    // if(main_coord.x > 0.88372137 && main_coord.x < 0.88372140 && main_coord.y < -0.015379013 && main_coord.y > -0.015379017)
+    // {
+    //   checker = 1;
+    // }
+    // else
+    // {
+    //   checker = 0;
+    // }
     if (checker == 1)
     {
       printf("\n ABC");
@@ -363,6 +365,7 @@ void descent_node(quadtree_node_t *node)
         neighbouroutput(1, filename, node->point->x, node->point->y);
       }
       // printf("\n %lf %lf has neighbours\t", node->point->x, node->point->y);
+      is_leafpoint = 1;
       find_neighbourset(common_treeroute(tree->root, node), node);
     }
   }

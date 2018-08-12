@@ -211,5 +211,6 @@ int north_ancestor(int patharray[41], int path_size);
 int south_ancestor(int patharray[41], int path_size);
 
 int wallpoint_insert_flag;
+int is_leafpoint;
 
 #endif

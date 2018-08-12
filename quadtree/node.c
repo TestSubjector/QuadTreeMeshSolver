@@ -1715,6 +1715,685 @@ void eastern_diagonal_neighbourset(quadtree_node_t *node, int mainnode_direction
             double xcord = (root->bounds->nw->x + root->bounds->se->x) / 2;
             double ycord = (root->bounds->nw->y + root->bounds->se->y) / 2;
             neighbourset(1, filename, xcord, ycord);
+            if(is_leafpoint == 1)
+            {
+                eastern_diagonal_neighbourset2(root, 1);
+                northern_diagonal_neighbourset2(root, 1);
+                southern_diagonal_neighbourset2(root, 1);
+            }
+            break;
+        }
+        else if (quadtree_node_isleaf(root))
+        {
+            neighbourset(1, filename, root->point->x, root->point->y);
+            if(is_leafpoint == 1)
+            {
+                eastern_diagonal_neighbourset2(root, 1);
+                northern_diagonal_neighbourset2(root, 1);
+                southern_diagonal_neighbourset2(root, 1);
+            }
+            break;
+        }
+        else if (j == patharray[40] - 1)
+        {
+            if(mainnode_direction == 1)
+            {
+                if (quadtree_node_isempty(root->sw))
+                {
+                    double xcord = (root->sw->bounds->nw->x + root->sw->bounds->se->x) / 2;
+                    double ycord = (root->sw->bounds->nw->y + root->sw->bounds->se->y) / 2;
+                    neighbourset(1, filename, xcord, ycord);
+                    if(is_leafpoint == 1)
+                    {
+                        eastern_diagonal_neighbourset2(root->sw, 1);
+                        northern_diagonal_neighbourset2(root->sw, 1);
+                        southern_diagonal_neighbourset2(root->sw, 1);
+                    }
+                }
+                else if (quadtree_node_isleaf(root->sw))
+                {
+                    neighbourset(1, filename, root->sw->point->x, root->sw->point->y);
+                    if(is_leafpoint == 1)
+                    {
+                        eastern_diagonal_neighbourset2(root->sw, 1);
+                        northern_diagonal_neighbourset2(root->sw, 1);
+                        southern_diagonal_neighbourset2(root->sw, 1);
+                    }
+                }
+            }
+            if(mainnode_direction == 2)
+            {
+                if (quadtree_node_isempty(root->nw))
+                {
+                    double xcord = (root->nw->bounds->nw->x + root->nw->bounds->se->x) / 2;
+                    double ycord = (root->nw->bounds->nw->y + root->nw->bounds->se->y) / 2;
+                    neighbourset(1, filename, xcord, ycord);
+                    if(is_leafpoint == 1)
+                    {
+                        eastern_diagonal_neighbourset2(root->nw, 2);
+                        northern_diagonal_neighbourset2(root->nw, 2);
+                        southern_diagonal_neighbourset2(root->nw, 2);
+                    }
+                    // printf("(%lf,%lf) ", xcord, ycord);
+                }
+                else if (quadtree_node_isleaf(root->nw))
+                {
+                    neighbourset(1, filename, root->nw->point->x, root->nw->point->y);
+                    
+                    if(is_leafpoint == 1)
+                    {
+                        eastern_diagonal_neighbourset2(root->nw, 2);
+                        northern_diagonal_neighbourset2(root->nw, 2);
+                        southern_diagonal_neighbourset2(root->nw, 2);
+                    }
+                }
+            }
+            break;
+        }
+    }
+}
+
+void western_diagonal_neighbourset(quadtree_node_t *node, int mainnode_direction)
+{
+    if(checker == 1)
+    {
+        printf("\n Start Western Diag Check \n");
+    }
+    common_ancestor_diagonal(tree->root, node);
+    quadtree_node_t *root = tree->root;
+    int diagonal_path_size = diagonal_patharray[40];
+    int j = 0;
+    int diagonal_pathstep = -1;
+    int ancestor_pos = -1;
+    char *filename = "neighbour.txt";
+
+    for (j = diagonal_path_size - 1; j >= 0; j--)
+    {
+        diagonal_pathstep = diagonal_patharray[j];
+        if (diagonal_pathstep == 1)
+        {
+            continue;
+        }
+        else if (diagonal_pathstep == 2)
+        {
+            ancestor_pos = j;
+            break;
+        }
+        else if (diagonal_pathstep == 3)
+        {
+            continue;
+        }
+        else if (diagonal_pathstep == 4)
+        {
+            ancestor_pos = j;
+            break;
+        }
+        else if (diagonal_pathstep == 0)
+        {
+            printf("\n Warning - Diagonal_Patharray has zero value problems");
+            continue;
+        }
+        else
+        {
+            printf("\n ERROR - Some random value corrupted patharray");
+            exit(2);
+        }
+    }
+    if (ancestor_pos == -1)
+    {
+        return;
+    }
+
+    j = ancestor_pos;
+    int diagonal_path_step = 0;
+    root = reach_ancestor(root, diagonal_patharray, ancestor_pos);
+
+    for (j = ancestor_pos; j <= diagonal_patharray[40] - 1; j++)
+    {
+        diagonal_path_step = diagonal_patharray[j];
+        if (diagonal_path_step == 1)
+        {
+            root = root->ne;
+        }
+        else if (diagonal_path_step == 2)
+        {
+            root = root->nw;
+        }
+        else if (diagonal_path_step == 3)
+        {
+            root = root->se;
+        }
+        else if (diagonal_path_step == 4)
+        {
+            root = root->sw;
+        }
+        else
+        {
+            printf("ERROR : 2nd stage path traversal for west diagonal_neighbour went awry");
+            exit(2);
+        }
+        if (quadtree_node_isempty(root))
+        {
+            double xcord = (root->bounds->nw->x + root->bounds->se->x) / 2;
+            double ycord = (root->bounds->nw->y + root->bounds->se->y) / 2;
+            neighbourset(1, filename, xcord, ycord);
+            if(is_leafpoint == 1)
+            {
+                western_diagonal_neighbourset2(root, 2);
+                northern_diagonal_neighbourset2(root, 2);
+                southern_diagonal_neighbourset2(root, 2);
+            }
+            if(checker == 1)
+            {
+                printf("\n Special west diag neighbour 1 - (%.10lf,%.10lf) ", xcord, ycord);
+            }
+            break;
+        }
+        else if (quadtree_node_isleaf(root))
+        {
+            neighbourset(1, filename, root->point->x, root->point->y);
+            if(is_leafpoint == 1)
+            {
+                western_diagonal_neighbourset2(root, 2);
+                northern_diagonal_neighbourset2(root, 2);
+                southern_diagonal_neighbourset2(root, 2);
+            }
+            if(checker == 1)
+            {
+                printf("\n Special west diag neighbour 2 - (%.10lf,%.10lf) ",root->point->x, root->point->y);
+            }
+            break;
+        }
+        else if (j == patharray[40] - 1)
+        {
+            if(mainnode_direction == 1)
+            {
+                if (quadtree_node_isempty(root->se))
+                {
+                    double xcord = (root->se->bounds->nw->x + root->se->bounds->se->x) / 2;
+                    double ycord = (root->se->bounds->nw->y + root->se->bounds->se->y) / 2;
+                    neighbourset(1, filename, xcord, ycord);
+                    if(is_leafpoint == 1)
+                    {
+                    western_diagonal_neighbourset2(root->se, 1);
+                    northern_diagonal_neighbourset2(root->se, 1);
+                    southern_diagonal_neighbourset2(root->se, 1);
+                    }
+                }
+                else if (quadtree_node_isleaf(root->se))
+                {
+                    neighbourset(1, filename, root->se->point->x, root->se->point->y);
+                    if(is_leafpoint == 1)
+                    {
+                    western_diagonal_neighbourset2(root->se, 1);
+                    northern_diagonal_neighbourset2(root->se, 1);
+                    southern_diagonal_neighbourset2(root->se, 1);
+                    }
+                }
+            }
+            if(mainnode_direction == 2)
+            {
+                if (quadtree_node_isempty(root->ne))
+                {
+                    double xcord = (root->ne->bounds->nw->x + root->ne->bounds->se->x) / 2;
+                    double ycord = (root->ne->bounds->nw->y + root->ne->bounds->se->y) / 2;
+                    neighbourset(1, filename, xcord, ycord);
+                    if(is_leafpoint == 1)
+                    {
+                        western_diagonal_neighbourset2(root->ne, 2);
+                        northern_diagonal_neighbourset2(root->ne, 2);
+                        southern_diagonal_neighbourset2(root->ne, 2);
+                    }
+                    // printf("(%lf,%lf) ", xcord, ycord);
+                }
+                else if (quadtree_node_isleaf(root->ne))
+                {
+                    neighbourset(1, filename, root->ne->point->x, root->ne->point->y);
+                    if(is_leafpoint == 1)
+                    {
+                        western_diagonal_neighbourset2(root->ne, 2);
+                        northern_diagonal_neighbourset2(root->ne, 2);
+                        southern_diagonal_neighbourset2(root->ne, 2);
+                    }
+                }
+            }
+            break;
+        }
+    }
+}
+
+void northern_diagonal_neighbourset(quadtree_node_t *node, int mainnode_direction)
+{
+    common_ancestor_diagonal(tree->root, node);
+    quadtree_node_t *root = tree->root;
+    int diagonal_path_size = diagonal_patharray[40];
+    int j = 0;
+    int diagonal_pathstep = -1;
+    int ancestor_pos = -1;
+    char *filename = "neighbour.txt";
+    if(checker == 1)
+    {
+        printf("\n Start 2");
+        printf("\n Common ancestor is %.10d", diagonal_patharray[40]);
+    }
+
+    for (j = diagonal_path_size - 1; j >= 0; j--)
+    {
+        diagonal_pathstep = diagonal_patharray[j];
+        if (diagonal_pathstep == 1)
+        {
+            continue;
+        }
+        else if (diagonal_pathstep == 2)
+        {
+            continue;
+        }
+        else if (diagonal_pathstep == 3)
+        {
+            // printf("\n Found common ancestor for NorthEast neighbour");
+            ancestor_pos = j;
+            break;
+        }
+        else if (diagonal_pathstep == 4)
+        {
+            // printf("\n Found common ancestor for NorthEast neighbour");
+            ancestor_pos = j;
+            break;
+        }
+        else if (diagonal_pathstep == 0)
+        {
+            printf("\n Warning - Diagonal_Patharray has zero value problems");
+        }
+        else
+        {
+            printf("\n ERROR - Some random value corrupted patharray");
+            exit(2);
+        }
+    }
+    if (ancestor_pos == -1)
+    {
+        return;
+    }
+
+    j = ancestor_pos;
+    if(checker == 1)
+    {
+        printf("\n %.10d is ancestor pos", j);
+    }
+    int diagonal_path_step = 0;
+
+    root = reach_ancestor(root, diagonal_patharray, ancestor_pos);
+
+    for (j = ancestor_pos; j <= diagonal_patharray[40] - 1; j++)
+    {
+        diagonal_path_step = diagonal_patharray[j];
+        if (diagonal_path_step == 1)
+        {
+            root = root->sw;
+        }
+        else if (diagonal_path_step == 2)
+        {
+            root = root->se;
+        }
+        else if (diagonal_path_step == 3)
+        {
+            root = root->nw;
+        }
+        else if (diagonal_path_step == 4)
+        {
+            // printf("\n Reached proper area - 2");
+            root = root->ne;
+            // double xcord = (root->bounds->nw->x + root->bounds->se->x) / 2;
+            // double ycord = (root->bounds->nw->y + root->bounds->se->y) / 2;
+            // printf("\n Special neighbour hope - (%lf,%lf) ", xcord, ycord);
+        }
+        if (quadtree_node_isempty(root))
+        {
+            double xcord = (root->bounds->nw->x + root->bounds->se->x) / 2;
+            double ycord = (root->bounds->nw->y + root->bounds->se->y) / 2;
+            neighbourset(1, filename, xcord, ycord);
+            if(is_leafpoint == 1)
+            {
+                western_diagonal_neighbourset2(root, 1);
+                northern_diagonal_neighbourset2(root, 1);
+                eastern_diagonal_neighbourset2(root, 1);
+            }
+            break;
+        }
+        else if (quadtree_node_isleaf(root))
+        {
+            if(checker == 1)
+            {
+                printf("\n Special north diag neighbour 2 - (%.10lf,%.10lf) ",root->sw->point->x, root->sw->point->y);
+            }
+            neighbourset(1, filename, root->point->x, root->point->y);
+            if(is_leafpoint == 1)
+            {
+                western_diagonal_neighbourset2(root, 1);
+                northern_diagonal_neighbourset2(root, 1);
+                eastern_diagonal_neighbourset2(root, 1);
+            }
+            break;
+        }
+        else if (j == patharray[40] - 1)
+        {
+            if(checker == 1)
+            {
+                printf("\n Start 2a");
+            }
+            if(mainnode_direction == 1)
+            {
+                if (quadtree_node_isempty(root->sw))
+                {
+                    double xcord = (root->sw->bounds->nw->x + root->sw->bounds->se->x) / 2;
+                    double ycord = (root->sw->bounds->nw->y + root->sw->bounds->se->y) / 2;
+                    // printf("\n Special Neighbour 3 - (%lf,%lf) ", xcord, ycord);
+                    neighbourset(1, filename, xcord, ycord);
+                    if(is_leafpoint == 1)
+                    {
+                        western_diagonal_neighbourset2(root->sw, 1);
+                        northern_diagonal_neighbourset2(root->sw, 1);
+                        eastern_diagonal_neighbourset2(root->sw, 1);
+                    }
+                }
+                else if (quadtree_node_isleaf(root->sw))
+                {
+                    // printf("\n Special Neighbour 4 - (%lf,%lf) ", root->sw->point->x, root->sw->point->y);
+                    neighbourset(1, filename, root->sw->point->x, root->sw->point->y);
+                    if(is_leafpoint == 1)
+                    {
+                        western_diagonal_neighbourset2(root->sw, 1);
+                        northern_diagonal_neighbourset2(root->sw, 1);
+                        eastern_diagonal_neighbourset2(root->sw, 1);
+                    }
+                }
+            }
+            if(mainnode_direction == 2)
+            {
+                if (quadtree_node_isempty(root->se))
+                {
+                    double xcord = (root->se->bounds->nw->x + root->se->bounds->se->x) / 2;
+                    double ycord = (root->se->bounds->nw->y + root->se->bounds->se->y) / 2;
+                    neighbourset(1, filename, xcord, ycord);
+                    if(is_leafpoint == 1)
+                    {
+                        western_diagonal_neighbourset2(root->se, 2);
+                        northern_diagonal_neighbourset2(root->se, 2);
+                        eastern_diagonal_neighbourset2(root->se, 2);
+                    }
+                    // printf("(%lf,%lf) ", xcord, ycord);
+                }
+                else if (quadtree_node_isleaf(root->se))
+                {
+                    neighbourset(1, filename, root->se->point->x, root->se->point->y);
+                    if(is_leafpoint == 1)
+                    {
+                        western_diagonal_neighbourset2(root->se, 2);
+                        northern_diagonal_neighbourset2(root->se, 2);
+                        eastern_diagonal_neighbourset2(root->se, 2);
+                    }
+                }
+            }
+            break;
+        }
+    }
+}
+
+void southern_diagonal_neighbourset(quadtree_node_t *node, int mainnode_direction)
+{
+    if(checker == 1)
+    {
+        printf("\n Start 3");
+    }
+    common_ancestor_diagonal(tree->root, node);
+    quadtree_node_t *root = tree->root;
+    int diagonal_path_size = diagonal_patharray[40];
+    int j = 0;
+    int diagonal_pathstep = -1;
+    int ancestor_pos = -1;
+    char *filename = "neighbour.txt";
+
+    for (j = diagonal_path_size - 1; j >= 0; j--)
+    {
+        diagonal_pathstep = diagonal_patharray[j];
+        if (diagonal_pathstep == 1)
+        {
+            // printf("\n Found common ancestor for SouthEast neighbour");
+            ancestor_pos = j;
+            break;
+        }
+        else if (diagonal_pathstep == 2)
+        {
+            // printf("\n Found common ancestor for SouthEast neighbour");
+            ancestor_pos = j;
+            break;
+        }
+        else if (diagonal_pathstep == 3)
+        {
+            continue;
+        }
+        else if (diagonal_pathstep == 4)
+        {
+            continue;
+        }
+        else if (diagonal_pathstep == 0)
+        {
+            printf("\n Warning - Diagonal_Patharray has zero value problems");
+        }
+        else
+        {
+            printf("\n ERROR - Some random value corrupted patharray");
+            exit(2);
+        }
+    }
+    if (ancestor_pos == -1)
+    {
+        return;
+    }
+
+    j = ancestor_pos;
+    // printf("\n %d is ancestor pos", j);
+    int diagonal_path_step = 0;
+
+    root = reach_ancestor(root, diagonal_patharray, ancestor_pos);
+
+    for (j = ancestor_pos; j <= diagonal_patharray[40] - 1; j++)
+    {
+        diagonal_path_step = diagonal_patharray[j];
+        if (diagonal_path_step == 1)
+        {
+            root = root->sw;
+        }
+        else if (diagonal_path_step == 2)
+        {
+            root = root->se;
+        }
+        else if (diagonal_path_step == 3)
+        {
+            root = root->nw;
+        }
+        else if (diagonal_path_step == 4)
+        {
+            // printf("\n Reached proper area - 2");
+            root = root->ne;
+        }
+        if (quadtree_node_isempty(root))
+        {
+            double xcord = (root->bounds->nw->x + root->bounds->se->x) / 2;
+            double ycord = (root->bounds->nw->y + root->bounds->se->y) / 2;
+            neighbourset(1, filename, xcord, ycord);
+            if(is_leafpoint == 1)
+            {
+                western_diagonal_neighbourset2(root, 1);
+                southern_diagonal_neighbourset2(root, 1);
+                eastern_diagonal_neighbourset2(root, 1);
+            }
+            if(checker == 1)
+            {
+                printf("\n Special south diag neighbour 1 - (%.10lf,%.10lf) ", xcord, ycord);
+            }
+            break;
+        }
+        else if (quadtree_node_isleaf(root))
+        {
+            if(checker == 1)
+            {
+                printf("\n Special south diag neighbour 2 - (%.10lf,%.10lf) ",root->point->x, root->point->y);
+            }
+            neighbourset(1, filename, root->point->x, root->point->y);
+            if(is_leafpoint == 1)
+            {
+                western_diagonal_neighbourset2(root, 1);
+                southern_diagonal_neighbourset2(root, 1);
+                eastern_diagonal_neighbourset2(root, 1);
+            }
+            break;
+        }
+        else if (j == patharray[40] - 1)
+        {
+            if(checker == 1)
+            {
+                printf("\n Start 5");
+            }
+            if(mainnode_direction == 1)
+            {
+                if (quadtree_node_isempty(root->nw))
+                {
+                    double xcord = (root->nw->bounds->nw->x + root->nw->bounds->se->x) / 2;
+                    double ycord = (root->nw->bounds->nw->y + root->nw->bounds->se->y) / 2;
+                    neighbourset(1, filename, xcord, ycord);
+                    if(is_leafpoint == 1)
+                    {
+                        western_diagonal_neighbourset2(root->nw, 1);
+                        southern_diagonal_neighbourset2(root->nw, 1);
+                        eastern_diagonal_neighbourset2(root->nw, 1);
+                    }
+                    // printf("(%lf,%lf) ", xcord, ycord);
+                }
+                else if (quadtree_node_isleaf(root->nw))
+                {
+                    neighbourset(1, filename, root->nw->point->x, root->nw->point->y);
+                    if(is_leafpoint == 1)
+                    {
+                        western_diagonal_neighbourset2(root->nw, 1);
+                        southern_diagonal_neighbourset2(root->nw, 1);
+                        eastern_diagonal_neighbourset2(root->nw, 1);
+                    }
+                }
+            }    
+
+            if(mainnode_direction == 2)
+            {
+                if (quadtree_node_isempty(root->ne))
+                {
+                    double xcord = (root->ne->bounds->nw->x + root->ne->bounds->se->x) / 2;
+                    double ycord = (root->ne->bounds->nw->y + root->ne->bounds->se->y) / 2;
+                    neighbourset(1, filename, xcord, ycord);
+                    if(is_leafpoint == 1)
+                    {
+                        western_diagonal_neighbourset2(root->ne, 2);
+                        southern_diagonal_neighbourset2(root->ne, 2);
+                        eastern_diagonal_neighbourset2(root->ne, 2);
+                    }
+                    // printf("(%lf,%lf) ", xcord, ycord);
+                }
+                else if (quadtree_node_isleaf(root->ne))
+                {
+                    neighbourset(1, filename, root->ne->point->x, root->ne->point->y);
+                    if(is_leafpoint == 1)
+                    {
+                        western_diagonal_neighbourset2(root->ne, 2);
+                        southern_diagonal_neighbourset2(root->ne, 2);
+                        eastern_diagonal_neighbourset2(root->ne, 2);
+                    }
+                }
+            }    
+            break;
+        }
+    }
+}
+
+// Additional neighbours for input points (wallpoints)
+void eastern_diagonal_neighbourset2(quadtree_node_t *node, int mainnode_direction)
+{
+    common_ancestor_diagonal(tree->root, node);
+    quadtree_node_t *root = tree->root;
+    int diagonal_path_size = diagonal_patharray[40];
+    int j = 0;
+    int diagonal_pathstep = -1;
+    int ancestor_pos = -1;
+    char *filename = "neighbour.txt";
+
+    for (j = diagonal_path_size - 1; j >= 0; j--)
+    {
+        diagonal_pathstep = diagonal_patharray[j];
+        if (diagonal_pathstep == 1)
+        {
+            ancestor_pos = j;
+            break;
+        }
+        else if (diagonal_pathstep == 2)
+        {
+            continue;
+        }
+        else if (diagonal_pathstep == 3)
+        {
+            ancestor_pos = j;
+            break;
+        }
+        else if (diagonal_pathstep == 4)
+        {
+            continue;
+        }
+        else if (diagonal_pathstep == 0)
+        {
+            printf("\n Warning - Diagonal_Patharray has zero value problems");
+            continue;
+        }
+        else
+        {
+            printf("\n ERROR - Some random value corrupted patharray");
+            exit(2);
+        }
+    }
+    if (ancestor_pos == -1)
+    {
+        return;
+    }
+
+    j = ancestor_pos;
+    int diagonal_path_step = 0;
+    root = reach_ancestor(root, diagonal_patharray, ancestor_pos);
+
+    for (j = ancestor_pos; j <= diagonal_patharray[40] - 1; j++)
+    {
+        diagonal_path_step = diagonal_patharray[j];
+        if (diagonal_path_step == 1)
+        {
+            root = root->ne;
+        }
+        else if (diagonal_path_step == 2)
+        {
+            root = root->nw;
+        }
+        else if (diagonal_path_step == 3)
+        {
+            root = root->se;
+        }
+        else if (diagonal_path_step == 4)
+        {
+            root = root->sw;
+        }
+        else
+        {
+            printf("ERROR : 2nd stage path traversal for east diagonal_neighbour went awry");
+            exit(2);
+        }
+        if (quadtree_node_isempty(root))
+        {
+            double xcord = (root->bounds->nw->x + root->bounds->se->x) / 2;
+            double ycord = (root->bounds->nw->y + root->bounds->se->y) / 2;
+            neighbourset(1, filename, xcord, ycord);
             break;
         }
         else if (quadtree_node_isleaf(root))
@@ -1756,7 +2435,7 @@ void eastern_diagonal_neighbourset(quadtree_node_t *node, int mainnode_direction
     }
 }
 
-void western_diagonal_neighbourset(quadtree_node_t *node, int mainnode_direction)
+void western_diagonal_neighbourset2(quadtree_node_t *node, int mainnode_direction)
 {
     if(checker == 1)
     {
@@ -1889,7 +2568,7 @@ void western_diagonal_neighbourset(quadtree_node_t *node, int mainnode_direction
     }
 }
 
-void northern_diagonal_neighbourset(quadtree_node_t *node, int mainnode_direction)
+void northern_diagonal_neighbourset2(quadtree_node_t *node, int mainnode_direction)
 {
     common_ancestor_diagonal(tree->root, node);
     quadtree_node_t *root = tree->root;
@@ -2034,7 +2713,7 @@ void northern_diagonal_neighbourset(quadtree_node_t *node, int mainnode_directio
     }
 }
 
-void southern_diagonal_neighbourset(quadtree_node_t *node, int mainnode_direction)
+void southern_diagonal_neighbourset2(quadtree_node_t *node, int mainnode_direction)
 {
     if(checker == 1)
     {
