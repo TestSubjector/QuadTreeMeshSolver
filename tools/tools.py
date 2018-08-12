@@ -1,6 +1,7 @@
 import core
 from progress import printProgressBar
 import argparse
+import connectivity
 from shapely.geometry import MultiPoint
 from shapely.ops import triangulate
 import balance
@@ -56,6 +57,7 @@ def main():
         elif ptidx == "exit!":
             exit()
         elif ptidx == "wcc":
+            globaldata = connectivity.connectivityCheck(globaldata)
             core.wallConnectivityCheck(globaldata)
         elif ptidx == "icc":
             core.interiorConnectivityCheck(globaldata)
@@ -101,9 +103,10 @@ def main():
             print("(3) Delete Connectivity and reinstate connectivity using Triangle Data and balance the remaining using Nischay's Connectivity.")
             print("(4) Balance Connectivity using Triangle Data.")
             print("(5) Balance Connectivity using Triangle Data.")
-            print("(6) Exit")
-            print("(7) Exit without saving any changes")
-            print("(8) Go Back")
+            print("(6) Find Point Perpendicular to nearest wall segment")
+            print("(7) Exit")
+            print("(8) Exit without saving any changes")
+            print("(9) Go Back")
             whatkind = int(input("What option do you want to select? "))
             if whatkind == 1:
                 tris = balance.getNeighboursFromTriangle(ptidx,globaldata,polydata)
@@ -127,8 +130,10 @@ def main():
             elif whatkind == 5:
                 None
             elif whatkind == 6:
-                break
+                print(core.getPerpendicularPoint(ptidx,globaldata))
             elif whatkind == 7:
+                break
+            elif whatkind == 8:
                 exit()
             else:
                 break

@@ -9,7 +9,7 @@
     },
     "bspline":{
         "threshold":30,
-        "pointControl":3
+        "pointControl":20
     },
     "penrose": {
         "cutoffConditionValue": 1E-3,
