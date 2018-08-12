@@ -605,8 +605,11 @@ def checkPoints(globaldata):
                     # print(idx)
                     ptList = findNearestNeighbourWallPoints(idx,globaldata,wallptData,wallptDataOr)
                     perpendicularPt = getPerpendicularPoint(idx,globaldata)
-                    ptListArray.append(ptList)
-                    perpendicularListArray.append((perpendicularPt))
+                    # print(ptList)
+                    # print(perpendicularListArray)
+                    if (perpendicularPt) not in perpendicularListArray:
+                        ptListArray.append(ptList)
+                        perpendicularListArray.append((perpendicularPt))
     return ptListArray,perpendicularListArray
 
 def findNearestNeighbourWallPoints(idx,globaldata,wallptData,wallptDataOr):
@@ -682,8 +685,8 @@ def perpendicularPt(x1,x2,x3,y1,y2,y3):
     return x4,y4
 
 def midPt(x1,x2,y1,y2):
-    x3 = x1+x2/2
-    y3 = y1+y2/2
+    x3 = (x1+x2)/2
+    y3 = (y1+y2)/2
     return x3,y3
 
 def distance(ax,ay,bx,by):
