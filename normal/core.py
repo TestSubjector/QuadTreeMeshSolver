@@ -22,8 +22,8 @@ def appendNeighbours(index, globaldata, newpts):
     nbhs = getNeighbours(index, globaldata)
     nbhs = nbhs + [pt]
     nbhs = list(set(nbhs))
-    globaldata[int(index)][12:] = nbhs
-    globaldata[int(index)][11] = len(nbhs)
+    globaldata[int(index)][14:] = nbhs
+    globaldata[int(index)][13] = len(nbhs)
     return globaldata
 
 
@@ -35,7 +35,7 @@ def getFlag(indexval, list):
 def getNeighbours(index, globaldata):
     index = int(index)
     ptdata = globaldata[index]
-    ptdata = ptdata[12:]
+    ptdata = ptdata[14:]
     return ptdata
 
 
@@ -294,7 +294,7 @@ def cleanNeighbours(globaldata):
     for i in range(len(globaldata)):
         if i == 0:
             continue
-        noneighours = int(globaldata[i][11])
+        noneighours = int(globaldata[i][13])
         cordneighbours = globaldata[i][-noneighours:]
         result = []
         for item in cordneighbours:
@@ -308,7 +308,7 @@ def cleanNeighbours(globaldata):
         cordneighbours = result
 
         noneighours = len(cordneighbours)
-        globaldata[i] = globaldata[i][:11] + [noneighours] + list(cordneighbours)
+        globaldata[i] = globaldata[i][:13] + [noneighours] + list(cordneighbours)
     log.info("Duplicate Neighbours Removed")
     return globaldata
 
