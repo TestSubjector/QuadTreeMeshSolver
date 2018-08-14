@@ -610,8 +610,8 @@ def convertPointsToIndex(pointarray,globaldata):
 
 def fillNeighboursIndex(index,globaldata,nbhs):
     nbhs = list(set(nbhs))
-    globaldata[int(index)][12:] = nbhs
-    globaldata[int(index)][11] = len(nbhs)
+    globaldata[int(index)][14:] = nbhs
+    globaldata[int(index)][13] = len(nbhs)
     return globaldata
 
 def checkAeroGlobal2(globaldata,wallpointsData):
