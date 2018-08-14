@@ -589,7 +589,6 @@ def getWallEndPoints(globaldata):
 
 def checkPoints(globaldata,selectbspline,normal):
     wallptData = getWallPointArray(globaldata)
-    selectbspline = list(map(int, selectbspline))
     wallptDataOr = wallptData
     wallptData = flattenList(wallptData)
     threshold = int(config.getConfig()["bspline"]["threshold"])
@@ -613,6 +612,7 @@ def checkPoints(globaldata,selectbspline,normal):
                             ptListArray.append(ptList)
                             perpendicularListArray.append((perpendicularPt))
     else:
+        selectbspline = list(map(int, selectbspline))
         for idx,itm in enumerate(selectbspline):
             printProgressBar(idx, len(selectbspline), prefix="Progress:", suffix="Complete", length=50)  
             ptList = findNearestNeighbourWallPoints(itm,globaldata,wallptData,wallptDataOr)
