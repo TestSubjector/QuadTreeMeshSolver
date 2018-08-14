@@ -587,29 +587,40 @@ def getWallEndPoints(globaldata):
         endPoints.append(int(itm[-1]))
     return endPoints
 
-def checkPoints(globaldata):
+def checkPoints(globaldata,selectbspline):
     wallptData = getWallPointArray(globaldata)
+    selectbspline = list(map(int, selectbspline))
     wallptDataOr = wallptData
     wallptData = flattenList(wallptData)
     threshold = int(config.getConfig()["bspline"]["threshold"])
     ptsToBeAdded = int(config.getConfig()["bspline"]["pointControl"])
     ptListArray = []
     perpendicularListArray = []
-    for idx,_ in enumerate(globaldata):
-        printProgressBar(idx, len(globaldata) - 1, prefix="Progress:", suffix="Complete", length=50)
-        if idx > 0:
-            flag = getFlag(idx,globaldata)
-            if flag == 1:
-                result = checkConditionNumber(idx,globaldata,threshold)
-                if(result):
-                    # print(idx)
-                    ptList = findNearestNeighbourWallPoints(idx,globaldata,wallptData,wallptDataOr)
-                    perpendicularPt = getPerpendicularPoint(idx,globaldata)
-                    # print(ptList)
-                    # print(perpendicularListArray)
-                    if (perpendicularPt) not in perpendicularListArray:
-                        ptListArray.append(ptList)
-                        perpendicularListArray.append((perpendicularPt))
+    if len(selectbspline) == 0:
+        for idx,_ in enumerate(globaldata):
+            printProgressBar(idx, len(globaldata) - 1, prefix="Progress:", suffix="Complete", length=50)
+            if idx > 0:
+                flag = getFlag(idx,globaldata)
+                if flag == 1:
+                    result = checkConditionNumber(idx,globaldata,threshold)
+                    if(result):
+                        # print(idx)
+                        ptList = findNearestNeighbourWallPoints(idx,globaldata,wallptData,wallptDataOr)
+                        perpendicularPt = getPerpendicularPoint(idx,globaldata)
+                        # print(ptList)
+                        # print(perpendicularListArray)
+                        if (perpendicularPt) not in perpendicularListArray:
+                            ptListArray.append(ptList)
+                            perpendicularListArray.append((perpendicularPt))
+    else:
+        for idx,itm in enumerate(selectbspline):
+            printProgressBar(idx, len(selectbspline), prefix="Progress:", suffix="Complete", length=50)  
+            ptList = findNearestNeighbourWallPoints(itm,globaldata,wallptData,wallptDataOr)
+            perpendicularPt = getPerpendicularPoint(itm,globaldata)
+            if (perpendicularPt) not in perpendicularListArray:
+                ptListArray.append(ptList)
+                perpendicularListArray.append((perpendicularPt))
+
     return ptListArray,perpendicularListArray
 
 def findNearestNeighbourWallPoints(idx,globaldata,wallptData,wallptDataOr):

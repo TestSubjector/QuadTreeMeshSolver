@@ -17,6 +17,7 @@ def main():
     # Command Line Arguments
     parser = argparse.ArgumentParser()
     parser.add_argument("-i", "--input", const=str, nargs="?")
+    parser.add_argument("-b", "--bspline", nargs="+")
     args = parser.parse_args()
 
     log.info("Loading Data")
@@ -42,7 +43,7 @@ def main():
         globaldata.append(entry)
 
     globaldata = core.cleanNeighbours(globaldata)
-    problempts,perpendicularpts = core.checkPoints(globaldata)
+    problempts,perpendicularpts = core.checkPoints(globaldata,args.bspline)
     wallPts = core.getWallPointArray(globaldata)
     additionPts = []
     try:
