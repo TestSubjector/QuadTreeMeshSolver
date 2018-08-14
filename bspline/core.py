@@ -587,7 +587,7 @@ def getWallEndPoints(globaldata):
         endPoints.append(int(itm[-1]))
     return endPoints
 
-def checkPoints(globaldata,selectbspline):
+def checkPoints(globaldata,selectbspline,normal):
     wallptData = getWallPointArray(globaldata)
     selectbspline = list(map(int, selectbspline))
     wallptDataOr = wallptData
@@ -606,7 +606,7 @@ def checkPoints(globaldata,selectbspline):
                     if(result):
                         # print(idx)
                         ptList = findNearestNeighbourWallPoints(idx,globaldata,wallptData,wallptDataOr)
-                        perpendicularPt = getPerpendicularPoint(idx,globaldata)
+                        perpendicularPt = getPerpendicularPoint(idx,globaldata,normal)
                         # print(ptList)
                         # print(perpendicularListArray)
                         if (perpendicularPt) not in perpendicularListArray:
@@ -616,7 +616,7 @@ def checkPoints(globaldata,selectbspline):
         for idx,itm in enumerate(selectbspline):
             printProgressBar(idx, len(selectbspline), prefix="Progress:", suffix="Complete", length=50)  
             ptList = findNearestNeighbourWallPoints(itm,globaldata,wallptData,wallptDataOr)
-            perpendicularPt = getPerpendicularPoint(itm,globaldata)
+            perpendicularPt = getPerpendicularPoint(itm,globaldata,normal)
             if (perpendicularPt) not in perpendicularListArray:
                 ptListArray.append(ptList)
                 perpendicularListArray.append((perpendicularPt))
@@ -674,7 +674,7 @@ def load_obj(name ):
         return json.load(f)
 
 
-def getPerpendicularPoint(idx,globaldata):
+def getPerpendicularPoint(idx,globaldata,normal):
     wallptData = getWallPointArray(globaldata)
     wallptDataOr = wallptData
     wallptData = flattenList(wallptData)
@@ -686,8 +686,11 @@ def getPerpendicularPoint(idx,globaldata):
     pts1y = float(pts[0].split(",")[1])
     pts2x = float(pts[1].split(",")[0])
     pts2y = float(pts[1].split(",")[1])
-    return midPt(pts1x,pts2x,pts1y,pts2y)
-    # return perpendicularPt(pts1x,pts2x,mainptx,pts1y,pts2y,mainpty)
+    if normal:
+        return perpendicularPt(pts1x,pts2x,mainptx,pts1y,pts2y,mainpty)
+    else:
+        return midPt(pts1x,pts2x,pts1y,pts2y)
+
 
 def perpendicularPt(x1,x2,x3,y1,y2,y3):
     k = ((y2-y1) * (x3-x1) - (x2-x1) * (y3-y1)) / ((y2-y1)**2 + (x2-x1)**2)
@@ -717,3 +720,11 @@ def findNearestPoint(ptAtt,splineArray):
             pt["x"] = itmx
             pt["y"] = itmy
     return [pt["x"],pt["y"]]
+
+def str_to_bool(s):
+    if s == 'True':
+         return True
+    elif s == 'False':
+         return False
+    else:
+         raise ValueError
