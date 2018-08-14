@@ -21,7 +21,9 @@ def main():
     parser.add_argument("-n", "--normal", nargs="?")
     args = parser.parse_args()
 
-    normalApproach = core.str_to_bool(args.normal)
+    normalApproach = False
+    if args.normal:
+        normalApproach = core.str_to_bool(args.normal)
 
     log.info("Loading Data")
     log.debug("Arguments")
