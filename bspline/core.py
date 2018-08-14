@@ -294,7 +294,7 @@ def cleanNeighbours(globaldata):
     for i in range(len(globaldata)):
         if i == 0:
             continue
-        noneighours = int(globaldata[i][11])
+        noneighours = int(globaldata[i][13])
         cordneighbours = globaldata[i][-noneighours:]
         result = []
         for item in cordneighbours:
@@ -308,7 +308,7 @@ def cleanNeighbours(globaldata):
         cordneighbours = result
 
         noneighours = len(cordneighbours)
-        globaldata[i] = globaldata[i][:11] + [noneighours] + list(cordneighbours)
+        globaldata[i] = globaldata[i][:13] + [noneighours] + list(cordneighbours)
     log.info("Duplicate Neighbours Removed")
     return globaldata
 
