@@ -595,7 +595,7 @@ def checkPoints(globaldata,selectbspline,normal):
     ptsToBeAdded = int(config.getConfig()["bspline"]["pointControl"])
     ptListArray = []
     perpendicularListArray = []
-    if len(selectbspline) == 0:
+    if not selectbspline:
         for idx,_ in enumerate(globaldata):
             printProgressBar(idx, len(globaldata) - 1, prefix="Progress:", suffix="Complete", length=50)
             if idx > 0:
