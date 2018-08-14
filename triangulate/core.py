@@ -14,8 +14,8 @@ def appendNeighbours(index, globaldata, newpts):
     nbhs = getNeighbours(index, globaldata)
     nbhs = nbhs + [pt]
     nbhs = list(set(nbhs))
-    globaldata[int(index)][12:] = nbhs
-    globaldata[int(index)][11] = len(nbhs)
+    globaldata[int(index)][14:] = nbhs
+    globaldata[int(index)][13] = len(nbhs)
     return globaldata
 
 
@@ -27,7 +27,7 @@ def getFlag(indexval, list):
 def getNeighbours(index, globaldata):
     index = int(index)
     ptdata = globaldata[index]
-    ptdata = ptdata[12:]
+    ptdata = ptdata[14:]
     return ptdata
 
 def getLeftandRightPoint(index,globaldata):
@@ -607,7 +607,7 @@ def wallRemovedNeighbours(points,wallpoints):
 
 def replaceNeighbours(index,nbhs,globaldata):
     data = globaldata[index]
-    data = data[:11]
+    data = data[:13]
     data.append(len(nbhs))
     data = data + nbhs
     globaldata[index] = data

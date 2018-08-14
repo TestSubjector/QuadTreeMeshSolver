@@ -37,6 +37,8 @@ def loadWall(geometrydata,hashtable,globaldata,idf):
             walldata.insert(8, 0)
             walldata.insert(9, 0)
             walldata.insert(10, 0)
+            walldata.insert(11, 0)
+            walldata.insert(12, 1)
             globaldata.append(walldata)
             index += 1
         # Last Point
@@ -52,6 +54,8 @@ def loadWall(geometrydata,hashtable,globaldata,idf):
             walldata.insert(8, 0)
             walldata.insert(9, 0)
             walldata.insert(10, 0)
+            walldata.insert(11, 0)
+            walldata.insert(12, 1)
             globaldata.append(walldata)
             index += 1
         # Other Points
@@ -67,6 +71,8 @@ def loadWall(geometrydata,hashtable,globaldata,idf):
             walldata.insert(8, 0)
             walldata.insert(9, 0)
             walldata.insert(10, 0)
+            walldata.insert(11, 0)
+            walldata.insert(12, 1)
             globaldata.append(walldata)
             index += 1
     log.info("Wall Point Processed")
@@ -130,6 +136,8 @@ def loadInterior(data, hashtable, globaldata, index):
                 cleandata.pop(0)
                 cleandata.insert(0, cleandata[len(cleandata) - 1])
                 cleandata.pop(-1)
+                cleandata.insert(0, 1)
+                cleandata.insert(0, 0)
                 cleandata.insert(0, 0)
                 cleandata.insert(0, 0)
                 cleandata.insert(0, 0)
@@ -150,6 +158,8 @@ def loadInterior(data, hashtable, globaldata, index):
                 cleandata.pop(0)
                 cleandata.insert(0, cleandata[len(cleandata) - 1])
                 cleandata.pop(-1)
+                cleandata.insert(0, 1)
+                cleandata.insert(0, 0)
                 cleandata.insert(0, 0)
                 cleandata.insert(0, 0)
                 cleandata.insert(0, 0)
