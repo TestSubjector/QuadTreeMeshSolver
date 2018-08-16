@@ -18,6 +18,10 @@
     "pseudowall": {
         "inflatedPolygonDistance": 0
     },
+    "normalWall":{
+        "inflatedPolygonDistance": 1E-3,
+        "conditionValueThreshold": 30
+    },
     "rechecker": {
         "maxPoints": 2,
         "conditionValueThreshold": 30
