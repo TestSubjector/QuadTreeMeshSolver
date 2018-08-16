@@ -21,6 +21,8 @@ then
     cp -rlf ./backup_files/preprocessorfile_rechecker.txt ./files/preprocessorfile_rechecker.txt
     cp -rlf ./backup_files/preprocessorfile.txt ./files/preprocessorfile.txt
     cp -rlf ./backup_files/wall.json wall.json
+
+# Clean directory
 elif [ $1 -eq 3 ]
 then
     rm -rf files
@@ -28,6 +30,11 @@ then
     rm -f wall.json
     rm -f adapted.txt
     touch adapted.txt
+    mkdir files
+    mkdir backup_files
+    make clean -f ./quadtree/Makefile
+    make -f ./quadtree/Makefile
+
 # Adaptation
 elif [ $1 -eq 4 ]
 then
