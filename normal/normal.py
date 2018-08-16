@@ -3,7 +3,6 @@ from progress import printProgressBar
 import core
 import copy
 import logging
-import bsplinegen
 import config
 import numpy as np
 import math
@@ -23,7 +22,7 @@ def main():
     log.debug("Arguments")
     log.debug(args)
 
-    file1 = open(args.input or "preprocessorfile_bspline.txt", "r")
+    file1 = open(args.input or "preprocessorfile_normal.txt", "r")
     data = file1.read()
     globaldata = ["start"]
     splitdata = data.split("\n")
@@ -40,6 +39,22 @@ def main():
         itm.pop(-1)
         entry = itm
         globaldata.append(entry)
+    
+    pseudoPts = core.inflatedWallPolygon(globaldata,float(config.getConfig()["normalWall"]["inflatedPolygonDistance"]))
+    log.info("Found " + str(len(pseudoPts)) + " pseudo points")
+
+    globaldata = core.setNormals(pseudoPts,globaldata)
+
+    globaldata.pop(0)
+
+    with open("preprocessorfile_normal.txt", "w") as text_file:
+        for item1 in globaldata:
+            text_file.writelines(["%s " % item for item in item1])
+            text_file.writelines("\n")
+            
+    log.info("Done")
+
+
     
 if __name__ == "__main__":
     import logging

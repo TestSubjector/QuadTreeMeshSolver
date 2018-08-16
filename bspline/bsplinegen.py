@@ -56,10 +56,10 @@ def bsplineCall(cv, point_division, index1, index2):
 
     generated_points = [] 
     update = 2000
-    while len(generated_points) < point_division and update < 30000:
+    while len(generated_points) < point_division and update < 100000:
         # print(update)
         generated_points.clear()
-        u_new = np.linspace(u.min(), u.max(), (update + point_division)*(len(cv))*(1/len(str(len(cv)))))
+        u_new = np.linspace(u.min(), u.max(), (update + point_division)*(len(cv)))
         if update < 300:
             update = update + 1
         elif update < 2000:
