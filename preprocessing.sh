@@ -13,7 +13,7 @@ then
     cp -rlf wall.json ./backup_files/wall.json 
 
 # Reinstate Backup Files
-elif [ $1 -eq 2]
+elif [ $1 -eq 2 ]
 then 
     cp -rlf ./backup_files/neighbour.txt ./files/neighbour.txt
     cp -rlf ./backup_files/output.txt ./files/output.txt 
