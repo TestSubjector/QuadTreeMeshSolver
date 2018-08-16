@@ -14,10 +14,12 @@ int line_count = 0;
 int adapted_line_count = 0;
 int shape_line_count = 0;
 int height_of_tree = 0;
+int wallpoint_insert_flag = 0;
+int success;
 
 void main_tree(int initial_coord_length, coords_t *coords_list, coords_t *adapted_list, quadtree_node_t *leaf_array)
 {
-    tree = quadtree_new(-10, -10, 10, 10);
+    tree = quadtree_new(-2, -2, 2, 2);
     if (tree == NULL)
     {
         printf("\n ERROR : Memory allocation to the main quad_tree was unsuccessful");
@@ -29,7 +31,7 @@ void main_tree(int initial_coord_length, coords_t *coords_list, coords_t *adapte
 
     for (i = 0; i < initial_coord_length; i++) // Inserting points into the tree one-by-one
     {
-        int success = quadtree_insert(tree, coords_list[i].x, coords_list[i].y);
+        success = quadtree_insert(tree, coords_list[i].x, coords_list[i].y);
         if (success == 0) // Out of bounds
         {
             printf("\n Warning: On line %d points %lf & %lf are out of bounds or were not created", i + 1, coords_list[i].x, coords_list[i].y);
@@ -97,6 +99,7 @@ void main_tree(int initial_coord_length, coords_t *coords_list, coords_t *adapte
             if(adapted_list[j].x == 1000 && adapted_list[j].y == 1000)
             {
                 printf("\n Freedom");
+                wallpoint_insert_flag = 0;
                 free(leaf_array);
                 leaf_array = malloc(sizeof(quadtree_node_t) * MAX);
                 leaf_iter = 0;
@@ -117,18 +120,42 @@ void main_tree(int initial_coord_length, coords_t *coords_list, coords_t *adapte
                 }
                 continue;
             }
-            refined_node = quadtree_search(adapted_list[j].x, adapted_list[j].y);
-            // printf("\n %lf, %lf", adapted_list[j].x, adapted_list[j].y);
-            if(refined_node == NULL)
+
+            if(adapted_list[j].x == 2000 && adapted_list[j].y == 2000)
             {
-                printf("\n Warning - Point to be adapted not found");
-                // printf("\n %.17g, %.17g", adapted_list[j].x, adapted_list[j].y);
+                wallpoint_insert_flag = 1; 
                 continue;
+            }
+
+            if(wallpoint_insert_flag == 0)
+            {
+                refined_node = quadtree_search(adapted_list[j].x, adapted_list[j].y);
+                // printf("\n %lf, %lf", adapted_list[j].x, adapted_list[j].y);
+                if(refined_node == NULL)
+                {
+                    printf("\n Warning - Point to be adapted not found");
+                    // printf("\n %.17g, %.17g", adapted_list[j].x, adapted_list[j].y);
+                    continue;
+                }
+                else
+                {
+                    // printf("\n %d", j);
+                    split_node_newpoints(tree->root, refined_node);
+                }
             }
             else
             {
-                // printf("\n %d", j);
-                split_node_newpoints(tree->root, refined_node);
+                success = quadtree_insert(tree, adapted_list[j].x, adapted_list[j].y);
+                // printf("\n Successful ping");
+                if (success == 0) // Out of bounds
+                {
+                    printf("\n Warning: On line %d points %lf & %lf are out of bounds or were not created during adaptation stage", i + 1, adapted_list[j].x, adapted_list[j].y);
+                }
+                else
+                {
+                    char *quickfilename = "output.txt";
+                }
+                continue;
             }
         }
         newoutputfile = 1;  // Clean file and write new generated files

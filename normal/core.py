@@ -5,7 +5,14 @@ from shapely import wkt
 from shapely.ops import linemerge, unary_union, polygonize
 from progress import printProgressBar
 import config
+import scipy.interpolate as si
+import matplotlib.pyplot as plt
+from scipy.interpolate import splprep, splev
 import logging
+import itertools
+import bsplinegen
+import pickle
+import json
 log = logging.getLogger(__name__)
 log.addHandler(logging.StreamHandler())
 
@@ -251,17 +258,11 @@ def checkConditionNumber(index, globaldata, threshold):
         or yneg > threshold
         or math.isnan(yneg)
     ):
-        print(
-            index,
-            len(dSPointXPos),
-            xpos,
-            len(dSPointXNeg),
-            xneg,
-            len(dSPointYPos),
-            ypos,
-            len(dSPointYNeg),
-            yneg,
-        )
+        # print(index)
+        # print(xpos,xneg,ypos,yneg)
+        return True
+    else:
+        return False
 
 def checkConditionNumberWall(index, globaldata, threshold):
     xpos = getWeightedInteriorConditionValueofXPos(index, globaldata)
@@ -533,6 +534,9 @@ def getWallPointArrayIndex(globaldata):
                 startgeo = startgeo + 1
     return wallpointarray
 
+def flattenList(ptdata):
+    return list(itertools.chain.from_iterable(ptdata))
+
 
 def getLeftandRightPoint(index,globaldata):
     index = int(index)
@@ -546,7 +550,7 @@ def getLeftandRightPoint(index,globaldata):
 
 def replaceNeighbours(index,nbhs,globaldata):
     data = globaldata[index]
-    data = data[:13]
+    data = data[:11]
     data.append(len(nbhs))
     data = data + nbhs
     globaldata[index] = data
@@ -582,3 +586,145 @@ def getWallEndPoints(globaldata):
     for itm in wallIndex:
         endPoints.append(int(itm[-1]))
     return endPoints
+
+def checkPoints(globaldata,selectbspline,normal):
+    wallptData = getWallPointArray(globaldata)
+    selectbspline = list(map(int, selectbspline))
+    wallptDataOr = wallptData
+    wallptData = flattenList(wallptData)
+    threshold = int(config.getConfig()["bspline"]["threshold"])
+    ptsToBeAdded = int(config.getConfig()["bspline"]["pointControl"])
+    ptListArray = []
+    perpendicularListArray = []
+    if len(selectbspline) == 0:
+        for idx,_ in enumerate(globaldata):
+            printProgressBar(idx, len(globaldata) - 1, prefix="Progress:", suffix="Complete", length=50)
+            if idx > 0:
+                flag = getFlag(idx,globaldata)
+                if flag == 1:
+                    result = checkConditionNumber(idx,globaldata,threshold)
+                    if(result):
+                        # print(idx)
+                        ptList = findNearestNeighbourWallPoints(idx,globaldata,wallptData,wallptDataOr)
+                        perpendicularPt = getPerpendicularPoint(idx,globaldata,normal)
+                        # print(ptList)
+                        # print(perpendicularListArray)
+                        if (perpendicularPt) not in perpendicularListArray:
+                            ptListArray.append(ptList)
+                            perpendicularListArray.append((perpendicularPt))
+    else:
+        for idx,itm in enumerate(selectbspline):
+            printProgressBar(idx, len(selectbspline), prefix="Progress:", suffix="Complete", length=50)  
+            ptList = findNearestNeighbourWallPoints(itm,globaldata,wallptData,wallptDataOr)
+            perpendicularPt = getPerpendicularPoint(itm,globaldata,normal)
+            if (perpendicularPt) not in perpendicularListArray:
+                ptListArray.append(ptList)
+                perpendicularListArray.append((perpendicularPt))
+
+    return ptListArray,perpendicularListArray
+
+def findNearestNeighbourWallPoints(idx,globaldata,wallptData,wallptDataOr):
+    ptx,pty = getPoint(idx,globaldata)
+    leastdt,leastidx = 1000,1000
+    for itm in wallptData:
+        if not isNonAeroDynamic(idx,itm,globaldata,wallptDataOr):
+            itmx = float(itm.split(",")[0])
+            itmy = float(itm.split(",")[1])
+            ptDist = math.sqrt((deltaX(itmx,ptx) ** 2) + (deltaY(itmy,pty) ** 2))
+            if leastdt > ptDist:
+                leastdt = ptDist
+                leastidx = getIndexFromPoint(itm,globaldata)
+    ptsToCheck = convertIndexToPoints(getLeftandRightPoint(leastidx,globaldata),globaldata)
+    leastdt2,leastidx2 = 1000,1000
+    for itm in ptsToCheck:
+        if not isNonAeroDynamic(idx,itm,globaldata,wallptDataOr):
+            itmx = float(itm.split(",")[0])
+            itmy = float(itm.split(",")[1])
+            ptDist = math.sqrt((deltaX(itmx,ptx) ** 2) + (deltaY(itmy,pty) ** 2))
+            if leastdt2 > ptDist:
+                leastdt2 = ptDist
+                leastidx2 = getIndexFromPoint(itm,globaldata)
+    if leastidx > leastidx2:
+        leastidx,leastidx2 = leastidx2,leastidx
+    if leastidx == 1:
+        leastidx,leastidx2 = leastidx2,leastidx
+    return convertIndexToPoints([leastidx,leastidx2],globaldata)
+
+def feederData(wallpts,wallptData):
+    wallpt = wallpts[0]
+    for itm in wallptData:
+        if wallpt in itm:
+            return [itm.index(wallpts[0]),itm.index(wallpts[1]),itm]
+
+def undelimitXY(a):
+    finallist = []
+    for itm in a:
+        cord = []
+        cord.append(float(itm.split(",")[0]))
+        cord.append(float(itm.split(",")[1]))
+        finallist.append(cord)
+    return finallist
+
+def save_obj(obj, name ):
+    with open(name + '.json', 'w') as f:
+        json.dump(obj, f)
+
+def load_obj(name ):
+    with open(name + '.json', 'r') as f:
+        return json.load(f)
+
+
+def getPerpendicularPoint(idx,globaldata,normal):
+    wallptData = getWallPointArray(globaldata)
+    wallptDataOr = wallptData
+    wallptData = flattenList(wallptData)
+    pts = findNearestNeighbourWallPoints(idx,globaldata,wallptData,wallptDataOr)
+    mainpt = getPointxy(idx,globaldata)
+    mainptx = float(mainpt.split(",")[0])
+    mainpty = float(mainpt.split(",")[1])
+    pts1x = float(pts[0].split(",")[0])
+    pts1y = float(pts[0].split(",")[1])
+    pts2x = float(pts[1].split(",")[0])
+    pts2y = float(pts[1].split(",")[1])
+    if normal:
+        return perpendicularPt(pts1x,pts2x,mainptx,pts1y,pts2y,mainpty)
+    else:
+        return midPt(pts1x,pts2x,pts1y,pts2y)
+
+
+def perpendicularPt(x1,x2,x3,y1,y2,y3):
+    k = ((y2-y1) * (x3-x1) - (x2-x1) * (y3-y1)) / ((y2-y1)**2 + (x2-x1)**2)
+    x4 = x3 - k * (y2-y1)
+    y4 = y3 + k * (x2-x1)
+    return x4,y4
+
+def midPt(x1,x2,y1,y2):
+    x3 = (x1+x2)/2
+    y3 = (y1+y2)/2
+    return x3,y3
+
+def distance(ax,ay,bx,by):
+    return math.sqrt((ax - bx)**2 + (ay - by)**2)
+
+def findNearestPoint(ptAtt,splineArray):
+    ptdist = 10000
+    pt = {"x":0,"y":0}
+    ptAttx = float(ptAtt[0])
+    ptAtty = float(ptAtt[1])
+    for itm in splineArray:
+        itmx = float(itm[0])
+        itmy = float(itm[1])
+        dist = distance(ptAttx,ptAtty,itmx,itmy)
+        if dist < ptdist:
+            ptdist = dist
+            pt["x"] = itmx
+            pt["y"] = itmy
+    return [pt["x"],pt["y"]]
+
+def str_to_bool(s):
+    if s == 'True':
+         return True
+    elif s == 'False':
+         return False
+    else:
+         raise ValueError

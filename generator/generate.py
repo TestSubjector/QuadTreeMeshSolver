@@ -46,12 +46,27 @@ def main():
     globaldata = []
 
     log.info("Found " + str(len(wallarg)) + " wall geometry files.")
+    try:
+        bsplineWallData = dict(load_obj("wall"))
+    except IOError:
+        bsplineWallData = "None"
     for idx,itm in enumerate(wallarg):
         log.info("Loading Geometry " + str(itm))
         file2 = open(str(itm) or "airfoil_160.txt", "r")
         geometrydata = file2.read()
         file2.close()
         geometrydata = geometrydata.split("\n")
+        # print(geometrydata)
+        if bsplineWallData != "None":
+            insertionKeys = list(bsplineWallData.keys())
+            for itm in insertionKeys:
+                itmCheck = str(float(itm.split(",")[0])) +"\t" + str(float(itm.split(",")[1]))
+                resultMan,insertionidx = checkIfInside(float(itm.split(",")[0]),float(itm.split(",")[1]),geometrydata)
+                if resultMan:
+                    ptsToBeAdded = bsplineWallData[itm]
+                    for ptCordItm in reversed(ptsToBeAdded):
+                        dataInsert = str(ptCordItm[0]) + "\t" + str(ptCordItm[1])
+                        geometrydata.insert(insertionidx + 1,dataInsert)
         hashtable, wallpointsdata, globaldata = loadWall(geometrydata,hashtable,globaldata,idx + 1)
         wallpoints.append(wallpointsdata)
 

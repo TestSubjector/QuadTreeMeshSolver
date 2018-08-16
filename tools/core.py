@@ -12,6 +12,7 @@ from multiprocessing.pool import ThreadPool
 import time
 import os
 import errno
+import itertools
 log = logging.getLogger(__name__)
 log.addHandler(logging.StreamHandler())
 
@@ -20,8 +21,8 @@ def appendNeighbours(index, globaldata, newpts):
     nbhs = getNeighbours(index, globaldata)
     nbhs = nbhs + [pt]
     nbhs = list(set(nbhs))
-    globaldata[int(index)][12:] = nbhs
-    globaldata[int(index)][11] = len(nbhs)
+    globaldata[int(index)][14:] = nbhs
+    globaldata[int(index)][13] = len(nbhs)
     return globaldata
 
 
@@ -33,7 +34,7 @@ def getFlag(indexval, list):
 def getNeighbours(index, globaldata):
     index = int(index)
     ptdata = globaldata[index]
-    ptdata = ptdata[12:]
+    ptdata = ptdata[14:]
     return ptdata
 
 def getLeftandRightPoint(index,globaldata):
@@ -434,8 +435,18 @@ def checkConditionNumber(index, globaldata, threshold):
     dSPointXNeg = getDXNegPoints(index, globaldata)
     dSPointYPos = getDYPosPoints(index, globaldata)
     dSPointYNeg = getDYNegPoints(index, globaldata)
-    if xneg > threshold or xpos > threshold or ypos > threshold or yneg > threshold:
-        print(
+    if (
+        xneg > threshold
+        or len(dSPointXNeg) < 2 or len(dSPointXPos) < 2 or len(dSPointYNeg) < 2 or len(dSPointYPos) < 2 
+        or math.isnan(xneg)
+        or xpos > threshold
+        or math.isnan(xpos)
+        or ypos > threshold
+        or math.isnan(ypos)
+        or yneg > threshold
+        or math.isnan(yneg)
+    ):
+            print(
             index,
             len(dSPointXPos),
             xpos,
@@ -453,7 +464,7 @@ def cleanNeighbours(globaldata):
     for i in range(len(globaldata)):
         if i == 0:
             continue
-        noneighours = int(globaldata[i][11])
+        noneighours = int(globaldata[i][13])
         cordneighbours = globaldata[i][-noneighours:]
         result = []
         for item in cordneighbours:
@@ -470,7 +481,7 @@ def cleanNeighbours(globaldata):
         cordneighbours = result
 
         noneighours = len(cordneighbours)
-        globaldata[i] = globaldata[i][:11] + [noneighours] + list(cordneighbours)
+        globaldata[i] = globaldata[i][:13] + [noneighours] + list(cordneighbours)
     print("Duplicate Neighbours Removed")
     return globaldata
 
@@ -584,7 +595,7 @@ def getConditionNumberNormal(index,globaldata):
 
 def replaceNeighbours(index,nbhs,globaldata):
     data = globaldata[index]
-    data = data[:11]
+    data = data[:13]
     data.append(len(nbhs))
     data = data + nbhs
     globaldata[index] = data
@@ -599,8 +610,8 @@ def convertPointsToIndex(pointarray,globaldata):
 
 def fillNeighboursIndex(index,globaldata,nbhs):
     nbhs = list(set(nbhs))
-    globaldata[int(index)][12:] = nbhs
-    globaldata[int(index)][11] = len(nbhs)
+    globaldata[int(index)][14:] = nbhs
+    globaldata[int(index)][13] = len(nbhs)
     return globaldata
 
 def checkAeroGlobal2(globaldata,wallpointsData):
@@ -784,3 +795,138 @@ def wallConnectivityCheck(globaldata):
     if madechanges == True:
         with open("adapted.txt", "a+") as text_file:
             text_file.writelines("1000 1000\n")
+
+def wallConnectivityCheckNearest(globaldata):
+    madechanges = False
+    for idx,_ in enumerate(globaldata):
+        if idx > 0:
+            flag = getFlag(idx,globaldata)
+            if flag == 0:
+                xpos,xneg,_,_ = getFlags(idx,globaldata)
+                if xpos == 1 or xneg == 1:
+                    print(idx) 
+                    madechanges = True
+                    ptcord = getNearestProblemPoint(idx,globaldata)
+                    if ptcord != 0:
+                        ptcordx = float(ptcord.split(",")[0])
+                        ptcordy = float(ptcord.split(",")[1])
+                    with open("adapted.txt", "a+") as text_file:
+                        text_file.writelines(["%s %s " % (ptcordx, ptcordy)])
+                        text_file.writelines("\n")
+    if madechanges == True:
+        with open("adapted.txt", "a+") as text_file:
+            text_file.writelines("1000 1000\n")   
+
+def interiorConnectivityCheck(globaldata):
+    for idx,_ in enumerate(globaldata):
+        if idx > 0:
+            flag = getFlag(idx,globaldata)
+            if flag == 1:
+                checkConditionNumber(idx,globaldata,int(config.getConfig()["bspline"]["threshold"]))
+
+def flattenList(ptdata):
+    return list(itertools.chain.from_iterable(ptdata))
+
+def getPerpendicularPoint(idx,globaldata):
+    wallptData = getWallPointArray(globaldata)
+    wallptDataOr = wallptData
+    wallptData = flattenList(wallptData)
+    pts = findNearestNeighbourWallPoints(idx,globaldata,wallptData,wallptDataOr)
+    mainpt = getPointxy(idx,globaldata)
+    mainptx = float(mainpt.split(",")[0])
+    mainpty = float(mainpt.split(",")[1])
+    pts1x = float(pts[0].split(",")[0])
+    pts1y = float(pts[0].split(",")[1])
+    pts2x = float(pts[1].split(",")[0])
+    pts2y = float(pts[1].split(",")[1])
+    return perpendicularPt(pts1x,pts2x,mainptx,pts1y,pts2y,mainpty)
+
+def perpendicularPt(x1,x2,x3,y1,y2,y3):
+    k = ((y2-y1) * (x3-x1) - (x2-x1) * (y3-y1)) / ((y2-y1)**2 + (x2-x1)**2)
+    x4 = x3 - k * (y2-y1)
+    y4 = y3 + k * (x2-x1)
+    return x4,y4
+
+def findNearestNeighbourWallPoints(idx,globaldata,wallptData,wallptDataOr):
+    wallptDataOr = generateWallPolygons(wallptDataOr)
+    ptx,pty = getPoint(idx,globaldata)
+    leastdt,leastidx = 1000,1000
+    for itm in wallptData:
+        if not isNonAeroDynamic(idx,itm,globaldata,wallptDataOr):
+            itmx = float(itm.split(",")[0])
+            itmy = float(itm.split(",")[1])
+            ptDist = math.sqrt((deltaX(itmx,ptx) ** 2) + (deltaY(itmy,pty) ** 2))
+            if leastdt > ptDist:
+                leastdt = ptDist
+                leastidx = getIndexFromPoint(itm,globaldata)
+    ptsToCheck = getLeftandRightPoint(leastidx,globaldata)
+    leastdt2,leastidx2 = 1000,1000
+    for itm in ptsToCheck:
+        if not isNonAeroDynamic(idx,itm,globaldata,wallptDataOr):
+            itmx = float(itm.split(",")[0])
+            itmy = float(itm.split(",")[1])
+            ptDist = math.sqrt((deltaX(itmx,ptx) ** 2) + (deltaY(itmy,pty) ** 2))
+            if leastdt2 > ptDist:
+                leastdt2 = ptDist
+                leastidx2 = getIndexFromPoint(itm,globaldata)
+    if leastidx > leastidx2:
+        leastidx,leastidx2 = leastidx2,leastidx
+    if leastidx == 1:
+        leastidx,leastidx2 = leastidx2,leastidx
+    return convertIndexToPoints([leastidx,leastidx2],globaldata)
+
+def angle(x1, y1, x2, y2, x3, y3):
+    a = np.array([x1, y1])
+    b = np.array([x2, y2])
+    c = np.array([x3, y3])
+
+    ba = a - b
+    bc = c - b
+
+    cosine_angle = np.dot(ba, bc) / (np.linalg.norm(ba) * np.linalg.norm(bc))
+    angle = np.arccos(cosine_angle)
+
+    return np.degrees(angle)
+
+
+def getNearestProblemPoint(idx,globaldata):
+    xpos = getDWallXPosPoints(idx,globaldata)
+    xneg = getDWallXNegPoints(idx,globaldata)
+    leftright = getLeftandRightPoint(idx,globaldata)
+    mainptx,mainpty = getPoint(idx,globaldata)
+    mainpt = (mainptx,mainpty)
+    currang = 0
+    currpt = 0
+    if len(xpos) == 1:
+        leftright.remove(xpos[0])
+        wallx = float(leftright[0].split(",")[0])
+        wally = float(leftright[0].split(",")[1])
+        wallpt = (wallx,wally)
+        for itm in xneg:
+            itmx = float(itm.split(",")[0])
+            itmy = float(itm.split(",")[1])
+            itmpt = (itmx,itmy)
+            try:
+                angitm = angle(wallx,wally,mainptx,mainpty,itmx,itmy)
+            except:
+                print(wallx,wally,mainptx,mainpty,itmx,itmy)
+            if currang < angitm:
+                curang = angitm
+                currpt = itm
+    if len(xneg) == 1:
+        leftright.remove(xneg[0])
+        wallx = float(leftright[0].split(",")[0])
+        wally = float(leftright[0].split(",")[1])
+        wallpt = (wallx,wally)
+        for itm in xpos:
+            itmx = float(itm.split(",")[0])
+            itmy = float(itm.split(",")[1])
+            itmpt = (itmx,itmy)
+            try:
+                angitm = angle(wallx,wally,mainptx,mainpty,itmx,itmy)
+            except:
+                print(wallx,wally,mainptx,mainpty,itmx,itmy)
+            if currang < angitm:
+                curang = angitm
+                currpt = itm
+    return currpt

@@ -38,11 +38,10 @@ def cleanNeighbours(globaldata):  # Verified
     for i in range(len(globaldata)):
         # printProgressBar(i, len(globaldata) - 1, prefix = 'Progress:', suffix = 'Complete', length = 50)
         try:
-            noneighours = int(globaldata[i][11])  # Number of neighbours
+            noneighours = int(globaldata[i][13])  # Number of neighbours
         except IndexError:
-            print(i)
-            print(globaldata[i])
-            exit()
+            log.warn("No neighbours found for index " + str(i))
+            noneighbours = 0
         # noneighours = int(globaldata[i][11])  # Number of neighbours
         cordneighbours = globaldata[i][-noneighours:]
         # TODO - Ask, why get the same thing as above?
@@ -54,7 +53,7 @@ def cleanNeighbours(globaldata):  # Verified
                 result.append(str(item))
         cordneighbours = result
         noneighours = len(cordneighbours)
-        globaldata[i] = globaldata[i][:11] + [noneighours] + list(cordneighbours)
+        globaldata[i] = globaldata[i][:13] + [noneighours] + list(cordneighbours)
         # with open("duplication_removal.txt", "w") as text_file:
         #     for item1 in globaldata:
         #         text_file.writelines(["%s " % item for item in item1])
@@ -75,10 +74,10 @@ def getIndexOf(pointxy, hashtable):
 def getNeighbours(indexval, list):
     val = []
     pointdata = list[indexval]
-    numbneigh = int(pointdata[11])
+    numbneigh = int(pointdata[13])
     try:
         for i in range(numbneigh):
-            val = val + [str(pointdata[i + 12])]
+            val = val + [str(pointdata[i + 14])]
     except Exception:
         pass
     return val
@@ -247,12 +246,12 @@ def euclideanDistance(a, b):
 
 
 def appendNeighbours(neighbours, index, globaldata):
-    nbhcount = int(globaldata[index][11])
+    nbhcount = int(globaldata[index][13])
     nbhs = globaldata[index][-nbhcount:]
     nbhs = nbhs + neighbours
     nbhcount = nbhcount + len(neighbours)
-    globaldata[index][11] = nbhcount
-    globaldata[index] = globaldata[index][:12] + nbhs
+    globaldata[index][13] = nbhcount
+    globaldata[index] = globaldata[index][:14] + nbhs
     return globaldata
 
 

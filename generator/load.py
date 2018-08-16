@@ -1,5 +1,7 @@
 # from progress import *
 import logging
+import pickle
+import json
 log = logging.getLogger(__name__)
 log.addHandler(logging.StreamHandler())
 
@@ -35,6 +37,8 @@ def loadWall(geometrydata,hashtable,globaldata,idf):
             walldata.insert(8, 0)
             walldata.insert(9, 0)
             walldata.insert(10, 0)
+            walldata.insert(11, 0)
+            walldata.insert(12, 1)
             globaldata.append(walldata)
             index += 1
         # Last Point
@@ -50,6 +54,8 @@ def loadWall(geometrydata,hashtable,globaldata,idf):
             walldata.insert(8, 0)
             walldata.insert(9, 0)
             walldata.insert(10, 0)
+            walldata.insert(11, 0)
+            walldata.insert(12, 1)
             globaldata.append(walldata)
             index += 1
         # Other Points
@@ -65,6 +71,8 @@ def loadWall(geometrydata,hashtable,globaldata,idf):
             walldata.insert(8, 0)
             walldata.insert(9, 0)
             walldata.insert(10, 0)
+            walldata.insert(11, 0)
+            walldata.insert(12, 1)
             globaldata.append(walldata)
             index += 1
     log.info("Wall Point Processed")
@@ -128,6 +136,8 @@ def loadInterior(data, hashtable, globaldata, index):
                 cleandata.pop(0)
                 cleandata.insert(0, cleandata[len(cleandata) - 1])
                 cleandata.pop(-1)
+                cleandata.insert(0, 1)
+                cleandata.insert(0, 0)
                 cleandata.insert(0, 0)
                 cleandata.insert(0, 0)
                 cleandata.insert(0, 0)
@@ -148,6 +158,8 @@ def loadInterior(data, hashtable, globaldata, index):
                 cleandata.pop(0)
                 cleandata.insert(0, cleandata[len(cleandata) - 1])
                 cleandata.pop(-1)
+                cleandata.insert(0, 1)
+                cleandata.insert(0, 0)
                 cleandata.insert(0, 0)
                 cleandata.insert(0, 0)
                 cleandata.insert(0, 0)
@@ -163,3 +175,20 @@ def loadInterior(data, hashtable, globaldata, index):
                 globaldata.append(cleandata)
     log.info("Interior Point and Wall Point Neighbour Processed")
     return hashtable, globaldata
+
+def save_obj(obj, name ):
+    with open(name + '.json', 'w') as f:
+        json.dump(obj, f)
+
+def load_obj(name ):
+    with open(name + '.json', 'r') as f:
+        return json.load(f)
+
+def checkIfInside(xcord,ycord,wallData):
+    for idx,itm in enumerate(wallData):
+        compare = itm.split("\t")
+        compareValX = float(compare[0])
+        compareValY = float(compare[1])
+        if xcord == compareValX and ycord == compareValY:
+            return True,idx
+    return False,0

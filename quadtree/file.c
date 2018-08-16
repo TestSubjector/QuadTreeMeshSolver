@@ -105,7 +105,7 @@ void fileoutput(int append, char *filename, double xcord, double ycord)
     }
     if (fp == NULL)
     {
-        printf("\n ERROR : File creation of neighbourhood data was unsuccessful");
+        printf("\n ERROR : File creation of point data was unsuccessful");
         exit(1);
     }
     if (pnpoly(shape_line_count, shape_list, xcord, ycord))

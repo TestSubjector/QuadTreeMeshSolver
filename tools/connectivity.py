@@ -15,9 +15,9 @@ def connectivityCheck(globaldata):
             if(getFlag(idx,globaldata) == 0 or getFlag(idx,globaldata) == 2):
                 result = connectivityCheckWallandOuterPoint(idx,globaldata)
                 globaldata = setFlags(idx,globaldata,result)
-            else:
-                result = connectivityCheckInteriorPoint(idx,globaldata)
-                globaldata = setFlags(idx,globaldata,result)
+            # else:
+            #     result = connectivityCheckInteriorPoint(idx,globaldata)
+            #     globaldata = setFlags(idx,globaldata,result)
     return globaldata
 
 
