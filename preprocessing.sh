@@ -5,22 +5,24 @@ set -e
 # Backup Files
 if [ $1 -eq 1 ]
 then
-    cp -rlf ./files/neighbour.txt ./backup_files/neighbour.txt
-    cp -rlf ./files/output.txt ./backup_files/output.txt 
-    cp -rlf ./files/preprocessorfile_cleaned.txt ./backup_files/preprocessorfile_cleaned.txt 
-    cp -rlf ./files/preprocessorfile_rechecker.txt ./backup_files/preprocessorfile_rechecker.txt
-    cp -rlf ./files/preprocessorfile.txt ./backup_files/preprocessorfile.txt
-    cp -rlf wall.json ./backup_files/wall.json 
+    cp -rf ./files/neighbour.txt ./backup_files/neighbour.txt
+    cp -rf ./files/output.txt ./backup_files/output.txt 
+    cp -rf ./files/preprocessorfile_cleaned.txt ./backup_files/preprocessorfile_cleaned.txt 
+    cp -rf ./files/preprocessorfile_rechecker.txt ./backup_files/preprocessorfile_rechecker.txt
+    cp -rf ./files/preprocessorfile.txt ./backup_files/preprocessorfile.txt
+    cp -rf ./files/preprocessorfile_normal.txt ./backup_files/preprocessorfile_normal.txt
+    cp -rf wall.json ./backup_files/wall.json 
 
 # Reinstate Backup Files
 elif [ $1 -eq 2 ]
 then 
-    cp -rlf ./backup_files/neighbour.txt ./files/neighbour.txt
-    cp -rlf ./backup_files/output.txt ./files/output.txt 
-    cp -rlf ./backup_files/preprocessorfile_cleaned.txt ./files/preprocessorfile_cleaned.txt
-    cp -rlf ./backup_files/preprocessorfile_rechecker.txt ./files/preprocessorfile_rechecker.txt
-    cp -rlf ./backup_files/preprocessorfile.txt ./files/preprocessorfile.txt
-    cp -rlf ./backup_files/wall.json wall.json
+    cp -rf ./backup_files/neighbour.txt ./files/neighbour.txt
+    cp -rf ./backup_files/output.txt ./files/output.txt 
+    cp -rf ./backup_files/preprocessorfile_cleaned.txt ./files/preprocessorfile_cleaned.txt
+    cp -rf ./backup_files/preprocessorfile_rechecker.txt ./files/preprocessorfile_rechecker.txt
+    cp -rf ./backup_files/preprocessorfile.txt ./files/preprocessorfile.txt
+    cp -rf ./backup_files/preprocessorfile_normal.txt ./files/preprocessorfile_normal.txt
+    cp -rf ./backup_files/wall.json wall.json
 
 # Clean directory
 elif [ $1 -eq 3 ]
