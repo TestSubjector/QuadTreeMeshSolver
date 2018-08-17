@@ -4,6 +4,8 @@ import argparse
 import logging
 log = logging.getLogger(__name__)
 log.addHandler(logging.StreamHandler())
+from matplotlib import pyplot as plt
+from shapely.geometry.polygon import LinearRing, Polygon
 
 def main():
     # Command Line Arguments
@@ -34,6 +36,11 @@ def main():
     globaldata = core.cleanNeighbours(globaldata)
     wallpoints = core.getWallPointArray(globaldata)
     wallpointsData = core.generateWallPolygons(wallpoints)
+    print(len(wallpointsData))
+    x,y = wallpointsData[0].exterior.xy
+    fig, axs = plt.subplots()
+    axs.fill(x, y, alpha=0.5, fc='r', ec='none')
+    plt.show() #if not interactive.
 
     log.info("Running Non Aero Checks")
 

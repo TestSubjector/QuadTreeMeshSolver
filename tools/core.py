@@ -822,7 +822,8 @@ def interiorConnectivityCheck(globaldata):
         if idx > 0:
             flag = getFlag(idx,globaldata)
             if flag == 1:
-                checkConditionNumber(idx,globaldata,int(config.getConfig()["bspline"]["threshold"]))
+                # checkConditionNumber(idx,globaldata,int(config.getConfig()["bspline"]["threshold"]))
+                isConditionBad(idx,globaldata,True)
 
 def flattenList(ptdata):
     return list(itertools.chain.from_iterable(ptdata))
@@ -930,3 +931,111 @@ def getNearestProblemPoint(idx,globaldata):
                 curang = angitm
                 currpt = itm
     return currpt
+
+def updateNormals(idx,globaldata,nx,ny):
+    globaldata[idx][11] = nx
+    globaldata[idx][12] = ny
+    return globaldata
+
+def getNormals(idx,globaldata):
+    nx = globaldata[idx][11]
+    ny = globaldata[idx][12]
+    return nx,ny
+
+def calculateNormalConditionValues(idx,globaldata,nxavg,nyavg):
+    nbhs = convertIndexToPoints(getNeighbours(idx,globaldata),globaldata)
+    # print(nbhs)
+    _,_,_,dSPosNbhs = deltaWallNeighbourCalculation(idx,nbhs,nxavg,nyavg,True,globaldata)
+    _,_,_,dSNegNbhs = deltaWallNeighbourCalculation(idx,nbhs,nxavg,nyavg,False,globaldata)
+    _,_,_,dNPosNbhs = deltaWallNeighbourCalculationN(idx,nbhs,nxavg,nyavg,True,globaldata)
+    _,_,_,dNNegNbhs = deltaWallNeighbourCalculationN(idx,nbhs,nxavg,nyavg,False,globaldata)
+    
+    dSPosCondition = weightedConditionValueForSetOfPointsNormalWithInputs(idx,globaldata,dSPosNbhs,nxavg,nyavg)
+    dSNegCondition = weightedConditionValueForSetOfPointsNormalWithInputs(idx,globaldata,dSNegNbhs,nxavg,nyavg)
+    dNPosCondition = weightedConditionValueForSetOfPointsNormalWithInputs(idx,globaldata,dNPosNbhs,nxavg,nyavg)
+    dNNegCondition = weightedConditionValueForSetOfPointsNormalWithInputs(idx,globaldata,dNNegNbhs,nxavg,nyavg)
+
+    result = {"spos":dSPosNbhs,"sposCond":dSPosCondition,"sneg":dSNegNbhs,"snegCond":dSNegCondition,"npos":dNPosNbhs,"nposCond":dNPosCondition,"nneg":dNNegNbhs,"nnegCond":dNNegCondition}
+    return result
+
+def isConditionBad(idx,globaldata,verbose):
+    nx,ny = getNormals(idx,globaldata)
+    condResult = calculateNormalConditionValues(idx,globaldata,nx,ny)
+    dSPosNbhs,dSNegNbhs,dNPosNbhs,dNNegNbhs = condResult["spos"], condResult["sneg"], condResult["npos"], condResult["nneg"]
+    dSPosCondition,dSNegCondition,dNPosCondition,dNNegCondition = condResult["sposCond"], condResult["snegCond"], condResult["nposCond"], condResult["nnegCond"]
+    maxCond = max(dSPosCondition,dSNegCondition,dNPosCondition,dNNegCondition)
+    if maxCond > float(config.getConfig()["bspline"]["threshold"]) or math.isnan(dSPosCondition) or math.isnan(dSNegCondition) or math.isnan(dNPosCondition) or math.isnan(dNNegCondition):
+        # print(idx)
+        if verbose:
+            print(idx,len(dSPosNbhs),dSPosCondition,len(dSNegNbhs),dSNegCondition,len(dNPosNbhs),dNPosCondition,len(dNNegNbhs),dNNegCondition)
+        return True
+    else:
+        return False
+
+def weightedConditionValueForSetOfPointsNormalWithInputs(index, globaldata, nbh, nx, ny):
+    mainptx = float(globaldata[index][1])
+    mainpty = float(globaldata[index][2])
+    nx = float(nx)
+    ny = float(ny)
+    tx = float(ny)
+    ty = -float(nx)
+    deltaSumS = 0
+    deltaSumN = 0
+    deltaSumSN = 0
+    data = []
+    for nbhitem in nbh:
+        nbhitemX = float(nbhitem.split(",")[0])
+        nbhitemY = float(nbhitem.split(",")[1])
+        deltaS = (tx * (nbhitemX - mainptx)) + (ty * (nbhitemY - mainpty))
+        deltaN = (nx * (nbhitemX - mainptx)) + (ny * (nbhitemY - mainpty))
+        d = math.sqrt(deltaS ** 2 + deltaN ** 2)
+        if d == 0:
+            continue
+        power = int(config.getConfig()["global"]["weightCondition"])
+        w = d ** power
+        deltaSumS = deltaSumS + w * (deltaS) ** 2
+        deltaSumN = deltaSumN + w * (deltaN) ** 2
+        deltaSumSN = deltaSumSN + w * (deltaS) * (deltaN)
+    data.append(deltaSumS)
+    data.append(deltaSumSN)
+    data.append(deltaSumSN)
+    data.append(deltaSumN)
+    random = np.array(data)
+    shape = (2, 2)
+    random = random.reshape(shape)
+    s = np.linalg.svd(random, full_matrices=False, compute_uv=False)
+    s = max(s) / min(s)
+    return s
+
+
+def deltaWallNeighbourCalculationN(
+    index, currentneighbours, nx, ny, giveposdelta, globaldata
+):
+    deltaspos, deltasneg, deltaszero = 0, 0, 0
+    nx = float(nx)
+    ny = float(ny)
+    tx = float(ny)
+    ty = -float(nx)
+    xcord = float(globaldata[index][1])
+    ycord = float(globaldata[index][2])
+    output = []
+    for item in currentneighbours:
+        itemx = float(item.split(",")[0])
+        itemy = float(item.split(",")[1])
+        deltas = (nx * (itemx - xcord)) + (ny * (itemy - ycord))
+        # if(index==730):
+        #     print(deltas)
+        if deltas <= 0:
+            if giveposdelta:
+                output.append(item)
+            deltaspos = deltaspos + 1
+        if deltas >= 0:
+            if not giveposdelta:
+                output.append(item)
+            deltasneg = deltasneg + 1
+        if deltas == 0:
+            deltaszero = deltaszero + 1
+    if getFlag(index, globaldata) == 2:
+        None
+        # print(index,len(currentneighbours),deltaspos,deltasneg,deltaszero)
+    return deltaspos, deltasneg, deltaszero, output
