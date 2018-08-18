@@ -45,6 +45,13 @@ def main():
 
     globaldata = core.setNormals(pseudoPts,globaldata)
 
+    for _,idx in enumerate(pseudoPts):
+        checkConditionNumberLogger(idx,globaldata,float(config.getConfig()["normalWall"]["conditionValueThreshold"]))
+
+    f = open("History.txt","a+")
+    f.write(" ====== ")
+    f.close()
+
     globaldata.pop(0)
 
     with open("preprocessorfile_normal.txt", "w") as text_file:
