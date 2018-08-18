@@ -10,9 +10,9 @@ then
     cp -rf ./files/preprocessorfile_cleaned.txt ./backup_files/preprocessorfile_cleaned.txt 
     cp -rf ./files/preprocessorfile_rechecker.txt ./backup_files/preprocessorfile_rechecker.txt
     cp -rf ./files/preprocessorfile.txt ./backup_files/preprocessorfile.txt
-    cp -rf ./files/preprocessorfile_normal.txt ./backup_files/preprocessorfile_normal.txt
+    # cp -rf ./files/preprocessorfile_normal.txt ./backup_files/preprocessorfile_normal.txt
     cp -rf wall.json ./backup_files/wall.json 
-
+    echo Backup completed
 # Reinstate Backup Files
 elif [ $1 -eq 2 ]
 then 
@@ -23,7 +23,7 @@ then
     cp -rf ./backup_files/preprocessorfile.txt ./files/preprocessorfile.txt
     cp -rf ./backup_files/preprocessorfile_normal.txt ./files/preprocessorfile_normal.txt
     cp -rf ./backup_files/wall.json wall.json
-
+    echo Backup reinstated
 # Clean directory
 elif [ $1 -eq 3 ]
 then
@@ -36,7 +36,7 @@ then
     mkdir backup_files
     make clean -f ./quadtree/Makefile
     make -f ./quadtree/Makefile
-
+    echo Everything wiped
 # Adaptation
 elif [ $1 -eq 4 ]
 then
@@ -44,31 +44,47 @@ then
     python3 ./adapter/adapter.py -i ./files/preprocessorfile_rechecker.txt -a ./sensor_flag.dat
     cp -rlf ./pseudopoints.txt ./files/pseudopoints.txt
     rm ./pseudopoints.txt
-
+    echo Adaptation points added
 else
-    # Neighbour Generation
-    ./quadtree/main ./quadtree/input/airfoil_640.txt ./adapted.txt ./quadtree/input/airfoil_640.txt
-    cp -rlf ./neighbour.txt ./files/neighbour.txt
-    rm ./neighbour.txt
+    for value in {1..5}
+    do
 
-    # Indexing 
-    python3 ./generator/generate.py -n ./files/neighbour.txt -w ./generator/airfoil/airfoil_640
-    cp -rlf ./output.txt ./files/output.txt
-    cp -rlf ./preprocessorfile.txt ./files/preprocessorfile.txt
-    rm ./output.txt
-    rm ./preprocessorfile.txt
+        echo $value Iteration
 
-    # Pre Checks
+        # Neighbour Generation
+        ./quadtree/main ./quadtree/input/airfoil_640.txt ./adapted.txt ./quadtree/input/airfoil_640.txt
+        cp -rlf ./neighbour.txt ./files/f$value/neighbour.txt
+        rm ./neighbour.txt
 
-    python3 ./tools/pre.py -i ./files/preprocessorfile.txt
-    cp -rlf ./preprocessorfile_cleaned.txt ./files/preprocessorfile_cleaned.txt
-    rm ./preprocessorfile_cleaned.txt
+        # Indexing 
+        python3 ./generator/generate.py -n ./files/f$value/neighbour.txt -w ./generator/airfoil/airfoil_640
+        cp -rlf ./output.txt ./files/f$value/output.txt
+        cp -rlf ./preprocessorfile.txt ./files/f$value/preprocessorfile.txt
+        rm ./output.txt
+        rm ./preprocessorfile.txt
 
-    python3 ./triangulate/triangulate.py -i ./files/preprocessorfile_cleaned.txt -a False True True
-    cp -rlf ./preprocessorfile_triangulate.txt ./files/preprocessorfile_triangulate.txt
-    rm ./preprocessorfile_triangulate.txt
+        # Pre Checks
 
-    python3 ./rechecker/rechecker.py -i ./files/preprocessorfile_triangulate.txt
-    cp -rlf ./preprocessorfile_rechecker.txt ./files/preprocessorfile_rechecker.txt
-    rm ./preprocessorfile_rechecker.txt
+        python3 ./tools/pre.py -i ./files/f$value/preprocessorfile.txt
+        cp -rlf ./preprocessorfile_cleaned.txt ./files/f$value/preprocessorfile_cleaned.txt
+        rm ./preprocessorfile_cleaned.txt
+
+        python3 ./triangulate/triangulate.py -i ./files/f$value/preprocessorfile_cleaned.txt -a False True True
+        cp -rlf ./preprocessorfile_triangulate.txt ./files/f$value/preprocessorfile_triangulate.txt
+        rm ./preprocessorfile_triangulate.txt
+
+        python3 ./rechecker/rechecker.py -i ./files/f$value/preprocessorfile_triangulate.txt
+        cp -rlf ./preprocessorfile_rechecker.txt ./files/f$value/preprocessorfile_rechecker.txt
+        rm ./preprocessorfile_rechecker.txt
+
+        python3 ./normal/normal.py -i ./files/f$value/preprocessorfile_rechecker.txt
+        cp -rlf ./preprocessorfile_normal.txt ./files/f$value/preprocessorfile_normal.txt
+        rm ./preprocessorfile_normal.txt
+
+        python3 ./bspline/bspline.py -i ./files/f$value/preprocessorfile_normal.txt
+        cp -rf ./wall.json ./files/f$value/wall.json
+        
+    done
+    echo All Done
 fi
+
