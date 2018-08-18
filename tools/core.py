@@ -848,8 +848,20 @@ def perpendicularPt(x1,x2,x3,y1,y2,y3):
     y4 = y3 + k * (x2-x1)
     return x4,y4
 
+def angle(x1, y1, x2, y2, x3, y3):
+    a = np.array([x1, y1])
+    b = np.array([x2, y2])
+    c = np.array([x3, y3])
+
+    ba = a - b
+    bc = c - b
+
+    cosine_angle = np.dot(ba, bc) / (np.linalg.norm(ba) * np.linalg.norm(bc))
+    angle = np.arccos(cosine_angle)
+
+    return np.degrees(angle)
+
 def findNearestNeighbourWallPoints(idx,globaldata,wallptData,wallptDataOr):
-    wallptDataOr = generateWallPolygons(wallptDataOr)
     ptx,pty = getPoint(idx,globaldata)
     leastdt,leastidx = 1000,1000
     for itm in wallptData:
@@ -860,20 +872,26 @@ def findNearestNeighbourWallPoints(idx,globaldata,wallptData,wallptDataOr):
             if leastdt > ptDist:
                 leastdt = ptDist
                 leastidx = getIndexFromPoint(itm,globaldata)
-    ptsToCheck = getLeftandRightPoint(leastidx,globaldata)
+    ptsToCheck = convertIndexToPoints(getLeftandRightPoint(leastidx,globaldata),globaldata)
     leastdt2,leastidx2 = 1000,1000
+    leastptx,leastpty = getPoint(leastidx,globaldata)
+    currangle = 1000
     for itm in ptsToCheck:
         if not isNonAeroDynamic(idx,itm,globaldata,wallptDataOr):
             itmx = float(itm.split(",")[0])
             itmy = float(itm.split(",")[1])
             ptDist = math.sqrt((deltaX(itmx,ptx) ** 2) + (deltaY(itmy,pty) ** 2))
-            if leastdt2 > ptDist:
-                leastdt2 = ptDist
+            anglecal = angle(ptx,pty,leastptx,leastpty,itmx,itmy)
+            if currangle == 1000:
+                currangle = anglecal
+                leastidx2 = getIndexFromPoint(itm,globaldata)
+            elif anglecal < currangle:
+                currangle = anglecal
                 leastidx2 = getIndexFromPoint(itm,globaldata)
     if leastidx > leastidx2:
         leastidx,leastidx2 = leastidx2,leastidx
-    if leastidx == 1:
-        leastidx,leastidx2 = leastidx2,leastidx
+    # if leastidx == 1:
+    #     leastidx,leastidx2 = leastidx2,leastidx
     return convertIndexToPoints([leastidx,leastidx2],globaldata)
 
 def angle(x1, y1, x2, y2, x3, y3):
