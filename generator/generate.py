@@ -60,10 +60,13 @@ def main():
         if bsplineWallData != "None":
             insertionKeys = list(bsplineWallData.keys())
             for itm in insertionKeys:
-                itmCheck = str(float(itm.split(",")[0])) +"\t" + str(float(itm.split(",")[1]))
-                resultMan,insertionidx = checkIfInside(float(itm.split(",")[0]),float(itm.split(",")[1]),geometrydata)
+                itmx = float(itm.split(",")[0])
+                itmy = float(itm.split(",")[1])
+                itmCheck = str(itmx) +"\t" + str(itmy)
+                resultMan,insertionidx = checkIfInside(itmx,itmy,geometrydata)
                 if resultMan:
                     ptsToBeAdded = bsplineWallData[itm]
+                    sorted(ptsToBeAdded,key = lambda point: distance_squared(itmx,itmy,point[0],point[1]))
                     for ptCordItm in reversed(ptsToBeAdded):
                         dataInsert = str(ptCordItm[0]) + "\t" + str(ptCordItm[1])
                         geometrydata.insert(insertionidx + 1,dataInsert)

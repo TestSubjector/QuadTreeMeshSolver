@@ -192,3 +192,7 @@ def checkIfInside(xcord,ycord,wallData):
         if xcord == compareValX and ycord == compareValY:
             return True,idx
     return False,0
+
+
+def distance_squared(x1,y1,x2,y2):
+    return (x1-x2)**2 + (y1-y2)**2
