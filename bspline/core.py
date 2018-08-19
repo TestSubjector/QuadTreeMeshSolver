@@ -750,8 +750,8 @@ def findNearestNeighbourWallPoints(idx,globaldata,wallptData,wallptDataOr):
                 leastidx2 = getIndexFromPoint(itm,globaldata)
     if leastidx > leastidx2:
         leastidx,leastidx2 = leastidx2,leastidx
-    # if leastidx == 1:
-    #     leastidx,leastidx2 = leastidx2,leastidx
+    if leastidx == 1 and leastidx2 > 2:
+        leastidx,leastidx2 = leastidx2,leastidx
     return convertIndexToPoints([leastidx,leastidx2],globaldata)
 
 def feederData(wallpts,wallptData):
