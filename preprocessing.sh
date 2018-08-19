@@ -51,6 +51,8 @@ else
 
         echo $value Iteration
 
+        cp -rf ./adapted.txt ./files/f$value/adapted.txt
+
         # Neighbour Generation
         ./quadtree/main ./quadtree/input/airfoil_640.txt ./adapted.txt ./quadtree/input/airfoil_640.txt
         cp -rlf ./neighbour.txt ./files/f$value/neighbour.txt
