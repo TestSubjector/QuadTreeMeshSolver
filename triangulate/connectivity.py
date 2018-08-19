@@ -2,23 +2,49 @@ from core import *
 from config import getConfig
 
 
-def connectivityCheck(globaldata):
-    for idx,itm in enumerate(globaldata):
-        printProgressBar(
-            idx,
-            len(globaldata) - 1,
-            prefix="Progress:",
-            suffix="Complete",
-            length=50,
-        )
-        if(idx >0):
-            if(getFlag(idx,globaldata) == 0 or getFlag(idx,globaldata) == 2):
-                result = connectivityCheckWallandOuterPoint(idx,globaldata)
-                globaldata = setFlags(idx,globaldata,result)
-            else:
-                result = connectivityCheckInteriorPoint(idx,globaldata)
-                globaldata = setFlags(idx,globaldata,result)
-    return globaldata
+def connectivityCheck(globaldata, badPoints):
+    badPointsNew = []
+    if len(badPoints) == 0:
+        for idx,itm in enumerate(globaldata):
+            printProgressBar(
+                idx,
+                len(globaldata) - 1,
+                prefix="Progress:",
+                suffix="Complete",
+                length=50,
+            )
+            if(idx >0):
+                if(getFlag(idx,globaldata) == 0 or getFlag(idx,globaldata) == 2):
+                    result = connectivityCheckWallandOuterPoint(idx,globaldata)
+                    if 1 in result or 2 in result:
+                        badPointsNew.append(idx)
+                    globaldata = setFlags(idx,globaldata,result)
+                else:
+                    result = connectivityCheckInteriorPoint(idx,globaldata)
+                    if 1 in result or 2 in result:
+                        badPointsNew.append(idx)
+                    globaldata = setFlags(idx,globaldata,result)
+    else:
+        for index,idx in enumerate(badPoints):
+            printProgressBar(
+                index,
+                len(badPoints) - 1,
+                prefix="Progress:",
+                suffix="Complete",
+                length=50,
+            )
+            if(idx >0):
+                if(getFlag(idx,globaldata) == 0 or getFlag(idx,globaldata) == 2):
+                    result = connectivityCheckWallandOuterPoint(idx,globaldata)
+                    if 1 in result or 2 in result:
+                        badPointsNew.append(idx)
+                    globaldata = setFlags(idx,globaldata,result)
+                else:
+                    result = connectivityCheckInteriorPoint(idx,globaldata)
+                    if 1 in result or 2 in result:
+                        badPointsNew.append(idx)
+                    globaldata = setFlags(idx,globaldata,result)
+    return globaldata,badPointsNew
 
 
 def connectivityCheckWallandOuterPoint(index,globaldata):

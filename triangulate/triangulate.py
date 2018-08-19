@@ -63,6 +63,7 @@ def main():
     log.info("Wall Polygon Generation Complete")
     print("Deleting Unneeded Wall Points (Except Left and Right Points)")
     globaldata = cleanWallPoints(globaldata)
+    badPoints = []
 
     if algo1 == True:
 
@@ -77,24 +78,24 @@ def main():
         log.info("Generated " + str(len(interiortriangles)) + " triangle(s).")
         polydata = getPolygon(interiortriangles)
         log.info("Running Connectivity Check")
-        globaldata = connectivityCheck(globaldata)
+        globaldata,badPoints = connectivityCheck(globaldata,badPoints)
         log.info("Connectivity Check Done")
         log.info("Running Triangulation Balancing using Nischay's Triangle Neighbours")
         globaldata = triangleBalance(globaldata,polydata,wallpts)
         log.info("Triangle Balancing Done")
     if algo2 == True:
         log.info("Running Connectivity Check")
-        globaldata = connectivityCheck(globaldata)
+        globaldata,badPoints = connectivityCheck(globaldata,badPoints)
         log.info("Connectivity Recheck Done")
         log.info("Running Triangulation Balancing using Kumar's Neighbours (Left and Right Mode)")
         globaldata = triangleBalance2(globaldata,wallpts)
     if algo3 == True:
         log.info("Running Connectivity Check")
-        globaldata = connectivityCheck(globaldata)
+        globaldata,badPoints = connectivityCheck(globaldata,badPoints)
         log.info("Running Triangulation Balancing using Kumar's Neighbours (General)")
         globaldata = triangleBalance3(globaldata,wallpts)
     log.info("Running Connectivity Recheck")
-    globaldata = connectivityCheck(globaldata)
+    globaldata,badPoints = connectivityCheck(globaldata,badPoints)
     log.info("Writing Deletion Points")
     problempts = findDeletionPoints(globaldata)
     
