@@ -12,6 +12,7 @@ then
     cp -rf ./files/preprocessorfile.txt ./backup_files/preprocessorfile.txt
     # cp -rf ./files/preprocessorfile_normal.txt ./backup_files/preprocessorfile_normal.txt
     cp -rf wall.json ./backup_files/wall.json 
+    cp -rf history.txt ./backup_files/history.txt 
     echo Backup completed
 # Reinstate Backup Files
 elif [ $1 -eq 2 ]
@@ -23,6 +24,8 @@ then
     cp -rf ./backup_files/preprocessorfile.txt ./files/preprocessorfile.txt
     cp -rf ./backup_files/preprocessorfile_normal.txt ./files/preprocessorfile_normal.txt
     cp -rf ./backup_files/wall.json wall.json
+    cp -rf ./backup_files/history.txt history.txt  
+
     echo Backup reinstated
 # Clean directory
 elif [ $1 -eq 3 ]
@@ -46,6 +49,7 @@ then
     rm ./pseudopoints.txt
     echo Adaptation points added
 else
+    rm ./history.txt
     for value in {1..5}
     do
 

@@ -48,8 +48,8 @@ def main():
     for _,idx in enumerate(pseudoPts):
         core.checkConditionNumberLogger(idx,globaldata,float(config.getConfig()["normalWall"]["conditionValueThreshold"]))
 
-    f = open("History.txt","a+")
-    f.write(" ====== ")
+    f = open("history.txt","a+")
+    f.write("\n ====== \n")
     f.close()
 
     globaldata.pop(0)
