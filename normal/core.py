@@ -473,7 +473,7 @@ def checkConditionNumberLogger(index, globaldata, threshold):
         or math.isnan(yneg)
     ):
         f = open("History.txt","a+")
-        f.write(index,len(dSPointXPos),xpos,len(dSPointXNeg),xneg,len(dSPointYPos),ypos,len(dSPointYNeg),yneg)
+        f.write(str(index) + " " + str(len(dSPointXPos)) + " " + str(xpos) + " " + str(len(dSPointXNeg)) + " " + str(xneg) + " " + str(len(dSPointYPos)) + " " + str(ypos) + " " + str(len(dSPointYNeg)) + " " + str(yneg))
         f.close
         return True
     else:
