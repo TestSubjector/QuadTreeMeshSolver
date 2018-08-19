@@ -56,6 +56,7 @@ def main():
         geometrydata = file2.read()
         file2.close()
         geometrydata = geometrydata.split("\n")
+        geometrydataOrg = wallFloat(geometrydata)
         # print(geometrydata)
         if bsplineWallData != "None":
             insertionKeys = list(bsplineWallData.keys())
@@ -63,11 +64,11 @@ def main():
                 itmx = float(itm.split(",")[0])
                 itmy = float(itm.split(",")[1])
                 itmCheck = str(itmx) +"\t" + str(itmy)
-                resultMan,insertionidx = checkIfInside(itmx,itmy,geometrydata)
+                resultMan,insertionidx = checkIfInside(itmx,itmy,geometrydata,geometrydataOrg,bsplineWallData)
                 if resultMan:
-                    ptsToBeAdded = bsplineWallData[itm]
-                    sorted(ptsToBeAdded,key = lambda point: distance_squared(itmx,itmy,point[0],point[1]))
-                    for ptCordItm in reversed(ptsToBeAdded):
+                    ptsToBeAdded = getItem(bsplineWallData,itm)
+                    ptsToBeAdded = sorted(ptsToBeAdded,key = lambda point: distance_squared(itmx,itmy,point[0],point[1]),reverse=True)
+                    for ptCordItm in ptsToBeAdded:
                         dataInsert = str(ptCordItm[0]) + "\t" + str(ptCordItm[1])
                         geometrydata.insert(insertionidx + 1,dataInsert)
         hashtable, wallpointsdata, globaldata = loadWall(geometrydata,hashtable,globaldata,idx + 1)
