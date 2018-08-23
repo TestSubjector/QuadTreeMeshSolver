@@ -44,7 +44,7 @@ then
 elif [ $1 -eq 4 ]
 then
     # Adaptation Points
-    python3 ./adapter/adapter.py -i ./files/preprocessorfile_rechecker.txt -a ./sensor_flag.dat
+    python3 ./adapter/adapter.py -i ./files/preprocessorfile_normal.txt -a ./sensor_flag.dat
     cp -rlf ./pseudopoints.txt ./files/pseudopoints.txt
     rm ./pseudopoints.txt
     echo Adaptation points added
@@ -58,12 +58,12 @@ else
         cp -rf ./adapted.txt ./files/f$value/adapted.txt
 
         # Neighbour Generation
-        ./quadtree/main ./quadtree/input/airfoil_640.txt ./adapted.txt ./quadtree/input/airfoil_640.txt
+        ./quadtree/main ./quadtree/input/new/twospline_airfoil_flap.txt ./adapted.txt ./quadtree/input/new/shapespline_airfoil_flap.txt
         cp -rlf ./neighbour.txt ./files/f$value/neighbour.txt
         rm ./neighbour.txt
 
-        # Indexing 
-        python3 ./generator/generate.py -n ./files/f$value/neighbour.txt -w ./generator/airfoil/airfoil_640
+        # Indexing
+        python3 ./generator/generate.py -n ./files/f$value/neighbour.txt -w ./generator/twoshapebspline/airfoil ./generator/twoshapebspline/flap
         cp -rlf ./output.txt ./files/f$value/output.txt
         cp -rlf ./preprocessorfile.txt ./files/f$value/preprocessorfile.txt
         rm ./output.txt

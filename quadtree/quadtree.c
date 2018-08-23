@@ -350,20 +350,17 @@ void descent_node(quadtree_node_t *node)
     checker = 0;
     main_coord.x = node->point->x;
     main_coord.y = node->point->y;
-    if (pnpoly(shape_line_count, shape_list, node->point->x, node->point->y))
+    if (newneighboursetfile == 1)
     {
-      if (newneighboursetfile == 1)
-      {
-        neighbouroutput(0, filename, node->point->x, node->point->y);
-        newneighboursetfile = 0;
-      }
-      else
-      {
-        neighbouroutput(1, filename, node->point->x, node->point->y);
-      }
-      // printf("\n %lf %lf has neighbours\t", node->point->x, node->point->y);
-      find_neighbourset(common_treeroute(tree->root, node), node);
+      neighbouroutput(0, filename, node->point->x, node->point->y);
+      newneighboursetfile = 0;
     }
+    else
+    {
+      neighbouroutput(1, filename, node->point->x, node->point->y);
+    }
+    // printf("\n %lf %lf has neighbours\t", node->point->x, node->point->y);
+    find_neighbourset(common_treeroute(tree->root, node), node);
   }
 }
 
