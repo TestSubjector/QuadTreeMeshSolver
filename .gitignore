@@ -64,3 +64,5 @@ removal_points.txt
 sensor_flag.dat
 adapted.txt
 neighbour.txt
+Pipfile.lock
+shape_generated.txt

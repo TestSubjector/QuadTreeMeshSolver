@@ -71,8 +71,8 @@ def bsplineCall(cv, point_division, index1, index2):
         for i in range(len(new_points[0])):
             # The cv[x] represents point index (subtracted by one) in between which the new generated points are found 
             if (typeObtuseRightAcute(cv[index1][0], cv[index1][1], new_points[0][i],new_points[1][i], cv[index2][0], cv[index2][1])== 1):
-                if(angle(cv[index1][0], cv[index1][1], new_points[0][i],new_points[1][i], cv[index2][0], cv[index2][1]) > 175 and 
-                    angle(cv[index1][0], cv[index1][1], new_points[0][i],new_points[1][i], cv[index2][0], cv[index2][1]) < 185):
+                if(angle(cv[index1][0], cv[index1][1], new_points[0][i],new_points[1][i], cv[index2][0], cv[index2][1]) > 170 and 
+                    angle(cv[index1][0], cv[index1][1], new_points[0][i],new_points[1][i], cv[index2][0], cv[index2][1]) < 190):
                     generated_points.append([new_points[0][i], new_points[1][i]])
                     # print(new_points[0][i], new_points[1][i])
     else:
