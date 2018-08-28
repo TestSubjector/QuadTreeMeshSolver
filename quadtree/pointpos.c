@@ -23,7 +23,7 @@ int fourth_poly = 0;
 int pnpoly(int nvert, coords_t *shape_list, double testx, double testy)
 {
     int i, j, c = 1;
-
+    
     // The leaf under observation stores one of the input points, so no blanking. Goes through all input points
     for (i = 0; i < nvert; i++)
     {
@@ -32,6 +32,15 @@ int pnpoly(int nvert, coords_t *shape_list, double testx, double testy)
             return c;
         }
     }
+
+    for (i = 0; i < adapted_line_count; i++)
+    {
+        if (adapted_list[i].y == testy && adapted_list[i].x == testx)
+        {
+            return c;
+        }
+    }
+
     for (i = 0, j = nvert - 1; i < nvert; j = i++) // We start from j = nvert-1 to cover the last edge
     {
         // Essentially, the condition below uses the formula {y-y1 = (y2-y1/x2-x1)*(x-x1)} and slopes to find
@@ -112,6 +121,7 @@ int notaero_blank(int nvert, coords_t *coords_list, coords_t main_point, coords_
 {
     int i, j, k, l;
     // printf(" \n It's running atleast");
+    
     int checker = 0;
     // if(fabs(main_point.x - 0.999298096) < 0.00001 && fabs(main_point.y + 0.000457763672) < 0.00001  && neighbour_point.x == 0.9991382 && neighbour_point.y == 0.00012220342)
     // {

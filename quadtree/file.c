@@ -121,12 +121,12 @@ void fileoutput(int append, char *filename, double xcord, double ycord)
 // File output function to calculate valid neighbours for points
 void neighbouroutput(int append, char *filename, double xcord, double ycord)
 {
-    char xcordstr[20];
-    char ycordstr[20];
-    char serialnumstr[20];
-    char neighbourcountstr[20];
-    gcvt(xcord, 18, xcordstr);
-    gcvt(ycord, 18, ycordstr);
+    char xcordstr[25];
+    char ycordstr[25];
+    char serialnumstr[25];
+    char neighbourcountstr[25];
+    gcvt(xcord, 24, xcordstr);
+    gcvt(ycord, 24, ycordstr);
     gcvt(serial_number, 10, serialnumstr);
     FILE *fp = NULL;
     if (append == 1)
@@ -179,10 +179,10 @@ void neighbouroutput(int append, char *filename, double xcord, double ycord)
 void neighbourset(int append, char *filename, double xcord, double ycord)
 {
     // The if condition checks for blanking points
-    char xcordstr[20];
-    char ycordstr[20];
-    gcvt(xcord, 18, xcordstr);
-    gcvt(ycord, 18, ycordstr);
+    char xcordstr[25];
+    char ycordstr[25];
+    gcvt(xcord, 24, xcordstr);
+    gcvt(ycord, 24, ycordstr);
     // double_to_char(xcord,xcordstr);
     // double_to_char(ycord,ycordstr);
     FILE *fp = NULL;
