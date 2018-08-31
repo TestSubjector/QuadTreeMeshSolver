@@ -51,7 +51,7 @@ def getIndexFromPoint(pt, globaldata):
     ptx = float(pt.split(",")[0])
     pty = float(pt.split(",")[1])
     for itm in globaldata:
-        if itm[1] == str(ptx) and itm[2] == str(pty):
+        if str(itm[1]) == str(ptx) and str(itm[2]) == str(pty):
             return int(itm[0])
 
 
