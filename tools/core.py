@@ -614,7 +614,7 @@ def fillNeighboursIndex(index,globaldata,nbhs):
     globaldata[int(index)][13] = len(nbhs)
     return globaldata
 
-def checkAeroGlobal2(globaldata,wallpointsData):
+def checkAeroGlobal2(globaldata,wallpointsData,wallcount):
     coresavail = multiprocessing.cpu_count()
     log.info("Found " + str(coresavail) + " available core(s).")
     log.info("BOOSTU BOOSTU BOOSTU")
@@ -626,7 +626,7 @@ def checkAeroGlobal2(globaldata,wallpointsData):
     chunksize = math.ceil(len(globaldata)/min(MAX_CORES,coresavail))
     globalchunks = list(chunks(globaldata,chunksize))
     for itm in globalchunks:
-        results.append(pool.apply_async(checkAeroGlobal, args=(itm, globaldata,wallpointsData)))
+        results.append(pool.apply_async(checkAeroGlobal, args=(itm, globaldata,wallpointsData,wallcount)))
     pool.close()
     pool.join()
     results = [r.get() for r in results]
@@ -640,22 +640,25 @@ def checkAeroGlobal2(globaldata,wallpointsData):
     log.info("Replacement Done")
     return globaldata
 
-def checkAeroGlobal(chunk,globaldata,wallpointsData):
+def checkAeroGlobal(chunk,globaldata,wallpointsData,wallcount):
     # t1 = time.clock()
     for index,itm in enumerate(chunk):
         if itm is not "start":
             idx = itm[0]
             # printProgressBar(idx, len(globaldata) - 1, prefix="Progress:", suffix="Complete", length=50)    
             nbhs = getNeighbours(idx,globaldata)
-            nonaeronbhs = []
-            for itm in nbhs:
-                cord = getPointxy(itm,globaldata)
-                if isNonAeroDynamic(idx,cord,globaldata,wallpointsData):
-                    nonaeronbhs.append(itm)
-            finalnbhs = list(set(nbhs) - set(nonaeronbhs))
-            if(len(nbhs) != len(finalnbhs)):
-                chunk = fillNeighboursIndex(index,chunk,finalnbhs)
-                log.debug("Point %s has a non aero point with index %s",idx,itm)
+            nbhs = list(map(int, nbhs))
+            # if True:
+            if min(nbhs) < wallcount:
+                nonaeronbhs = []
+                for itm in nbhs:
+                    cord = getPointxy(itm,globaldata)
+                    if isNonAeroDynamic(idx,cord,globaldata,wallpointsData):
+                        nonaeronbhs.append(itm)
+                finalnbhs = list(set(nbhs) - set(nonaeronbhs))
+                if(len(nbhs) != len(finalnbhs)):
+                    chunk = fillNeighboursIndex(index,chunk,finalnbhs)
+                    log.debug("Point %s has a non aero point with index %s",idx,itm)
     # t2 = time.clock()
     # log.info(t2 - t1)
     return chunk

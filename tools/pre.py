@@ -16,7 +16,7 @@ def main():
 
     globaldata = config.getKeyVal("globaldata")
 
-    if globaldata == None:
+    if globaldata != None:
 
         file1 = open(args.input or "preprocessorfile.txt", "r")
         data = file1.read()
@@ -41,12 +41,14 @@ def main():
 
     globaldata = core.cleanNeighbours(globaldata)
     wallpoints = core.getWallPointArray(globaldata)
+    wallcount = str(wallpoints)
+    wallcount = wallcount.count(",")-wallcount.count("[]")+1
     wallpointsData = core.generateWallPolygons(wallpoints)
 
     log.info("Running Non Aero Checks")
 
     # globaldata = core.checkAeroGlobal(globaldata,globaldata,wallpointsData)
-    globaldata = core.checkAeroGlobal2(globaldata,wallpointsData)
+    globaldata = core.checkAeroGlobal2(globaldata,wallpointsData,wallcount)
 
     globaldata.pop(0)
 
