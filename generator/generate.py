@@ -37,6 +37,8 @@ def main():
     data = data.split("\n")
     data.pop(0)  # Pops the first blank line
 
+    config.setPrefix()
+
     interiorPointsCount = 0
     outerPointsCount = 0
 
@@ -81,6 +83,8 @@ def main():
 
     globaldata = cleanNeighbours(globaldata)
     globaldata = generateReplacement(hashtable, globaldata)
+
+    config.setKeyVal("globaldata",globaldata)
 
     with open("preprocessorfile.txt", "w") as text_file:
         for item1 in globaldata:

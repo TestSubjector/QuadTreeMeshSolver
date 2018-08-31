@@ -9,6 +9,7 @@ scipy = "*"
 matplotlib = "*"
 cython = "*"
 shapely = "*"
+redis = "*"
 
 [dev-packages]
 pylint = "*"

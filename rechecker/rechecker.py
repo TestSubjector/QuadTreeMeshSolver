@@ -18,23 +18,30 @@ def main():
     log.debug("Arguments")
     log.debug(args)
 
-    file1 = open(args.input or "preprocessorfile_pointremoval.txt", "r")
-    data = file1.read()
-    globaldata = ["start"]
-    splitdata = data.split("\n")
-    splitdata = splitdata[:-1]
+    globaldata = config.getKeyVal("globaldata")
 
-    log.info("Processed Pre-Processor File")
-    log.info("Converting to readable format")
+    if globaldata == None:
 
-    for idx, itm in enumerate(splitdata):
-        printProgressBar(
-            idx, len(splitdata) - 1, prefix="Progress:", suffix="Complete", length=50
-        )
-        itm = itm.split(" ")
-        itm.pop(-1)
-        entry = itm
-        globaldata.append(entry)
+        file1 = open(args.input or "preprocessorfile_pointremoval.txt", "r")
+        data = file1.read()
+        globaldata = ["start"]
+        splitdata = data.split("\n")
+        splitdata = splitdata[:-1]
+
+        log.info("Processed Pre-Processor File")
+        log.info("Converting to readable format")
+
+        for idx, itm in enumerate(splitdata):
+            printProgressBar(
+                idx, len(splitdata) - 1, prefix="Progress:", suffix="Complete", length=50
+            )
+            itm = itm.split(" ")
+            itm.pop(-1)
+            entry = itm
+            globaldata.append(entry)
+
+    else:
+        globaldata.insert(0,"start")
 
     globaldata = cleanNeighbours(globaldata)
 
@@ -76,6 +83,8 @@ def main():
     globaldata = cleanNeighbours(globaldata)
 
     globaldata.pop(0)
+
+    config.setKeyVal("globaldata",globaldata)
 
     with open("preprocessorfile_rechecker.txt", "w") as text_file:
         for item1 in globaldata:

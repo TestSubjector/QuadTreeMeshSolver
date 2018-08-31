@@ -22,11 +22,34 @@ def main():
     log.debug("Arguments")
     log.debug(args)
 
-    file1 = open(args.input or "preprocessorfile.txt", "r")
-    data = file1.read()
-    globaldata = ["start"]
-    splitdata = data.split("\n")
-    splitdata = splitdata[:-1]
+    globaldata = config.getKeyVal("globaldata")
+
+    if globaldata == None:
+
+        file1 = open(args.input or "preprocessorfile.txt", "r")
+        data = file1.read()
+        globaldata = ["start"]
+        splitdata = data.split("\n")
+        splitdata = splitdata[:-1]
+
+        log.info("Processed Pre-Processor File")
+        log.info("Converting to readable format")
+
+        for idx, itm in enumerate(splitdata):
+            printProgressBar(
+                idx, len(splitdata) - 1, prefix="Progress:", suffix="Complete", length=50
+            )
+            itm = itm.split(" ")
+            itm.pop(-1)
+            entry = itm
+            globaldata.append(entry)
+
+    else:
+        globaldata.insert(0,"start")
+
+    globaldata = cleanNeighbours(globaldata)
+
+    wallpts = getWallPointArray(globaldata)
 
     algo1,algo2,algo3 = True,True,True
 
@@ -35,22 +58,6 @@ def main():
         algo1 = algo[0]
         algo2 = algo[1]
         algo3 = algo[2]
-
-    log.info("Processed Pre-Processor File")
-    log.info("Converting to readable format")
-
-    for idx, itm in enumerate(splitdata):
-        printProgressBar(
-            idx, len(splitdata) - 1, prefix="Progress:", suffix="Complete", length=50
-        )
-        itm = itm.split(" ")
-        itm.pop(-1)
-        entry = itm
-        globaldata.append(entry)
-
-    globaldata = cleanNeighbours(globaldata)
-
-    wallpts = getWallPointArray(globaldata)
 
     # Removes Traces of Wall Points from the last wallpoint neighbours
 
@@ -104,6 +111,8 @@ def main():
     temp.writeConditionValuesForWall(globaldata)
 
     globaldata.pop(0)
+
+    config.setKeyVal("globaldata",globaldata)
 
     with open("removal_points.txt", "w") as text_file:
         for item1 in problempts:
