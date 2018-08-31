@@ -17,7 +17,7 @@ def main():
     globaldata = config.getKeyVal("globaldata")
 
     if globaldata == None:
-        
+
         file1 = open(args.input or "preprocessorfile.txt", "r")
         data = file1.read()
         globaldata = ["start"]
@@ -49,6 +49,8 @@ def main():
     globaldata = core.checkAeroGlobal2(globaldata,wallpointsData)
 
     globaldata.pop(0)
+
+    config.setKeyVal("globaldata",globaldata)
 
     log.info("Writing file to disk")
 
