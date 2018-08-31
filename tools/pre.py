@@ -14,23 +14,30 @@ def main():
 
     log.info("Loading Data")
 
-    file1 = open(args.input or "preprocessorfile.txt", "r")
-    data = file1.read()
-    globaldata = ["start"]
-    splitdata = data.split("\n")
-    splitdata = splitdata[:-1]
+    globaldata = config.getKeyVal("globaldata")
 
-    log.info("Processed Pre-Processor File")
-    log.info("Converting to readable format")
+    if globaldata == None:
+        
+        file1 = open(args.input or "preprocessorfile.txt", "r")
+        data = file1.read()
+        globaldata = ["start"]
+        splitdata = data.split("\n")
+        splitdata = splitdata[:-1]
 
-    for idx, itm in enumerate(splitdata):
-        printProgressBar(
-            idx, len(splitdata) - 1, prefix="Progress:", suffix="Complete", length=50
-        )
-        itm = itm.split(" ")
-        itm.pop(-1)
-        entry = itm
-        globaldata.append(entry)
+        log.info("Processed Pre-Processor File")
+        log.info("Converting to readable format")
+
+        for idx, itm in enumerate(splitdata):
+            printProgressBar(
+                idx, len(splitdata) - 1, prefix="Progress:", suffix="Complete", length=50
+            )
+            itm = itm.split(" ")
+            itm.pop(-1)
+            entry = itm
+            globaldata.append(entry)
+    
+    else:
+        globaldata.insert(0,"start")
 
     globaldata = core.cleanNeighbours(globaldata)
     wallpoints = core.getWallPointArray(globaldata)
