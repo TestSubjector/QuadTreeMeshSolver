@@ -99,7 +99,7 @@ def generateBSplinePoints(cv,update):
     return new_points
 
 def convertPointsToKdTree(points):
-    return spatial.KDTree(list(zip(points[0].ravel(), points[1].ravel())))
+    return spatial.cKDTree(list(zip(points[0].ravel(), points[1].ravel())))
 
 def getPointsBetween(kdTree,startx,stopx):
     startx = tuple(map(float,startx.split(",")))

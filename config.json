@@ -12,6 +12,10 @@
         "pointControl": 200000,
         "polygon": false
     },
+    "normalWall":{
+        "inflatedPolygonDistance": 1E-3,
+        "conditionValueThreshold": 30
+    },
     "penrose": {
         "cutoffConditionValue": 0.001,
         "power": 2
