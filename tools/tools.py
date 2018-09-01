@@ -52,6 +52,7 @@ def main():
         print("Type 'wcc' to run Wall Connectivity Check on all Wall Points.")
         print("Type 'wcc!' to run Wall Connectivity Check on all Wall Points and return nearest point.")
         print("Type 'icc' to run Interior Connectivity Check on all Interior Points.")
+        print("Type 'cache' to push the file you read into cache.")
         ptidx = input("Which point do you want to fix? ")
         if ptidx == "exit":
             break
@@ -65,6 +66,8 @@ def main():
             core.wallConnectivityCheckNearest(globaldata)
         elif ptidx == "icc":
             core.interiorConnectivityCheck(globaldata)
+        elif ptidx == "cache":
+            core.pushCache(globaldata)
         isPointIndex = False
         try:
             ptidx = int(ptidx)
@@ -139,6 +142,8 @@ def main():
                 break
             elif whatkind == 8:
                 exit()
+            elif whatkind == 9:
+                None
             else:
                 break
 

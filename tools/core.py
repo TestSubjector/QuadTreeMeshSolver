@@ -1060,3 +1060,8 @@ def deltaWallNeighbourCalculationN(
         None
         # print(index,len(currentneighbours),deltaspos,deltasneg,deltaszero)
     return deltaspos, deltasneg, deltaszero, output
+
+def pushCache(globaldata):
+    globaldata.pop(0)
+    config.setKeyVal("globaldata",globaldata)
+    log.info("Pushed to Cache!")
