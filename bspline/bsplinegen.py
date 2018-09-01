@@ -102,9 +102,11 @@ def convertPointsToKdTree(points):
     return spatial.KDTree(list(zip(points[0].ravel(), points[1].ravel())))
 
 def getPointsBetween(kdTree,startx,stopx):
-    startrg = kdTree.query(np.array(startx))[0]
-    stoprg = kdTree.query(np.array(stopx))[0]
-    result = kdTree.data()[startrg:stoprg]
+    startx = tuple(map(float,startx.split(",")))
+    stopx = tuple(map(float,stopx.split(",")))
+    startrg = kdTree.query(np.array(startx))[1]
+    stoprg = kdTree.query(np.array(stopx))[1]
+    result = kdTree.data[startrg:stoprg]
     return verifyPointsBetween(result.tolist(),startx,stopx)
 
 def verifyPointsBetween(search_list,startpt,stoppt):

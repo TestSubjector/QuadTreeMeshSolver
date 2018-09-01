@@ -67,7 +67,7 @@ def main():
     bsplineArray = []
     for itm in wallPts:
         print("Generating Points for Wall Point with points",len(itm))
-        bsplineData = bsplinegen.generateBSplinePoints(np.array(core.undelimitXY(itm)),2000)
+        bsplineData = bsplinegen.generateBSplinePoints(np.array(core.undelimitXY(itm)),int(config.getConfig()["bspline"]["pointControl"]))
         print("Generating KD Tree")
         bsplineData = bsplinegen.convertPointsToKdTree(bsplineData)
         bsplineArray.append(bsplineData)
@@ -76,16 +76,16 @@ def main():
         # print(data[0],data[1])
         if config.getConfig()["bspline"]["polygon"] == False:
             # newpts = bsplinegen.bsplineCall(np.array(core.undelimitXY(data[2])),int(config.getConfig()["bspline"]["pointControl"]),data[0],data[1])
-            newpts = bsplinegen.getPointsBetween(bsplineArray[data[2]],data[0],data[1])
-            print(newpts)
+            newpts = bsplinegen.getPointsBetween(bsplineArray[data[2]],wallPts[data[2]][data[0]],wallPts[data[2]][data[1]])
             newpts = [core.findNearestPoint(perpendicularpts[idx],newpts)]
         else:
             newpts = [list(perpendicularpts[idx])]
         printProgressBar(idx + 1, len(problempts), prefix="Progress:", suffix="Complete", length=50)
         try:
-            writingDict[data[3][int(data[0])]] = writingDict[data[3][int(data[0])]] + newpts
+            print(data)
+            writingDict[data[3]][0] = writingDict[data[3]][0] + newpts
         except KeyError:
-            writingDict[data[3][int(data[0])]] = newpts
+            writingDict[data[3]] = newpts
         additionPts.append(newpts)
     additionPts = list(itertools.chain.from_iterable(additionPts))
     print(writingDict)

@@ -1,1 +1,65 @@
-{"generator": {"maxCoresForReplacement": 4}, "box": {"boxSideLength": 0, "XRange": [0, 0], "YRange": [0, 0]}, "bspline": {"threshold": 30, "pointControl": 20, "polygon": true}, "penrose": {"cutoffConditionValue": 0.001, "power": 2}, "pseudowall": {"inflatedPolygonDistance": 0}, "rechecker": {"maxPoints": 2, "conditionValueThreshold": 30}, "remover": {"conditionValueAdditionThreshold": 30, "conditionValueDeletionThreshold": 30}, "triangulate": {"triangle": {"interiorThreshold": 30, "wallandOuterThreshold": 30, "aggressiveMaxNeighbours": 2, "normalMaxNeighbours": 1}, "leftright": {"wallThreshold": 30, "aggressiveMaxNeighbours": 2, "normalMaxNeighbours": 1}, "general": {"wallThreshold": 30, "aggressiveMaxNeighbours": 2}}, "global": {"weightCondition": 0, "logger": {"level": "INFO", "logPath": "log.log"}, "nonAdaptRegion": 0.001, "nonAdaptEdgePointRadius": [], "edgePoints": [], "redis": {"host": "localhost", "port": 6379, "password": "", "db": 0, "prefix": "3d9c3bcdeb674589ad0d0038239f8042"},"wallPointOrientation":"cw"}}
+{
+    "generator": {
+        "maxCoresForReplacement": 4
+    },
+    "box": {
+        "boxSideLength": 0,
+        "XRange": [0, 0],
+        "YRange": [0, 0]
+    },
+    "bspline": {
+        "threshold": 30,
+        "pointControl": 200000,
+        "polygon": false
+    },
+    "penrose": {
+        "cutoffConditionValue": 0.001,
+        "power": 2
+    },
+    "pseudowall": {
+        "inflatedPolygonDistance": 0
+    },
+    "rechecker": {
+        "maxPoints": 2,
+        "conditionValueThreshold": 30
+    },
+    "remover": {
+        "conditionValueAdditionThreshold": 30,
+        "conditionValueDeletionThreshold": 30
+    },
+    "triangulate": {
+        "triangle": {
+            "interiorThreshold": 30,
+            "wallandOuterThreshold": 30,
+            "aggressiveMaxNeighbours": 2,
+            "normalMaxNeighbours": 1
+        },
+        "leftright": {
+            "wallThreshold": 30,
+            "aggressiveMaxNeighbours": 2,
+            "normalMaxNeighbours": 1
+        },
+        "general": {
+            "wallThreshold": 30,
+            "aggressiveMaxNeighbours": 2
+        }
+    },
+    "global": {
+        "weightCondition": 0,
+        "logger": {
+            "level": "INFO",
+            "logPath": "log.log"
+        },
+        "nonAdaptRegion": 0.001,
+        "nonAdaptEdgePointRadius": [],
+        "edgePoints": [],
+        "redis": {
+            "host": "localhost",
+            "port": 6379,
+            "password": "",
+            "db": 0,
+            "prefix": "3d9c3bcdeb674589ad0d0038239f8042"
+        },
+        "wallPointOrientation": "cw"
+    }
+}
