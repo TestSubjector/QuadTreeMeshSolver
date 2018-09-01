@@ -83,9 +83,9 @@ def main():
             newpts = [list(perpendicularpts[idx])]
         printProgressBar(idx + 1, len(problempts), prefix="Progress:", suffix="Complete", length=50)
         try:
-            writingDict[data[2][int(data[0])]] = writingDict[data[2][int(data[0])]] + newpts
+            writingDict[data[3][int(data[0])]] = writingDict[data[3][int(data[0])]] + newpts
         except KeyError:
-            writingDict[data[2][int(data[0])]] = newpts
+            writingDict[data[3][int(data[0])]] = newpts
         additionPts.append(newpts)
     additionPts = list(itertools.chain.from_iterable(additionPts))
     print(writingDict)
