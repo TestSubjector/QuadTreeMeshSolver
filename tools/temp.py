@@ -1,4 +1,5 @@
 import core
+import progress
 
 def writeNormalsToText(globaldata):
     for idx,itm in enumerate(globaldata):
@@ -42,3 +43,52 @@ def createAdaptedFull(globaldata):
     with open("adapted.txt", "a") as text_file:
         text_file.writelines("1000 1000\n")
                     
+
+def writeConditionValues(globaldata):
+    writeFile = []
+    for idx,itm in enumerate(globaldata):
+        if idx > 0:
+            flag = core.getFlag(idx,globaldata)
+            if flag == 0:
+                data = []
+                nx,ny = core.normalCalculation(idx,globaldata,True)
+                result = core.calculateNormalConditionValues(idx,globaldata,nx,ny)
+                ptx,pty = core.getPoint(idx,globaldata)
+                data.append(idx)
+                data.append(ptx)
+                data.append(pty)
+                data.append(result["sposCond"])
+                data.append(result["snegCond"])
+                data.append(1)
+                data.append(result["nnegCond"])
+                writeFile.append(data)
+            elif flag == 1:
+                data = []
+                nx,ny = core.getNormals(idx,globaldata)
+                result = core.calculateNormalConditionValues(idx,globaldata,nx,ny)
+                ptx,pty = core.getPoint(idx,globaldata)
+                data.append(idx)
+                data.append(ptx)
+                data.append(pty)
+                data.append(result["sposCond"])
+                data.append(result["snegCond"])
+                data.append(result["nposCond"])
+                data.append(result["nnegCond"])
+                writeFile.append(data)
+            elif flag == 2:
+                data = []
+                nx,ny = core.normalCalculation(idx,globaldata,False)
+                result = core.calculateNormalConditionValues(idx,globaldata,nx,ny)
+                ptx,pty = core.getPoint(idx,globaldata)
+                data.append(idx)
+                data.append(ptx)
+                data.append(pty)
+                data.append(result["sposCond"])
+                data.append(result["snegCond"])
+                data.append(result["nposCond"])
+                data.append(1)
+                writeFile.append(data)
+    with open("conditionFile.txt", "w") as text_file:
+        for item1 in writeFile:
+            text_file.writelines(["%s " % item for item in item1])
+            text_file.writelines("\n")

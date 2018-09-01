@@ -37,6 +37,7 @@ def main():
     # print(result)
 
     temp.writeNormalsToText(globaldata)
+    temp.writeConditionValues(globaldata)
     exit()
 
     wallpointsData = core.generateWallPolygons(wallpoints)

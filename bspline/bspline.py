@@ -64,11 +64,20 @@ def main():
         writingDict = {}
     print(writingDict)
     print("Bsplining", len(problempts), "points.")
+    bsplineArray = []
+    for itm in wallPts:
+        print("Generating Points for Wall Point with points",len(itm))
+        bsplineData = bsplinegen.generateBSplinePoints(np.array(core.undelimitXY(itm)),2000)
+        print("Generating KD Tree")
+        bsplineData = bsplinegen.convertPointsToKdTree(bsplineData)
+        bsplineArray.append(bsplineData)
     for idx,itm in enumerate(problempts): 
         data = core.feederData(itm,wallPts)
         # print(data[0],data[1])
         if config.getConfig()["bspline"]["polygon"] == False:
-            newpts = bsplinegen.bsplineCall(np.array(core.undelimitXY(data[2])),int(config.getConfig()["bspline"]["pointControl"]),data[0],data[1])
+            # newpts = bsplinegen.bsplineCall(np.array(core.undelimitXY(data[2])),int(config.getConfig()["bspline"]["pointControl"]),data[0],data[1])
+            newpts = bsplinegen.getPointsBetween(bsplineArray[data[2]],data[0],data[1])
+            print(newpts)
             newpts = [core.findNearestPoint(perpendicularpts[idx],newpts)]
         else:
             newpts = [list(perpendicularpts[idx])]

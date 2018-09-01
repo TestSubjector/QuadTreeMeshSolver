@@ -3,6 +3,8 @@ import scipy.interpolate as si
 import matplotlib.pyplot as plt
 import math
 from scipy.interpolate import splprep, splev
+from scipy import spatial
+import config
 
 # cv: Input array of the body
 # point_division: Number of new points required between given point indexes
@@ -28,8 +30,6 @@ def distance(ax,ay,bx,by):
 def typeObtuseRightAcute(x1, y1, x2, y2, x3, y3):
     #no idea if this is a good value but works for example
     #and should be low enough to give right answers for all but crazy close triangles
-
-    epsilon = 1e-15
 
     # Using Pythagoras theorem
     sideAB = distance(x1, y1, x2, y2)
@@ -89,4 +89,29 @@ def bsplineCall(cv, point_division, index1, index2):
     # # plt.ylim(-0.1, 0.1)
     # # plt.gca().set_aspect('equal', adjustable='box')
     # plt.show()
+    return generated_points
+
+def generateBSplinePoints(cv,update):
+    cv = np.concatenate((cv, [cv[0]]), axis = 0)
+    tck, u = splprep([cv[:,0], cv[:,1]], s=0)
+    u_new = np.linspace(u.min(), u.max(), update*len(cv))
+    new_points = splev(u_new, tck, der = 0)
+    return new_points
+
+def convertPointsToKdTree(points):
+    return spatial.KDTree(list(zip(points[0].ravel(), points[1].ravel())))
+
+def getPointsBetween(kdTree,startx,stopx):
+    startrg = kdTree.query(np.array(startx))[0]
+    stoprg = kdTree.query(np.array(stopx))[0]
+    result = kdTree.data()[startrg:stoprg]
+    return verifyPointsBetween(result.tolist(),startx,stopx)
+
+def verifyPointsBetween(search_list,startpt,stoppt):
+    generated_points = []
+    for i in range(len(search_list)):
+        if (typeObtuseRightAcute(startpt[0], startpt[1], search_list[i][0],search_list[i][1], stoppt[0], stoppt[1])== 1):
+            if(angle(startpt[0], startpt[1], search_list[i][0],search_list[i][1], stoppt[0], stoppt[1]) > 170 and 
+                angle(startpt[0], startpt[1], search_list[i][0],search_list[i][1], stoppt[0], stoppt[1]) < 190):
+                generated_points.append([search_list[i][0], search_list[i][1]])
     return generated_points
