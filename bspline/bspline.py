@@ -64,13 +64,21 @@ def main():
         writingDict = {}
     print(writingDict)
     print("Bsplining", len(problempts), "points.")
-    bsplineArray = []
-    for itm in wallPts:
-        print("Generating Points for Wall Point with points",len(itm))
-        bsplineData = bsplinegen.generateBSplinePoints(np.array(core.undelimitXY(itm)),int(config.getConfig()["bspline"]["pointControl"]))
-        print("Generating KD Tree")
-        bsplineData = bsplinegen.convertPointsToKdTree(bsplineData)
-        bsplineArray.append(bsplineData)
+    print("Checking in cache store")
+    bsplineArray = config.getKeyVal("bspline")
+    if bsplineArray == None:
+        print("Not found in cache store")
+        bsplineArray = []
+        for itm in wallPts:
+            print("Generating Points for Wall Point with points",len(itm))
+            bsplineData = bsplinegen.generateBSplinePoints(np.array(core.undelimitXY(itm)),int(config.getConfig()["bspline"]["pointControl"]))
+            print("Generating KD Tree")
+            bsplineData = bsplinegen.convertPointsToKdTree(bsplineData)
+            bsplineArray.append(bsplineData)
+        print("Dumping KD Tree to Cache")
+        config.setKeyVal("bspline",bsplineArray)
+    else:
+        print("Loaded From Cache")
     for idx,itm in enumerate(problempts): 
         data = core.feederData(itm,wallPts)
         # print(data[0],data[1])

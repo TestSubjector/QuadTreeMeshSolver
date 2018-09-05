@@ -39,12 +39,12 @@ def main():
     wallpoints = core.getWallPointArray(globaldata)
     wallpointsData = core.generateWallPolygons(wallpoints)
 
-    interiorpts = []
-    interiorpts.extend(range(1, len(globaldata)))
-    interiorpts = core.convertPointToShapelyPoint(core.convertIndexToPoints(interiorpts,globaldata))
-    interiorpts = MultiPoint(interiorpts)
-    interiortriangles = triangulate(interiorpts)
-    polydata = balance.getPolygon(interiortriangles)
+    # interiorpts = []
+    # interiorpts.extend(range(1, len(globaldata)))
+    # interiorpts = core.convertPointToShapelyPoint(core.convertIndexToPoints(interiorpts,globaldata))
+    # interiorpts = MultiPoint(interiorpts)
+    # interiortriangles = triangulate(interiorpts)
+    # polydata = balance.getPolygon(interiortriangles)
 
     while True:
         print("Type 'exit' to quit (Saves changes).")
@@ -116,24 +116,28 @@ def main():
             print("(9) Go Back")
             whatkind = int(input("What option do you want to select? "))
             if whatkind == 1:
-                tris = balance.getNeighboursFromTriangle(ptidx,globaldata,polydata)
-                tris = core.getAeroPointsFromSet(ptidx,tris,globaldata,wallpointsData)
-                tris = core.convertPointsToIndex(tris,globaldata)
-                globaldata = core.replaceNeighbours(ptidx,tris,globaldata)
+                # tris = balance.getNeighboursFromTriangle(ptidx,globaldata,polydata)
+                # tris = core.getAeroPointsFromSet(ptidx,tris,globaldata,wallpointsData)
+                # tris = core.convertPointsToIndex(tris,globaldata)
+                # globaldata = core.replaceNeighbours(ptidx,tris,globaldata)
+                None
             elif whatkind == 2:
-                tris = balance.getNeighboursFromTriangle(ptidx,globaldata,polydata)
-                tris = core.getAeroPointsFromSet(ptidx,tris,globaldata,wallpointsData)
-                tris = core.convertPointsToIndex(tris,globaldata)
-                globaldata = core.replaceNeighbours(ptidx,tris,globaldata)
-                globadata = balance.fixXneg
+                # tris = balance.getNeighboursFromTriangle(ptidx,globaldata,polydata)
+                # tris = core.getAeroPointsFromSet(ptidx,tris,globaldata,wallpointsData)
+                # tris = core.convertPointsToIndex(tris,globaldata)
+                # globaldata = core.replaceNeighbours(ptidx,tris,globaldata)
+                # globadata = balance.fixXneg
+                None
             elif whatkind == 3:
-                tris = balance.getNeighboursFromTriangle(ptidx,globaldata,polydata)
-                tris = core.getAeroPointsFromSet(ptidx,tris,globaldata,wallpointsData)
-                tris = core.convertPointsToIndex(tris,globaldata)
-                globaldata = core.replaceNeighbours(ptidx,tris,globaldata)
-                globaldata = balance.triangleBalance(globaldata,polydata,wallpointsData,ptidx)
+                # tris = balance.getNeighboursFromTriangle(ptidx,globaldata,polydata)
+                # tris = core.getAeroPointsFromSet(ptidx,tris,globaldata,wallpointsData)
+                # tris = core.convertPointsToIndex(tris,globaldata)
+                # globaldata = core.replaceNeighbours(ptidx,tris,globaldata)
+                # globaldata = balance.triangleBalance(globaldata,polydata,wallpointsData,ptidx)
+                None
             elif whatkind == 4:
-                globaldata = balance.triangleBalance(globaldata,polydata,wallpointsData,ptidx)
+                # globaldata = balance.triangleBalance(globaldata,polydata,wallpointsData,ptidx)
+                None
             elif whatkind == 5:
                 None
             elif whatkind == 6:

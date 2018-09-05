@@ -1,6 +1,7 @@
 import json
 import redis
 import uuid
+import jsonpickle
 
 def getConfig():
     with open("config.json","r") as f:
@@ -14,7 +15,7 @@ def setKeyVal(keyitm,keyval):
     if PREFIX == "NONE":
         setPrefix()
     PREFIX = getConfig()["global"]["redis"]["prefix"]
-    conn.set(PREFIX + "_" + str(keyitm),json.dumps({keyitm: keyval}))
+    conn.set(PREFIX + "_" + str(keyitm),json.dumps(jsonpickle.encode({keyitm: keyval})))
     return True
 
 def getKeyVal(keyitm):
@@ -23,7 +24,7 @@ def getKeyVal(keyitm):
         setPrefix()
     PREFIX = getConfig()["global"]["redis"]["prefix"]
     try:
-        result = dict(json.loads(conn.get(PREFIX + "_" + str(keyitm))))
+        result = dict(jsonpickle.decode(json.loads(conn.get(PREFIX + "_" + str(keyitm)))))
         return result.get(keyitm)
     except TypeError:
         return None
