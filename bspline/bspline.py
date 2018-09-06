@@ -73,10 +73,10 @@ def main():
             print("Generating Points for Wall Point with points",len(itm))
             bsplineData = bsplinegen.generateBSplinePoints(np.array(core.undelimitXY(itm)),int(config.getConfig()["bspline"]["pointControl"]))
             print("Generating KD Tree")
-            # bsplineData = bsplinegen.convertPointsToKdTree(bsplineData)
+            bsplineData = bsplinegen.convertPointsToNicePoints(bsplineData)
             bsplineArray.append(bsplineData)
         print("Dumping KD Tree to Cache")
-        config.setKeyVal("bspline",bsplineArray)
+        # config.setKeyVal("bspline",bsplineArray)
     else:
         print("Loaded From Cache")
     for idx,itm in enumerate(problempts): 

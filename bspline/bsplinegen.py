@@ -102,6 +102,9 @@ def generateBSplinePoints(cv,update):
 def convertPointsToKdTree(points):
     return spatial.cKDTree(list(zip(points[0].ravel(), points[1].ravel())))
 
+def convertPointsToNicePoints(bsplineData):
+    return list(zip(bsplineData[0].ravel(), bsplineData[1].ravel()))
+
 def getPointsBetween(kdTree,startx,stopx):
     startx = tuple(map(float,startx.split(",")))
     stopx = tuple(map(float,stopx.split(",")))
@@ -122,9 +125,8 @@ def verifyPointsBetween(search_list,startpt,stoppt):
 def getPointsBetween2(bsplineData,startx,stopx):
     startx = tuple(map(float,startx.split(",")))
     stopx = tuple(map(float,stopx.split(",")))
-    bsplineData = list(zip(bsplineData[0].ravel(), bsplineData[1].ravel()))
-    startrg = spatial.distance.cdist(np.array(bsplineData),np.array(startx),"euclidean").argmin()
-    stoprg = spatial.distance.cdist(np.array(bsplineData),np.array(stopx),"euclidean").argmin()
+    startrg = spatial.distance.cdist(np.array(bsplineData),np.array([startx]),"euclidean").argmin()
+    stoprg = spatial.distance.cdist(np.array(bsplineData),np.array([stopx]),"euclidean").argmin()
     if startrg > stoprg:
         startrg,stoprg = stoprg,startrg
     result = bsplineData[startrg:stoprg]
