@@ -5,6 +5,7 @@ import math
 from scipy.interpolate import splprep, splev
 from scipy import spatial
 import config
+import core
 
 # cv: Input array of the body
 # point_division: Number of new points required between given point indexes
@@ -117,3 +118,13 @@ def verifyPointsBetween(search_list,startpt,stoppt):
                 angle(startpt[0], startpt[1], search_list[i][0],search_list[i][1], stoppt[0], stoppt[1]) < 190):
                 generated_points.append([search_list[i][0], search_list[i][1]])
     return generated_points
+
+def getPointsBetween2(bsplineData,startx,stopx):
+    startx = tuple(map(float,startx.split(",")))
+    stopx = tuple(map(float,stopx.split(",")))
+    startrg = spatial.distance.cdist(np.array(bsplineData),np.array(startx),"euclidean").argmin()
+    stoprg = spatial.distance.cdist(np.array(bsplineData),np.array(stopx),"euclidean").argmin()
+    if startrg > stoprg:
+        startrg,stoprg = stoprg,startrg
+    result = bsplineData[startrg:stoprg]
+    return verifyPointsBetween(result.tolist(),startx,stopx)

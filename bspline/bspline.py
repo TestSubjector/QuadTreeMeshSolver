@@ -73,7 +73,7 @@ def main():
             print("Generating Points for Wall Point with points",len(itm))
             bsplineData = bsplinegen.generateBSplinePoints(np.array(core.undelimitXY(itm)),int(config.getConfig()["bspline"]["pointControl"]))
             print("Generating KD Tree")
-            bsplineData = bsplinegen.convertPointsToKdTree(bsplineData)
+            # bsplineData = bsplinegen.convertPointsToKdTree(bsplineData)
             bsplineArray.append(bsplineData)
         print("Dumping KD Tree to Cache")
         config.setKeyVal("bspline",bsplineArray)
@@ -84,7 +84,7 @@ def main():
         # print(data[0],data[1])
         if config.getConfig()["bspline"]["polygon"] == False:
             # newpts = bsplinegen.bsplineCall(np.array(core.undelimitXY(data[2])),int(config.getConfig()["bspline"]["pointControl"]),data[0],data[1])
-            newpts = bsplinegen.getPointsBetween(bsplineArray[data[2]],wallPts[data[2]][data[0]],wallPts[data[2]][data[1]])
+            newpts = bsplinegen.getPointsBetween2(bsplineArray[data[2]],wallPts[data[2]][data[0]],wallPts[data[2]][data[1]])
             newpts = [core.findNearestPoint(perpendicularpts[idx],newpts)]
         else:
             newpts = [list(perpendicularpts[idx])]
