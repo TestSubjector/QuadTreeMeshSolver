@@ -92,3 +92,17 @@ def writeConditionValues(globaldata):
         for item1 in writeFile:
             text_file.writelines(["%s " % item for item in item1])
             text_file.writelines("\n")
+
+def writeSrikanthStyle(globaldata):
+    with open("preprocessorfile_srikanth.txt", "w") as text_file:
+        for idx,item1 in enumerate(globaldata):
+            if idx > 0:
+                item2 = item1
+                item2.pop(7)
+                item2.pop(7)
+                item2.pop(7)
+                item2.pop(7)
+                item2.pop(7)
+                item2.pop(7)
+                text_file.writelines(["%s " % item for item in item2])
+                text_file.writelines("\n") 

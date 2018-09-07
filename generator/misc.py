@@ -43,7 +43,11 @@ def cleanNeighbours(globaldata):  # Verified
             log.warn("No neighbours found for index " + str(i))
             noneighbours = 0
         # noneighours = int(globaldata[i][11])  # Number of neighbours
-        cordneighbours = globaldata[i][-noneighours:]
+        try:
+            cordneighbours = globaldata[i][-noneighours:]
+        except:
+            print(globaldata[i])
+            log.warn("No neighbours found for index " + str(i))
         # TODO - Ask, why get the same thing as above?
         cordneighbours = [str(float(j.split(",")[0])) + "," + str(float(j.split(",")[1])) for j in cordneighbours]
         

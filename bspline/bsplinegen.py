@@ -130,4 +130,4 @@ def getPointsBetween2(bsplineData,startx,stopx):
     if startrg > stoprg:
         startrg,stoprg = stoprg,startrg
     result = bsplineData[startrg:stoprg]
-    return verifyPointsBetween(result.tolist(),startx,stopx)
+    return verifyPointsBetween(result,startx,stopx)

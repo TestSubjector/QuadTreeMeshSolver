@@ -36,8 +36,9 @@ def main():
     # result = core.findAverageWallDistance(globaldata,wallpointsIndex)
     # print(result)
 
-    temp.writeNormalsToText(globaldata)
-    temp.writeConditionValues(globaldata)
+    # temp.writeNormalsToText(globaldata)
+    # temp.writeConditionValues(globaldata)
+    temp.writeSrikanthStyle(globaldata)
     exit()
 
     wallpointsData = core.generateWallPolygons(wallpoints)

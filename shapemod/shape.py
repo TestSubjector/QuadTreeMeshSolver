@@ -34,16 +34,26 @@ def main():
         if bsplineWallData != "None":
             insertionKeys = list(bsplineWallData.keys())
             for itm in insertionKeys:
-                itmx = float(itm.split(",")[0])
-                itmy = float(itm.split(",")[1])
+                postInsert = True
+                itm2 = itm
+                if "pre" in itm2:
+                    itm2 = itm2.replace("pre","")
+                    postInsert = False
+                itmx = float(itm2.split(",")[0])
+                itmy = float(itm2.split(",")[1])
                 itmCheck = str(itmx) +"\t" + str(itmy)
                 resultMan,insertionidx = checkIfInside(itmx,itmy,geometrydata,geometrydataOrg,bsplineWallData)
                 if resultMan:
                     ptsToBeAdded = getItem(bsplineWallData,itm)
-                    ptsToBeAdded = sorted(ptsToBeAdded,key = lambda point: distance_squared(itmx,itmy,point[0],point[1]),reverse=True)
+                    ptsToBeAdded = sorted(ptsToBeAdded,key = lambda point: distance_squared(itmx,itmy,point[0],point[1]),reverse=postInsert)
+                    i = 0
                     for ptCordItm in ptsToBeAdded:
                         dataInsert = str(ptCordItm[0]) + "\t" + str(ptCordItm[1])
-                        geometrydata.insert(insertionidx + 1,dataInsert)
+                        if postInsert == True:
+                            geometrydata.insert(insertionidx + 1,dataInsert)
+                        else:
+                            geometrydata.insert(insertionidx + i,dataInsert)
+                            i = i + 1
         wallpointsdata = loadWall(geometrydata)
         wallpoints.append(wallpointsdata)
     

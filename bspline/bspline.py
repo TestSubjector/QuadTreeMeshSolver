@@ -91,7 +91,7 @@ def main():
         printProgressBar(idx + 1, len(problempts), prefix="Progress:", suffix="Complete", length=50)
         try:
             print(data)
-            writingDict[data[3]][0] = writingDict[data[3]][0] + newpts
+            writingDict[data[3]] = writingDict[data[3]] + newpts
         except KeyError:
             writingDict[data[3]] = newpts
         additionPts.append(newpts)
