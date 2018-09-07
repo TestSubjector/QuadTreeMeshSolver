@@ -65,20 +65,21 @@ def main():
     print(writingDict)
     print("Bsplining", len(problempts), "points.")
     print("Checking in cache store")
-    bsplineArray = config.getKeyVal("bspline")
-    if bsplineArray == None:
+    try:
+        bsplineArray = list(config.load_obj_marshal("bspline"))
+        print("Loaded from cache")
+    except IOError:
         print("Not found in cache store")
         bsplineArray = []
         for itm in wallPts:
             print("Generating Points for Wall Point with points",len(itm))
             bsplineData = bsplinegen.generateBSplinePoints(np.array(core.undelimitXY(itm)),int(config.getConfig()["bspline"]["pointControl"]))
-            print("Generating KD Tree")
+            print("Making them nice")
             bsplineData = bsplinegen.convertPointsToNicePoints(bsplineData)
             bsplineArray.append(bsplineData)
-        print("Dumping KD Tree to Cache")
-        # config.setKeyVal("bspline",bsplineArray)
-    else:
-        print("Loaded From Cache")
+        print("Dumping BSpline Points to Cache")
+        config.save_obj_marshal(bsplineArray,"bspline")
+    print("Starting BSpline")
     for idx,itm in enumerate(problempts): 
         data = core.feederData(itm,wallPts)
         # print(data[0],data[1])

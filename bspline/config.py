@@ -2,6 +2,7 @@ import json
 import redis
 import uuid
 import jsonpickle
+import marshal
 
 def getConfig():
     with open("config.json","r") as f:
@@ -15,7 +16,7 @@ def setKeyVal(keyitm,keyval):
     if PREFIX == "NONE":
         setPrefix()
     PREFIX = getConfig()["global"]["redis"]["prefix"]
-    conn.set(PREFIX + "_" + str(keyitm),json.dumps(jsonpickle.encode({keyitm: keyval})))
+    conn.set(PREFIX + "_" + str(keyitm),json.dumps({keyitm: keyval}))
     return True
 
 def getKeyVal(keyitm):
@@ -24,7 +25,7 @@ def getKeyVal(keyitm):
         setPrefix()
     PREFIX = getConfig()["global"]["redis"]["prefix"]
     try:
-        result = dict(jsonpickle.decode(json.loads(conn.get(PREFIX + "_" + str(keyitm)))))
+        result = dict(json.loads(conn.get(PREFIX + "_" + str(keyitm))))
         return result.get(keyitm)
     except TypeError:
         return None
@@ -45,3 +46,11 @@ def save_obj(obj, name):
 def load_obj(name):
     with open(name + '.json', 'r') as f:
         return json.load(f)
+
+def save_obj_marshal(obj, name):
+    with open(name + '.marshal', 'w') as f:
+        marshal.dump(obj, f)
+
+def load_obj_marshal(name):
+    with open(name + '.marshal', 'r') as f:
+        return marshal.load(f)

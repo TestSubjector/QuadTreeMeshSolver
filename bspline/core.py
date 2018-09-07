@@ -5,13 +5,10 @@ from shapely import wkt
 from shapely.ops import linemerge, unary_union, polygonize
 from progress import printProgressBar
 import config
-import scipy.interpolate as si
-import matplotlib.pyplot as plt
-from scipy.interpolate import splprep, splev
+from scipy import spatial
 import logging
 import itertools
 import bsplinegen
-import pickle
 import json
 log = logging.getLogger(__name__)
 log.addHandler(logging.StreamHandler())
@@ -811,19 +808,10 @@ def distance(ax,ay,bx,by):
     return math.sqrt((ax - bx)**2 + (ay - by)**2)
 
 def findNearestPoint(ptAtt,splineArray):
-    ptdist = 10000
-    pt = {"x":0,"y":0}
-    ptAttx = float(ptAtt[0])
-    ptAtty = float(ptAtt[1])
-    for itm in splineArray:
-        itmx = float(itm[0])
-        itmy = float(itm[1])
-        dist = distance(ptAttx,ptAtty,itmx,itmy)
-        if dist < ptdist:
-            ptdist = dist
-            pt["x"] = itmx
-            pt["y"] = itmy
-    return [pt["x"],pt["y"]]
+    if len(splineArray) == 0:
+        print("Warning no bspline points were available")
+        exit()
+    return [splineArray[spatial.distance.cdist(np.array(splineArray),np.array([ptAtt]),"euclidean").argmin()]]
 
 def str_to_bool(s):
     if s == 'True':

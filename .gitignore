@@ -12,6 +12,7 @@ condition.dat
 file.dat
 wall.pkl
 wall.json
+bspline.marshal
 
 # C extensions
 *.so
