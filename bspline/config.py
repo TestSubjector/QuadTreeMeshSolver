@@ -48,9 +48,9 @@ def load_obj(name):
         return json.load(f)
 
 def save_obj_marshal(obj, name):
-    with open(name + '.marshal', 'w') as f:
+    with open(name + '.marshal', 'wb') as f:
         marshal.dump(obj, f)
 
 def load_obj_marshal(name):
-    with open(name + '.marshal', 'r') as f:
+    with open(name + '.marshal', 'rb') as f:
         return marshal.load(f)
