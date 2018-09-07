@@ -49,7 +49,7 @@ then
     rm ./pseudopoints.txt
     echo Adaptation points added
 else
-    rm ./history.txt
+    rm ./history.txt |
     for value in {1..5}
     do
 

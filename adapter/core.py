@@ -10,8 +10,8 @@ def appendNeighbours(index, globaldata, newpts):
     nbhs = getNeighbours(index, globaldata)
     nbhs = nbhs + [pt]
     nbhs = list(set(nbhs))
-    globaldata[int(index)][14:] = nbhs
-    globaldata[int(index)][13] = len(nbhs)
+    globaldata[int(index)][15:] = nbhs
+    globaldata[int(index)][14] = len(nbhs)
     return globaldata
 
 def silentRemove(filename):
@@ -31,7 +31,7 @@ def getFlag(indexval, list):
 def getNeighbours(index, globaldata):
     index = int(index)
     ptdata = globaldata[index]
-    ptdata = ptdata[14:]
+    ptdata = ptdata[15:]
     return ptdata
 
 

@@ -85,6 +85,8 @@ def loadInterior(data, hashtable, globaldata, index):
     for i in range(len(data)):
         # printProgressBar(i, len(data) - 1, prefix = 'Progress:', suffix = 'Complete', length = 50)
         cleandata = str(data[i]).split(" ")
+        depth = int(cleandata[2])
+        cleandata.pop(2)
         cord = (
             str(float(cleandata[1].split(",")[0]))
             + ","
@@ -98,6 +100,7 @@ def loadInterior(data, hashtable, globaldata, index):
                 cleandata.pop(-2)  # Pop number of neighbours
                 cleandata.pop(0)  # Pop blank space
                 cleandata.insert(0, str(int(cleandata[len(cleandata) - 1]) + 2))
+                cleandata.insert(0, depth)
                 cleandata.pop(-1)
                 cleandata.append(
                     str(float(hashtable[int(globaldata[val - 1][3])].split(",")[0]))
@@ -116,6 +119,7 @@ def loadInterior(data, hashtable, globaldata, index):
                 cleandata.pop(-2)
                 cleandata.pop(0)
                 cleandata.insert(0, str(int(cleandata[len(cleandata) - 1]) + 2))
+                cleandata.insert(0, depth)
                 cleandata.pop(-1)
                 cleandata.append(
                     str(float(hashtable[int(globaldata[val - 1][3])].split(",")[0]))
@@ -137,6 +141,7 @@ def loadInterior(data, hashtable, globaldata, index):
                 cleandata.pop(0)
                 cleandata.insert(0, cleandata[len(cleandata) - 1])
                 cleandata.pop(-1)
+                cleandata.insert(0, depth)
                 cleandata.insert(0, 1)
                 cleandata.insert(0, 0)
                 cleandata.insert(0, 0)
@@ -159,6 +164,7 @@ def loadInterior(data, hashtable, globaldata, index):
                 cleandata.pop(0)
                 cleandata.insert(0, cleandata[len(cleandata) - 1])
                 cleandata.pop(-1)
+                cleandata.insert(0, depth)
                 cleandata.insert(0, 1)
                 cleandata.insert(0, 0)
                 cleandata.insert(0, 0)
