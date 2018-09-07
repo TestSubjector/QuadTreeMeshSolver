@@ -1,4 +1,4 @@
-CC=gcc
+CC=gcc -ggdb
 
 main:	bounds.o centralcode.o file.o node.o treepoint.o pointpos.o quadtree.o quadtree_neighbourset.o
 		cc -o main bounds.o centralcode.o file.o node.o treepoint.o pointpos.o quadtree.o quadtree_neighbourset.o -lm

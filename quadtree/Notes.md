@@ -20,3 +20,4 @@
 18. The second function **neighbourset**...*work in progress*
 19. The neighbour file has a blank first line because of append (a+) usage.
 20. TODO - Add conditions in the **notaero** function for concave polygons.
+21. Added height

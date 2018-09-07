@@ -41,6 +41,7 @@ quadtree_node_t *quadtree_node_new()
     node->sw = NULL;
     node->point = NULL;
     node->bounds = NULL;
+    node->height = 1;
     return node;
 }
 
@@ -242,9 +243,13 @@ int split_node_newpoints(quadtree_t *tree, quadtree_node_t *node)
     }
 
     node->nw = nw;
+    nw->height = node->height + 1;
     node->ne = ne;
+    ne->height = node->height + 1;
     node->sw = sw;
+    sw->height = node->height + 1;
     node->se = se;
+    se->height = node->height + 1;
 
     if (quadtree_node_isleaf(node))
     {

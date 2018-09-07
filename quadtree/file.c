@@ -119,14 +119,16 @@ void fileoutput(int append, char *filename, double xcord, double ycord)
 }
 
 // File output function to calculate valid neighbours for points
-void neighbouroutput(int append, char *filename, double xcord, double ycord)
+void neighbouroutput(int append, char *filename, double xcord, double ycord, int node_height)
 {
     char xcordstr[25];
     char ycordstr[25];
+    char heightstr[25];
     char serialnumstr[25];
     char neighbourcountstr[25];
     gcvt(xcord, 24, xcordstr);
     gcvt(ycord, 24, ycordstr);
+    gcvt(node_height,2, heightstr);
     gcvt(serial_number, 10, serialnumstr);
     FILE *fp = NULL;
     if (append == 1)
@@ -169,6 +171,8 @@ void neighbouroutput(int append, char *filename, double xcord, double ycord)
         fputs(xcordstr, fp);
         fputs(",", fp);
         fputs(ycordstr, fp);
+        fputs("\t", fp);
+        fputs(heightstr, fp);
         fputs("\t", fp);
 
         serial_number++; // Increment the S.No for new point

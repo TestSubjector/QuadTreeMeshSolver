@@ -44,6 +44,7 @@ typedef struct quadtree_node
     struct quadtree_node *sw;
     quadtree_bounds_t *bounds;
     quadtree_point_t *point;
+    int height;
 } quadtree_node_t;
 
 quadtree_node_t *quadtree_node_new();
@@ -159,7 +160,7 @@ void balance_neighboursset(int patharray[41], int ancestor_pos, int direction);
 
 // File reading for neighbourset
 
-void neighbouroutput(int append, char *filename, double xcord, double ycord);
+void neighbouroutput(int append, char *filename, double xcord, double ycord, int node_height);
 
 void neighbourset(int append, char *filename, double xcord, double ycord);
 
