@@ -811,7 +811,19 @@ def findNearestPoint(ptAtt,splineArray):
     if len(splineArray) == 0:
         print("Warning no bspline points were available")
         exit()
-    return [splineArray[spatial.distance.cdist(np.array(splineArray),np.array([ptAtt]),"euclidean").argmin()]]
+    cord = {"x":0,"y":0}
+    dist = distance(ptAtt[0],ptAtt[1],splineArray[0][0],splineArray[0][1])
+    cord["x"] = splineArray[0][0]
+    cord["y"] = splineArray[0][1]
+    for itm in splineArray:
+        distcurr = distance(ptAtt[0],ptAtt[1],itm[0],itm[1])
+        if distcurr > dist:
+            break
+        else:
+            dist = distcurr
+            cord["x"] = itm[0]
+            cord["y"] = itm[1]
+    return [cord["x"],cord["y"]]
 
 def str_to_bool(s):
     if s == 'True':

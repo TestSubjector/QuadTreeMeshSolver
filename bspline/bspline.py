@@ -86,7 +86,7 @@ def main():
         if config.getConfig()["bspline"]["polygon"] == False:
             # newpts = bsplinegen.bsplineCall(np.array(core.undelimitXY(data[2])),int(config.getConfig()["bspline"]["pointControl"]),data[0],data[1])
             newpts = bsplinegen.getPointsBetween2(bsplineArray[data[2]],wallPts[data[2]][data[0]],wallPts[data[2]][data[1]])
-            newpts = [core.findNearestPoint(perpendicularpts[idx],newpts)]
+            newpts = core.findNearestPoint(perpendicularpts[idx],newpts)
         else:
             newpts = [list(perpendicularpts[idx])]
         printProgressBar(idx + 1, len(problempts), prefix="Progress:", suffix="Complete", length=50)
@@ -95,7 +95,7 @@ def main():
             writingDict[data[3]] = writingDict[data[3]] + newpts
         except KeyError:
             writingDict[data[3]] = newpts
-        additionPts.append(newpts)
+        additionPts.append(newpts[0])
     additionPts = list(itertools.chain.from_iterable(additionPts))
     print(writingDict)
     with open("adapted.txt", "a+") as text_file:

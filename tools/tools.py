@@ -53,6 +53,8 @@ def main():
         print("Type 'wcc!' to run Wall Connectivity Check on all Wall Points and return nearest point.")
         print("Type 'icc' to run Interior Connectivity Check on all Interior Points.")
         print("Type 'cache' to push the file you read into cache.")
+        print("Type 'integrity' to check wall.json integrity")
+        print("Type 'clean' to cleanse the soul of adapted.txt")
         ptidx = input("Which point do you want to fix? ")
         if ptidx == "exit":
             break
@@ -68,6 +70,10 @@ def main():
             core.interiorConnectivityCheck(globaldata)
         elif ptidx == "cache":
             core.pushCache(globaldata)
+        elif ptidx == "integrity":
+            core.verifyIntegrity()
+        elif ptidx == "clean":
+            core.cleanAdapted()
         isPointIndex = False
         try:
             ptidx = int(ptidx)

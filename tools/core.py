@@ -13,6 +13,8 @@ import time
 import os
 import errno
 import itertools
+import re
+from collections import Counter
 log = logging.getLogger(__name__)
 log.addHandler(logging.StreamHandler())
 
@@ -1065,3 +1067,44 @@ def pushCache(globaldata):
     globaldata.pop(0)
     config.setKeyVal("globaldata",globaldata)
     log.info("Pushed to Cache!")
+
+def verifyIntegrity():
+    loadWall = dict(config.load_obj("wall"))
+    with open("adapted.txt","r") as fileman:
+        data = fileman.read()
+    matchdata = re.findall("(?<=2000 2000)([\S\s]*?)(?=1000 1000)",str(data))
+    pointsToCheck = []
+    for itm in matchdata:
+        itmsplit = itm.split("\n")
+        itmsplit.pop(0)
+        itmsplit.pop(-1)
+        itmsplit = [s.strip() for s in itmsplit]
+        pointsToCheck = pointsToCheck + itmsplit
+    pointsToCheckOld = pointsToCheck
+    itCount = len(pointsToCheck)
+    pointsToCheck = list(set(pointsToCheck))
+    finCount = len(pointsToCheck)
+    if itCount != finCount:
+        print("Warning repeated elements detected in adapted file")
+        print([k for k,v in Counter(pointsToCheckOld).items() if v>1])
+    pointsToCheck = [tuple(float(y) for y in s.split(" ")) for s in pointsToCheck]
+
+    allItems = loadWall.values()
+    allItems = list(itertools.chain(*allItems))
+    allItems = [tuple(s) for s in allItems]
+    # print(allItems)
+    try:
+        notPresent = set(pointsToCheck) - set(allItems)
+        if len(notPresent) > 0:
+            print("Not Present in Adapted File")
+            print(list(notPresent))
+        notPresent = set(allItems) - set(pointsToCheck)
+        if len(notPresent) > 0:
+            print("Not Present in Wall File")
+            print(list(notPresent))
+    except TypeError:
+        print("Either adapted.txt or wall.json is invalid")
+    # (?<=2000 2000)([\S\s]*?)(?=1000 1000)
+
+def cleanAdapted():
+    None
