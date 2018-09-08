@@ -3,7 +3,7 @@ import redis
 import uuid
 import jsonpickle
 import marshal
-import cPickle
+import pickle
 
 def getConfig():
     with open("config.json","r") as f:
@@ -58,8 +58,8 @@ def load_obj_marshal(name):
 
 def save_obj_cpickle(obj, name):
     with open(name + '.pkl', 'wb') as f:
-        cPickle.dump(obj, f,protocol=cPickle.HIGHEST_PROTOCOL)
+        pickle.dump(obj, f,protocol=cPickle.HIGHEST_PROTOCOL)
 
 def load_obj_cpickle(name):
     with open(name + '.pkl', 'rb') as f:
-        return cPickle.load(f)
+        return pickle.load(f)
