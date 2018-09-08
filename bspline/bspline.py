@@ -66,7 +66,7 @@ def main():
     print("Bsplining", len(problempts), "points.")
     print("Checking in cache store")
     try:
-        bsplineArray = list(config.load_obj_marshal("bspline"))
+        bsplineArray = list(config.load_obj_cpickle("bspline"))
         print("Loaded from cache")
     except IOError:
         print("Not found in cache store")
@@ -78,7 +78,7 @@ def main():
             bsplineData = bsplinegen.convertPointsToNicePoints(bsplineData)
             bsplineArray.append(bsplineData)
         print("Dumping BSpline Points to Cache")
-        config.save_obj_marshal(bsplineArray,"bspline")
+        config.save_obj_cpickle(bsplineArray,"bspline")
     print("Starting BSpline")
     for idx,itm in enumerate(problempts): 
         data = core.feederData(itm,wallPts)
@@ -91,13 +91,11 @@ def main():
             newpts = [list(perpendicularpts[idx])]
         printProgressBar(idx + 1, len(problempts), prefix="Progress:", suffix="Complete", length=50)
         try:
-            print(data)
-            writingDict[data[3]] = writingDict[data[3]] + newpts
+            writingDict[data[3]] = writingDict[data[3]] + [newpts]
         except KeyError:
-            writingDict[data[3]] = newpts
-        additionPts.append(newpts[0])
+            writingDict[data[3]] = [newpts]
+        additionPts.append([newpts])
     additionPts = list(itertools.chain.from_iterable(additionPts))
-    print(writingDict)
     with open("adapted.txt", "a+") as text_file:
         text_file.writelines("1000 1000\n2000 2000\n")
         for item1 in additionPts:
