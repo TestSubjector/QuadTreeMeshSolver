@@ -78,7 +78,7 @@ def main():
             bsplineData = bsplinegen.convertPointsToNicePoints(bsplineData)
             bsplineArray.append(bsplineData)
         print("Dumping BSpline Points to Cache")
-        config.save_obj_cpickle(bsplineArray,"bspline")
+        # config.save_obj_cpickle(bsplineArray,"bspline")
     print("Starting BSpline")
     for idx,itm in enumerate(problempts): 
         data = core.feederData(itm,wallPts)
