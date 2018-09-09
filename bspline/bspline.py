@@ -90,11 +90,14 @@ def main():
         else:
             newpts = [list(perpendicularpts[idx])]
         printProgressBar(idx + 1, len(problempts), prefix="Progress:", suffix="Complete", length=50)
-        try:
-            writingDict[data[3]] = writingDict[data[3]] + [newpts]
-        except KeyError:
-            writingDict[data[3]] = [newpts]
-        additionPts.append([newpts])
+        if newpts != False:
+            try:
+                writingDict[data[3]] = writingDict[data[3]] + [newpts]
+            except KeyError:
+                writingDict[data[3]] = [newpts]
+            additionPts.append([newpts])
+        else:
+            print(wallPts[data[2]][data[0]],wallPts[data[2]][data[1]])
     additionPts = list(itertools.chain.from_iterable(additionPts))
     with open("adapted.txt", "a+") as text_file:
         text_file.writelines("1000 1000\n2000 2000\n")

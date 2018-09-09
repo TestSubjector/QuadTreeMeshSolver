@@ -810,7 +810,7 @@ def distance(ax,ay,bx,by):
 def findNearestPoint(ptAtt,splineArray):
     if len(splineArray) == 0:
         print("Warning no bspline points were available")
-        exit()
+        return False
     cord = {"x":0,"y":0}
     dist = distance(ptAtt[0],ptAtt[1],splineArray[0][0],splineArray[0][1])
     cord["x"] = splineArray[0][0]
