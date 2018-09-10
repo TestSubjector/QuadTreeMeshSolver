@@ -46,14 +46,12 @@ def main():
                 if resultMan:
                     ptsToBeAdded = getItem(bsplineWallData,itm)
                     ptsToBeAdded = sorted(ptsToBeAdded,key = lambda point: distance_squared(itmx,itmy,point[0],point[1]),reverse=postInsert)
-                    i = 0
                     for ptCordItm in ptsToBeAdded:
                         dataInsert = str(ptCordItm[0]) + "\t" + str(ptCordItm[1])
                         if postInsert == True:
                             geometrydata.insert(insertionidx + 1,dataInsert)
                         else:
-                            geometrydata.insert(insertionidx + i,dataInsert)
-                            i = i + 1
+                            geometrydata.insert(insertionidx,dataInsert)
         wallpointsdata = loadWall(geometrydata)
         wallpoints.append(wallpointsdata)
     
