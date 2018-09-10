@@ -88,7 +88,7 @@ def main():
             newpts = bsplinegen.getPointsBetween2(bsplineArray[data[2]],wallPts[data[2]][data[0]],wallPts[data[2]][data[1]])
             newpts = core.findNearestPoint(perpendicularpts[idx],newpts)
         else:
-            newpts = [list(perpendicularpts[idx])]
+            newpts = list(perpendicularpts[idx])
         printProgressBar(idx + 1, len(problempts), prefix="Progress:", suffix="Complete", length=50)
         if newpts != False:
             try:
