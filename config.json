@@ -9,7 +9,7 @@
     },
     "bspline": {
         "threshold": 30,
-        "pointControl": 200000,
+        "pointControl": 20,
         "polygon": false
     },
     "normalWall":{

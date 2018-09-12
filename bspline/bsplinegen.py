@@ -99,6 +99,16 @@ def generateBSplinePoints(cv,update):
     new_points = splev(u_new, tck, der = 0)
     return new_points
 
+def generateBSplineBetween(cv,index1,index2, num_points = 20):
+    cv = np.concatenate((cv, [cv[0]]), axis = 0)
+    if(index1 > len(cv) or index2 > len(cv)):
+        exit("ERROR: Index not in range")
+    tck, u = splprep([cv[:,0], cv[:,1]], s=0)
+    u_new = np.linspace(u[index1], u[index2], num_points)
+    new_points = splev(u_new, tck, der = 0)
+    new_points = convertPointsToNicePoints(new_points)
+    return new_points
+
 def convertPointsToKdTree(points):
     return spatial.cKDTree(list(zip(points[0].ravel(), points[1].ravel())))
 

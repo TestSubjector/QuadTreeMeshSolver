@@ -64,40 +64,24 @@ def main():
         writingDict = {}
     print(writingDict)
     print("Bsplining", len(problempts), "points.")
-    print("Checking in cache store")
-    try:
-        bsplineArray = list(config.load_obj_cpickle("bspline"))
-        print("Loaded from cache")
-    except IOError:
-        print("Not found in cache store")
-        bsplineArray = []
-        for itm in wallPts:
-            print("Generating Points for Wall Point with points",len(itm))
-            bsplineData = bsplinegen.generateBSplinePoints(np.array(core.undelimitXY(itm)),int(config.getConfig()["bspline"]["pointControl"]))
-            print("Making them nice")
-            bsplineData = bsplinegen.convertPointsToNicePoints(bsplineData)
-            bsplineArray.append(bsplineData)
-        print("Dumping BSpline Points to Cache")
-        # config.save_obj_cpickle(bsplineArray,"bspline")
+    bsplineArray = []
+    for itm in wallPts:
+        bsplineData = np.array(core.undelimitXY(itm))
+        bsplineArray.append(bsplineData)
     print("Starting BSpline")
     for idx,itm in enumerate(problempts): 
         data = core.feederData(itm,wallPts)
-        # print(data[0],data[1])
         if config.getConfig()["bspline"]["polygon"] == False:
-            # newpts = bsplinegen.bsplineCall(np.array(core.undelimitXY(data[2])),int(config.getConfig()["bspline"]["pointControl"]),data[0],data[1])
-            newpts = bsplinegen.getPointsBetween2(bsplineArray[data[2]],wallPts[data[2]][data[0]],wallPts[data[2]][data[1]])
+            newpts = bsplinegen.generateBSplineBetween(bsplineArray[data[2]],data[0],data[1],int(config.getConfig()["bspline"]["pointControl"]))
             newpts = core.findNearestPoint(perpendicularpts[idx],newpts)
         else:
             newpts = list(perpendicularpts[idx])
         printProgressBar(idx + 1, len(problempts), prefix="Progress:", suffix="Complete", length=50)
-        if newpts != False:
-            try:
-                writingDict[data[3]] = writingDict[data[3]] + [newpts]
-            except KeyError:
-                writingDict[data[3]] = [newpts]
-            additionPts.append([newpts])
-        else:
-            print(wallPts[data[2]][data[0]],wallPts[data[2]][data[1]])
+        try:
+            writingDict[data[3]] = writingDict[data[3]] + [newpts]
+        except KeyError:
+            writingDict[data[3]] = [newpts]
+        additionPts.append([newpts])
     additionPts = list(itertools.chain.from_iterable(additionPts))
     with open("adapted.txt", "a+") as text_file:
         text_file.writelines("1000 1000\n2000 2000\n")
