@@ -2,6 +2,7 @@
 #define __QUADTREE_H__
 
 #include <stdlib.h>
+#include <stdio.h>
 #include <math.h>
 #include "bool.h"
 
@@ -45,6 +46,7 @@ typedef struct quadtree_node
     quadtree_bounds_t *bounds;
     quadtree_point_t *point;
     int height;
+    int direction;
 } quadtree_node_t;
 
 quadtree_node_t *quadtree_node_new();
@@ -160,7 +162,7 @@ void balance_neighboursset(int patharray[41], int ancestor_pos, int direction);
 
 // File reading for neighbourset
 
-void neighbouroutput(int append, char *filename, double xcord, double ycord, int node_height);
+void neighbouroutput(int append, char *filename, double xcord, double ycord, int node_height, int direction);
 
 void neighbourset(int append, char *filename, double xcord, double ycord);
 

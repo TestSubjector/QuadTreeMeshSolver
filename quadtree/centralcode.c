@@ -88,7 +88,7 @@ void main_tree(int initial_coord_length, coords_t *coords_list, coords_t *adapte
     quadtree_neighbourset(tree->root);
 
     // To get number of neighbours of last point
-    neighbouroutput(1, "neighbour.txt", 1000, 1000, 1000);
+    neighbouroutput(1, "neighbour.txt", 1000, 1000, 1000, 1000);
 
     // Adaptation section
     if(adapted_line_count != 0)
@@ -98,7 +98,7 @@ void main_tree(int initial_coord_length, coords_t *coords_list, coords_t *adapte
         {
             if(adapted_list[j].x == 1000 && adapted_list[j].y == 1000)
             {
-                printf("\n Freedom");
+                printf("\n Balancing Points");
                 wallpoint_insert_flag = 0;
                 free(leaf_array);
                 leaf_array = malloc(sizeof(quadtree_node_t) * MAX);
@@ -123,6 +123,7 @@ void main_tree(int initial_coord_length, coords_t *coords_list, coords_t *adapte
 
             if(adapted_list[j].x == 2000 && adapted_list[j].y == 2000)
             {
+                printf("\n Bsplining Points");
                 wallpoint_insert_flag = 1; 
                 continue;
             }
@@ -164,7 +165,7 @@ void main_tree(int initial_coord_length, coords_t *coords_list, coords_t *adapte
         quadtree_walk(tree->root, descent, ascent);
         quadtree_neighbourset(tree->root);
         // To get number of neighbours of last point
-        neighbouroutput(1, "neighbour.txt", 1000, 1000, 1000);
+        neighbouroutput(1, "neighbour.txt", 1000, 1000, 1000, 1000);
     }
     
     free(leaf_array);
