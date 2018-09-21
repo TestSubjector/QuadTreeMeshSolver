@@ -745,9 +745,9 @@ def findNearestNeighbourWallPoints(idx,globaldata,wallptData,wallptDataOr):
             elif anglecal < currangle:
                 currangle = anglecal
                 leastidx2 = getIndexFromPoint(itm,globaldata)
-    if leastidx > leastidx2:
+    if leastidx > leastidx2 and leastidx2 != 1:
         leastidx,leastidx2 = leastidx2,leastidx
-    if leastidx == 1 and leastidx2 > 2:
+    if leastidx == 1 and leastidx2 > 1:
         leastidx,leastidx2 = leastidx2,leastidx
     return convertIndexToPoints([leastidx,leastidx2],globaldata)
 

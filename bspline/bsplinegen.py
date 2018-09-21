@@ -101,6 +101,9 @@ def generateBSplinePoints(cv,update):
 
 def generateBSplineBetween(cv,index1,index2, num_points = 20):
     cv = np.concatenate((cv, [cv[0]]), axis = 0)
+    if index2 == 0:
+        None
+        index2 = len(cv) - 1
     if(index1 > len(cv) or index2 > len(cv)):
         exit("ERROR: Index not in range")
     tck, u = splprep([cv[:,0], cv[:,1]], s=0)

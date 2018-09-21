@@ -1114,6 +1114,6 @@ def fullRefine(globaldata):
         for idx,_ in enumerate(globaldata):
             if idx > 0:
                 ptX,ptY = getPoint(idx,globaldata)
-                text_file.writelines(["%s %s " % ptX,ptY])
+                text_file.writelines(["%s %s " % (ptX,ptY)])
                 text_file.writelines("\n")
         text_file.writelines("1000 1000\n")
