@@ -1111,7 +1111,7 @@ def cleanAdapted():
 
 def fullRefine(globaldata):
     with open("adapted.txt", "a+") as text_file:
-        for idx,_ in enumerate(fullRefine):
+        for idx,_ in enumerate(globaldata):
             if idx > 0:
                 ptX,ptY = getPoint(idx,globaldata)
                 text_file.writelines(["%s %s " % ptX,ptY])
