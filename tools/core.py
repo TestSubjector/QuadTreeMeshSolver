@@ -1108,3 +1108,12 @@ def verifyIntegrity():
 
 def cleanAdapted():
     None
+
+def fullRefine(globaldata):
+    with open("adapted.txt", "a+") as text_file:
+        for idx,_ in enumerate(fullRefine):
+            if idx > 0:
+                ptX,ptY = getPoint(idx,globaldata)
+                text_file.writelines(["%s %s " % ptX,ptY])
+                text_file.writelines("\n")
+        text_file.writelines("1000 1000\n")

@@ -47,18 +47,16 @@ def main():
     # polydata = balance.getPolygon(interiortriangles)
 
     while True:
-        print("Type 'exit' to quit (Saves changes).")
         print("Type 'exit! to quit (Does not save changes).")
         print("Type 'wcc' to run Wall Connectivity Check on all Wall Points.")
         print("Type 'wcc!' to run Wall Connectivity Check on all Wall Points and return nearest point.")
         print("Type 'icc' to run Interior Connectivity Check on all Interior Points.")
         print("Type 'cache' to push the file you read into cache.")
         print("Type 'integrity' to check wall.json integrity")
+        print("Type 'full' to perform one full refinement")
         print("Type 'clean' to cleanse the soul of adapted.txt")
         ptidx = input("Which point do you want to fix? ")
-        if ptidx == "exit":
-            break
-        elif ptidx == "exit!":
+        if ptidx == "exit!":
             exit()
         elif ptidx == "wcc":
             globaldata = connectivity.connectivityCheck(globaldata)
@@ -74,6 +72,8 @@ def main():
             core.verifyIntegrity()
         elif ptidx == "clean":
             core.cleanAdapted()
+        elif ptidx == "full":
+            core.fullRefine(globaldata)
         isPointIndex = False
         try:
             ptidx = int(ptidx)
