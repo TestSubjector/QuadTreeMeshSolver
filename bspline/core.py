@@ -818,7 +818,7 @@ def findNearestPoint(ptAtt,splineArray):
     for itm in splineArray:
         distcurr = distance(ptAtt[0],ptAtt[1],itm[0],itm[1])
         if distcurr > dist:
-            break
+            None
         else:
             dist = distcurr
             cord["x"] = itm[0]
