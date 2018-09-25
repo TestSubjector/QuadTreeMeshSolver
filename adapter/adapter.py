@@ -90,6 +90,9 @@ def main():
     data2 = re.sub(" +", " ", data2)
     data2 = data2.split("\n")
     data2 = data2[:-1]
+    if len(data2) + 1 != len(globaldata):
+        print("Sensor File Length is not equal to Preprocessor File Length")
+        exit()
 
     print("Reading Adaptation File")
 
