@@ -13,6 +13,7 @@ file.dat
 wall.pkl
 wall.json
 bspline.marshal
+pseudopoints.txt
 
 # C extensions
 *.so
