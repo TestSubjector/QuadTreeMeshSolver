@@ -47,7 +47,7 @@ def main():
 
     wallpoints = getWallPointArray(globaldata)
 
-    badList = checkConditionNumber(idx, globaldata, 30)
+    badList = checkConditionNumber(globaldata, 30)
 
     # for idx, itm in enumerate(globaldata):
     #     if idx > 0 and getFlag(idx, globaldata) == 0:
@@ -64,9 +64,7 @@ def main():
             
     log.info("New")
 
-    for idx, itm in enumerate(globaldata):
-        if idx > 0 and getFlag(idx, globaldata) == 1:
-            checkConditionNumberSelectively(idx, globaldata, 30, badList)
+    checkConditionNumberSelectively(globaldata, 30, badList)
 
     # print("Set Flag")
 

@@ -231,7 +231,7 @@ def getDYNegPointsFromSet(index, globaldata, points):
     return mypoints
 
 
-def checkConditionNumber(index, globaldata, threshold):
+def checkConditionNumber(globaldata, threshold):
     badList = []
     for index,itm in enumerate(globaldata):
         if index > 0 and getFlag(index, globaldata) == 1:
@@ -268,7 +268,7 @@ def checkConditionNumber(index, globaldata, threshold):
                 badList.append(index)
     return badList
 
-def checkConditionNumberSelectively(index, globaldata, threshold, badList):
+def checkConditionNumberSelectively(globaldata, threshold, badList):
     badList = []
     for index in badList:
         if getFlag(index, globaldata) == 1:
