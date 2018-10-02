@@ -47,32 +47,26 @@ def main():
 
     wallpoints = getWallPointArray(globaldata)
 
-    for idx, itm in enumerate(globaldata):
-        if idx > 0 and getFlag(idx, globaldata) == 1:
-            checkConditionNumber(idx, globaldata, 30)
+    badList = checkConditionNumber(idx, globaldata, 30)
 
-    for idx, itm in enumerate(globaldata):
-        if idx > 0 and getFlag(idx, globaldata) == 0:
-            checkConditionNumberWall(idx, globaldata, 30)
+    # for idx, itm in enumerate(globaldata):
+    #     if idx > 0 and getFlag(idx, globaldata) == 0:
+    #         checkConditionNumberWall(idx, globaldata, 30)
 
-    for idx, itm in enumerate(globaldata):
-        if idx > 0 and getFlag(idx, globaldata) == 1:
-            globaldata = fixXPosMain(idx, globaldata, 30, wallpoints, -1)
-    for idx, itm in enumerate(globaldata):
-        if idx > 0 and getFlag(idx, globaldata) == 1:
-            globaldata = fixXNegMain(idx, globaldata, 30, wallpoints, -1)
-    for idx, itm in enumerate(globaldata):
-        if idx > 0 and getFlag(idx, globaldata) == 1:
-            globaldata = fixYPosMain(idx, globaldata, 30, wallpoints, -1)
-    for idx, itm in enumerate(globaldata):
-        if idx > 0 and getFlag(idx, globaldata) == 1:
-            globaldata = fixYNegMain(idx, globaldata, 30, wallpoints, -1)
+    for idx in badList:
+        globaldata = fixXPosMain(idx, globaldata, 30, wallpoints, -1)
+    for idx in badList:
+        globaldata = fixXNegMain(idx, globaldata, 30, wallpoints, -1)
+    for idx in badList:
+        globaldata = fixYPosMain(idx, globaldata, 30, wallpoints, -1)
+    for idx in badList:
+        globaldata = fixYNegMain(idx, globaldata, 30, wallpoints, -1)
             
     log.info("New")
 
     for idx, itm in enumerate(globaldata):
         if idx > 0 and getFlag(idx, globaldata) == 1:
-            checkConditionNumber(idx, globaldata, 30)
+            checkConditionNumberSelectively(idx, globaldata, 30, badList)
 
     # print("Set Flag")
 
