@@ -2,6 +2,7 @@ import argparse
 from progress import printProgressBar
 from core import *
 import copy
+import config
 import logging
 log = logging.getLogger(__name__)
 log.addHandler(logging.StreamHandler())
@@ -47,24 +48,26 @@ def main():
 
     wallpoints = getWallPointArray(globaldata)
 
-    badList = checkConditionNumber(globaldata, 30)
+    THRESHOLD = int(config.getConfig()["rechecker"]["conditionValueThreshold"])
+
+    badList = checkConditionNumber(globaldata, THRESHOLD)
 
     # for idx, itm in enumerate(globaldata):
     #     if idx > 0 and getFlag(idx, globaldata) == 0:
     #         checkConditionNumberWall(idx, globaldata, 30)
 
     for idx in badList:
-        globaldata = fixXPosMain(idx, globaldata, 30, wallpoints, -1)
+        globaldata = fixXPosMain(idx, globaldata, THRESHOLD, wallpoints, -1)
     for idx in badList:
-        globaldata = fixXNegMain(idx, globaldata, 30, wallpoints, -1)
+        globaldata = fixXNegMain(idx, globaldata, THRESHOLD, wallpoints, -1)
     for idx in badList:
-        globaldata = fixYPosMain(idx, globaldata, 30, wallpoints, -1)
+        globaldata = fixYPosMain(idx, globaldata, THRESHOLD, wallpoints, -1)
     for idx in badList:
-        globaldata = fixYNegMain(idx, globaldata, 30, wallpoints, -1)
+        globaldata = fixYNegMain(idx, globaldata, THRESHOLD, wallpoints, -1)
             
     log.info("New")
 
-    checkConditionNumberSelectively(globaldata, 30, badList)
+    checkConditionNumberSelectively(globaldata, THRESHOLD, badList)
 
     # print("Set Flag")
 
