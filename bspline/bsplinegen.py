@@ -110,6 +110,8 @@ def generateBSplineBetween(cv,index1,index2, num_points = 20):
     u_new = np.linspace(u[index1], u[index2], num_points)
     new_points = splev(u_new, tck, der = 0)
     new_points = convertPointsToNicePoints(new_points)
+    new_points.pop(0)
+    new_points.pop(-1)
     return new_points
 
 def convertPointsToKdTree(points):
