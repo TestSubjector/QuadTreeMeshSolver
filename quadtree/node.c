@@ -2538,7 +2538,7 @@ void valley_refinement(quadtree_node_t *valley_node, int flag)
     if(north + east + south + west >= 1)
     {
         // printf("\n ABCD");
-        split_node_newpoints(tree->root, valley_node);
+        split_node_newpoints(tree, valley_node);
     }
 }
 

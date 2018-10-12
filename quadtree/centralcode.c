@@ -141,7 +141,7 @@ void main_tree(int initial_coord_length, coords_t *coords_list, coords_t *adapte
                 else
                 {
                     // printf("\n %d", j);
-                    split_node_newpoints(tree->root, refined_node);
+                    split_node_newpoints(tree, refined_node);
                 }
             }
             else

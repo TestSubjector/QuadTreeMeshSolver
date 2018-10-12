@@ -74,7 +74,7 @@ quadtree_t *quadtree_new(double minx, double miny, double maxx, double maxy);
 
 void quadtree_free(quadtree_t *tree);
 
-quadtree_point_t *quadtree_search(double x, double y);
+quadtree_node_t *quadtree_search(double x, double y);
 
 int quadtree_insert(quadtree_t *tree, double x, double y);
 
@@ -214,5 +214,7 @@ int north_ancestor(int patharray[41], int path_size);
 int south_ancestor(int patharray[41], int path_size);
 
 int wallpoint_insert_flag;
+
+void extraoutput(int append, char *filename, double nw_bound_xcord, double nw_bound_ycord, double se_bound_xcord, double se_bound_ycord);
 
 #endif

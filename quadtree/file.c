@@ -88,12 +88,14 @@ void fileoutput(int append, char *filename, double xcord, double ycord)
     char ycordstr[20];
     gcvt(xcord, 18, xcordstr);
     gcvt(ycord, 18, ycordstr);
-    if (strstr(xcordstr, ycordstr) != NULL && fabs(xcord) != fabs(ycord))
-    {
-        printf("\n xcordstr is %s", xcordstr);
-    }
+
+    // if (strstr(xcordstr, ycordstr) != NULL && fabs(xcord) != fabs(ycord))
+    // {
+    //     printf("\n xcordstr is %s", xcordstr);
+    // }
     // double_to_char(xcord,xcordstr);
     // double_to_char(ycord,ycordstr);
+    
     FILE *fp = NULL;
     if (append == 1)
     {
@@ -116,6 +118,20 @@ void fileoutput(int append, char *filename, double xcord, double ycord)
         fputs("\n", fp);
     }
     fclose(fp);
+}
+
+// For on-demand additions to the output files
+void extraoutput(int append, char *filename, double nw_bound_xcord, double nw_bound_ycord, double se_bound_xcord, double se_bound_ycord)
+{
+    char nw_xcordstr[20];
+    char se_xcordstr[20];
+    char nw_ycordstr[20];
+    char se_ycordstr[20];
+    
+    gcvt(nw_bound_xcord, 18, nw_xcordstr);
+    gcvt(nw_bound_ycord, 18, nw_ycordstr);
+    gcvt(se_bound_xcord, 18, se_xcordstr);
+    gcvt(se_bound_ycord, 18, se_ycordstr);
 }
 
 // File output function to calculate valid neighbours for points

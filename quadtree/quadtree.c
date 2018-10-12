@@ -95,7 +95,7 @@ static int split_leafnode_(quadtree_t *tree, quadtree_node_t *node)
   return insert_(tree, node, old);
 }
 
-static quadtree_point_t *find_(quadtree_node_t *node, double x, double y)
+static quadtree_node_t *find_(quadtree_node_t *node, double x, double y)
 {
   if (!node)
   {
@@ -155,7 +155,7 @@ quadtree_t *quadtree_new(double minx, double miny, double maxx, double maxy)
   return tree;
 }
 
-quadtree_point_t *quadtree_search(double x, double y)
+quadtree_node_t *quadtree_search(double x, double y)
 {
   return find_(tree->root, x, y);
 }
@@ -450,7 +450,7 @@ void descent_refinement(quadtree_node_t *node)
   // printf("\n 1");
   if ((quadtree_node_isempty(node)) || (quadtree_node_isleaf(node)))
   {
-    split_node_newpoints(tree->root, node);
+    split_node_newpoints(tree, node);
   }
 }
 
