@@ -11,8 +11,8 @@ def appendNeighbours(index, globaldata, newpts):
     nbhs = getNeighbours(index, globaldata)
     nbhs = nbhs + [pt]
     nbhs = list(set(nbhs))
-    globaldata[int(index)][15:] = nbhs
-    globaldata[int(index)][14] = len(nbhs)
+    globaldata[int(index)][20:] = nbhs
+    globaldata[int(index)][19] = len(nbhs)
     return globaldata
 
 
@@ -24,7 +24,7 @@ def getFlag(indexval, list):
 def getNeighbours(index, globaldata):
     index = int(index)
     ptdata = globaldata[index]
-    ptdata = ptdata[15:]
+    ptdata = ptdata[20:]
     return ptdata
 
 def getLeftandRightPoint(index,globaldata):
