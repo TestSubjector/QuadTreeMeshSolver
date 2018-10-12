@@ -95,7 +95,7 @@ void fileoutput(int append, char *filename, double xcord, double ycord)
     // }
     // double_to_char(xcord,xcordstr);
     // double_to_char(ycord,ycordstr);
-    
+
     FILE *fp = NULL;
     if (append == 1)
     {
@@ -120,20 +120,6 @@ void fileoutput(int append, char *filename, double xcord, double ycord)
     fclose(fp);
 }
 
-// For on-demand additions to the output files
-void extraoutput(int append, char *filename, double nw_bound_xcord, double nw_bound_ycord, double se_bound_xcord, double se_bound_ycord)
-{
-    char nw_xcordstr[20];
-    char se_xcordstr[20];
-    char nw_ycordstr[20];
-    char se_ycordstr[20];
-    
-    gcvt(nw_bound_xcord, 18, nw_xcordstr);
-    gcvt(nw_bound_ycord, 18, nw_ycordstr);
-    gcvt(se_bound_xcord, 18, se_xcordstr);
-    gcvt(se_bound_ycord, 18, se_ycordstr);
-}
-
 // File output function to calculate valid neighbours for points
 void neighbouroutput(int append, char *filename, double xcord, double ycord, int node_height, int direction)
 {
@@ -148,14 +134,15 @@ void neighbouroutput(int append, char *filename, double xcord, double ycord, int
     gcvt(node_height,2, heightstr);
     gcvt(direction, 2, directionstr);
     gcvt(serial_number, 10, serialnumstr);
+
     FILE *fp = NULL;
     if (append == 1)
     {
-        fp = fopen(filename, "a+"); // Replace the old file with a blank line
+        fp = fopen(filename, "a+"); 
     }
     else
     {
-        fp = fopen(filename, "w");
+        fp = fopen(filename, "w"); // Replace the old file with a blank line
     }
 
     if (fp == NULL)
@@ -197,6 +184,45 @@ void neighbouroutput(int append, char *filename, double xcord, double ycord, int
 
         serial_number++; // Increment the S.No for new point
     }
+    fclose(fp);
+}
+
+
+// For on-demand additions to the output files
+void extraoutput(int append, char *filename,
+                    double nw_bound_xcord, double nw_bound_ycord, 
+                    double se_bound_xcord, double se_bound_ycord
+                )
+{
+    char nw_xcordstr[20];
+    char nw_ycordstr[20];
+    char se_xcordstr[20];
+    char se_ycordstr[20];
+    
+    gcvt(nw_bound_xcord, 18, nw_xcordstr);
+    gcvt(nw_bound_ycord, 18, nw_ycordstr);
+    gcvt(se_bound_xcord, 18, se_xcordstr);
+    gcvt(se_bound_ycord, 18, se_ycordstr);
+
+    FILE *fp = NULL;
+    if (append == 1)
+    {
+        fp = fopen(filename, "a+");
+    }
+    else
+    {
+        printf("\n Warning: File Type: Problem with developing file format for additional parameters");
+    }
+
+    fputs(nw_xcordstr, fp);
+    fputs("\t", fp);
+    fputs(nw_ycordstr, fp);
+    fputs("\t", fp);
+    fputs(se_xcordstr, fp);
+    fputs("\t", fp);
+    fputs(se_ycordstr, fp);
+    fputs("\t", fp);
+    
     fclose(fp);
 }
 

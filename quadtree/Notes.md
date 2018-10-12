@@ -1,4 +1,4 @@
-# A few notes pertaining to the code
+# A few notes pertaining to the quadtree code
 
 1. The input file contains the boundary points of a shape.
 2. The output file contains the points generated from the mesh (after blanking of non-aerodynamic points).
@@ -22,3 +22,4 @@
 20. TODO - Add conditions in the **notaero** function for concave polygons.
 21. Added node height
 22. Added node direction
+23. Removed compiler warnings, added function for on-demand addition of parameter to file (so that 21. or 22. type changes are cleaner)
