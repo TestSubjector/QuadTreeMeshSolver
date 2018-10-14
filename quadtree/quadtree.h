@@ -217,4 +217,9 @@ int wallpoint_insert_flag;
 
 void extraoutput(int append, char *filename, double nw_bound_xcord, double nw_bound_ycord, double se_bound_xcord, double se_bound_ycord);
 
+coords_t *derefined_list;
+void derefine(coords_t *derefined_list, int derefine_counter);
+quadtree_node_t *quadtree_parent_search(double x, double y);
+int derefine_search(coords_t *derefined_list, double x, double y, int derefine_counter);
+
 #endif

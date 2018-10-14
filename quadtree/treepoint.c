@@ -18,6 +18,103 @@ void quadtree_point_free(quadtree_point_t *point)
     free(point);
 }
 
+void derefine(coords_t *derefined_list, int derefine_counter)
+{
+    int child_counter;
+    quadtree_node_t *parent_node;
+    for(int i = 0; i < derefine_counter; i++)
+    {
+        child_counter = 0;
+        if(derefined_list[i].x != 10000 && derefined_list[i].y != 10000)
+        {
+            parent_node = quadtree_parent_search(derefined_list[i].x, derefined_list[i].y);
+            if(parent_node == NULL)
+            {
+                printf("\n Warning: Problems in paret node finding");
+            }
+
+            if (quadtree_node_isempty(parent_node->nw))
+            {
+                child_counter += derefine_search(derefined_list, (parent_node->nw->bounds->nw->x + parent_node->nw->bounds->se->x) / 2, (parent_node->nw->bounds->nw->y + parent_node->nw->bounds->se->y) / 2, derefine_counter);
+            }
+            else if (quadtree_node_isleaf(parent_node->nw))
+            {
+                child_counter += derefine_search(derefined_list, parent_node->nw->point->x, parent_node->nw->point->y, derefine_counter);
+            }
+            else
+            {
+                //Quadrants are not on same level, so no derefinement
+            }
+
+            if (quadtree_node_isempty(parent_node->ne))
+            {
+                child_counter += derefine_search(derefined_list, (parent_node->ne->bounds->nw->x + parent_node->ne->bounds->se->x) / 2, (parent_node->ne->bounds->nw->y + parent_node->ne->bounds->se->y) / 2, derefine_counter);
+            }
+            else if (quadtree_node_isleaf(parent_node->ne))
+            {
+                child_counter += derefine_search(derefined_list, parent_node->ne->point->x, parent_node->ne->point->y, derefine_counter);
+            }
+            else
+            {
+                //Quadrants are not on same level, so no derefinement
+            }
+
+            if (quadtree_node_isempty(parent_node->sw))
+            {
+                child_counter += derefine_search(derefined_list, (parent_node->sw->bounds->nw->x + parent_node->sw->bounds->se->x) / 2, (parent_node->sw->bounds->nw->y + parent_node->sw->bounds->se->y) / 2, derefine_counter);
+            }
+            else if (quadtree_node_isleaf(parent_node->sw))
+            {
+                child_counter += derefine_search(derefined_list, parent_node->sw->point->x, parent_node->sw->point->y, derefine_counter);
+            }
+            else
+            {
+                //Quadrants are not on same level, so no derefinement
+            }
+
+            if (quadtree_node_isempty(parent_node->se))
+            {
+                child_counter += derefine_search(derefined_list, (parent_node->se->bounds->nw->x + parent_node->se->bounds->se->x) / 2, (parent_node->se->bounds->nw->y + parent_node->se->bounds->se->y) / 2, derefine_counter);
+            }
+            else if (quadtree_node_isleaf(parent_node->se))
+            {
+                child_counter += derefine_search(derefined_list, parent_node->se->point->x, parent_node->se->point->y, derefine_counter);
+            }
+            else
+            {
+                //Quadrants are not on same level, so no derefinement
+            }
+
+            if(child_counter == 4)
+            {
+                quadtree_node_free(parent_node->nw);
+                quadtree_node_free(parent_node->ne);
+                quadtree_node_free(parent_node->sw);
+                quadtree_node_free(parent_node->se);
+                parent_node->nw = NULL;
+                parent_node->ne = NULL;
+                parent_node->sw = NULL;
+                parent_node->se = NULL;
+            }
+        }
+
+    }
+}
+
+int derefine_search(coords_t *derefined_list, double x, double y, int derefine_counter)
+{
+    for(int i = 0; i < derefine_counter; i++)
+    {
+        if(derefined_list[i].x == x && derefined_list[i].y == y)
+        {
+            derefined_list[i].x = 10000;
+            derefined_list[i].y = 10000;
+            return 1;
+        }
+    }
+    return 0;
+}
+
 quadtree_node_t *reach_ancestor(quadtree_node_t *node, int patharray[41], int ancestor_pos)
 {
     int path_step = 0;

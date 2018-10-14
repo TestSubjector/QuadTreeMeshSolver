@@ -8,6 +8,7 @@ quadtree_t *tree; // The main tree structure for all our needs
 coords_t *coords_list;  // Stores all the input points
 coords_t *adapted_list; // Stores all the adapted points
 coords_t *shape_list;
+coords_t *derefined_list; // Stores segments of points to be derefined
 
 int leaf_iter = 0;
 int line_count = 0;
@@ -15,7 +16,7 @@ int adapted_line_count = 0;
 int shape_line_count = 0;
 int height_of_tree = 0;
 int wallpoint_insert_flag = 0;
-int success;
+int insertion_success;
 
 void main_tree(int initial_coord_length, coords_t *coords_list, coords_t *adapted_list, quadtree_node_t *leaf_array)
 {
@@ -31,8 +32,8 @@ void main_tree(int initial_coord_length, coords_t *coords_list, coords_t *adapte
 
     for (i = 0; i < initial_coord_length; i++) // Inserting points into the tree one-by-one
     {
-        success = quadtree_insert(tree, coords_list[i].x, coords_list[i].y);
-        if (success == 0) // Out of bounds
+        insertion_success = quadtree_insert(tree, coords_list[i].x, coords_list[i].y);
+        if (insertion_success == 0) // Out of bounds
         {
             printf("\n Warning: On line %d points %lf & %lf are out of bounds or were not created", i + 1, coords_list[i].x, coords_list[i].y);
         }
@@ -93,12 +94,14 @@ void main_tree(int initial_coord_length, coords_t *coords_list, coords_t *adapte
     // Adaptation section
     if(adapted_line_count != 0)
     {
-         quadtree_node_t *refined_node = NULL;
+        int derefine_counter;
+        quadtree_node_t *refined_node = NULL;
+        
         for(j= 0; j < adapted_line_count; j++)
         {
             if(adapted_list[j].x == 1000 && adapted_list[j].y == 1000)
             {
-                printf("\n Balancing Points");
+                printf("\n Adapting Points");
                 wallpoint_insert_flag = 0;
                 free(leaf_array);
                 leaf_array = malloc(sizeof(quadtree_node_t) * MAX);
@@ -128,6 +131,23 @@ void main_tree(int initial_coord_length, coords_t *coords_list, coords_t *adapte
                 continue;
             }
 
+            if(adapted_list[j].x == 3000 && adapted_list[j].y == 3000)
+            {
+                if(wallpoint_insert_flag == 2)
+                {
+                    derefine(derefined_list, derefine_counter);
+                    free(derefined_list);
+                    printf("\n Derefining Points");
+                }
+                else
+                {
+                    derefine_counter = 0;
+                    derefined_list = malloc(sizeof(coords_t) * (MAX/10));
+                    wallpoint_insert_flag = 2; 
+                }
+                continue;
+            }
+
             if(wallpoint_insert_flag == 0)
             {
                 refined_node = quadtree_search(adapted_list[j].x, adapted_list[j].y);
@@ -144,11 +164,11 @@ void main_tree(int initial_coord_length, coords_t *coords_list, coords_t *adapte
                     split_node_newpoints(tree, refined_node);
                 }
             }
-            else
+            else if(wallpoint_insert_flag == 1)
             {
-                success = quadtree_insert(tree, adapted_list[j].x, adapted_list[j].y);
+                insertion_success = quadtree_insert(tree, adapted_list[j].x, adapted_list[j].y);
                 // printf("\n Successful ping");
-                if (success == 0) // Out of bounds
+                if (insertion_success == 0) // Out of bounds
                 {
                     printf("\n Warning: On line %d points %lf & %lf are out of bounds or were not created during adaptation stage", i + 1, adapted_list[j].x, adapted_list[j].y);
                 }
@@ -156,7 +176,12 @@ void main_tree(int initial_coord_length, coords_t *coords_list, coords_t *adapte
                 {
                     char *quickfilename = "output.txt";
                 }
-                continue;
+            }
+            else if(wallpoint_insert_flag == 2)
+            {
+                derefined_list[derefine_counter].x = adapted_list[j].x;
+                derefined_list[derefine_counter].y = adapted_list[j].y;
+                derefine_counter++;
             }
         }
         newoutputfile = 1;  // Clean file and write new generated files

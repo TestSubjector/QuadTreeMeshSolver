@@ -136,6 +136,47 @@ static quadtree_node_t *find_(quadtree_node_t *node, double x, double y)
   return NULL;
 }
 
+static quadtree_node_t *parent_find_(quadtree_node_t *node, double x, double y, quadtree_node_t *parent_node)
+{
+  if (!node)
+  {
+    // printf("\n Start");
+    return NULL;
+  }
+  if (quadtree_node_isleaf(node))
+  {
+    // printf("\n Start 1");
+    // printf("\n Wanted %lf, %lf", x, y);
+    // printf("\n Wanted %lf, %lf", node->point->x, node->point->y);
+    if (node->point->x == x && node->point->y == y)
+    {
+      // printf("\n Start 2");
+      return parent_node;
+    }
+  }
+  else if (quadtree_node_isempty(node))
+  {
+    if (fabs((node->bounds->nw->x + node->bounds->se->x) / 2 - x) < 0.0000000001 &&
+        fabs((node->bounds->nw->y + node->bounds->se->y) / 2 - y) < 0.0000000001)
+    {
+      return parent_node;
+    }
+    else
+    {
+      // printf("\n %.17g, %.17g", (node->bounds->nw->x + node->bounds->se->x) / 2, (node->bounds->nw->y + node->bounds->se->y)/2);
+    }
+  }
+  else if (quadtree_node_ispointer(node))
+  {
+    // printf("\n Start 3");
+    quadtree_point_t test;
+    test.x = x;
+    test.y = y;
+    return parent_find_(get_quadrant_(node, &test), x, y, node);
+  }
+  return NULL;
+}
+
 /* Non-Static Definitions */
 
 quadtree_t *quadtree_new(double minx, double miny, double maxx, double maxy)
@@ -158,6 +199,11 @@ quadtree_t *quadtree_new(double minx, double miny, double maxx, double maxy)
 quadtree_node_t *quadtree_search(double x, double y)
 {
   return find_(tree->root, x, y);
+}
+
+quadtree_node_t *quadtree_parent_search(double x, double y)
+{
+  return parent_find_(tree->root, x, y, NULL);
 }
 
 void quadtree_free(quadtree_t *tree)
@@ -504,4 +550,5 @@ void descent_valley(quadtree_node_t *node)
     valley_refinement(node, 1);
   }
 }
+
 
