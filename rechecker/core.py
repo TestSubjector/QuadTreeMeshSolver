@@ -15,8 +15,8 @@ def appendNeighbours(index, globaldata, newpts):
     nbhs = getNeighbours(index, globaldata)
     nbhs = nbhs + [pt]
     nbhs = list(set(nbhs))
-    globaldata[int(index)][15:] = nbhs
-    globaldata[int(index)][14] = len(nbhs)
+    globaldata[int(index)][20:] = nbhs
+    globaldata[int(index)][19] = len(nbhs)
     return globaldata
 
 
@@ -28,7 +28,7 @@ def getFlag(indexval, list):
 def getNeighbours(index, globaldata):
     index = int(index)
     ptdata = globaldata[index]
-    ptdata = ptdata[15:]
+    ptdata = ptdata[20:]
     return ptdata
 
 
@@ -316,7 +316,7 @@ def checkConditionNumberWall(index, globaldata, threshold):
     dSPointYPos = getDYPosPoints(index, globaldata)
     dSPointYNeg = getDYNegPoints(index, globaldata)
     if (
-        index == 1561
+        index == 2061
     ):
         print(
             index,
@@ -336,7 +336,7 @@ def cleanNeighbours(globaldata):
     for i in range(len(globaldata)):
         if i == 0:
             continue
-        noneighours = int(globaldata[i][14])
+        noneighours = int(globaldata[i][19])
         cordneighbours = globaldata[i][-noneighours:]
         result = []
         for item in cordneighbours:
@@ -350,7 +350,7 @@ def cleanNeighbours(globaldata):
         cordneighbours = result
 
         noneighours = len(cordneighbours)
-        globaldata[i] = globaldata[i][:14] + [noneighours] + list(cordneighbours)
+        globaldata[i] = globaldata[i][:19] + [noneighours] + list(cordneighbours)
     log.info("Duplicate Neighbours Removed")
     return globaldata
 
@@ -589,7 +589,7 @@ def getLeftandRightPoint(index,globaldata):
 
 def replaceNeighbours(index,nbhs,globaldata):
     data = globaldata[index]
-    data = data[:14]
+    data = data[:19]
     data.append(len(nbhs))
     data = data + nbhs
     globaldata[index] = data

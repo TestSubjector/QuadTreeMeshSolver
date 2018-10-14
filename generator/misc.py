@@ -38,7 +38,7 @@ def cleanNeighbours(globaldata):  # Verified
     for i in range(len(globaldata)):
         # printProgressBar(i, len(globaldata) - 1, prefix = 'Progress:', suffix = 'Complete', length = 50)
         try:
-            noneighours = int(globaldata[i][14])  # Number of neighbours
+            noneighours = int(globaldata[i][19])  # Number of neighbours
         except IndexError:
             log.warn("No neighbours found for index " + str(i))
             noneighbours = 0
@@ -57,7 +57,7 @@ def cleanNeighbours(globaldata):  # Verified
                 result.append(str(item))
         cordneighbours = result
         noneighours = len(cordneighbours)
-        globaldata[i] = globaldata[i][:14] + [noneighours] + list(cordneighbours)
+        globaldata[i] = globaldata[i][:19] + [noneighours] + list(cordneighbours)
         # with open("duplication_removal.txt", "w") as text_file:
         #     for item1 in globaldata:
         #         text_file.writelines(["%s " % item for item in item1])
@@ -78,10 +78,10 @@ def getIndexOf(pointxy, hashtable):
 def getNeighbours(indexval, list):
     val = []
     pointdata = list[indexval]
-    numbneigh = int(pointdata[14])
+    numbneigh = int(pointdata[19])
     try:
         for i in range(numbneigh):
-            val = val + [str(pointdata[i + 15])]
+            val = val + [str(pointdata[i + 20])]
     except Exception:
         pass
     return val
@@ -250,12 +250,12 @@ def euclideanDistance(a, b):
 
 
 def appendNeighbours(neighbours, index, globaldata):
-    nbhcount = int(globaldata[index][14])
+    nbhcount = int(globaldata[index][19])
     nbhs = globaldata[index][-nbhcount:]
     nbhs = nbhs + neighbours
     nbhcount = nbhcount + len(neighbours)
-    globaldata[index][14] = nbhcount
-    globaldata[index] = globaldata[index][:15] + nbhs
+    globaldata[index][19] = nbhcount
+    globaldata[index] = globaldata[index][:20] + nbhs
     return globaldata
 
 
