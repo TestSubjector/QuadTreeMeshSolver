@@ -1117,3 +1117,16 @@ def fullRefine(globaldata):
                 text_file.writelines(["%s %s " % (ptX,ptY)])
                 text_file.writelines("\n")
         text_file.writelines("1000 1000\n")
+
+
+def oldMode(globaldata):
+    globaldata.pop(0)
+    with open("preprocessorfile_oldmode.txt", "w") as text_file:
+        for item1 in globaldata:
+            item1.pop(14)
+            item1.pop(14)
+            item1.pop(14)
+            item1.pop(14)
+            item1.pop(14)
+            text_file.writelines(["%s " % item for item in item1])
+            text_file.writelines("\n") 

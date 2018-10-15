@@ -74,6 +74,8 @@ def main():
             core.cleanAdapted()
         elif ptidx == "full":
             core.fullRefine(globaldata)
+        elif ptidx == "old":
+            core.oldMode(globaldata)
         isPointIndex = False
         try:
             ptidx = int(ptidx)
