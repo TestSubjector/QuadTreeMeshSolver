@@ -33,6 +33,7 @@ def main():
     data = file1.read()
     globaldata = ["start"]
     adaptdata = []
+    derefine = []
     splitdata = data.split("\n")
     splitdata = splitdata[:-1]
     outerpts = []
@@ -107,13 +108,20 @@ def main():
                 xcord = globaldata[int(adaptpoint[0])][1]
                 ycord = globaldata[int(adaptpoint[0])][2]
                 adaptdata.append([xcord, ycord])
-
+        elif int(adaptpoint[1]) == 2:
+                xcord = globaldata[int(adaptpoint[0])][1]
+                ycord = globaldata[int(adaptpoint[0])][2]
+                derefine.append([xcord, ycord])
+    print(len(derefine))
     print(len(adaptdata))
 
     print("Adaptation File Data Processed")
     print("Writing adapted.txt")
 
     with open("adapted.txt", "a+") as text_file:
+        text_file.writelines("3000 3000\n")
+        for item1 in derefine:
+            text_file.writelines(["%s " % item for item in item1])
         for item1 in adaptdata:
             text_file.writelines(["%s " % item for item in item1])
             text_file.writelines("\n")
