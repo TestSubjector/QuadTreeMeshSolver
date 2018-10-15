@@ -55,6 +55,7 @@ def main():
         print("Type 'integrity' to check wall.json integrity")
         print("Type 'full' to perform one full refinement")
         print("Type 'clean' to cleanse the soul of adapted.txt")
+        print("Type 'old' to convert preprocessorfile to old format")
         ptidx = input("Which point do you want to fix? ")
         if ptidx == "exit!":
             exit()
