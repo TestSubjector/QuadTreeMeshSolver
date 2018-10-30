@@ -178,6 +178,7 @@ def main():
             text_file.writelines(["%s " % item for item in item1])
             text_file.writelines("\n")
         text_file.writelines("3000 3000\n")
+        text_file.writelines("1000 1000\n")
         for item1 in adaptdata:
             text_file.writelines(["%s " % item for item in item1])
             text_file.writelines("\n")
