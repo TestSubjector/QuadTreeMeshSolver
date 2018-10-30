@@ -578,15 +578,14 @@ def doesItIntersect(idx, quadrant, globaldata, wallpoints):
     getPtx,getPty = getPoint(idx,globaldata)
     pttocheck = shapely.geometry.Point([getPtx,getPty])
     responselist = []
-    for item in wallpoints:
-        polygonpts = []
-        for item2 in item:
-            polygonpts.append([float(item2.split(",")[0]), float(item2.split(",")[1])])
-        polygontocheck = shapely.geometry.Polygon(polygonpts)
-        if polygontocheck.contains(pttocheck):
-            responselist.append(False)
-            break
-        else:
+    if quadrantpoly.contains(pttocheck):
+        responselist.append(False)
+    else:
+        for item in wallpoints:
+            polygonpts = []
+            for item2 in item:
+                polygonpts.append([float(item2.split(",")[0]), float(item2.split(",")[1])])
+            polygontocheck = shapely.geometry.Polygon(polygonpts)
             response = polygontocheck.intersects(quadrantpoly)
             if response:
                 responselist.append(False)
