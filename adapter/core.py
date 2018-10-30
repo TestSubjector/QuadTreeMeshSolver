@@ -267,7 +267,7 @@ def getPerpendicularPoint(idx,globaldata,normal):
     else:
         return midPt(pts1x,pts2x,pts1y,pts2y)
 
-def getPerpendicularPointManual(pt,globaldata,normal):
+def getPerpendicularPointManual(pt,globaldata,normal,quadrant):
     wallptData = getWallPointArray(globaldata)
     wallptDataOr = wallptData
     wallptData = flattenList(wallptData)
@@ -279,9 +279,21 @@ def getPerpendicularPointManual(pt,globaldata,normal):
     pts2x = float(pts[1].split(",")[0])
     pts2y = float(pts[1].split(",")[1])
     if normal:
-        return perpendicularPt(pts1x,pts2x,mainptx,pts1y,pts2y,mainpty)
+        pptx,ppty = perpendicularPt(pts1x,pts2x,mainptx,pts1y,pts2y,mainpty)
+        if quadrantContains(quadrant,(pptx,ppty)):
+            return pptx,ppty
+        else:
+            return None
     else:
         return midPt(pts1x,pts2x,pts1y,pts2y)
+
+def quadrantContains(quadrant,pt):
+    quadpoly = shapely.geometry.Polygon(quadrant)
+    ptpoly = shapely.geometry.Point(pt)
+    if quadpoly.contains(ptpoly):
+        return True
+    else:
+        return False
 
 def flattenList(ptdata):
     return list(itertools.chain.from_iterable(ptdata))
@@ -499,7 +511,7 @@ def getBoundingBoxOfQuadrant(index,globaldata):
     topr = (toprx,topry)
     bottoml = (bottomlx,bottomly)
     bottomr = (bottomrx,bottomry)
-    return [topl,topr,bottomr,bottoml]
+    return (topl,topr,bottomr,bottoml)
 
 def getNorthWestQuadrant(index,globaldata):
     box = getBoundingBoxOfQuadrant(index,globaldata)
@@ -508,7 +520,7 @@ def getNorthWestQuadrant(index,globaldata):
     bottomr = (midx,midy)
     topr = (bottomr[0],topl[1])
     bottoml = (topl[0],bottomr[1])
-    return [topl,topr,bottomr,bottoml]
+    return (topl,topr,bottomr,bottoml)
 
 def getNorthEastQuadrant(index,globaldata):
     box = getBoundingBoxOfQuadrant(index,globaldata)
@@ -517,7 +529,7 @@ def getNorthEastQuadrant(index,globaldata):
     bottoml = (midx,midy)
     topl = (bottoml[0],topr[1])
     bottomr = (topr[0],bottoml[1])
-    return [topl,topr,bottomr,bottoml]
+    return (topl,topr,bottomr,bottoml)
 
 def getSouthWestQuadrant(index,globaldata):
     box = getBoundingBoxOfQuadrant(index,globaldata)
@@ -526,7 +538,7 @@ def getSouthWestQuadrant(index,globaldata):
     topr = (midx,midy)
     topl = (bottoml[0],topr[1])
     bottomr = (topr[0],bottoml[1])
-    return [topl,topr,bottomr,bottoml]
+    return (topl,topr,bottomr,bottoml)
 
 def getSouthEastQuadrant(index,globaldata):
     box = getBoundingBoxOfQuadrant(index,globaldata)
@@ -535,7 +547,7 @@ def getSouthEastQuadrant(index,globaldata):
     topl = (midx,midy)
     topr = (bottomr[0],topl[1])
     bottoml = (topl[0],bottomr[1])
-    return [topl,topr,bottomr,bottoml]
+    return (topl,topr,bottomr,bottoml)
 
 def getPerpendicularPointsFromQuadrants(index,globaldata):
     NWQ = getNorthWestQuadrant(index,globaldata)
@@ -546,16 +558,32 @@ def getPerpendicularPointsFromQuadrants(index,globaldata):
     walldata = getWallPointArray(globaldata)
     if doesItIntersect(index, NWQ,globaldata,walldata):
         centercord = getCentroidOfQuadrantManual(globaldata, NWQ)
-        perPoints.append(getPerpendicularPointManual(centercord,globaldata,True))
+        ppp = getPerpendicularPointManual(centercord,globaldata,True,NWQ)
+        if ppp is None:
+            perPoints.append((centercord,NWQ))
+        else:
+            perPoints.append((ppp,NWQ))
     if doesItIntersect(index, NEQ,globaldata,walldata):
         centercord = getCentroidOfQuadrantManual(globaldata, NEQ)
-        perPoints.append(getPerpendicularPointManual(centercord,globaldata,True))
+        ppp = getPerpendicularPointManual(centercord,globaldata,True,NEQ)
+        if ppp is None:
+            perPoints.append((centercord,NEQ))
+        else:
+            perPoints.append((ppp,NEQ))
     if doesItIntersect(index, SWQ,globaldata,walldata):
         centercord = getCentroidOfQuadrantManual(globaldata, SWQ)
-        perPoints.append(getPerpendicularPointManual(centercord,globaldata,True))
+        ppp = getPerpendicularPointManual(centercord,globaldata,True,SWQ)
+        if ppp is None:
+            perPoints.append((centercord,SWQ))
+        else:
+            perPoints.append((ppp,SWQ))
     if doesItIntersect(index, SEQ,globaldata,walldata):
         centercord = getCentroidOfQuadrantManual(globaldata, SEQ)
-        perPoints.append(getPerpendicularPointManual(centercord,globaldata,True))
+        ppp = getPerpendicularPointManual(centercord,globaldata,True,SEQ)
+        if ppp is None:
+            perPoints.append((centercord,SEQ))
+        else:
+            perPoints.append((ppp,SEQ))
     return perPoints
 
 def getCentroidOfQuadrant(index,globaldata):
@@ -595,3 +623,13 @@ def doesItIntersect(idx, quadrant, globaldata, wallpoints):
         return True
     else:
         return False
+
+def convertToSuperNicePoints(quadrant,data):
+    quadCheck = quadrant[1]
+    finallist = []
+    for itm in data:
+        if quadrantContains(quadCheck,itm):
+            None
+        else:
+            finallist.append(itm)
+    return finallist

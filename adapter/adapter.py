@@ -133,7 +133,7 @@ def main():
     splineList = []
 
     for itm in perPndList:
-        nbhPts = findNearestNeighbourWallPointsManual(itm,globaldata,wallPointsFlatten,wallPoints)
+        nbhPts = findNearestNeighbourWallPointsManual(itm[0],globaldata,wallPointsFlatten,wallPoints)
         splineData = feederData(nbhPts,wallPoints)
         splineList.append(splineData)
 
@@ -153,7 +153,8 @@ def main():
     for idx,itm in enumerate(perPndList): 
         data = splineList[idx]
         newpts = bsplinegen.generateBSplineBetween(bsplineArray[data[2]],data[0],data[1],int(config.getConfig()["bspline"]["pointControl"]))
-        newpts = findNearestPoint(perPndList[idx],newpts)
+        newpts = convertToSuperNicePoints(perPndList[idx],newpts)
+        newpts = findNearestPoint(perPndList[idx][0],newpts)
         printProgressBar(idx + 1, len(perPndList), prefix="Progress:", suffix="Complete", length=50)
         try:
             writingDict[data[3]] = writingDict[data[3]] + [newpts]
