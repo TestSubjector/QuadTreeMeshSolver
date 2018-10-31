@@ -1,9 +1,10 @@
-from core import *
+import core
 from config import getConfig
+import progress
 
 def connectivityCheck(globaldata):
     for idx,itm in enumerate(globaldata):
-        printProgressBar(
+        progress.printProgressBar(
             idx,
             len(globaldata) - 1,
             prefix="Progress:",
@@ -11,9 +12,9 @@ def connectivityCheck(globaldata):
             length=50,
         )
         if(idx >0):
-            if(getFlag(idx,globaldata) == 0 or getFlag(idx,globaldata) == 2):
+            if core.getFlag(idx,globaldata) == 0 or core.getFlag(idx,globaldata) == 2:
                 result = connectivityCheckWallandOuterPoint(idx,globaldata)
-                globaldata = setFlags(idx,globaldata,result)
+                globaldata = core.setFlags(idx,globaldata,result)
             # else:
             #     result = connectivityCheckInteriorPoint(idx,globaldata)
             #     globaldata = setFlags(idx,globaldata,result)
@@ -23,10 +24,10 @@ def connectivityCheck(globaldata):
 def connectivityCheckWallandOuterPoint(index,globaldata):
     result = []
     WALL_OUTER_THRESHOLD = int(getConfig()["triangulate"]["triangle"]["wallandOuterThreshold"])
-    xpos = len(getDWallXPosPoints(index,globaldata))
-    xneg = len(getDWallXNegPoints(index,globaldata))
-    xposConditionValue = getWeightedNormalConditionValueofWallXPos(index,globaldata)
-    xnegConditionValue = getWeightedNormalConditionValueofWallXNeg(index,globaldata)
+    xpos = len(core.getDWallXPosPoints(index,globaldata))
+    xneg = len(core.getDWallXNegPoints(index,globaldata))
+    xposConditionValue = core.getWeightedNormalConditionValueofWallXPos(index,globaldata)
+    xnegConditionValue = core.getWeightedNormalConditionValueofWallXNeg(index,globaldata)
     if(xposConditionValue < WALL_OUTER_THRESHOLD):
         if(xpos < 3):
             result.append(2)
@@ -48,14 +49,14 @@ def connectivityCheckWallandOuterPoint(index,globaldata):
 def connectivityCheckInteriorPoint(index,globaldata):
     result = []
     INTERIOR_THRESHOLD = int(getConfig()["triangulate"]["triangle"]["interiorThreshold"])
-    xpos = len(getDXPosPoints(index,globaldata))
-    xneg = len(getDXNegPoints(index,globaldata))
-    ypos = len(getDYPosPoints(index,globaldata))
-    yneg = len(getDYNegPoints(index,globaldata))
-    xposConditionValue = getWeightedInteriorConditionValueofXPos(index,globaldata)
-    xnegConditionValue = getWeightedInteriorConditionValueofXNeg(index,globaldata)
-    yposConditionValue = getWeightedInteriorConditionValueofYPos(index,globaldata)
-    ynegConditionValue = getWeightedInteriorConditionValueofYNeg(index,globaldata)
+    xpos = len(core.getDXPosPoints(index,globaldata))
+    xneg = len(core.getDXNegPoints(index,globaldata))
+    ypos = len(core.getDYPosPoints(index,globaldata))
+    yneg = len(core.getDYNegPoints(index,globaldata))
+    xposConditionValue = core.getWeightedInteriorConditionValueofXPos(index,globaldata)
+    xnegConditionValue = core.getWeightedInteriorConditionValueofXNeg(index,globaldata)
+    yposConditionValue = core.getWeightedInteriorConditionValueofYPos(index,globaldata)
+    ynegConditionValue = core.getWeightedInteriorConditionValueofYNeg(index,globaldata)
     if(xposConditionValue < INTERIOR_THRESHOLD):
         if(xpos < 3):
             result.append(2)
@@ -89,8 +90,8 @@ def connectivityCheckInteriorPoint(index,globaldata):
 def findDeletionPoints(globaldata):
     deletionpts = []
     for idx,itm in enumerate(globaldata):
-        if idx > 0 and int(getFlag(idx,globaldata)) == 1:
-            xpos,xneg,ypos,yneg = getFlags(idx,globaldata)
+        if idx > 0 and int(core.getFlag(idx,globaldata)) == 1:
+            xpos,xneg,ypos,yneg = core.getFlags(idx,globaldata)
             if(xpos == 1 or xneg == 1 or ypos == 1 or yneg == 1):
                 deletionpts.append(idx)
     return deletionpts
