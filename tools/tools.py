@@ -68,7 +68,7 @@ def main():
             core.wallConnectivityCheckNearest(globaldata)
         elif ptidx == "wcc!!":
             globaldata = connectivity.connectivityCheck(globaldata)
-            core.wallConnectivtyCheckSensor(globaldata)    
+            core.wallConnectivityCheckSensor(globaldata)    
         elif ptidx == "icc":
             core.interiorConnectivityCheck(globaldata)
         elif ptidx == "cache":
