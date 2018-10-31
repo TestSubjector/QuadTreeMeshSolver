@@ -51,6 +51,7 @@ def main():
         print("Type 'wcc' to run Wall Connectivity Check on all Wall Points.")
         print("Type 'wcc!' to run Wall Connectivity Check on all Wall Points and return nearest point.")
         print("Type 'wcc!!' to run Wall Connectivity Check on all Wall Points and generate a corresponding sensor file.")
+        print("Type 'wcc!!!' to run Wall Connectivity Check on all Wall Points and try fixing sparsity.")
         print("Type 'icc' to run Interior Connectivity Check on all Interior Points.")
         print("Type 'cache' to push the file you read into cache.")
         print("Type 'integrity' to check wall.json integrity")
@@ -69,6 +70,9 @@ def main():
         elif ptidx == "wcc!!":
             globaldata = connectivity.connectivityCheck(globaldata)
             core.wallConnectivityCheckSensor(globaldata)    
+        elif ptidx == "wcc!!!":
+            globaldata = connectivity.connectivityCheck(globaldata)
+            core.sparseNullifier(globaldata)  
         elif ptidx == "icc":
             core.interiorConnectivityCheck(globaldata)
         elif ptidx == "cache":

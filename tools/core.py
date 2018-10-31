@@ -14,6 +14,7 @@ import os
 import errno
 import itertools
 import re
+import connectivity
 from collections import Counter
 log = logging.getLogger(__name__)
 log.addHandler(logging.StreamHandler())
@@ -834,6 +835,39 @@ def wallConnectivityCheckSensor(globaldata):
                     print(idx) 
                     madechanges = True
                     sensorBox.append(idx)
+    if madechanges == True:
+        with open("sensor_flag.dat", "w") as text_file:
+            for idx,itm in enumerate(globaldata):
+                if idx > 0:
+                    if idx in sensorBox:
+                        text_file.writelines("  " + str(idx) + "  1\n")
+                    else:
+                        text_file.writelines("  " + str(idx) + "  0\n")
+
+def sparseNullifier(globaldata):
+    madechanges = False
+    sensorBox = []
+    for idx,_ in enumerate(globaldata):
+        if idx > 0:
+            flag = getFlag(idx,globaldata)
+            if flag == 0:
+                xpos,xneg,_,_ = getFlags(idx,globaldata)
+                if xpos == 1:
+                    getXposPoints = getDWallXPosPoints(idx,globaldata)
+                    for itm in getXposPoints:
+                        index = getIndexFromPoint(itm,globaldata)
+                        flag = getFlag(index,globaldata)
+                        if flag == 0:
+                            madechanges = True
+                            sensorBox.append(idx)
+                if xneg == 1:
+                    getXnegPoints = getDWallXNegPoints(idx,globaldata)
+                    for itm in getXnegPoints:
+                        index = getIndexFromPoint(itm,globaldata)
+                        flag = getFlag(index,globaldata)
+                        if flag == 0:
+                            madechanges = True
+                            sensorBox.append(idx)
     if madechanges == True:
         with open("sensor_flag.dat", "w") as text_file:
             for idx,itm in enumerate(globaldata):
