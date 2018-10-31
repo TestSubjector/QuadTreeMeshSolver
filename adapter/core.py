@@ -302,7 +302,7 @@ def feederData(wallpts,wallptData):
     wallpt = wallpts[0]
     for idx,itm in enumerate(wallptData):
         if wallpt in itm:
-            return (itm.index(wallpts[0]),itm.index(wallpts[1]),idx)
+            return (itm.index(wallpts[0]),itm.index(wallpts[1]),idx,wallpt)
 
 def distance(ax,ay,bx,by):
     return math.sqrt((ax - bx)**2 + (ay - by)**2)
