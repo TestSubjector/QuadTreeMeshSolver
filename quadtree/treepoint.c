@@ -30,7 +30,7 @@ void derefine(coords_t *derefined_list, int derefine_counter)
             parent_node = quadtree_parent_search(derefined_list[i].x, derefined_list[i].y);
             if(parent_node == NULL)
             {
-                printf("\n Warning: Problems in paret node finding");
+                printf("\n Warning: Problems in parent node finding");
             }
 
             if (quadtree_node_isempty(parent_node->nw))
@@ -97,10 +97,10 @@ void derefine(coords_t *derefined_list, int derefine_counter)
                 parent_node->se = NULL;
             }
         }
-
     }
 }
 
+// To make sure we don't evaluate the (at max 4) derefinement points that lie in the same quadrant again
 int derefine_search(coords_t *derefined_list, double x, double y, int derefine_counter)
 {
     for(int i = 0; i < derefine_counter; i++)
