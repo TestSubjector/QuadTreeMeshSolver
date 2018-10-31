@@ -53,6 +53,13 @@ def getIndexFromPoint(pt, globaldata):
         if str(itm[1]) == str(ptx) and str(itm[2]) == str(pty):
             return int(itm[0])
 
+def getIndexFromPointTuple(pt, globaldata):
+    ptx = pt[0]
+    pty = pt[1]
+    for itm in globaldata:
+        if str(itm[1]) == str(ptx) and str(itm[2]) == str(pty):
+            return int(itm[0])
+
 
 def getPoint(index, globaldata):
     index = int(index)
@@ -302,7 +309,7 @@ def feederData(wallpts,wallptData):
     wallpt = wallpts[0]
     for idx,itm in enumerate(wallptData):
         if wallpt in itm:
-            return (itm.index(wallpts[0]),itm.index(wallpts[1]),idx,wallpt)
+            return (itm.index(wallpts[0]),itm.index(wallpts[1]),itm.index(wallpts[2]),idx,wallpts[0],wallpts[1])
 
 def distance(ax,ay,bx,by):
     return math.sqrt((ax - bx)**2 + (ay - by)**2)
@@ -554,6 +561,8 @@ def getPerpendicularPointsFromQuadrants(index,globaldata):
     NEQ = getNorthEastQuadrant(index,globaldata)
     SWQ = getSouthWestQuadrant(index,globaldata)
     SEQ = getSouthEastQuadrant(index,globaldata)
+    ptx,pty = getPoint(index,globaldata)
+    pt = (ptx,pty)
     if len(set(NWQ)) < 4 or len(set(NEQ)) < 4 or len(set(SEQ)) < 4 or len(set(SWQ)) < 4:
         print("Warning point index: " + str(index) + " has same NW and SE bounding box")
         exit()
@@ -562,36 +571,36 @@ def getPerpendicularPointsFromQuadrants(index,globaldata):
     walldata = getWallPointArray(globaldata)
     if doesItIntersect(index, NWQ,globaldata,walldata):
         centercord = getCentroidOfQuadrantManual(globaldata, NWQ)
-        # ppp = None
-        ppp = getPerpendicularPointManual(centercord,globaldata,True,NWQ)
+        ppp = None
+        # ppp = getPerpendicularPointManual(centercord,globaldata,True,NWQ)
         if ppp is None:
-            perPoints.append((centercord,NWQ))
+            perPoints.append((centercord,NWQ,pt))
         else:
-            perPoints.append((ppp,NWQ))
+            perPoints.append((ppp,NWQ,pt))
     if doesItIntersect(index, NEQ,globaldata,walldata):
         centercord = getCentroidOfQuadrantManual(globaldata, NEQ)
-        # ppp = None
-        ppp = getPerpendicularPointManual(centercord,globaldata,True,NEQ)
+        ppp = None
+        # ppp = getPerpendicularPointManual(centercord,globaldata,True,NEQ)
         if ppp is None:
-            perPoints.append((centercord,NEQ))
+            perPoints.append((centercord,NEQ,pt))
         else:
-            perPoints.append((ppp,NEQ))
+            perPoints.append((ppp,NEQ,pt))
     if doesItIntersect(index, SWQ,globaldata,walldata):
         centercord = getCentroidOfQuadrantManual(globaldata, SWQ)
-        # ppp = None
-        ppp = getPerpendicularPointManual(centercord,globaldata,True,SWQ)
+        ppp = None
+        # ppp = getPerpendicularPointManual(centercord,globaldata,True,SWQ)
         if ppp is None:
-            perPoints.append((centercord,SWQ))
+            perPoints.append((centercord,SWQ,pt))
         else:
-            perPoints.append((ppp,SWQ))
+            perPoints.append((ppp,SWQ,pt))
     if doesItIntersect(index, SEQ,globaldata,walldata):
         centercord = getCentroidOfQuadrantManual(globaldata, SEQ)
-        # ppp = None
-        ppp = getPerpendicularPointManual(centercord,globaldata,True,SEQ)
+        ppp = None
+        # ppp = getPerpendicularPointManual(centercord,globaldata,True,SEQ)
         if ppp is None:
-            perPoints.append((centercord,SEQ))
+            perPoints.append((centercord,SEQ,pt))
         else:
-            perPoints.append((ppp,SEQ))
+            perPoints.append((ppp,SEQ,pt))
     return perPoints
 
 def getCentroidOfQuadrant(index,globaldata):
@@ -623,10 +632,11 @@ def doesItIntersect(idx, quadrant, globaldata, wallpoints):
                 polygonpts.append([float(item2.split(",")[0]), float(item2.split(",")[1])])
             polygontocheck = shapely.geometry.Polygon(polygonpts)
             response = polygontocheck.intersects(quadrantpoly)
+            response = True
             if response:
-                responselist.append(False)
-            else:
                 responselist.append(True)
+            else:
+                responselist.append(False)
     if True in responselist:
         return True
     else:
@@ -636,7 +646,6 @@ def convertToSuperNicePoints(quadrant,data):
     quadCheck = quadrant[1]
     finallist = []
     for itm in data:
-        finallist.append(itm)
         if quadrantContains(quadCheck,itm):
             finallist.append(itm)
         else:

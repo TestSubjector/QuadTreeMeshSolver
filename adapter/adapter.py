@@ -138,8 +138,16 @@ def main():
     splineList = []
 
     for itm in perPndList:
-        nbhPts = findNearestNeighbourWallPointsManual(itm[0],globaldata,wallPointsFlatten,wallPoints)
-        splineData = feederData(nbhPts,wallPoints)
+        wallPointCord = itm[2]
+        wallPointCurrent = getIndexFromPointTuple(wallPointCord, globaldata)
+        leftRight = convertIndexToPoints(getLeftandRightPoint(wallPointCurrent,globaldata),globaldata)
+        leftRight.insert(1,str(wallPointCord[0]) + "," + str(wallPointCord[1]))
+        # print(leftRight)
+        # nbhPts = findNearestNeighbourWallPointsManual(itm[0],globaldata,wallPointsFlatten,wallPoints)
+        
+        splineData = feederData(leftRight,wallPoints)
+        print(itm)
+        # print(splineData)
         splineList.append(splineData)
 
     try:
@@ -157,19 +165,32 @@ def main():
     print("Starting BSpline")
     for idx,itm in enumerate(perPndList): 
         data = splineList[idx]
-        newpts = bsplinegen.generateBSplineBetween(bsplineArray[int(data[2])],data[0],data[1],int(config.getConfig()["bspline"]["pointControl"]))
+        newpts = bsplinegen.generateBSplineBetween(bsplineArray[int(data[3])],data[0],data[1],int(config.getConfig()["bspline"]["pointControl"]))
         newpts = convertToSuperNicePoints(perPndList[idx],newpts)
         newpts = findNearestPoint(perPndList[idx][0],newpts)
-        if quadrantContains(perPndList[idx][1],newpts):
-            None
+        if newpts != False:
+            if quadrantContains(perPndList[idx][1],newpts):
+                None
+            printProgressBar(idx + 1, len(perPndList), prefix="Progress:", suffix="Complete", length=50)
+            try:
+                writingDict[data[4]] = writingDict[data[4]] + [newpts]
+            except KeyError:
+                writingDict[data[4]] = [newpts]
+            additionPts.append([newpts])
         else:
-            print("Noooo")
-        printProgressBar(idx + 1, len(perPndList), prefix="Progress:", suffix="Complete", length=50)
-        try:
-            writingDict[data[3]] = writingDict[data[3]] + [newpts]
-        except KeyError:
-            writingDict[data[3]] = [newpts]
-        additionPts.append([newpts])
+            data = splineList[idx]
+            newpts = bsplinegen.generateBSplineBetween(bsplineArray[int(data[3])],data[1],data[2],int(config.getConfig()["bspline"]["pointControl"]))
+            newpts = convertToSuperNicePoints(perPndList[idx],newpts)
+            newpts = findNearestPoint(perPndList[idx][0],newpts)
+            if newpts != False:
+                if quadrantContains(perPndList[idx][1],newpts):
+                    None
+                printProgressBar(idx + 1, len(perPndList), prefix="Progress:", suffix="Complete", length=50)
+                try:
+                    writingDict[data[5]] = writingDict[data[5]] + [newpts]
+                except KeyError:
+                    writingDict[data[5]] = [newpts]
+                additionPts.append([newpts])
     additionPts = list(itertools.chain.from_iterable(additionPts))
     save_obj(writingDict,"wall")
 
