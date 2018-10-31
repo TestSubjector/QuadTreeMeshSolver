@@ -126,7 +126,12 @@ def main():
         printProgressBar(idax + 1, len(adaptwall), prefix="Progress:", suffix="Complete", length=50)
         idx = getIndexFromPoint(str(itm[0] + "," + str(itm[1])), globaldata)
         perList = getPerpendicularPointsFromQuadrants(idx,globaldata)
-        perPndList = perPndList + perList
+        for itm in perList:
+            if quadrantContains(itm[1],itm[0]):
+                perPndList.append(itm)
+            else:
+                print("Warning Quadrant Point Mismatch")
+                print(itm)
 
     perPndList = list(set(perPndList))
 
@@ -152,9 +157,13 @@ def main():
     print("Starting BSpline")
     for idx,itm in enumerate(perPndList): 
         data = splineList[idx]
-        newpts = bsplinegen.generateBSplineBetween(bsplineArray[data[2]],data[0],data[1],int(config.getConfig()["bspline"]["pointControl"]))
+        newpts = bsplinegen.generateBSplineBetween(bsplineArray[int(data[2])],data[0],data[1],int(config.getConfig()["bspline"]["pointControl"]))
         newpts = convertToSuperNicePoints(perPndList[idx],newpts)
         newpts = findNearestPoint(perPndList[idx][0],newpts)
+        if quadrantContains(perPndList[idx][1],newpts):
+            None
+        else:
+            print("Noooo")
         printProgressBar(idx + 1, len(perPndList), prefix="Progress:", suffix="Complete", length=50)
         try:
             writingDict[data[3]] = writingDict[data[3]] + [newpts]

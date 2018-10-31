@@ -302,7 +302,7 @@ def feederData(wallpts,wallptData):
     wallpt = wallpts[0]
     for idx,itm in enumerate(wallptData):
         if wallpt in itm:
-            return [itm.index(wallpts[0]),itm.index(wallpts[1]),idx,wallpt]
+            return (itm.index(wallpts[0]),itm.index(wallpts[1]),idx)
 
 def distance(ax,ay,bx,by):
     return math.sqrt((ax - bx)**2 + (ay - by)**2)
@@ -332,7 +332,7 @@ def findNearestPoint(ptAtt,splineArray):
             dist = distcurr
             cord["x"] = itm[0]
             cord["y"] = itm[1]
-    return [cord["x"],cord["y"]]
+    return (cord["x"],cord["y"])
 
 def save_obj(obj, name ):
     with open(name + '.json', 'w') as f:
@@ -554,10 +554,15 @@ def getPerpendicularPointsFromQuadrants(index,globaldata):
     NEQ = getNorthEastQuadrant(index,globaldata)
     SWQ = getSouthWestQuadrant(index,globaldata)
     SEQ = getSouthEastQuadrant(index,globaldata)
+    if len(set(NWQ)) < 4 or len(set(NEQ)) < 4 or len(set(SEQ)) < 4 or len(set(SWQ)) < 4:
+        print("Warning point index: " + str(index) + " has same NW and SE bounding box")
+        exit()
+
     perPoints = []
     walldata = getWallPointArray(globaldata)
     if doesItIntersect(index, NWQ,globaldata,walldata):
         centercord = getCentroidOfQuadrantManual(globaldata, NWQ)
+        # ppp = None
         ppp = getPerpendicularPointManual(centercord,globaldata,True,NWQ)
         if ppp is None:
             perPoints.append((centercord,NWQ))
@@ -565,6 +570,7 @@ def getPerpendicularPointsFromQuadrants(index,globaldata):
             perPoints.append((ppp,NWQ))
     if doesItIntersect(index, NEQ,globaldata,walldata):
         centercord = getCentroidOfQuadrantManual(globaldata, NEQ)
+        # ppp = None
         ppp = getPerpendicularPointManual(centercord,globaldata,True,NEQ)
         if ppp is None:
             perPoints.append((centercord,NEQ))
@@ -572,6 +578,7 @@ def getPerpendicularPointsFromQuadrants(index,globaldata):
             perPoints.append((ppp,NEQ))
     if doesItIntersect(index, SWQ,globaldata,walldata):
         centercord = getCentroidOfQuadrantManual(globaldata, SWQ)
+        # ppp = None
         ppp = getPerpendicularPointManual(centercord,globaldata,True,SWQ)
         if ppp is None:
             perPoints.append((centercord,SWQ))
@@ -579,6 +586,7 @@ def getPerpendicularPointsFromQuadrants(index,globaldata):
             perPoints.append((ppp,SWQ))
     if doesItIntersect(index, SEQ,globaldata,walldata):
         centercord = getCentroidOfQuadrantManual(globaldata, SEQ)
+        # ppp = None
         ppp = getPerpendicularPointManual(centercord,globaldata,True,SEQ)
         if ppp is None:
             perPoints.append((centercord,SEQ))
@@ -628,8 +636,9 @@ def convertToSuperNicePoints(quadrant,data):
     quadCheck = quadrant[1]
     finallist = []
     for itm in data:
+        finallist.append(itm)
         if quadrantContains(quadCheck,itm):
-            None
-        else:
             finallist.append(itm)
+        else:
+            None
     return finallist
