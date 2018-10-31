@@ -162,15 +162,9 @@ def main():
             writingDict[data[3]] = [newpts]
         additionPts.append([newpts])
     additionPts = list(itertools.chain.from_iterable(additionPts))
-    with open("adapted.txt", "a+") as text_file:
-        text_file.writelines("1000 1000\n2000 2000\n")
-        for item1 in additionPts:
-            text_file.writelines(["%s " % item for item in item1])
-            text_file.writelines("\n")
-        text_file.writelines("1000 1000\n")
     save_obj(writingDict,"wall")
 
-    print("Writing remaining adapted points")
+    print("Writing adapted text")
 
     with open("adapted.txt", "a+") as text_file:
         text_file.writelines("3000 3000\n")
@@ -180,6 +174,11 @@ def main():
         text_file.writelines("3000 3000\n")
         text_file.writelines("1000 1000\n")
         for item1 in adaptdata:
+            text_file.writelines(["%s " % item for item in item1])
+            text_file.writelines("\n")
+        text_file.writelines("1000 1000\n")
+        text_file.writelines("2000 2000\n")
+        for item1 in additionPts:
             text_file.writelines(["%s " % item for item in item1])
             text_file.writelines("\n")
         text_file.writelines("1000 1000\n")
