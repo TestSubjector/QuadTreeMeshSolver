@@ -822,6 +822,28 @@ def wallConnectivityCheckNearest(globaldata):
         with open("adapted.txt", "a+") as text_file:
             text_file.writelines("1000 1000\n")   
 
+def wallConnectivityCheckSensor(globaldata):
+    madechanges = False
+    sensorBox = []
+    for idx,_ in enumerate(globaldata):
+        if idx > 0:
+            flag = getFlag(idx,globaldata)
+            if flag == 0:
+                xpos,xneg,_,_ = getFlags(idx,globaldata)
+                if xpos == 1 or xneg == 1:
+                    print(idx) 
+                    madechanges = True
+                    sensorBox.append(idx)
+    if madechanges == True:
+        with open("sensor_flag.dat", "w") as text_file:
+            for idx,itm in enumerate(globaldata):
+                if idx > 0:
+                    if idx in sensorBox:
+                        text_file.writelines("  " + str(idx) + "  1\n")
+                    else:
+                        text_file.writelines("  " + str(idx) + "  0\n")
+                   
+
 def interiorConnectivityCheck(globaldata):
     for idx,_ in enumerate(globaldata):
         if idx > 0:
