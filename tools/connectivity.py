@@ -1,7 +1,6 @@
 from core import *
 from config import getConfig
 
-
 def connectivityCheck(globaldata):
     for idx,itm in enumerate(globaldata):
         printProgressBar(
