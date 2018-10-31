@@ -859,7 +859,7 @@ def sparseNullifier(globaldata):
                         flag = getFlag(index,globaldata)
                         if flag == 0:
                             madechanges = True
-                            sensorBox.append(idx)
+                            sensorBox.append(index)
                 if xneg == 1:
                     getXnegPoints = getDWallXNegPoints(idx,globaldata)
                     for itm in getXnegPoints:
@@ -867,7 +867,7 @@ def sparseNullifier(globaldata):
                         flag = getFlag(index,globaldata)
                         if flag == 0:
                             madechanges = True
-                            sensorBox.append(idx)
+                            sensorBox.append(index)
     if madechanges == True:
         with open("sensor_flag.dat", "w") as text_file:
             for idx,itm in enumerate(globaldata):
