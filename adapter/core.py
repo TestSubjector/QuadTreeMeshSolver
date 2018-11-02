@@ -618,6 +618,10 @@ def getCentroidOfQuadrantManual(globaldata,quadrant):
     midy = midy / 2
     return midx,midy
 
+def getDepth(idx,globaldata):
+    depth = int(globaldata[idx][13])
+    return depth
+
 def doesItIntersect(idx, quadrant, globaldata, wallpoints):
     quadrantpoly = shapely.geometry.Polygon(quadrant)
     getPtx,getPty = getPoint(idx,globaldata)

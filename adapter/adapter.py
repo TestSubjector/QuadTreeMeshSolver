@@ -108,7 +108,13 @@ def main():
                 if xycord not in wallPointsFlatten:
                     adaptdata.append([xcord, ycord])
                 else:
-                    adaptwall.append([xcord, ycord])
+                    wallidx = getIndexFromPoint(xycord,globaldata)
+                    walldepth = getDepth(wallidx,globaldata)
+                    WALL_LIMIT = int(config.getConfig()["adapter"]["minWallAdaptDepth"])
+                    if walldepth >= WALL_LIMIT:
+                        adaptwall.append([xcord, ycord])
+                    else:
+                        adaptdata.append([xcord, ycord])
         elif int(adaptpoint[1]) == 2:
                 xcord = globaldata[int(adaptpoint[0])][1]
                 ycord = globaldata[int(adaptpoint[0])][2]
