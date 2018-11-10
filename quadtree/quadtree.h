@@ -222,4 +222,10 @@ void derefine(coords_t *derefined_list, int derefine_counter);
 quadtree_node_t *quadtree_parent_search(double x, double y);
 int derefine_search(coords_t *derefined_list, double x, double y, int derefine_counter);
 
+int foreign_flag;
+void centroidify(quadtree_node_t *node, coords_t *shape_list);
+void quadtree_foreignwalk(quadtree_node_t *root, void (*descent_foreign)(quadtree_node_t *node, coords_t *shape_list),
+                             void (*ascent)(quadtree_node_t *node), coords_t *shape_list);
+void descent_foreign(quadtree_node_t *node, coords_t *shape_list);                            
+
 #endif

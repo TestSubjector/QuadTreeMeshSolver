@@ -551,4 +551,45 @@ void descent_valley(quadtree_node_t *node)
   }
 }
 
+void quadtree_foreignwalk(quadtree_node_t *root, void (*descent_foreign)(quadtree_node_t *node, coords_t *shape_list),
+                             void (*ascent)(quadtree_node_t *node), coords_t *shape_list)
+{
+  if (root->nw != NULL)
+  {
+    quadtree_foreignwalk(root->nw, descent_foreign, ascent, shape_list);
+  }
+  if (root->ne != NULL)
+  {
+    quadtree_foreignwalk(root->ne, descent_foreign, ascent, shape_list);
+  }
+  if (root->sw != NULL)
+  {
+    quadtree_foreignwalk(root->sw, descent_foreign, ascent, shape_list);
+  }
+  if (root->se != NULL)
+  {
+    quadtree_foreignwalk(root->se, descent_foreign, ascent, shape_list);
+  }
+  (*descent_foreign)(root, shape_list);
+  (*ascent)(root);
+}
 
+void descent_foreign(quadtree_node_t *node, coords_t *shape_list)
+{
+  if (quadtree_node_isleaf(node))
+  {
+    int centroid_flag = 0;
+    for(int i = 0; i < shape_line_count; i++)
+    {
+      if(node->point->x == shape_list[i].x && node->point->y == shape_list[i].y)
+      {
+        centroid_flag = 1;
+        break;
+      }
+    }
+    if(centroid_flag != 1)
+    {
+      quadtree_node_reset(node);
+    }
+  }
+}

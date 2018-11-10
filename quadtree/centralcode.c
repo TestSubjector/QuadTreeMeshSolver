@@ -17,10 +17,11 @@ int shape_line_count = 0;
 int height_of_tree = 0;
 int wallpoint_insert_flag = 0;
 int insertion_success;
+int foreign_flag = 0;
 
 void main_tree(int initial_coord_length, coords_t *coords_list, coords_t *adapted_list, quadtree_node_t *leaf_array)
 {
-    tree = quadtree_new(-10, -10, 10, 10);
+    tree = quadtree_new(-15, -15, 15, 15);
     if (tree == NULL)
     {
         printf("\n ERROR : Memory allocation to the main quad_tree was unsuccessful");
@@ -83,6 +84,10 @@ void main_tree(int initial_coord_length, coords_t *coords_list, coords_t *adapte
 
     // quadtree_refinementwalk(tree->root, descent_refinement, ascent);
     // quadtree_refinementwalk(tree->root, descent_refinement, ascent);
+
+    if(foreign_flag != 0)
+        centroidify(tree->root, shape_list);
+
     quadtree_walk(tree->root, descent, ascent);
     printf("\n Max Depth of tree is %d", maxDepth(tree->root));
 
@@ -142,7 +147,7 @@ void main_tree(int initial_coord_length, coords_t *coords_list, coords_t *adapte
                 else
                 {
                     derefine_counter = 0;
-                    derefined_list = malloc(sizeof(coords_t) * (MAX/10));
+                    derefined_list = malloc(sizeof(coords_t) * (MAX));
                     wallpoint_insert_flag = 2; 
                 }
                 continue;
