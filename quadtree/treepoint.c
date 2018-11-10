@@ -20,7 +20,7 @@ void quadtree_point_free(quadtree_point_t *point)
 
 void centroidify(quadtree_node_t *node, coords_t *shape_list)
 {
-    quadtree_foreignwalk(node, descent, ascent, shape_list);
+    quadtree_foreignwalk(node, descent_foreign, ascent, shape_list);
 }
 
 void derefine(coords_t *derefined_list, int derefine_counter)

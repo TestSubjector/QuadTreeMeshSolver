@@ -589,7 +589,11 @@ void descent_foreign(quadtree_node_t *node, coords_t *shape_list)
     }
     if(centroid_flag != 1)
     {
-      quadtree_node_reset(node);
+      node->point = NULL;
+    }
+    else
+    {
+      // printf("0\n");
     }
   }
 }

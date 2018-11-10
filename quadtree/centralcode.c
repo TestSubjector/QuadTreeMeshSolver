@@ -17,9 +17,9 @@ int shape_line_count = 0;
 int height_of_tree = 0;
 int wallpoint_insert_flag = 0;
 int insertion_success;
-int foreign_flag = 0;
+int foreign_flag = 1;
 
-void main_tree(int initial_coord_length, coords_t *coords_list, coords_t *adapted_list, quadtree_node_t *leaf_array)
+void main_tree(int initial_coord_length, coords_t *coords_list, coords_t *adapted_list, coords_t *shape_list, quadtree_node_t *leaf_array)
 {
     tree = quadtree_new(-15, -15, 15, 15);
     if (tree == NULL)
@@ -62,6 +62,10 @@ void main_tree(int initial_coord_length, coords_t *coords_list, coords_t *adapte
     }
     height_of_tree = maxDepth(tree->root);
 
+    if(foreign_flag != 0)
+    { 
+        centroidify(tree->root, shape_list);
+    }
     // quadtree_valleywalk(tree->root, descent_valley, ascent);
 
     // free(leaf_array);
@@ -85,9 +89,6 @@ void main_tree(int initial_coord_length, coords_t *coords_list, coords_t *adapte
     // quadtree_refinementwalk(tree->root, descent_refinement, ascent);
     // quadtree_refinementwalk(tree->root, descent_refinement, ascent);
 
-    if(foreign_flag != 0)
-        centroidify(tree->root, shape_list);
-
     quadtree_walk(tree->root, descent, ascent);
     printf("\n Max Depth of tree is %d", maxDepth(tree->root));
 
@@ -102,7 +103,7 @@ void main_tree(int initial_coord_length, coords_t *coords_list, coords_t *adapte
         int derefine_counter;
         quadtree_node_t *refined_node = NULL;
         
-        for(j= 0; j < adapted_line_count; j++)
+        for(j = 0; j < adapted_line_count; j++)
         {
             if(adapted_list[j].x == 1000 && adapted_list[j].y == 1000)
             {
@@ -242,11 +243,12 @@ int main(int argc, char *argv[])
     
     // printf("\n %d", adapted_line_count);
 
-    main_tree(line_count, coords_list, adapted_list, leaf_array);
+    main_tree(line_count, coords_list, adapted_list, shape_list, leaf_array);
 
     printf("\nQuadtree_t: %ld\n", sizeof(quadtree_t));
     printf("\n");
     free(coords_list);
     free(adapted_list);
+    free(shape_list);
     return 0;
 }
