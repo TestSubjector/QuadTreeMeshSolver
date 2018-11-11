@@ -45,6 +45,11 @@ void main_tree(int initial_coord_length, coords_t *coords_list, coords_t *adapte
         printf("\nStatus: Please note that it is being assumed that the input file has multiple geometries.");
     }
 
+    if(foreign_flag != 0)
+    { 
+        centroidify(tree->root, shape_list);
+    }
+
     quadtree_leafnodes(tree->root, leaf_array);
 
     for (i = 0; i < leaf_iter; i++)
@@ -62,10 +67,7 @@ void main_tree(int initial_coord_length, coords_t *coords_list, coords_t *adapte
     }
     height_of_tree = maxDepth(tree->root);
 
-    if(foreign_flag != 0)
-    { 
-        centroidify(tree->root, shape_list);
-    }
+    
     // quadtree_valleywalk(tree->root, descent_valley, ascent);
 
     // free(leaf_array);

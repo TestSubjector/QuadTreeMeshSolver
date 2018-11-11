@@ -249,20 +249,14 @@ void neighbourset(int append, char *filename, double xcord, double ycord)
         coords_t neighbour_point;
         neighbour_point.x = xcord;
         neighbour_point.y = ycord;
-        if (notaero_blank(line_count, coords_list, main_coord, neighbour_point))
+
+        neighbour_counter++;
+        if (fp != NULL)
         {
-            neighbour_counter++;
-            if (fp != NULL)
-            {
-                fputs(xcordstr, fp);
-                fputs(",", fp);
-                fputs(ycordstr, fp);
-                fputs("\t", fp);
-            }
-        }
-        else
-        {
-            // printf("\n Non-Aero blanked");
+            fputs(xcordstr, fp);
+            fputs(",", fp);
+            fputs(ycordstr, fp);
+            fputs("\t", fp);
         }
     }
     fclose(fp);

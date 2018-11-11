@@ -27,7 +27,11 @@ int pnpoly(int nvert, coords_t *shape_list, double testx, double testy)
     // The leaf under observation stores one of the input points, so no blanking. Goes through all input points
     for (i = 0; i < nvert; i++)
     {
-        if (coords_list[i].y == testy && coords_list[i].x == testx)
+        if (coords_list[i].y == testy && coords_list[i].x == testx && foreign_flag == 0)
+        {
+            return c;
+        }
+        else if (shape_list[i].y == testy && shape_list[i].x == testx && foreign_flag == 1)
         {
             return c;
         }
@@ -117,7 +121,7 @@ int doIntersect(coords_t p1, coords_t q1, coords_t p2, coords_t q2)
     return 0; // Doesn't fall in any of the above cases
 }
 
-int notaero_blank(int nvert, coords_t *coords_list, coords_t main_point, coords_t neighbour_point)
+int notaero_blank(int nvert, coords_t *polygon_list, coords_t main_point, coords_t neighbour_point)
 {
     int i, j, k, l;
     // printf(" \n It's running atleast");
@@ -132,10 +136,10 @@ int notaero_blank(int nvert, coords_t *coords_list, coords_t main_point, coords_
     // Point on boundary, therefore not blankable point
     for (i = 0; i < nvert - 1; i++)
     {
-        if ((main_point.x == coords_list[i].x && main_point.y == coords_list[i].y ||
-             neighbour_point.x == coords_list[i + 1].x && neighbour_point.y == coords_list[i + 1].y ||
-             main_point.x == coords_list[i + 1].x && main_point.y == coords_list[i + 1].y ||
-             neighbour_point.x == coords_list[i].x && neighbour_point.y == coords_list[i].y))
+        if ((main_point.x == polygon_list[i].x && main_point.y == polygon_list[i].y ||
+             neighbour_point.x == polygon_list[i + 1].x && neighbour_point.y == polygon_list[i + 1].y ||
+             main_point.x == polygon_list[i + 1].x && main_point.y == polygon_list[i + 1].y ||
+             neighbour_point.x == polygon_list[i].x && neighbour_point.y == polygon_list[i].y))
         {   
             // if(checker == 1)
             // {
@@ -143,14 +147,14 @@ int notaero_blank(int nvert, coords_t *coords_list, coords_t main_point, coords_
             // }
             for (j = 0; j < nvert; j++)
             {
-                if (main_point.x == coords_list[j].x && main_point.y == coords_list[j].y)
+                if (main_point.x == polygon_list[j].x && main_point.y == polygon_list[j].y)
                 {
                     break;
                 }
             }
             for (k = 0; k < nvert; k++)
             {
-                if (neighbour_point.x == coords_list[k].x && neighbour_point.y == coords_list[k].y)
+                if (neighbour_point.x == polygon_list[k].x && neighbour_point.y == polygon_list[k].y)
                 {
                     break;
                 }
@@ -172,7 +176,7 @@ int notaero_blank(int nvert, coords_t *coords_list, coords_t main_point, coords_
         else
         {
             // When main_point or neighbouring_point is not a wall point
-            if (doIntersect(main_point, neighbour_point, coords_list[i], coords_list[i + 1]))
+            if (doIntersect(main_point, neighbour_point, polygon_list[i], polygon_list[i + 1]))
             {
                 return 0;
             }
