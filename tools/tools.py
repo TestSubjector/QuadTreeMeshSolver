@@ -58,20 +58,22 @@ def main():
         print("Type 'full' to perform one full refinement")
         print("Type 'clean' to cleanse the soul of adapted.txt")
         print("Type 'old' to convert preprocessorfile to old format")
+        print("Type 'bad2' to print all points with 2 in it's split connectivity")
+        print("Type 'bad1' to print all points with 1 in it's split connectivity")
         ptidx = input("Which point do you want to fix? ")
         if ptidx == "exit!":
             exit()
         elif ptidx == "wcc":
-            globaldata = connectivity.connectivityCheck(globaldata)
+            globaldata = connectivity.connectivityCheck(globaldata, True, False)
             core.wallConnectivityCheck(globaldata)
         elif ptidx == "wcc!":
-            globaldata = connectivity.connectivityCheck(globaldata)
+            globaldata = connectivity.connectivityCheck(globaldata, True, False)
             core.wallConnectivityCheckNearest(globaldata)
         elif ptidx == "wcc!!":
-            globaldata = connectivity.connectivityCheck(globaldata)
+            globaldata = connectivity.connectivityCheck(globaldata, True, False)
             core.wallConnectivityCheckSensor(globaldata)    
         elif ptidx == "wcc!!!":
-            globaldata = connectivity.connectivityCheck(globaldata)
+            globaldata = connectivity.connectivityCheck(globaldata, True, False)
             core.sparseNullifier(globaldata)  
         elif ptidx == "icc":
             core.interiorConnectivityCheck(globaldata)
@@ -85,6 +87,12 @@ def main():
             core.fullRefine(globaldata)
         elif ptidx == "old":
             core.oldMode(globaldata)
+        elif ptidx == "bad2":
+            globaldata = connectivity.connectivityCheck(globaldata, True, True)
+            core.printBadness(2,globaldata)    
+        elif ptidx == "bad1":
+            globaldata = connectivity.connectivityCheck(globaldata, True, True)
+            core.printBadness(1,globaldata)   
         isPointIndex = False
         try:
             ptidx = int(ptidx)

@@ -1186,3 +1186,13 @@ def oldMode(globaldata):
             item1.pop(14)
             text_file.writelines(["%s " % item for item in item1])
             text_file.writelines("\n") 
+
+def printBadness(val, globaldata):
+    for idx,_ in enumerate(globaldata):
+        if idx > 0:
+            flag = getFlag(idx,globaldata)
+            if flag == 1:
+                xpos,xneg,ypos,yneg = getFlags(idx,globaldata)
+                if xpos == val or xneg == val or ypos == val or yneg == val:
+                    print(idx)
+    

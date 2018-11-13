@@ -2,7 +2,7 @@ import core
 from config import getConfig
 import progress
 
-def connectivityCheck(globaldata):
+def connectivityCheck(globaldata, wallouter = True, interior = False):
     for idx,itm in enumerate(globaldata):
         progress.printProgressBar(
             idx,
@@ -12,12 +12,13 @@ def connectivityCheck(globaldata):
             length=50,
         )
         if(idx >0):
-            if core.getFlag(idx,globaldata) == 0 or core.getFlag(idx,globaldata) == 2:
+            if (core.getFlag(idx,globaldata) == 0 or core.getFlag(idx,globaldata) == 2) and wallouter == True:
                 result = connectivityCheckWallandOuterPoint(idx,globaldata)
                 globaldata = core.setFlags(idx,globaldata,result)
-            # else:
-            #     result = connectivityCheckInteriorPoint(idx,globaldata)
-            #     globaldata = setFlags(idx,globaldata,result)
+            else:
+                if interior == True:
+                    result = connectivityCheckInteriorPoint(idx,globaldata)
+                    globaldata = core.setFlags(idx,globaldata,result)
     return globaldata
 
 
