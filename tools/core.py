@@ -955,19 +955,6 @@ def findNearestNeighbourWallPoints(idx,globaldata,wallptData,wallptDataOr):
     #     leastidx,leastidx2 = leastidx2,leastidx
     return convertIndexToPoints([leastidx,leastidx2],globaldata)
 
-def angle(x1, y1, x2, y2, x3, y3):
-    a = np.array([x1, y1])
-    b = np.array([x2, y2])
-    c = np.array([x3, y3])
-
-    ba = a - b
-    bc = c - b
-
-    cosine_angle = np.dot(ba, bc) / (np.linalg.norm(ba) * np.linalg.norm(bc))
-    angle = np.arccos(cosine_angle)
-
-    return np.degrees(angle)
-
 
 def getNearestProblemPoint(idx,globaldata):
     xpos = getDWallXPosPoints(idx,globaldata)
@@ -1020,6 +1007,14 @@ def getNormals(idx,globaldata):
     nx = globaldata[idx][11]
     ny = globaldata[idx][12]
     return nx,ny
+
+def getWallEndPoints(globaldata):
+    wallIndex = getWallPointArrayIndex(globaldata)
+    endPoints = []
+    for itm in wallIndex:
+        endPoints.append(int(itm[-1]))
+    return endPoints
+
 
 def calculateNormalConditionValues(idx,globaldata,nxavg,nyavg):
     nbhs = convertIndexToPoints(getNeighbours(idx,globaldata),globaldata)
@@ -1195,4 +1190,3 @@ def printBadness(val, globaldata):
                 xpos,xneg,ypos,yneg = getFlags(idx,globaldata)
                 if xpos == val or xneg == val or ypos == val or yneg == val:
                     print(idx)
-    

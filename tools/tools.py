@@ -48,6 +48,7 @@ def main():
 
     while True:
         print("Type 'exit! to quit (Does not save changes).")
+        print("Type 'exit to quit (Saves changes).")
         print("Type 'wcc' to run Wall Connectivity Check on all Wall Points.")
         print("Type 'wcc!' to run Wall Connectivity Check on all Wall Points and return nearest point.")
         print("Type 'wcc!!' to run Wall Connectivity Check on all Wall Points and generate a corresponding sensor file.")
@@ -63,6 +64,8 @@ def main():
         ptidx = input("Which point do you want to fix? ")
         if ptidx == "exit!":
             exit()
+        if ptidx == "exit":
+            break
         elif ptidx == "wcc":
             globaldata = connectivity.connectivityCheck(globaldata, True, False)
             core.wallConnectivityCheck(globaldata)
@@ -139,6 +142,7 @@ def main():
             print("(7) Exit")
             print("(8) Exit without saving any changes")
             print("(9) Go Back")
+            print("(10) Increase connectivity set to 3")
             whatkind = int(input("What option do you want to select? "))
             if whatkind == 1:
                 # tris = balance.getNeighboursFromTriangle(ptidx,globaldata,polydata)
@@ -173,6 +177,11 @@ def main():
                 exit()
             elif whatkind == 9:
                 None
+            elif whatkind == 10:
+                tris = core.getNeighbours(ptidx,globaldata)
+                tris = core.getAeroPointsFromSet(ptidx,tris,globaldata,wallpointsData)
+                tris = core.convertPointsToIndex(tris,globaldata)
+                globaldata = balance.forcePointsToFix(ptidx,tris,globaldata)
             else:
                 break
 

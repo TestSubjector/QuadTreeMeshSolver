@@ -1,5 +1,7 @@
 import argparse
 from progress import printProgressBar
+import sys
+sys.path.append('../')
 import core
 import copy
 import logging
