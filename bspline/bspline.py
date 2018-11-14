@@ -74,7 +74,14 @@ def main():
     for idx,itm in enumerate(problempts): 
         data = core.feederData(itm,wallPts)
         if config.getConfig()["bspline"]["polygon"] == False:
-            newpts = bsplinegen.generateBSplineBetween(bsplineArray[data[2]],data[0],data[1],int(config.getConfig()["bspline"]["pointControl"]))
+            if config.getConfig()["global"]["wallPointOrientation"] == "ccw":
+                newpts = bsplinegen.generateBSplineBetween(bsplineArray[data[2]],data[0],data[1],int(config.getConfig()["bspline"]["pointControl"]))
+            else:
+                if data[0] == 1:
+                    newpts = bsplinegen.generateBSplineBetween(bsplineArray[data[2]],data[1],data[0],int(config.getConfig()["bspline"]["pointControl"]))
+                else:
+                    newpts = bsplinegen.generateBSplineBetween(bsplineArray[data[2]],data[0],data[1],int(config.getConfig()["bspline"]["pointControl"]))
+            newpts = bsplinegen.getPointsOnlyInQuadrant(newpts,bsplineArray[data[2]][int(data[0])],bsplineArray[data[2]][int(data[1])],globaldata)
             newpts = core.findNearestPoint(perpendicularpts[idx],newpts)
         else:
             newpts = list(perpendicularpts[idx])

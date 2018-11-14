@@ -6,6 +6,9 @@ from scipy.interpolate import splprep, splev
 from scipy import spatial
 import config
 import core
+import shapely.geometry
+from shapely import wkt
+from shapely.ops import linemerge, unary_union, polygonize
 
 # cv: Input array of the body
 # point_division: Number of new points required between given point indexes
@@ -113,6 +116,18 @@ def generateBSplineBetween(cv,index1,index2, num_points = 20):
     new_points.pop(0)
     new_points.pop(-1)
     return new_points
+
+def getPointsOnlyInQuadrant(ptslist,wall1,wall2,globaldata):
+    goodpoints = []
+    # quad1 = core.getBoundingBoxOfQuadrant(wall1,globaldata)
+    idx1 = core.getIndexFromPoint(str(wall1[0]) + "," + str(wall1[1]),globaldata)
+    idx2 = core.getIndexFromPoint(str(wall2[0]) + "," + str(wall2[1]),globaldata)
+    quad1 = core.getBoundingBoxOfQuadrant(idx1,globaldata)
+    quad2 = core.getBoundingBoxOfQuadrant(idx2,globaldata)
+    for itm in ptslist:
+        if core.quadrantContains(quad1,itm):
+            goodpoints.append(itm)
+    return goodpoints
 
 def convertPointsToKdTree(points):
     return spatial.cKDTree(list(zip(points[0].ravel(), points[1].ravel())))

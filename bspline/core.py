@@ -884,3 +884,159 @@ def angle(x1, y1, x2, y2, x3, y3):
     angle = np.arccos(cosine_angle)
 
     return np.degrees(angle)
+
+def quadrantContains(quadrant,pt):
+    quadpoly = shapely.geometry.Polygon(quadrant)
+    ptpoly = shapely.geometry.Point(pt)
+    if quadpoly.contains(ptpoly):
+        return True
+    else:
+        return False
+
+def quadrantContainsFaster(quadpoly,pt):
+    ptpoly = shapely.geometry.Point(pt)
+    if quadpoly.contains(ptpoly):
+        return True
+    else:
+        return False
+
+def getBoundingBoxOfQuadrant(index,globaldata):
+    toplx = float(globaldata[index][15])
+    toply = float(globaldata[index][16])
+    bottomrx = float(globaldata[index][17])
+    bottomry = float(globaldata[index][18])
+    toprx = bottomrx
+    topry = toply
+    bottomlx = toplx
+    bottomly = bottomry
+    topl = (toplx,toply)
+    topr = (toprx,topry)
+    bottoml = (bottomlx,bottomly)
+    bottomr = (bottomrx,bottomry)
+    return (topl,topr,bottomr,bottoml)
+
+def getNorthWestQuadrant(index,globaldata):
+    box = getBoundingBoxOfQuadrant(index,globaldata)
+    midx,midy = getCentroidOfQuadrant(index,globaldata)
+    topl = box[0]
+    bottomr = (midx,midy)
+    topr = (bottomr[0],topl[1])
+    bottoml = (topl[0],bottomr[1])
+    return (topl,topr,bottomr,bottoml)
+
+def getNorthEastQuadrant(index,globaldata):
+    box = getBoundingBoxOfQuadrant(index,globaldata)
+    midx,midy = getCentroidOfQuadrant(index,globaldata)
+    topr = box[1]
+    bottoml = (midx,midy)
+    topl = (bottoml[0],topr[1])
+    bottomr = (topr[0],bottoml[1])
+    return (topl,topr,bottomr,bottoml)
+
+def getSouthWestQuadrant(index,globaldata):
+    box = getBoundingBoxOfQuadrant(index,globaldata)
+    midx,midy = getCentroidOfQuadrant(index,globaldata)
+    bottoml = box[3]
+    topr = (midx,midy)
+    topl = (bottoml[0],topr[1])
+    bottomr = (topr[0],bottoml[1])
+    return (topl,topr,bottomr,bottoml)
+
+def getSouthEastQuadrant(index,globaldata):
+    box = getBoundingBoxOfQuadrant(index,globaldata)
+    midx,midy = getCentroidOfQuadrant(index,globaldata)
+    bottomr = box[2]
+    topl = (midx,midy)
+    topr = (bottomr[0],topl[1])
+    bottoml = (topl[0],bottomr[1])
+    return (topl,topr,bottomr,bottoml)
+
+def getPerpendicularPointsFromQuadrants(index,globaldata):
+    NWQ = getNorthWestQuadrant(index,globaldata)
+    NEQ = getNorthEastQuadrant(index,globaldata)
+    SWQ = getSouthWestQuadrant(index,globaldata)
+    SEQ = getSouthEastQuadrant(index,globaldata)
+    ptx,pty = getPoint(index,globaldata)
+    pt = (ptx,pty)
+    if len(set(NWQ)) < 4 or len(set(NEQ)) < 4 or len(set(SEQ)) < 4 or len(set(SWQ)) < 4:
+        print("Warning point index: " + str(index) + " has same NW and SE bounding box")
+        exit()
+
+    perPoints = []
+    walldata = getWallPointArray(globaldata)
+    if doesItIntersect(index, NWQ,globaldata,walldata):
+        centercord = getCentroidOfQuadrantManual(globaldata, NWQ)
+        ppp = None
+        # ppp = getPerpendicularPointManual(centercord,globaldata,True,NWQ)
+        if ppp is None:
+            perPoints.append((centercord,NWQ,pt))
+        else:
+            perPoints.append((ppp,NWQ,pt))
+    if doesItIntersect(index, NEQ,globaldata,walldata):
+        centercord = getCentroidOfQuadrantManual(globaldata, NEQ)
+        ppp = None
+        # ppp = getPerpendicularPointManual(centercord,globaldata,True,NEQ)
+        if ppp is None:
+            perPoints.append((centercord,NEQ,pt))
+        else:
+            perPoints.append((ppp,NEQ,pt))
+    if doesItIntersect(index, SWQ,globaldata,walldata):
+        centercord = getCentroidOfQuadrantManual(globaldata, SWQ)
+        ppp = None
+        # ppp = getPerpendicularPointManual(centercord,globaldata,True,SWQ)
+        if ppp is None:
+            perPoints.append((centercord,SWQ,pt))
+        else:
+            perPoints.append((ppp,SWQ,pt))
+    if doesItIntersect(index, SEQ,globaldata,walldata):
+        centercord = getCentroidOfQuadrantManual(globaldata, SEQ)
+        ppp = None
+        # ppp = getPerpendicularPointManual(centercord,globaldata,True,SEQ)
+        if ppp is None:
+            perPoints.append((centercord,SEQ,pt))
+        else:
+            perPoints.append((ppp,SEQ,pt))
+    return perPoints
+
+def getCentroidOfQuadrant(index,globaldata):
+    quadrant = getBoundingBoxOfQuadrant(index,globaldata)
+    midx = quadrant[0][0] + quadrant[2][0]
+    midx = midx / 2
+    midy = quadrant[0][1] + quadrant[2][1]
+    midy = midy / 2
+    return midx,midy
+
+def getCentroidOfQuadrantManual(globaldata,quadrant):
+    midx = quadrant[0][0] + quadrant[2][0]
+    midx = midx / 2
+    midy = quadrant[0][1] + quadrant[2][1]
+    midy = midy / 2
+    return midx,midy
+
+def getDepth(idx,globaldata):
+    depth = int(globaldata[idx][13])
+    return depth
+
+def doesItIntersect(idx, quadrant, globaldata, wallpoints):
+    quadrantpoly = shapely.geometry.Polygon(quadrant)
+    getPtx,getPty = getPoint(idx,globaldata)
+    pttocheck = shapely.geometry.Point([getPtx,getPty])
+    responselist = []
+    if quadrantpoly.contains(pttocheck):
+        responselist.append(False)
+    else:
+        for item in wallpoints:
+            polygonpts = []
+            for item2 in item:
+                polygonpts.append([float(item2.split(",")[0]), float(item2.split(",")[1])])
+            polygontocheck = shapely.geometry.Polygon(polygonpts)
+            response = polygontocheck.intersects(quadrantpoly)
+            response = True
+            if response:
+                responselist.append(True)
+            else:
+                responselist.append(False)
+    if True in responselist:
+        return True
+    else:
+        return False
