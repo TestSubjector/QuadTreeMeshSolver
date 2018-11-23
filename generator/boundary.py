@@ -28,7 +28,7 @@ def detectOuter(hashtable, globaldata):
                 1, currentcord, currentneighbours
             )
             try:
-                currentcord = getFarthestPoint(currentneighbours)
+                leftcord = getFarthestPoint(currentneighbours)
                 # xvals = getXCordNeighbours(currentneighbours)
                 # currentnewneighbours = []
                 # for index, item in enumerate(xvals):
@@ -49,7 +49,7 @@ def detectOuter(hashtable, globaldata):
                 2, currentcord, currentneighbours
             )
             try:
-                currentcord = getFarthestPoint(currentneighbours)
+                leftcord = getFarthestPoint(currentneighbours)
                 # yvals = getYCordNeighbours(currentneighbours)
                 # currentnewneighbours = []
                 # for index, item in enumerate(yvals):
@@ -70,7 +70,7 @@ def detectOuter(hashtable, globaldata):
                 3, currentcord, currentneighbours
             )
             try:
-                currentcord = getFarthestPoint(currentneighbours)
+                leftcord = getFarthestPoint(currentneighbours)
                 # xvals = getXCordNeighbours(currentneighbours)
                 # currentnewneighbours = []
                 # for index, item in enumerate(xvals):
@@ -90,7 +90,7 @@ def detectOuter(hashtable, globaldata):
                 4, currentcord, currentneighbours
             )
             try:
-                currentcord = getFarthestPoint(currentneighbours)
+                leftcord = getFarthestPoint(currentneighbours)
                 # yvals = getYCordNeighbours(currentneighbours)
                 # currentnewneighbours = []
                 # for index, item in enumerate(yvals):
