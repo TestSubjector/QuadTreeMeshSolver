@@ -129,70 +129,117 @@ def isPositive(val):
 
 def getBiggestXBiggestY(list):
     newlist = []
+    maxCurr = 0
+    currIdx = 0
     for item in list:
         if (
             isPositive(float(item.split(",")[0])) == True
             and isPositive(float(item.split(",")[1])) == True
         ):
             newlist.append(item)
-    getBiggestX = max(getXCordNeighbours(newlist))
-    templist = []
-    for item in newlist:
-        if float((item.split(",")[0])) == getBiggestX:
-            templist.append(item)
-    getBiggestY = max(getYCordNeighbours(templist))
-    return str(getBiggestX) + "," + str(getBiggestY)
+    for itm in newlist:
+        itmx = float(itm.split(",")[0])
+        itmy = float(itm.split(",")[1])
+        itmx = itmx * itmx
+        itmy = itmy * itmy
+        itmdist = (itmx + itmy) ** 0.5
+        if maxCurr < itmdist:
+            maxCurr = itmdist
+            currIdx = itm
+    # getBiggestX = max(getXCordNeighbours(newlist))
+    # templist = []
+    # for item in newlist:
+    #     if float((item.split(",")[0])) == getBiggestX:
+    #         templist.append(item)
+    # getBiggestY = max(getYCordNeighbours(templist))
+    return currIdx
 
 
 def getSmallestXBiggestY(list):
     newlist = []
+    maxCurr = 0
+    currIdx = 0
     for item in list:
         if (
             isPositive(float(item.split(",")[0])) == False
             and isPositive(float(item.split(",")[1])) == True
         ):
             newlist.append(item)
-    getSmallestX = min(getXCordNeighbours(newlist))
-    templist = []
-    for item in newlist:
-        if float((item.split(",")[0])) == getSmallestX:
-            templist.append(item)
-    getBiggestY = max(getYCordNeighbours(templist))
-    return str(getSmallestX) + "," + str(getBiggestY)
+    for itm in newlist:
+        itmx = float(itm.split(",")[0])
+        itmy = float(itm.split(",")[1])
+        itmx = itmx * itmx
+        itmy = itmy * itmy
+        itmdist = (itmx + itmy) ** 0.5
+        if maxCurr < itmdist:
+            maxCurr = itmdist
+            currIdx = itm
+    # getSmallestX = min(getXCordNeighbours(newlist))
+    # templist = []
+    # for item in newlist:
+        # if float((item.split(",")[0])) == getSmallestX:
+            # templist.append(item)
+    # getBiggestY = max(getYCordNeighbours(templist))
+    # return str(getSmallestX) + "," + str(getBiggestY)
+    return currIdx
 
 
 def getBiggestXSmallestY(list):
     newlist = []
+    maxCurr = 0
+    currIdx = 0
     for item in list:
         if (
             isPositive(float(item.split(",")[0])) == True
             and isPositive(float(item.split(",")[1])) == False
         ):
             newlist.append(item)
-    getBiggestX = max(getXCordNeighbours(newlist))
-    templist = []
-    for item in newlist:
-        if float((item.split(",")[0])) == getBiggestX:
-            templist.append(item)
-    getSmallestY = min(getYCordNeighbours(templist))
-    return str(getBiggestX) + "," + str(getSmallestY)
+    for itm in newlist:
+        itmx = float(itm.split(",")[0])
+        itmy = float(itm.split(",")[1])
+        itmx = itmx * itmx
+        itmy = itmy * itmy
+        itmdist = (itmx + itmy) ** 0.5
+        if maxCurr < itmdist:
+            maxCurr = itmdist
+            currIdx = itm
+    # getBiggestX = max(getXCordNeighbours(newlist))
+    # templist = []
+    # for item in newlist:
+        # if float((item.split(",")[0])) == getBiggestX:
+            # templist.append(item)
+    # getSmallestY = min(getYCordNeighbours(templist))
+    # return str(getBiggestX) + "," + str(getSmallestY)
+    return currIdx
 
 
 def getSmallestXSmallestY(list):
     newlist = []
+    maxCurr = 0
+    currIdx = 0
     for item in list:
         if (
             isPositive(float(item.split(",")[0])) == False
             and isPositive(float(item.split(",")[1])) == False
         ):
             newlist.append(item)
-    getBiggestX = min(getXCordNeighbours(newlist))
-    templist = []
-    for item in newlist:
-        if float((item.split(",")[0])) == getBiggestX:
-            templist.append(item)
-    getSmallestY = min(getYCordNeighbours(templist))
-    return str(getBiggestX) + "," + str(getSmallestY)
+    for itm in newlist:
+        itmx = float(itm.split(",")[0])
+        itmy = float(itm.split(",")[1])
+        itmx = itmx * itmx
+        itmy = itmy * itmy
+        itmdist = (itmx + itmy) ** 0.5
+        if maxCurr < itmdist:
+            maxCurr = itmdist
+            currIdx = itm
+    # getBiggestX = min(getXCordNeighbours(newlist))
+    # templist = []
+    # for item in newlist:
+    #     if float((item.split(",")[0])) == getBiggestX:
+    #         templist.append(item)
+    # getSmallestY = min(getYCordNeighbours(templist))
+    # return str(getBiggestX) + "," + str(getSmallestY)
+    return currIdx
 
 
 def getNeighboursDirectional(direction, maincord, list):
@@ -362,3 +409,19 @@ def perpendicularDistance(pta, ptb, main_point):
 def chunks(l, n):
     for i in range(0, len(l), n):
         yield l[i : i + n]
+
+def distFromOrigin(pt):
+    ptx = pt.split(",")[0]
+    pty = pt.split(",")[1]
+    dist = ((ptx * ptx) + (pty * pty)) ** 0.5
+    return dist
+
+def getFarthestPoint(listpts):
+    currentdist = 0
+    currentpt = 0
+    for itm in listpts:
+        dist = distFromOrigin(itm)
+        if dist > currentdist:
+            currentdist = dist
+            currentpt = itm
+    return currentpt

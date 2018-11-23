@@ -28,13 +28,14 @@ def detectOuter(hashtable, globaldata):
                 1, currentcord, currentneighbours
             )
             try:
-                xvals = getXCordNeighbours(currentneighbours)
-                currentnewneighbours = []
-                for index, item in enumerate(xvals):
-                    if item == min(xvals):
-                        currentnewneighbours.append(currentneighbours[index])
-                currentYCords = getYCordNeighbours(currentneighbours)
-                leftcord = currentneighbours[currentYCords.index(max(currentYCords))]
+                currentcord = getFarthestPoint(currentneighbours)
+                # xvals = getXCordNeighbours(currentneighbours)
+                # currentnewneighbours = []
+                # for index, item in enumerate(xvals):
+                #     if item == min(xvals):
+                #         currentnewneighbours.append(currentneighbours[index])
+                # currentYCords = getYCordNeighbours(currentneighbours)
+                # leftcord = currentneighbours[currentYCords.index(max(currentYCords))]
                 # print(leftcord)
             except Exception:
                 None
@@ -48,13 +49,14 @@ def detectOuter(hashtable, globaldata):
                 2, currentcord, currentneighbours
             )
             try:
-                yvals = getYCordNeighbours(currentneighbours)
-                currentnewneighbours = []
-                for index, item in enumerate(yvals):
-                    if item == min(yvals):
-                        currentnewneighbours.append(currentneighbours[index])
-                currentXCords = getXCordNeighbours(currentneighbours)
-                leftcord = currentneighbours[currentXCords.index(min(currentXCords))]
+                currentcord = getFarthestPoint(currentneighbours)
+                # yvals = getYCordNeighbours(currentneighbours)
+                # currentnewneighbours = []
+                # for index, item in enumerate(yvals):
+                #     if item == min(yvals):
+                #         currentnewneighbours.append(currentneighbours[index])
+                # currentXCords = getXCordNeighbours(currentneighbours)
+                # leftcord = currentneighbours[currentXCords.index(min(currentXCords))]
                 # print(leftcord)
             except Exception:
                 None
@@ -68,13 +70,14 @@ def detectOuter(hashtable, globaldata):
                 3, currentcord, currentneighbours
             )
             try:
-                xvals = getXCordNeighbours(currentneighbours)
-                currentnewneighbours = []
-                for index, item in enumerate(xvals):
-                    if item == max(xvals):
-                        currentnewneighbours.append(currentneighbours[index])
-                currentYCords = getYCordNeighbours(currentnewneighbours)
-                leftcord = currentnewneighbours[currentYCords.index(min(currentYCords))]
+                currentcord = getFarthestPoint(currentneighbours)
+                # xvals = getXCordNeighbours(currentneighbours)
+                # currentnewneighbours = []
+                # for index, item in enumerate(xvals):
+                #     if item == max(xvals):
+                #         currentnewneighbours.append(currentneighbours[index])
+                # currentYCords = getYCordNeighbours(currentnewneighbours)
+                # leftcord = currentnewneighbours[currentYCords.index(min(currentYCords))]
                 # print(leftcord)
             except Exception:
                 None
@@ -87,13 +90,14 @@ def detectOuter(hashtable, globaldata):
                 4, currentcord, currentneighbours
             )
             try:
-                yvals = getYCordNeighbours(currentneighbours)
-                currentnewneighbours = []
-                for index, item in enumerate(yvals):
-                    if item == max(yvals):
-                        currentnewneighbours.append(currentneighbours[index])
-                currentXCords = getXCordNeighbours(currentnewneighbours)
-                leftcord = currentnewneighbours[currentXCords.index(max(currentXCords))]
+                currentcord = getFarthestPoint(currentneighbours)
+                # yvals = getYCordNeighbours(currentneighbours)
+                # currentnewneighbours = []
+                # for index, item in enumerate(yvals):
+                #     if item == max(yvals):
+                #         currentnewneighbours.append(currentneighbours[index])
+                # currentXCords = getXCordNeighbours(currentnewneighbours)
+                # leftcord = currentnewneighbours[currentXCords.index(max(currentXCords))]
                 # print(leftcord)
             except Exception:
                 None
