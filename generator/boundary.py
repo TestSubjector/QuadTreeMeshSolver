@@ -12,6 +12,7 @@ def detectOuter(hashtable, globaldata):
     currentstatus = 1
     currentcord = biggestxy
     previouscord = biggestxy
+    leftcord = "start"
     count = 0
     while True:
         count += 1
@@ -21,7 +22,6 @@ def detectOuter(hashtable, globaldata):
         # if(currentcord=='9.375,-1.875'):
         #     break
         # print(currentneighbours)
-        # print(currentcord)
         if currentstatus == 1:
             # print(currentcord)
             currentneighbours = getNeighboursDirectional(

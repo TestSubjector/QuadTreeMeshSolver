@@ -411,8 +411,8 @@ def chunks(l, n):
         yield l[i : i + n]
 
 def distFromOrigin(pt):
-    ptx = pt.split(",")[0]
-    pty = pt.split(",")[1]
+    ptx = float(pt.split(",")[0])
+    pty = float(pt.split(",")[1])
     dist = ((ptx * ptx) + (pty * pty)) ** 0.5
     return dist
 
@@ -421,6 +421,7 @@ def getFarthestPoint(listpts):
     currentpt = 0
     for itm in listpts:
         dist = distFromOrigin(itm)
+        #print(distFromOrigin(itm))
         if dist > currentdist:
             currentdist = dist
             currentpt = itm
