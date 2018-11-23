@@ -1190,3 +1190,30 @@ def printBadness(val, globaldata):
                 xpos,xneg,ypos,yneg = getFlags(idx,globaldata)
                 if xpos == val or xneg == val or ypos == val or yneg == val:
                     print(idx)
+
+def splitWrite(globaldata):
+    outer = []
+    inter = []
+    wall = []
+    for idx in range(len(globaldata)):
+        if idx > 0:
+            flag = getFlag(idx,globaldata)
+            ptx,pty = getPoint(idx,globaldata)
+            if flag == 0:
+                wall.append((ptx,pty))
+            elif flag == 1:
+                inter.append((ptx,pty))
+            elif flag == 2:
+                outer.append((ptx,pty))
+    with open("outerpts.txt", "w") as text_file:
+        for itm in outer:
+            text_file.writelines(["%s %s " % (itm[0],itm[1])])
+            text_file.writelines("\n")
+    with open("interpts.txt", "w") as text_file:
+        for itm in inter:
+            text_file.writelines(["%s %s " % (itm[0],itm[1])])
+            text_file.writelines("\n")
+    with open("wallpts.txt", "w") as text_file:
+        for itm in wall:
+            text_file.writelines(["%s %s " % (itm[0],itm[1])])
+            text_file.writelines("\n")

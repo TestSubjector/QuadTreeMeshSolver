@@ -15,6 +15,9 @@ wall.json
 bspline.marshal
 pseudopoints.txt
 config.json
+outerpts.txt
+interpts.txt
+wallpts.txt
 
 # C extensions
 *.so

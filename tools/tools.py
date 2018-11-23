@@ -61,6 +61,7 @@ def main():
         print("Type 'old' to convert preprocessorfile to old format")
         print("Type 'bad2' to print all points with 2 in it's split connectivity")
         print("Type 'bad1' to print all points with 1 in it's split connectivity")
+        print("Type 'split' to output the different type of points in a file")
         ptidx = input("Which point do you want to fix? ")
         if ptidx == "exit!":
             exit()
@@ -96,6 +97,8 @@ def main():
         elif ptidx == "bad1":
             globaldata = connectivity.connectivityCheck(globaldata, True, True)
             core.printBadness(1,globaldata)   
+        elif ptidx == "split":
+            core.splitWrite(globaldata) 
         isPointIndex = False
         try:
             ptidx = int(ptidx)
