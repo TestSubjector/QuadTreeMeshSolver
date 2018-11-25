@@ -62,6 +62,7 @@ def main():
         print("Type 'bad2' to print all points with 2 in it's split connectivity")
         print("Type 'bad1' to print all points with 1 in it's split connectivity")
         print("Type 'split' to output the different type of points in a file")
+        print("Type 'config' to start Config Manager")
         ptidx = input("Which point do you want to fix? ")
         if ptidx == "exit!":
             exit()
@@ -99,6 +100,8 @@ def main():
             core.printBadness(1,globaldata)   
         elif ptidx == "split":
             core.splitWrite(globaldata) 
+        elif ptidx == "config":
+            core.configManager() 
         isPointIndex = False
         try:
             ptidx = int(ptidx)

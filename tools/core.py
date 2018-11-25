@@ -1217,3 +1217,22 @@ def splitWrite(globaldata):
         for itm in wall:
             text_file.writelines(["%s %s " % (itm[0],itm[1])])
             text_file.writelines("\n")
+
+def configManager():
+    while True:
+        print("Type 'thres' to change threshold value")
+        ptidx = input("Awaiting Command: ")
+        if ptidx == 'thres':
+            thresholdval = int(input("Enter threshold value: "))
+            configData = config.load_obj("config")
+            configData["bspline"]["threshold"] = thresholdval
+            configData["normalWall"]["conditionValueThreshold"] = thresholdval
+            configData["rechecker"]["conditionValueThreshold"] = thresholdval
+            configData["triangulate"]["leftright"]["wallThreshold"] = thresholdval
+            configData["triangulate"]["general"]["wallThreshold"] = thresholdval
+            config.save_obj(configData,"config")
+            print("Updated Configuration")
+            break
+        else:
+            break
+    return None
