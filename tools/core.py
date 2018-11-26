@@ -1220,9 +1220,18 @@ def splitWrite(globaldata):
 
 def configManager():
     while True:
-        print("Type 'thres' to change threshold value")
+        print("Type 'thres' to change threshold value (Normal and BSpline Only)")
+        print("Type 'thres!' to change threshold value")
         ptidx = input("Awaiting Command: ")
         if ptidx == 'thres':
+            thresholdval = int(input("Enter threshold value: "))
+            configData = config.load_obj("config")
+            configData["bspline"]["threshold"] = thresholdval
+            configData["normalWall"]["conditionValueThreshold"] = thresholdval
+            config.save_obj(configData,"config")
+            print("Updated Configuration")
+            break
+        elif ptidx == 'thres!':
             thresholdval = int(input("Enter threshold value: "))
             configData = config.load_obj("config")
             configData["bspline"]["threshold"] = thresholdval
