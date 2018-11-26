@@ -17,6 +17,7 @@ import re
 import connectivity
 from collections import Counter
 import os
+from time import sleep
 log = logging.getLogger(__name__)
 log.addHandler(logging.StreamHandler())
 
@@ -1237,7 +1238,10 @@ def configManager():
             configData["bspline"]["threshold"] = thresholdval
             configData["normalWall"]["conditionValueThreshold"] = thresholdval
             config.save_obj(configData,"config")
+            clearScreen()
             print("Updated Configuration")
+            sleep(1)
+            clearScreen()
             break
         elif ptidx == 'thres!':
             thresholdval = int(input("Enter threshold value: "))
@@ -1247,11 +1251,22 @@ def configManager():
             configData["triangulate"]["leftright"]["wallThreshold"] = thresholdval
             configData["triangulate"]["general"]["wallThreshold"] = thresholdval
             config.save_obj(configData,"config")
+            clearScreen()
             print("Updated Configuration")
+            sleep(1)
+            clearScreen()
             break
         elif ptidx == 'exit':
+            clearScreen()
+            print("Going back")
+            sleep(1)
+            clearScreen()
             break
         else:
+            clearScreen()
+            print("Invalid input going back")
+            sleep(1)
+            clearScreen()
             break
     return None
 
