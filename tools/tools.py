@@ -47,6 +47,7 @@ def main():
     # polydata = balance.getPolygon(interiortriangles)
 
     while True:
+        core.clearScreen()
         print("Type 'exit! to quit (Does not save changes).")
         print("Type 'exit to quit (Saves changes).")
         print("Type 'wcc' to run Wall Connectivity Check on all Wall Points.")
@@ -110,6 +111,7 @@ def main():
             isPointIndex = False
             pass
         if isPointIndex == True:
+            core.clearScreen()
             print("Point Index:",ptidx)
             print("Point Co ordinate:",core.getPointxy(ptidx,globaldata))
             flag = core.getFlag(ptidx,globaldata)

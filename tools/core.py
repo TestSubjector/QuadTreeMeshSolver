@@ -16,6 +16,7 @@ import itertools
 import re
 import connectivity
 from collections import Counter
+import os
 log = logging.getLogger(__name__)
 log.addHandler(logging.StreamHandler())
 
@@ -1220,6 +1221,7 @@ def splitWrite(globaldata):
 
 def configManager():
     while True:
+        clearScreen()
         print("Type 'thres' to change threshold value (Normal and BSpline Only)")
         print("Type 'thres!' to change threshold value")
         ptidx = input("Awaiting Command: ")
@@ -1245,3 +1247,6 @@ def configManager():
         else:
             break
     return None
+
+def clearScreen():
+    os.system('cls' if os.name == 'nt' else 'clear')
