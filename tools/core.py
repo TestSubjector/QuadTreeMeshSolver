@@ -1222,12 +1222,18 @@ def splitWrite(globaldata):
 def configManager():
     while True:
         clearScreen()
+        configData = config.load_obj("config")
+        print("*******************************")
+        print("Current Configuration")
+        print("BSpline Condition Number: %s" % configData["bspline"]["threshold"])
+        print("Rechecker Condition Number: %s" % configData["rechecker"]["conditionValueThreshold"])
+        print("*******************************")
+        print("Type 'exit' to go back")
         print("Type 'thres' to change threshold value (Normal and BSpline Only)")
         print("Type 'thres!' to change threshold value")
         ptidx = input("Awaiting Command: ")
         if ptidx == 'thres':
             thresholdval = int(input("Enter threshold value: "))
-            configData = config.load_obj("config")
             configData["bspline"]["threshold"] = thresholdval
             configData["normalWall"]["conditionValueThreshold"] = thresholdval
             config.save_obj(configData,"config")
@@ -1235,7 +1241,6 @@ def configManager():
             break
         elif ptidx == 'thres!':
             thresholdval = int(input("Enter threshold value: "))
-            configData = config.load_obj("config")
             configData["bspline"]["threshold"] = thresholdval
             configData["normalWall"]["conditionValueThreshold"] = thresholdval
             configData["rechecker"]["conditionValueThreshold"] = thresholdval
@@ -1243,6 +1248,8 @@ def configManager():
             configData["triangulate"]["general"]["wallThreshold"] = thresholdval
             config.save_obj(configData,"config")
             print("Updated Configuration")
+            break
+        elif ptidx == 'exit':
             break
         else:
             break

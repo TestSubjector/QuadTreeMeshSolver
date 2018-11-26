@@ -45,9 +45,9 @@ def main():
     # interiorpts = MultiPoint(interiorpts)
     # interiortriangles = triangulate(interiorpts)
     # polydata = balance.getPolygon(interiortriangles)
+    core.clearScreen()
 
     while True:
-        core.clearScreen()
         print("Type 'exit! to quit (Does not save changes).")
         print("Type 'exit to quit (Saves changes).")
         print("Type 'wcc' to run Wall Connectivity Check on all Wall Points.")
@@ -70,38 +70,52 @@ def main():
         if ptidx == "exit":
             break
         elif ptidx == "wcc":
+            core.clearScreen()
             globaldata = connectivity.connectivityCheck(globaldata, True, False)
             core.wallConnectivityCheck(globaldata)
         elif ptidx == "wcc!":
+            core.clearScreen()
             globaldata = connectivity.connectivityCheck(globaldata, True, False)
             core.wallConnectivityCheckNearest(globaldata)
         elif ptidx == "wcc!!":
+            core.clearScreen()
             globaldata = connectivity.connectivityCheck(globaldata, True, False)
             core.wallConnectivityCheckSensor(globaldata)    
         elif ptidx == "wcc!!!":
+            core.clearScreen()
             globaldata = connectivity.connectivityCheck(globaldata, True, False)
             core.sparseNullifier(globaldata)  
         elif ptidx == "icc":
+            core.clearScreen()
             core.interiorConnectivityCheck(globaldata)
         elif ptidx == "cache":
+            core.clearScreen()
             core.pushCache(globaldata)
         elif ptidx == "integrity":
+            core.clearScreen()
             core.verifyIntegrity()
         elif ptidx == "clean":
+            core.clearScreen()
             core.cleanAdapted()
         elif ptidx == "full":
+            core.clearScreen()
             core.fullRefine(globaldata)
         elif ptidx == "old":
+            core.clearScreen()
             core.oldMode(globaldata)
         elif ptidx == "bad2":
+            core.clearScreen()
             globaldata = connectivity.connectivityCheck(globaldata, True, True)
             core.printBadness(2,globaldata)    
         elif ptidx == "bad1":
+            core.clearScreen()
             globaldata = connectivity.connectivityCheck(globaldata, True, True)
             core.printBadness(1,globaldata)   
         elif ptidx == "split":
+            core.clearScreen()
             core.splitWrite(globaldata) 
         elif ptidx == "config":
+            core.clearScreen()
             core.configManager() 
         isPointIndex = False
         try:
@@ -180,10 +194,12 @@ def main():
             elif whatkind == 6:
                 print(core.getPerpendicularPoint(ptidx,globaldata))
             elif whatkind == 7:
+                core.clearScreen()
                 break
             elif whatkind == 8:
                 exit()
             elif whatkind == 9:
+                core.clearScreen()
                 None
             elif whatkind == 10:
                 tris = core.getNeighbours(ptidx,globaldata)
@@ -191,6 +207,7 @@ def main():
                 tris = core.convertPointsToIndex(tris,globaldata)
                 globaldata = balance.forcePointsToFix(ptidx,tris,globaldata)
             else:
+                core.clearScreen()
                 break
 
     globaldata.pop(0)
