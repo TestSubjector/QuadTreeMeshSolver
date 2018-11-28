@@ -18,22 +18,8 @@ import connectivity
 from collections import Counter
 import os
 from time import sleep
-
-import point
-
 log = logging.getLogger(__name__)
 log.addHandler(logging.StreamHandler())
-
-def convertOldDataToNewData(globaldata):
-    newglobaldata = []
-    for i in range(len(globaldata)):
-        if i > 0:
-            data = globaldata[i][:20]
-            nbhs = getNeighbours(i, globaldata)
-            data.append(nbhs)
-            quadpt = point.QuadPoint(*data)
-            newglobaldata.append(quadpt)
-    return newglobaldata
 
 def appendNeighbours(index, globaldata, newpts):
     pt = getIndexFromPoint(newpts, globaldata)
@@ -96,13 +82,6 @@ def convertIndexToPoints(indexarray, globaldata):
         ptlist.append((str(ptx) + "," + str(pty)))
     return ptlist
 
-def convertIndexToPoints2(indexarray, globaldata):
-    ptlist = []
-    for item in indexarray:
-        itmx = globaldata[item].X()
-        itmy = globaldata[item].Y()
-        ptlist.append((itmx,itmy))
-    return ptlist
 
 def weightedConditionValueForSetOfPoints(index, globaldata, points):
     index = int(index)
@@ -901,63 +880,13 @@ def sparseNullifier(globaldata):
                         text_file.writelines("  " + str(idx) + "  0\n")
                    
 
-def getInteriorPoints(globaldata):
-    result = []
-    for i in range(len(globaldata)):
-        if i > 0:
-            flag = getFlag(i, globaldata)
-            if flag == 1:
-                result.append(i)
-    return result
-
-def getInteriorPoints2(globaldata):
-    result = []
-    for i in range(len(globaldata)):
-        if i > 0:
-            flag = globaldata[i].pointType()
-            if flag == 1:
-                result.append(i)
-    return result
-
 def interiorConnectivityCheck(globaldata):
-    interiorPts = getInteriorPoints(globaldata)
-    coresavail = multiprocessing.cpu_count()
-    log.info("Found " + str(coresavail) + " available core(s).")
-    log.info("BOOSTU BOOSTU BOOSTU")
-    MAX_CORES = int(config.getConfig()["generator"]["maxCoresForReplacement"])
-    log.info("Max Cores Allowed " + str(MAX_CORES))
-    pool = ThreadPool(min(MAX_CORES,coresavail))
-    results = []
-    chunksize = math.ceil(len(interiorPts)/min(MAX_CORES,coresavail))
-    globalchunks = list(chunks(interiorPts,chunksize))
-    for itm in globalchunks:
-        results.append(pool.apply_async(isConditionBadParallel, args=(itm, globaldata, True)))
-    pool.close()
-    pool.join()
-    results = [r.get() for r in results]
-    # for idx,_ in enumerate(globaldata):
-    #     if idx > 0:
-    #         flag = getFlag(idx,globaldata)
-    #         if flag == 1:
-    #             # checkConditionNumber(idx,globaldata,int(config.getConfig()["bspline"]["threshold"]))
-    #             isConditionBad(idx,globaldata,True)
-
-def interiorConnectivityCheck2(globaldata):
-    interiorPts = getInteriorPoints2(globaldata)
-    coresavail = multiprocessing.cpu_count()
-    log.info("Found " + str(coresavail) + " available core(s).")
-    log.info("BOOSTU BOOSTU BOOSTU")
-    MAX_CORES = int(config.getConfig()["generator"]["maxCoresForReplacement"])
-    log.info("Max Cores Allowed " + str(MAX_CORES))
-    pool = ThreadPool(min(MAX_CORES,coresavail))
-    results = []
-    chunksize = math.ceil(len(interiorPts)/min(MAX_CORES,coresavail))
-    globalchunks = list(chunks(interiorPts,chunksize))
-    for itm in globalchunks:
-        results.append(pool.apply_async(isConditionBadParallel2, args=(itm, globaldata, True)))
-    pool.close()
-    pool.join()
-    results = [r.get() for r in results]
+    for idx,_ in enumerate(globaldata):
+        if idx > 0:
+            flag = getFlag(idx,globaldata)
+            if flag == 1:
+                # checkConditionNumber(idx,globaldata,int(config.getConfig()["bspline"]["threshold"]))
+                isConditionBad(idx,globaldata,True)
 
 def flattenList(ptdata):
     return list(itertools.chain.from_iterable(ptdata))
@@ -1105,27 +1034,9 @@ def calculateNormalConditionValues(idx,globaldata,nxavg,nyavg):
     result = {"spos":dSPosNbhs,"sposCond":dSPosCondition,"sneg":dSNegNbhs,"snegCond":dSNegCondition,"npos":dNPosNbhs,"nposCond":dNPosCondition,"nneg":dNNegNbhs,"nnegCond":dNNegCondition}
     return result
 
-def calculateNormalConditionValues2(idx, globaldata):
-    nx = globaldata[i].getNx()
-    ny = globaldata[i].getNy()
-
-
 def isConditionBad(idx,globaldata,verbose):
     nx,ny = getNormals(idx,globaldata)
     condResult = calculateNormalConditionValues(idx,globaldata,nx,ny)
-    dSPosNbhs,dSNegNbhs,dNPosNbhs,dNNegNbhs = condResult["spos"], condResult["sneg"], condResult["npos"], condResult["nneg"]
-    dSPosCondition,dSNegCondition,dNPosCondition,dNNegCondition = condResult["sposCond"], condResult["snegCond"], condResult["nposCond"], condResult["nnegCond"]
-    maxCond = max(dSPosCondition,dSNegCondition,dNPosCondition,dNNegCondition)
-    if maxCond > float(config.getConfig()["bspline"]["threshold"]) or math.isnan(dSPosCondition) or math.isnan(dSNegCondition) or math.isnan(dNPosCondition) or math.isnan(dNNegCondition):
-        # print(idx)
-        if verbose:
-            print(idx,len(dSPosNbhs),dSPosCondition,len(dSNegNbhs),dSNegCondition,len(dNPosNbhs),dNPosCondition,len(dNNegNbhs),dNNegCondition)
-        return True
-    else:
-        return False
-
-def isConditionBadParallel2(idx, globaldata, verbose):
-    condResult = calculateNormalConditionValues2(idx,globaldata)
     dSPosNbhs,dSNegNbhs,dNPosNbhs,dNNegNbhs = condResult["spos"], condResult["sneg"], condResult["npos"], condResult["nneg"]
     dSPosCondition,dSNegCondition,dNPosCondition,dNNegCondition = condResult["sposCond"], condResult["snegCond"], condResult["nposCond"], condResult["nnegCond"]
     maxCond = max(dSPosCondition,dSNegCondition,dNPosCondition,dNNegCondition)
@@ -1172,13 +1083,6 @@ def weightedConditionValueForSetOfPointsNormalWithInputs(index, globaldata, nbh,
     s = max(s) / min(s)
     return s
 
-def isConditionBadParallel(data, globaldata, verbose):
-    for idx in data:
-        isConditionBad(idx, globaldata, verbose)
-
-def isConditionBadParallel2(data, globaldata, verbose):
-    for idx in data:
-        isConditionBad(idx, globaldata, verbose)
 
 def deltaWallNeighbourCalculationN(
     index, currentneighbours, nx, ny, giveposdelta, globaldata

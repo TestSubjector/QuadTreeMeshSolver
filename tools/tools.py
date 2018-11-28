@@ -6,6 +6,7 @@ from shapely.geometry import MultiPoint
 from shapely.ops import triangulate
 import balance
 import logging
+import time
 log = logging.getLogger(__name__)
 log.addHandler(logging.StreamHandler())
 
@@ -19,7 +20,7 @@ def main():
 
     file1 = open(args.input or "preprocessorfile.txt", "r")
     data = file1.read()
-    globaldata = ["start"]
+    globaldata = [["start",0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,[0]]]
     splitdata = data.split("\n")
     splitdata = splitdata[:-1]
 
@@ -38,6 +39,8 @@ def main():
     globaldata = core.cleanNeighbours(globaldata)
     wallpoints = core.getWallPointArray(globaldata)
     wallpointsData = core.generateWallPolygons(wallpoints)
+
+    newglobaldata = core.convertOldDataToNewData(globaldata)
 
     # interiorpts = []
     # interiorpts.extend(range(1, len(globaldata)))
@@ -87,7 +90,11 @@ def main():
             core.sparseNullifier(globaldata)  
         elif ptidx == "icc":
             core.clearScreen()
+            start = time.time()
             core.interiorConnectivityCheck(globaldata)
+            end = time.time()
+            print(end - start)
+            exit()
         elif ptidx == "cache":
             core.clearScreen()
             core.pushCache(globaldata)

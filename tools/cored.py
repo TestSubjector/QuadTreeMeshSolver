@@ -18,23 +18,11 @@ import connectivity
 from collections import Counter
 import os
 from time import sleep
-
-import point
-
+import numba
 log = logging.getLogger(__name__)
 log.addHandler(logging.StreamHandler())
 
-def convertOldDataToNewData(globaldata):
-    newglobaldata = []
-    for i in range(len(globaldata)):
-        if i > 0:
-            data = globaldata[i][:20]
-            nbhs = getNeighbours(i, globaldata)
-            data.append(nbhs)
-            quadpt = point.QuadPoint(*data)
-            newglobaldata.append(quadpt)
-    return newglobaldata
-
+@numba.jit(cache=True, parallel=False)
 def appendNeighbours(index, globaldata, newpts):
     pt = getIndexFromPoint(newpts, globaldata)
     nbhs = getNeighbours(index, globaldata)
@@ -44,18 +32,19 @@ def appendNeighbours(index, globaldata, newpts):
     globaldata[int(index)][19] = len(nbhs)
     return globaldata
 
-
+@numba.jit(cache=True, parallel=False)
 def getFlag(indexval, list):
     indexval = int(indexval)
     return int(list[indexval][5])
 
-
+@numba.jit(cache=True, parallel=False)
 def getNeighbours(index, globaldata):
     index = int(index)
     ptdata = globaldata[index]
     ptdata = ptdata[20:]
     return ptdata
 
+@numba.jit(cache=True, parallel=False)
 def getLeftandRightPoint(index,globaldata):
     index = int(index)
     ptdata = globaldata[index]
@@ -66,6 +55,7 @@ def getLeftandRightPoint(index,globaldata):
     nbhs.append(getPointxy(rightpt,globaldata))
     return nbhs
 
+@numba.jit(cache=True, parallel=False)
 def getIndexFromPoint(pt, globaldata):
     ptx = float(pt.split(",")[0])
     pty = float(pt.split(",")[1])
@@ -73,7 +63,7 @@ def getIndexFromPoint(pt, globaldata):
         if str(itm[1]) == str(ptx) and str(itm[2]) == str(pty):
             return int(itm[0])
 
-
+@numba.jit(cache=True, parallel=False)
 def getPoint(index, globaldata):
     index = int(index)
     ptdata = globaldata[index]
@@ -81,13 +71,13 @@ def getPoint(index, globaldata):
     pty = float(ptdata[2])
     return ptx, pty
 
-
+@numba.jit(cache=True, parallel=False)
 def getPointxy(index, globaldata):
     index = int(index)
     ptx, pty = getPoint(index, globaldata)
     return str(ptx) + "," + str(pty)
 
-
+@numba.jit(cache=True, parallel=False)
 def convertIndexToPoints(indexarray, globaldata):
     ptlist = []
     for item in indexarray:
@@ -96,14 +86,7 @@ def convertIndexToPoints(indexarray, globaldata):
         ptlist.append((str(ptx) + "," + str(pty)))
     return ptlist
 
-def convertIndexToPoints2(indexarray, globaldata):
-    ptlist = []
-    for item in indexarray:
-        itmx = globaldata[item].X()
-        itmy = globaldata[item].Y()
-        ptlist.append((itmx,itmy))
-    return ptlist
-
+@numba.jit(cache=True, parallel=False)
 def weightedConditionValueForSetOfPoints(index, globaldata, points):
     index = int(index)
     mainptx = float(globaldata[index][1])
@@ -137,18 +120,20 @@ def weightedConditionValueForSetOfPoints(index, globaldata, points):
     s = max(s) / min(s)
     return s
 
-
+@numba.jit(cache=True, parallel=False)
 def deltaX(xcord, orgxcord):
     return float(orgxcord - xcord)
 
+@numba.jit(cache=True, parallel=False)
 def chunks(l, n):
     for i in range(0, len(l), n):
         yield l[i : i + n]
 
-
+@numba.jit(cache=True, parallel=False)
 def deltaY(ycord, orgycord):
     return float(orgycord - ycord)
 
+@numba.jit(cache=True, parallel=False)
 def normalCalculation(index, globaldata, wallpoint):
     nx = 0
     ny = 0
@@ -185,6 +170,7 @@ def normalCalculation(index, globaldata, wallpoint):
     ny = ny / det
     return nx, ny
 
+@numba.jit(cache=True, parallel=False)
 def weightedConditionValueForSetOfPointsNormal(index, globaldata, nbh):
     nx,ny = normalCalculation(index,globaldata,True)
     mainptx = float(globaldata[index][1])
@@ -221,6 +207,7 @@ def weightedConditionValueForSetOfPointsNormal(index, globaldata, nbh):
     s = max(s) / min(s)
     return s
 
+@numba.jit(cache=True, parallel=False)
 def deltaWallNeighbourCalculation(
     index, currentneighbours, nx, ny, giveposdelta, globaldata
 ):
@@ -248,7 +235,7 @@ def deltaWallNeighbourCalculation(
             deltaszero = deltaszero + 1
     return deltaspos, deltasneg, deltaszero, output
 
-
+@numba.jit(cache=True, parallel=False)
 def deltaNeighbourCalculation(currentneighbours, currentcord, isxcord, isnegative):
     xpos, xneg, ypos, yneg = 0, 0, 0, 0
     temp = []
@@ -271,6 +258,7 @@ def deltaNeighbourCalculation(currentneighbours, currentcord, isxcord, isnegativ
             yneg = yneg + 1
     return xpos, ypos, xneg, yneg, temp
 
+@numba.jit(cache=True, parallel=False)
 def getWeightedNormalConditionValueofWallXPos(index, globaldata):
     nbhs = convertIndexToPoints(getNeighbours(index, globaldata), globaldata)
     nx,ny = normalCalculation(index,globaldata,True)
@@ -279,7 +267,7 @@ def getWeightedNormalConditionValueofWallXPos(index, globaldata):
     )
     return weightedConditionValueForSetOfPointsNormal(index, globaldata, mypoints)
 
-
+@numba.jit(cache=True, parallel=False)
 def getWeightedNormalConditionValueofWallXNeg(index, globaldata):
     nbhs = convertIndexToPoints(getNeighbours(index, globaldata), globaldata)
     nx,ny = normalCalculation(index,globaldata,True)
@@ -289,7 +277,7 @@ def getWeightedNormalConditionValueofWallXNeg(index, globaldata):
     return weightedConditionValueForSetOfPointsNormal(index, globaldata, mypoints)
 
 
-
+@numba.jit(cache=True, parallel=False)
 def getWeightedInteriorConditionValueofXPos(index, globaldata):
     nbhs = convertIndexToPoints(getNeighbours(index, globaldata), globaldata)
     _, _, _, _, mypoints = deltaNeighbourCalculation(
@@ -297,7 +285,7 @@ def getWeightedInteriorConditionValueofXPos(index, globaldata):
     )
     return weightedConditionValueForSetOfPoints(index, globaldata, mypoints)
 
-
+@numba.jit(cache=True, parallel=False)
 def getWeightedInteriorConditionValueofXNeg(index, globaldata):
     nbhs = convertIndexToPoints(getNeighbours(index, globaldata), globaldata)
     _, _, _, _, mypoints = deltaNeighbourCalculation(
@@ -305,7 +293,7 @@ def getWeightedInteriorConditionValueofXNeg(index, globaldata):
     )
     return weightedConditionValueForSetOfPoints(index, globaldata, mypoints)
 
-
+@numba.jit(cache=True, parallel=False)
 def getWeightedInteriorConditionValueofYPos(index, globaldata):
     nbhs = convertIndexToPoints(getNeighbours(index, globaldata), globaldata)
     _, _, _, _, mypoints = deltaNeighbourCalculation(
@@ -313,7 +301,7 @@ def getWeightedInteriorConditionValueofYPos(index, globaldata):
     )
     return weightedConditionValueForSetOfPoints(index, globaldata, mypoints)
 
-
+@numba.jit(cache=True, parallel=False)
 def getWeightedInteriorConditionValueofYNeg(index, globaldata):
     nbhs = convertIndexToPoints(getNeighbours(index, globaldata), globaldata)
     _, _, _, _, mypoints = deltaNeighbourCalculation(
@@ -321,7 +309,7 @@ def getWeightedInteriorConditionValueofYNeg(index, globaldata):
     )
     return weightedConditionValueForSetOfPoints(index, globaldata, mypoints)
 
-
+@numba.jit(cache=True, parallel=False)
 def getDXPosPoints(index, globaldata):
     nbhs = convertIndexToPoints(getNeighbours(index, globaldata), globaldata)
     _, _, _, _, mypoints = deltaNeighbourCalculation(
@@ -329,7 +317,7 @@ def getDXPosPoints(index, globaldata):
     )
     return mypoints
 
-
+@numba.jit(cache=True, parallel=False)
 def getDXNegPoints(index, globaldata):
     nbhs = convertIndexToPoints(getNeighbours(index, globaldata), globaldata)
     _, _, _, _, mypoints = deltaNeighbourCalculation(
@@ -337,6 +325,7 @@ def getDXNegPoints(index, globaldata):
     )
     return mypoints
 
+@numba.jit(cache=True, parallel=False)
 def getDWallXPosPoints(index, globaldata):
     nbhs = convertIndexToPoints(getNeighbours(index, globaldata), globaldata)
     nx,ny = normalCalculation(index,globaldata,True)
@@ -345,7 +334,7 @@ def getDWallXPosPoints(index, globaldata):
     )
     return mypoints
 
-
+@numba.jit(cache=True, parallel=False)
 def getDWallXNegPoints(index, globaldata):
     nbhs = convertIndexToPoints(getNeighbours(index, globaldata), globaldata)
     nx,ny = normalCalculation(index,globaldata,True)
@@ -355,7 +344,7 @@ def getDWallXNegPoints(index, globaldata):
     return mypoints
 
 
-
+@numba.jit(cache=True, parallel=False)
 def getDYPosPoints(index, globaldata):
     nbhs = convertIndexToPoints(getNeighbours(index, globaldata), globaldata)
     _, _, _, _, mypoints = deltaNeighbourCalculation(
@@ -363,7 +352,7 @@ def getDYPosPoints(index, globaldata):
     )
     return mypoints
 
-
+@numba.jit(cache=True, parallel=False)
 def getDYNegPoints(index, globaldata):
     nbhs = convertIndexToPoints(getNeighbours(index, globaldata), globaldata)
     _, _, _, _, mypoints = deltaNeighbourCalculation(
@@ -371,7 +360,7 @@ def getDYNegPoints(index, globaldata):
     )
     return mypoints
 
-
+@numba.jit(cache=True, parallel=False)
 def getDXPosPointsFromSet(index, globaldata, points):
     nbhs = convertIndexToPoints(points, globaldata)
     _, _, _, _, mypoints = deltaNeighbourCalculation(
@@ -379,7 +368,7 @@ def getDXPosPointsFromSet(index, globaldata, points):
     )
     return mypoints
 
-
+@numba.jit(cache=True, parallel=False)
 def getDXNegPointsFromSet(index, globaldata, points):
     nbhs = convertIndexToPoints(points, globaldata)
     _, _, _, _, mypoints = deltaNeighbourCalculation(
@@ -387,7 +376,7 @@ def getDXNegPointsFromSet(index, globaldata, points):
     )
     return mypoints
 
-
+@numba.jit(cache=True, parallel=False)
 def getDYPosPointsFromSet(index, globaldata, points):
     nbhs = convertIndexToPoints(points, globaldata)
     _, _, _, _, mypoints = deltaNeighbourCalculation(
@@ -395,7 +384,7 @@ def getDYPosPointsFromSet(index, globaldata, points):
     )
     return mypoints
 
-
+@numba.jit(cache=True, parallel=False)
 def getDYNegPointsFromSet(index, globaldata, points):
     nbhs = convertIndexToPoints(points, globaldata)
     _, _, _, _, mypoints = deltaNeighbourCalculation(
@@ -403,6 +392,7 @@ def getDYNegPointsFromSet(index, globaldata, points):
     )
     return mypoints
 
+@numba.jit(cache=True, parallel=False)
 def getDXPosPointsFromSetRaw(index, globaldata, points):
     nbhs = points
     _, _, _, _, mypoints = deltaNeighbourCalculation(
@@ -410,7 +400,7 @@ def getDXPosPointsFromSetRaw(index, globaldata, points):
     )
     return mypoints
 
-
+@numba.jit(cache=True, parallel=False)
 def getDXNegPointsFromSetRaw(index, globaldata, points):
     nbhs = points
     _, _, _, _, mypoints = deltaNeighbourCalculation(
@@ -418,7 +408,7 @@ def getDXNegPointsFromSetRaw(index, globaldata, points):
     )
     return mypoints
 
-
+@numba.jit(cache=True, parallel=False)
 def getDYPosPointsFromSetRaw(index, globaldata, points):
     nbhs = points
     _, _, _, _, mypoints = deltaNeighbourCalculation(
@@ -426,7 +416,7 @@ def getDYPosPointsFromSetRaw(index, globaldata, points):
     )
     return mypoints
 
-
+@numba.jit(cache=True, parallel=False)
 def getDYNegPointsFromSetRaw(index, globaldata, points):
     nbhs = points
     _, _, _, _, mypoints = deltaNeighbourCalculation(
@@ -434,6 +424,7 @@ def getDYNegPointsFromSetRaw(index, globaldata, points):
     )
     return mypoints
 
+@numba.jit(cache=True, parallel=False)
 def getDWallXPosPointsFromSetRaw(index, globaldata, points):
     nbhs = points
     nx,ny = normalCalculation(index,globaldata,True)
@@ -442,7 +433,7 @@ def getDWallXPosPointsFromSetRaw(index, globaldata, points):
     )
     return mypoints
 
-
+@numba.jit(cache=True, parallel=False)
 def getDWallXNegPointsFromSetRaw(index, globaldata, points):
     nbhs = points
     nx,ny = normalCalculation(index,globaldata,True)
@@ -451,7 +442,7 @@ def getDWallXNegPointsFromSetRaw(index, globaldata, points):
     )
     return mypoints
 
-
+@numba.jit(cache=True, parallel=False)
 def checkConditionNumber(index, globaldata, threshold):
     xpos = getWeightedInteriorConditionValueofXPos(index, globaldata)
     xneg = getWeightedInteriorConditionValueofXNeg(index, globaldata)
@@ -484,7 +475,6 @@ def checkConditionNumber(index, globaldata, threshold):
             yneg,
         )
 
-
 def cleanNeighbours(globaldata):
     print("Beginning Duplicate Neighbour Detection")
     for i in range(len(globaldata)):
@@ -511,7 +501,7 @@ def cleanNeighbours(globaldata):
     print("Duplicate Neighbours Removed")
     return globaldata
 
-
+@numba.jit(cache=True, parallel=False)
 def convertPointToShapelyPoint(pointarry):
     pointnewarry = []
     for itm in pointarry:
@@ -520,6 +510,7 @@ def convertPointToShapelyPoint(pointarry):
         pointnewarry.append((xcord, ycord))
     return pointnewarry
 
+@numba.jit(cache=True, parallel=False)
 def getWallPointArray(globaldata):
     wallpointarray = []
     startgeo = 0
@@ -536,6 +527,7 @@ def getWallPointArray(globaldata):
                 startgeo = startgeo + 1
     return wallpointarray
 
+@numba.jit(cache=True, parallel=False)
 def getWallPointArrayIndex(globaldata):
     wallpointarray = []
     startgeo = 0
@@ -552,6 +544,7 @@ def getWallPointArrayIndex(globaldata):
                 startgeo = startgeo + 1
     return wallpointarray
 
+@numba.jit(cache=True, parallel=False)
 def isNonAeroDynamic(index, cordpt, globaldata, wallPolygonData):
     main_pointx,main_pointy = getPoint(index, globaldata)
     cordptx = float(cordpt.split(",")[0])
@@ -574,6 +567,7 @@ def isNonAeroDynamic(index, cordpt, globaldata, wallPolygonData):
     else:
         return False
 
+@numba.jit(cache=True, parallel=False)
 def generateWallPolygons(wallpoints):
     wallPolygonData = []
     for item in wallpoints:
@@ -584,6 +578,7 @@ def generateWallPolygons(wallpoints):
         wallPolygonData.append(polygontocheck)
     return wallPolygonData
 
+@numba.jit(cache=True, parallel=False)
 def getAeroPointsFromSet(index,cordlist,globaldata,wallpoints):
     finallist = []
     for itm in cordlist:
@@ -591,6 +586,7 @@ def getAeroPointsFromSet(index,cordlist,globaldata,wallpoints):
             finallist.append(itm)
     return finallist
 
+@numba.jit(cache=True, parallel=False)
 def setFlags(index,globaldata,flags):
     globaldata[index][7] = flags[0]
     globaldata[index][8] = flags[1]
@@ -598,6 +594,7 @@ def setFlags(index,globaldata,flags):
     globaldata[index][10] = flags[3]
     return globaldata
 
+@numba.jit(cache=True, parallel=False)
 def getFlags(index,globaldata):
     flagxpos = int(globaldata[index][7])
     flagxneg = int(globaldata[index][8])
@@ -605,6 +602,7 @@ def getFlags(index,globaldata):
     flagyneg = int(globaldata[index][10])
     return flagxpos,flagxneg,flagypos,flagyneg
 
+@numba.jit(cache=True, parallel=False)
 def getConditionNumber(index, globaldata):
     xpos = getWeightedInteriorConditionValueofXPos(index, globaldata)
     xneg = getWeightedInteriorConditionValueofXNeg(index, globaldata)
@@ -613,12 +611,14 @@ def getConditionNumber(index, globaldata):
     result = {"xpos":xpos,"xneg":xneg,"ypos":ypos,"yneg":yneg}
     return result
 
+@numba.jit(cache=True, parallel=False)
 def getConditionNumberNormal(index,globaldata):
     xpos = getWeightedNormalConditionValueofWallXPos(index,globaldata)
     xneg = getWeightedNormalConditionValueofWallXNeg(index,globaldata)
     result = {"xpos":xpos,"xneg":xneg,"ypos":"NA","yneg":"NA"}
     return result
 
+@numba.jit(cache=True, parallel=False)
 def replaceNeighbours(index,nbhs,globaldata):
     data = globaldata[index]
     data = data[:19]
@@ -627,6 +627,7 @@ def replaceNeighbours(index,nbhs,globaldata):
     globaldata[index] = data
     return globaldata
 
+@numba.jit(cache=True, parallel=False)
 def convertPointsToIndex(pointarray,globaldata):
     ptlist = []
     for itm in pointarray:
@@ -634,12 +635,14 @@ def convertPointsToIndex(pointarray,globaldata):
         ptlist.append(idx)
     return ptlist
 
+@numba.jit(cache=True, parallel=False)
 def fillNeighboursIndex(index,globaldata,nbhs):
     nbhs = list(set(nbhs))
     globaldata[int(index)][20:] = nbhs
     globaldata[int(index)][19] = len(nbhs)
     return globaldata
 
+@numba.jit(cache=True, parallel=False)
 def checkAeroGlobal2(globaldata,wallpointsData,wallcount):
     coresavail = multiprocessing.cpu_count()
     log.info("Found " + str(coresavail) + " available core(s).")
@@ -666,6 +669,7 @@ def checkAeroGlobal2(globaldata,wallpointsData,wallcount):
     log.info("Replacement Done")
     return globaldata
 
+@numba.jit(cache=True, parallel=False)
 def checkAeroGlobal(chunk,globaldata,wallpointsData,wallcount):
     # t1 = time.clock()
     for index,itm in enumerate(chunk):
@@ -689,6 +693,7 @@ def checkAeroGlobal(chunk,globaldata,wallpointsData,wallcount):
     # log.info(t2 - t1)
     return chunk
 
+@numba.jit(cache=True, parallel=False)
 def silentRemove(filename):
     try:
         os.remove(filename)
@@ -696,9 +701,11 @@ def silentRemove(filename):
         if e.errno != errno.ENOENT:  # errno.ENOENT = no such file or directory
             raise  # re-raise exception if a different error occurred
 
+@numba.jit(cache=True, parallel=False)
 def getSquarePlot(x, y, side):
     return [(x+(side/2), y+(side/2)), (x-(side/2), y+(side/2)), (x-(side/2), y-(side/2)), (x+(side/2), y-(side/2))]
 
+@numba.jit(cache=True, parallel=False)
 def findHeadOfWall(wallpoints):
     headPts = []
     for wallptset in wallpoints:
@@ -713,6 +720,7 @@ def findHeadOfWall(wallpoints):
         headPts.append(currpt)
     return headPts
 
+@numba.jit(cache=True, parallel=False)
 def returnPointDist(globaldata):
     stats = {"interior":0,"outer":0,"wall":0}
     for idx,itm in enumerate(globaldata):
@@ -726,6 +734,7 @@ def returnPointDist(globaldata):
                 stats["wall"] = stats["wall"] + 1
     return stats
 
+@numba.jit(cache=True, parallel=False)
 def createBoxPolygon(wallpoints):
     BOX_SIDE_SIZE = float(config.getConfig()["box"]["boxSideLength"])
     headData = findHeadOfWall(wallpoints)
@@ -738,6 +747,7 @@ def createBoxPolygon(wallpoints):
         boxData.append(squarePoly)
     return boxData[:1]
 
+@numba.jit(cache=True, parallel=False)
 def findBoxAdaptPoints(globaldata,wallpoints):
     boxPoly = createBoxPolygon(wallpoints)
     adaptPoints = []
@@ -752,9 +762,11 @@ def findBoxAdaptPoints(globaldata,wallpoints):
                     adaptPoints.append(idx)
     return adaptPoints
 
+@numba.jit(cache=True, parallel=False)
 def getBoxPlot(XRange,YRange):
     return [(XRange[0],YRange[0]),(XRange[0],YRange[1]),(XRange[1],YRange[1]),(XRange[1],YRange[0])]
 
+@numba.jit(cache=True, parallel=False)
 def findGeneralBoxAdaptPoints(globaldata):
     XRange = tuple(config.getConfig()["box"]["XRange"])
     YRange = tuple(config.getConfig()["box"]["YRange"])
@@ -771,6 +783,7 @@ def findGeneralBoxAdaptPoints(globaldata):
                 adaptPoints.append(idx)
     return adaptPoints
 
+@numba.jit(cache=True, parallel=False)
 def str_to_bool(s):
     if s == 'True':
          return True
@@ -779,6 +792,7 @@ def str_to_bool(s):
     else:
          raise ValueError
 
+@numba.jit(cache=True, parallel=False)
 def findAverageWallDistance(globaldata,wallpoints):
     result = {"max":0,"min":100000000,"total":0,"sum":0,"avg":0}
     flat_list = (item for sublist in wallpoints for item in sublist)
@@ -799,6 +813,7 @@ def findAverageWallDistance(globaldata,wallpoints):
     result["avg"] = result["sum"] / result["total"]
     return result
 
+@numba.jit(cache=True, parallel=False)
 def getDistance(point1,point2,globaldata):
     ptax,ptay = getPoint(point1,globaldata)
     ptbx,ptby = getPoint(point2,globaldata)
@@ -807,6 +822,7 @@ def getDistance(point1,point2,globaldata):
     result = math.sqrt(ptx + pty)
     return result
 
+@numba.jit(cache=True, parallel=False)
 def wallConnectivityCheck(globaldata):
     madechanges = False
     for idx,_ in enumerate(globaldata):
@@ -825,6 +841,7 @@ def wallConnectivityCheck(globaldata):
         with open("adapted.txt", "a+") as text_file:
             text_file.writelines("1000 1000\n")
 
+@numba.jit(cache=True, parallel=False)
 def wallConnectivityCheckNearest(globaldata):
     madechanges = False
     for idx,_ in enumerate(globaldata):
@@ -846,6 +863,7 @@ def wallConnectivityCheckNearest(globaldata):
         with open("adapted.txt", "a+") as text_file:
             text_file.writelines("1000 1000\n")   
 
+@numba.jit(cache=True, parallel=False)
 def wallConnectivityCheckSensor(globaldata):
     madechanges = False
     sensorBox = []
@@ -867,6 +885,7 @@ def wallConnectivityCheckSensor(globaldata):
                     else:
                         text_file.writelines("  " + str(idx) + "  0\n")
 
+@numba.jit(cache=True, parallel=False)
 def sparseNullifier(globaldata):
     madechanges = False
     sensorBox = []
@@ -900,68 +919,20 @@ def sparseNullifier(globaldata):
                     else:
                         text_file.writelines("  " + str(idx) + "  0\n")
                    
-
-def getInteriorPoints(globaldata):
-    result = []
-    for i in range(len(globaldata)):
-        if i > 0:
-            flag = getFlag(i, globaldata)
-            if flag == 1:
-                result.append(i)
-    return result
-
-def getInteriorPoints2(globaldata):
-    result = []
-    for i in range(len(globaldata)):
-        if i > 0:
-            flag = globaldata[i].pointType()
-            if flag == 1:
-                result.append(i)
-    return result
-
+@numba.jit(cache=True, parallel=False)
 def interiorConnectivityCheck(globaldata):
-    interiorPts = getInteriorPoints(globaldata)
-    coresavail = multiprocessing.cpu_count()
-    log.info("Found " + str(coresavail) + " available core(s).")
-    log.info("BOOSTU BOOSTU BOOSTU")
-    MAX_CORES = int(config.getConfig()["generator"]["maxCoresForReplacement"])
-    log.info("Max Cores Allowed " + str(MAX_CORES))
-    pool = ThreadPool(min(MAX_CORES,coresavail))
-    results = []
-    chunksize = math.ceil(len(interiorPts)/min(MAX_CORES,coresavail))
-    globalchunks = list(chunks(interiorPts,chunksize))
-    for itm in globalchunks:
-        results.append(pool.apply_async(isConditionBadParallel, args=(itm, globaldata, True)))
-    pool.close()
-    pool.join()
-    results = [r.get() for r in results]
-    # for idx,_ in enumerate(globaldata):
-    #     if idx > 0:
-    #         flag = getFlag(idx,globaldata)
-    #         if flag == 1:
-    #             # checkConditionNumber(idx,globaldata,int(config.getConfig()["bspline"]["threshold"]))
-    #             isConditionBad(idx,globaldata,True)
+    for idx,_ in enumerate(globaldata):
+        if idx > 0:
+            flag = getFlag(idx,globaldata)
+            if flag == 1:
+                # checkConditionNumber(idx,globaldata,int(config.getConfig()["bspline"]["threshold"]))
+                isConditionBad(idx,globaldata,True)
 
-def interiorConnectivityCheck2(globaldata):
-    interiorPts = getInteriorPoints2(globaldata)
-    coresavail = multiprocessing.cpu_count()
-    log.info("Found " + str(coresavail) + " available core(s).")
-    log.info("BOOSTU BOOSTU BOOSTU")
-    MAX_CORES = int(config.getConfig()["generator"]["maxCoresForReplacement"])
-    log.info("Max Cores Allowed " + str(MAX_CORES))
-    pool = ThreadPool(min(MAX_CORES,coresavail))
-    results = []
-    chunksize = math.ceil(len(interiorPts)/min(MAX_CORES,coresavail))
-    globalchunks = list(chunks(interiorPts,chunksize))
-    for itm in globalchunks:
-        results.append(pool.apply_async(isConditionBadParallel2, args=(itm, globaldata, True)))
-    pool.close()
-    pool.join()
-    results = [r.get() for r in results]
-
+@numba.jit(cache=True, parallel=False)
 def flattenList(ptdata):
     return list(itertools.chain.from_iterable(ptdata))
 
+@numba.jit(cache=True, parallel=False)
 def getPerpendicularPoint(idx,globaldata):
     wallptData = getWallPointArray(globaldata)
     wallptDataOr = wallptData
@@ -976,12 +947,14 @@ def getPerpendicularPoint(idx,globaldata):
     pts2y = float(pts[1].split(",")[1])
     return perpendicularPt(pts1x,pts2x,mainptx,pts1y,pts2y,mainpty)
 
+@numba.jit(cache=True, parallel=False)
 def perpendicularPt(x1,x2,x3,y1,y2,y3):
     k = ((y2-y1) * (x3-x1) - (x2-x1) * (y3-y1)) / ((y2-y1)**2 + (x2-x1)**2)
     x4 = x3 - k * (y2-y1)
     y4 = y3 + k * (x2-x1)
     return x4,y4
 
+@numba.jit(cache=True, parallel=False)
 def angle(x1, y1, x2, y2, x3, y3):
     a = np.array([x1, y1])
     b = np.array([x2, y2])
@@ -995,6 +968,7 @@ def angle(x1, y1, x2, y2, x3, y3):
 
     return np.degrees(angle)
 
+@numba.jit(cache=True, parallel=False)
 def findNearestNeighbourWallPoints(idx,globaldata,wallptData,wallptDataOr):
     ptx,pty = getPoint(idx,globaldata)
     leastdt,leastidx = 1000,1000
@@ -1028,7 +1002,7 @@ def findNearestNeighbourWallPoints(idx,globaldata,wallptData,wallptDataOr):
     #     leastidx,leastidx2 = leastidx2,leastidx
     return convertIndexToPoints([leastidx,leastidx2],globaldata)
 
-
+@numba.jit(cache=True, parallel=False)
 def getNearestProblemPoint(idx,globaldata):
     xpos = getDWallXPosPoints(idx,globaldata)
     xneg = getDWallXNegPoints(idx,globaldata)
@@ -1071,16 +1045,19 @@ def getNearestProblemPoint(idx,globaldata):
                 currpt = itm
     return currpt
 
+@numba.jit(cache=True, parallel=False)
 def updateNormals(idx,globaldata,nx,ny):
     globaldata[idx][11] = nx
     globaldata[idx][12] = ny
     return globaldata
 
+@numba.jit(cache=True, parallel=False)
 def getNormals(idx,globaldata):
     nx = globaldata[idx][11]
     ny = globaldata[idx][12]
     return nx,ny
 
+@numba.jit(cache=True, parallel=False)
 def getWallEndPoints(globaldata):
     wallIndex = getWallPointArrayIndex(globaldata)
     endPoints = []
@@ -1088,7 +1065,7 @@ def getWallEndPoints(globaldata):
         endPoints.append(int(itm[-1]))
     return endPoints
 
-
+@numba.jit(cache=True, parallel=False)
 def calculateNormalConditionValues(idx,globaldata,nxavg,nyavg):
     nbhs = convertIndexToPoints(getNeighbours(idx,globaldata),globaldata)
     # print(nbhs)
@@ -1105,11 +1082,7 @@ def calculateNormalConditionValues(idx,globaldata,nxavg,nyavg):
     result = {"spos":dSPosNbhs,"sposCond":dSPosCondition,"sneg":dSNegNbhs,"snegCond":dSNegCondition,"npos":dNPosNbhs,"nposCond":dNPosCondition,"nneg":dNNegNbhs,"nnegCond":dNNegCondition}
     return result
 
-def calculateNormalConditionValues2(idx, globaldata):
-    nx = globaldata[i].getNx()
-    ny = globaldata[i].getNy()
-
-
+@numba.jit(cache=True, parallel=False)
 def isConditionBad(idx,globaldata,verbose):
     nx,ny = getNormals(idx,globaldata)
     condResult = calculateNormalConditionValues(idx,globaldata,nx,ny)
@@ -1124,19 +1097,7 @@ def isConditionBad(idx,globaldata,verbose):
     else:
         return False
 
-def isConditionBadParallel2(idx, globaldata, verbose):
-    condResult = calculateNormalConditionValues2(idx,globaldata)
-    dSPosNbhs,dSNegNbhs,dNPosNbhs,dNNegNbhs = condResult["spos"], condResult["sneg"], condResult["npos"], condResult["nneg"]
-    dSPosCondition,dSNegCondition,dNPosCondition,dNNegCondition = condResult["sposCond"], condResult["snegCond"], condResult["nposCond"], condResult["nnegCond"]
-    maxCond = max(dSPosCondition,dSNegCondition,dNPosCondition,dNNegCondition)
-    if maxCond > float(config.getConfig()["bspline"]["threshold"]) or math.isnan(dSPosCondition) or math.isnan(dSNegCondition) or math.isnan(dNPosCondition) or math.isnan(dNNegCondition):
-        # print(idx)
-        if verbose:
-            print(idx,len(dSPosNbhs),dSPosCondition,len(dSNegNbhs),dSNegCondition,len(dNPosNbhs),dNPosCondition,len(dNNegNbhs),dNNegCondition)
-        return True
-    else:
-        return False
-
+@numba.jit(cache=True, parallel=False)
 def weightedConditionValueForSetOfPointsNormalWithInputs(index, globaldata, nbh, nx, ny):
     mainptx = float(globaldata[index][1])
     mainpty = float(globaldata[index][2])
@@ -1172,14 +1133,7 @@ def weightedConditionValueForSetOfPointsNormalWithInputs(index, globaldata, nbh,
     s = max(s) / min(s)
     return s
 
-def isConditionBadParallel(data, globaldata, verbose):
-    for idx in data:
-        isConditionBad(idx, globaldata, verbose)
-
-def isConditionBadParallel2(data, globaldata, verbose):
-    for idx in data:
-        isConditionBad(idx, globaldata, verbose)
-
+@numba.jit(cache=True, parallel=False)
 def deltaWallNeighbourCalculationN(
     index, currentneighbours, nx, ny, giveposdelta, globaldata
 ):
@@ -1212,11 +1166,13 @@ def deltaWallNeighbourCalculationN(
         # print(index,len(currentneighbours),deltaspos,deltasneg,deltaszero)
     return deltaspos, deltasneg, deltaszero, output
 
+@numba.jit(cache=True, parallel=False)
 def pushCache(globaldata):
     globaldata.pop(0)
     config.setKeyVal("globaldata",globaldata)
     log.info("Pushed to Cache!")
 
+@numba.jit(cache=True, parallel=False)
 def verifyIntegrity():
     loadWall = dict(config.load_obj("wall"))
     with open("adapted.txt","r") as fileman:
@@ -1255,9 +1211,11 @@ def verifyIntegrity():
         print("Either adapted.txt or wall.json is invalid")
     # (?<=2000 2000)([\S\s]*?)(?=1000 1000)
 
+@numba.jit(cache=True, parallel=False)
 def cleanAdapted():
     None
 
+@numba.jit(cache=True, parallel=False)
 def fullRefine(globaldata):
     with open("adapted.txt", "a+") as text_file:
         for idx,_ in enumerate(globaldata):
@@ -1267,7 +1225,7 @@ def fullRefine(globaldata):
                 text_file.writelines("\n")
         text_file.writelines("1000 1000\n")
 
-
+@numba.jit(cache=True, parallel=False)
 def oldMode(globaldata):
     globaldata.pop(0)
     with open("preprocessorfile_oldmode.txt", "w") as text_file:
@@ -1280,6 +1238,7 @@ def oldMode(globaldata):
             text_file.writelines(["%s " % item for item in item1])
             text_file.writelines("\n") 
 
+@numba.jit(cache=True, parallel=False)
 def printBadness(val, globaldata):
     for idx,_ in enumerate(globaldata):
         if idx > 0:
@@ -1289,6 +1248,7 @@ def printBadness(val, globaldata):
                 if xpos == val or xneg == val or ypos == val or yneg == val:
                     print(idx)
 
+@numba.jit(cache=True, parallel=False)
 def splitWrite(globaldata):
     outer = []
     inter = []
@@ -1316,6 +1276,7 @@ def splitWrite(globaldata):
             text_file.writelines(["%s %s " % (itm[0],itm[1])])
             text_file.writelines("\n")
 
+@numba.jit(cache=True, parallel=False)
 def configManager():
     while True:
         clearScreen()
@@ -1366,5 +1327,6 @@ def configManager():
             break
     return None
 
+@numba.jit(cache=True, parallel=False)
 def clearScreen():
     os.system('cls' if os.name == 'nt' else 'clear')

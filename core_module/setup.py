@@ -1,9 +1,19 @@
+#!python
+#cython: language_level=3
+
 from distutils.core import setup
-from Cython.Build import cythonize
 from distutils.extension import Extension
+import numpy
 
 from Cython.Build import cythonize
-extensions = [Extension("core", ["core.pyx"])]
+from Cython.Compiler import Options
+
+Options.annotate = True
+
+
+extensions = [Extension("core", ["core.pyx"],
+            include_dirs=[numpy.get_include()]),
+        ]
 extensions = cythonize(extensions)
 
 setup(
