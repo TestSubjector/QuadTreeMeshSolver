@@ -83,7 +83,7 @@ def convertIndexToPoints(indexarray, globaldata):
     return ptlist
 
 
-def weightedConditionValueForSetOfPoints(index, globaldata, points):
+def weightedConditionValueForSetOfPoints(index, globaldata, points, conf):
     index = int(index)
     mainptx = float(globaldata[index][1])
     mainpty = float(globaldata[index][2])
@@ -100,7 +100,7 @@ def weightedConditionValueForSetOfPoints(index, globaldata, points):
         d = math.sqrt(deltaX ** 2 + deltaY ** 2)
         if d == 0:
             continue
-        power = int(config.getConfig()["global"]["weightCondition"])
+        power = int(conf["global"]["weightCondition"])
         w = d ** power
         deltaSumXX = deltaSumXX + w * (deltaX ** 2)
         deltaSumYY = deltaSumYY + w * (deltaY ** 2)
@@ -128,7 +128,7 @@ def chunks(l, n):
 def deltaY(ycord, orgycord):
     return float(orgycord - ycord)
 
-def normalCalculation(index, globaldata, wallpoint):
+def normalCalculation(index, globaldata, wallpoint, conf):
     nx = 0
     ny = 0
     cordx = float(globaldata[index][1])
@@ -156,7 +156,7 @@ def normalCalculation(index, globaldata, wallpoint):
     if not wallpoint:
         nx = nx / det
     else:
-        direction = config.getConfig()["global"]["wallPointOrientation"]
+        direction = conf["global"]["wallPointOrientation"]
         if direction == "cw":
             nx = (-nx) / det
         elif direction == "ccw":
@@ -164,8 +164,8 @@ def normalCalculation(index, globaldata, wallpoint):
     ny = ny / det
     return nx, ny
 
-def weightedConditionValueForSetOfPointsNormal(index, globaldata, nbh):
-    nx,ny = normalCalculation(index,globaldata,True)
+def weightedConditionValueForSetOfPointsNormal(index, globaldata, nbh, conf):
+    nx,ny = normalCalculation(index,globaldata,True, conf)
     mainptx = float(globaldata[index][1])
     mainpty = float(globaldata[index][2])
     nx = float(nx)
@@ -184,7 +184,7 @@ def weightedConditionValueForSetOfPointsNormal(index, globaldata, nbh):
         d = math.sqrt(deltaS ** 2 + deltaN ** 2)
         if d == 0:
             continue
-        power = int(config.getConfig()["global"]["weightCondition"])
+        power = int(conf["global"]["weightCondition"])
         w = d ** power
         deltaSumS = deltaSumS + w * (deltaS) ** 2
         deltaSumN = deltaSumN + w * (deltaN) ** 2
@@ -250,55 +250,55 @@ def deltaNeighbourCalculation(currentneighbours, currentcord, isxcord, isnegativ
             yneg = yneg + 1
     return xpos, ypos, xneg, yneg, temp
 
-def getWeightedNormalConditionValueofWallXPos(index, globaldata):
+def getWeightedNormalConditionValueofWallXPos(index, globaldata, conf):
     nbhs = convertIndexToPoints(getNeighbours(index, globaldata), globaldata)
-    nx,ny = normalCalculation(index,globaldata,True)
+    nx,ny = normalCalculation(index,globaldata,True, conf)
     _, _, _, mypoints = deltaWallNeighbourCalculation(index,
         nbhs,nx,ny, True, globaldata
     )
-    return weightedConditionValueForSetOfPointsNormal(index, globaldata, mypoints)
+    return weightedConditionValueForSetOfPointsNormal(index, globaldata, mypoints, conf)
 
 
-def getWeightedNormalConditionValueofWallXNeg(index, globaldata):
+def getWeightedNormalConditionValueofWallXNeg(index, globaldata, conf):
     nbhs = convertIndexToPoints(getNeighbours(index, globaldata), globaldata)
-    nx,ny = normalCalculation(index,globaldata,True)
+    nx,ny = normalCalculation(index,globaldata,True, conf)
     _, _, _, mypoints = deltaWallNeighbourCalculation(index,
         nbhs,nx,ny, False, globaldata
     )
-    return weightedConditionValueForSetOfPointsNormal(index, globaldata, mypoints)
+    return weightedConditionValueForSetOfPointsNormal(index, globaldata, mypoints, conf)
 
 
 
-def getWeightedInteriorConditionValueofXPos(index, globaldata):
+def getWeightedInteriorConditionValueofXPos(index, globaldata, conf):
     nbhs = convertIndexToPoints(getNeighbours(index, globaldata), globaldata)
     _, _, _, _, mypoints = deltaNeighbourCalculation(
         nbhs, getPointxy(index, globaldata), True, False
     )
-    return weightedConditionValueForSetOfPoints(index, globaldata, mypoints)
+    return weightedConditionValueForSetOfPoints(index, globaldata, mypoints, conf)
 
 
-def getWeightedInteriorConditionValueofXNeg(index, globaldata):
+def getWeightedInteriorConditionValueofXNeg(index, globaldata, conf):
     nbhs = convertIndexToPoints(getNeighbours(index, globaldata), globaldata)
     _, _, _, _, mypoints = deltaNeighbourCalculation(
         nbhs, getPointxy(index, globaldata), True, True
     )
-    return weightedConditionValueForSetOfPoints(index, globaldata, mypoints)
+    return weightedConditionValueForSetOfPoints(index, globaldata, mypoints, conf)
 
 
-def getWeightedInteriorConditionValueofYPos(index, globaldata):
+def getWeightedInteriorConditionValueofYPos(index, globaldata, conf):
     nbhs = convertIndexToPoints(getNeighbours(index, globaldata), globaldata)
     _, _, _, _, mypoints = deltaNeighbourCalculation(
         nbhs, getPointxy(index, globaldata), False, False
     )
-    return weightedConditionValueForSetOfPoints(index, globaldata, mypoints)
+    return weightedConditionValueForSetOfPoints(index, globaldata, mypoints, conf)
 
 
-def getWeightedInteriorConditionValueofYNeg(index, globaldata):
+def getWeightedInteriorConditionValueofYNeg(index, globaldata, conf):
     nbhs = convertIndexToPoints(getNeighbours(index, globaldata), globaldata)
     _, _, _, _, mypoints = deltaNeighbourCalculation(
         nbhs, getPointxy(index, globaldata), False, True
     )
-    return weightedConditionValueForSetOfPoints(index, globaldata, mypoints)
+    return weightedConditionValueForSetOfPoints(index, globaldata, mypoints, conf)
 
 
 def getDXPosPoints(index, globaldata):
@@ -316,18 +316,18 @@ def getDXNegPoints(index, globaldata):
     )
     return mypoints
 
-def getDWallXPosPoints(index, globaldata):
+def getDWallXPosPoints(index, globaldata, conf):
     nbhs = convertIndexToPoints(getNeighbours(index, globaldata), globaldata)
-    nx,ny = normalCalculation(index,globaldata,True)
+    nx,ny = normalCalculation(index,globaldata,True, conf)
     _, _, _, mypoints = deltaWallNeighbourCalculation(index,
         nbhs,nx,ny, True, globaldata
     )
     return mypoints
 
 
-def getDWallXNegPoints(index, globaldata):
+def getDWallXNegPoints(index, globaldata, conf):
     nbhs = convertIndexToPoints(getNeighbours(index, globaldata), globaldata)
-    nx,ny = normalCalculation(index,globaldata,True)
+    nx,ny = normalCalculation(index,globaldata,True, conf)
     _, _, _, mypoints = deltaWallNeighbourCalculation(index,
         nbhs,nx,ny, False, globaldata
     )
@@ -398,7 +398,7 @@ def getDXNegPointsFromSetRaw(index, globaldata, points):
     return mypoints
 
 
-def getDYPosPointsFromSetRaw(index, globaldata, points):
+def getDYPosPointsFromSetRaw(index, globaldata, points, conf):
     nbhs = points
     _, _, _, _, mypoints = deltaNeighbourCalculation(
         nbhs, getPointxy(index, globaldata), False, False
@@ -406,36 +406,36 @@ def getDYPosPointsFromSetRaw(index, globaldata, points):
     return mypoints
 
 
-def getDYNegPointsFromSetRaw(index, globaldata, points):
+def getDYNegPointsFromSetRaw(index, globaldata, points, conf):
     nbhs = points
     _, _, _, _, mypoints = deltaNeighbourCalculation(
         nbhs, getPointxy(index, globaldata), False, True
     )
     return mypoints
 
-def getDWallXPosPointsFromSetRaw(index, globaldata, points):
+def getDWallXPosPointsFromSetRaw(index, globaldata, points, conf):
     nbhs = points
-    nx,ny = normalCalculation(index,globaldata,True)
+    nx,ny = normalCalculation(index,globaldata,True, conf)
     _, _, _, mypoints = deltaWallNeighbourCalculation(index,
         nbhs,nx,ny, True, globaldata
     )
     return mypoints
 
 
-def getDWallXNegPointsFromSetRaw(index, globaldata, points):
+def getDWallXNegPointsFromSetRaw(index, globaldata, points, conf):
     nbhs = points
-    nx,ny = normalCalculation(index,globaldata,True)
+    nx,ny = normalCalculation(index,globaldata,True, conf)
     _, _, _, mypoints = deltaWallNeighbourCalculation(index,
         nbhs,nx,ny, False, globaldata
     )
     return mypoints
 
 
-def checkConditionNumber(index, globaldata, threshold):
-    xpos = getWeightedInteriorConditionValueofXPos(index, globaldata)
-    xneg = getWeightedInteriorConditionValueofXNeg(index, globaldata)
-    ypos = getWeightedInteriorConditionValueofYPos(index, globaldata)
-    yneg = getWeightedInteriorConditionValueofYNeg(index, globaldata)
+def checkConditionNumber(index, globaldata, threshold, conf):
+    xpos = getWeightedInteriorConditionValueofXPos(index, globaldata, conf)
+    xneg = getWeightedInteriorConditionValueofXNeg(index, globaldata, conf)
+    ypos = getWeightedInteriorConditionValueofYPos(index, globaldata, conf)
+    yneg = getWeightedInteriorConditionValueofYNeg(index, globaldata, conf)
     dSPointXPos = getDXPosPoints(index, globaldata)
     dSPointXNeg = getDXNegPoints(index, globaldata)
     dSPointYPos = getDYPosPoints(index, globaldata)
@@ -584,17 +584,17 @@ def getFlags(index,globaldata):
     flagyneg = int(globaldata[index][10])
     return flagxpos,flagxneg,flagypos,flagyneg
 
-def getConditionNumber(index, globaldata):
-    xpos = getWeightedInteriorConditionValueofXPos(index, globaldata)
-    xneg = getWeightedInteriorConditionValueofXNeg(index, globaldata)
-    ypos = getWeightedInteriorConditionValueofYPos(index, globaldata)
-    yneg = getWeightedInteriorConditionValueofYNeg(index, globaldata)
+def getConditionNumber(index, globaldata, conf):
+    xpos = getWeightedInteriorConditionValueofXPos(index, globaldata, conf)
+    xneg = getWeightedInteriorConditionValueofXNeg(index, globaldata, conf)
+    ypos = getWeightedInteriorConditionValueofYPos(index, globaldata, conf)
+    yneg = getWeightedInteriorConditionValueofYNeg(index, globaldata, conf)
     result = {"xpos":xpos,"xneg":xneg,"ypos":ypos,"yneg":yneg}
     return result
 
-def getConditionNumberNormal(index,globaldata):
-    xpos = getWeightedNormalConditionValueofWallXPos(index,globaldata)
-    xneg = getWeightedNormalConditionValueofWallXNeg(index,globaldata)
+def getConditionNumberNormal(index,globaldata, conf):
+    xpos = getWeightedNormalConditionValueofWallXPos(index,globaldata, conf)
+    xneg = getWeightedNormalConditionValueofWallXNeg(index,globaldata, conf)
     result = {"xpos":xpos,"xneg":xneg,"ypos":"NA","yneg":"NA"}
     return result
 
@@ -806,6 +806,7 @@ def wallConnectivityCheck(globaldata):
 
 def wallConnectivityCheckNearest(globaldata):
     madechanges = False
+    conf = config.getConfig()
     for idx,_ in enumerate(globaldata):
         if idx > 0:
             flag = getFlag(idx,globaldata)
@@ -814,7 +815,7 @@ def wallConnectivityCheckNearest(globaldata):
                 if xpos == 1 or xneg == 1:
                     print(idx) 
                     madechanges = True
-                    ptcord = getNearestProblemPoint(idx,globaldata)
+                    ptcord = getNearestProblemPoint(idx,globaldata, conf)
                     if ptcord != 0:
                         ptcordx = float(ptcord.split(",")[0])
                         ptcordy = float(ptcord.split(",")[1])
@@ -849,13 +850,14 @@ def wallConnectivityCheckSensor(globaldata):
 def sparseNullifier(globaldata):
     madechanges = False
     sensorBox = []
+    conf = config.getConfig()
     for idx,_ in enumerate(globaldata):
         if idx > 0:
             flag = getFlag(idx,globaldata)
             if flag == 0:
                 xpos,xneg,_,_ = getFlags(idx,globaldata)
                 if xpos == 1:
-                    getXposPoints = getDWallXPosPoints(idx,globaldata)
+                    getXposPoints = getDWallXPosPoints(idx,globaldata, conf)
                     for itm in getXposPoints:
                         index = getIndexFromPoint(itm,globaldata)
                         flag = getFlag(index,globaldata)
@@ -863,7 +865,7 @@ def sparseNullifier(globaldata):
                             madechanges = True
                             sensorBox.append(index)
                 if xneg == 1:
-                    getXnegPoints = getDWallXNegPoints(idx,globaldata)
+                    getXnegPoints = getDWallXNegPoints(idx,globaldata, conf)
                     for itm in getXnegPoints:
                         index = getIndexFromPoint(itm,globaldata)
                         flag = getFlag(index,globaldata)
@@ -881,12 +883,13 @@ def sparseNullifier(globaldata):
                    
 
 def interiorConnectivityCheck(globaldata):
+    conf = config.getConfig()
     for idx,_ in enumerate(globaldata):
         if idx > 0:
             flag = getFlag(idx,globaldata)
             if flag == 1:
                 # checkConditionNumber(idx,globaldata,int(config.getConfig()["bspline"]["threshold"]))
-                isConditionBad(idx,globaldata,True)
+                isConditionBad(idx,globaldata,True, conf)
 
 def flattenList(ptdata):
     return list(itertools.chain.from_iterable(ptdata))
@@ -958,9 +961,9 @@ def findNearestNeighbourWallPoints(idx,globaldata,wallptData,wallptDataOr):
     return convertIndexToPoints([leastidx,leastidx2],globaldata)
 
 
-def getNearestProblemPoint(idx,globaldata):
-    xpos = getDWallXPosPoints(idx,globaldata)
-    xneg = getDWallXNegPoints(idx,globaldata)
+def getNearestProblemPoint(idx,globaldata, conf):
+    xpos = getDWallXPosPoints(idx,globaldata, conf)
+    xneg = getDWallXNegPoints(idx,globaldata, conf)
     leftright = getLeftandRightPoint(idx,globaldata)
     mainptx,mainpty = getPoint(idx,globaldata)
     mainpt = (mainptx,mainpty)
@@ -1018,7 +1021,7 @@ def getWallEndPoints(globaldata):
     return endPoints
 
 
-def calculateNormalConditionValues(idx,globaldata,nxavg,nyavg):
+def calculateNormalConditionValues(idx,globaldata,nxavg,nyavg, conf):
     nbhs = convertIndexToPoints(getNeighbours(idx,globaldata),globaldata)
     # print(nbhs)
     _,_,_,dSPosNbhs = deltaWallNeighbourCalculation(idx,nbhs,nxavg,nyavg,True,globaldata)
@@ -1026,21 +1029,21 @@ def calculateNormalConditionValues(idx,globaldata,nxavg,nyavg):
     _,_,_,dNPosNbhs = deltaWallNeighbourCalculationN(idx,nbhs,nxavg,nyavg,True,globaldata)
     _,_,_,dNNegNbhs = deltaWallNeighbourCalculationN(idx,nbhs,nxavg,nyavg,False,globaldata)
     
-    dSPosCondition = weightedConditionValueForSetOfPointsNormalWithInputs(idx,globaldata,dSPosNbhs,nxavg,nyavg)
-    dSNegCondition = weightedConditionValueForSetOfPointsNormalWithInputs(idx,globaldata,dSNegNbhs,nxavg,nyavg)
-    dNPosCondition = weightedConditionValueForSetOfPointsNormalWithInputs(idx,globaldata,dNPosNbhs,nxavg,nyavg)
-    dNNegCondition = weightedConditionValueForSetOfPointsNormalWithInputs(idx,globaldata,dNNegNbhs,nxavg,nyavg)
+    dSPosCondition = weightedConditionValueForSetOfPointsNormalWithInputs(idx,globaldata,dSPosNbhs,nxavg,nyavg, conf)
+    dSNegCondition = weightedConditionValueForSetOfPointsNormalWithInputs(idx,globaldata,dSNegNbhs,nxavg,nyavg, conf)
+    dNPosCondition = weightedConditionValueForSetOfPointsNormalWithInputs(idx,globaldata,dNPosNbhs,nxavg,nyavg, conf)
+    dNNegCondition = weightedConditionValueForSetOfPointsNormalWithInputs(idx,globaldata,dNNegNbhs,nxavg,nyavg, conf)
 
     result = {"spos":dSPosNbhs,"sposCond":dSPosCondition,"sneg":dSNegNbhs,"snegCond":dSNegCondition,"npos":dNPosNbhs,"nposCond":dNPosCondition,"nneg":dNNegNbhs,"nnegCond":dNNegCondition}
     return result
 
-def isConditionBad(idx,globaldata,verbose):
+def isConditionBad(idx,globaldata,verbose, conf):
     nx,ny = getNormals(idx,globaldata)
-    condResult = calculateNormalConditionValues(idx,globaldata,nx,ny)
+    condResult = calculateNormalConditionValues(idx,globaldata,nx,ny, conf)
     dSPosNbhs,dSNegNbhs,dNPosNbhs,dNNegNbhs = condResult["spos"], condResult["sneg"], condResult["npos"], condResult["nneg"]
     dSPosCondition,dSNegCondition,dNPosCondition,dNNegCondition = condResult["sposCond"], condResult["snegCond"], condResult["nposCond"], condResult["nnegCond"]
     maxCond = max(dSPosCondition,dSNegCondition,dNPosCondition,dNNegCondition)
-    if maxCond > float(config.getConfig()["bspline"]["threshold"]) or math.isnan(dSPosCondition) or math.isnan(dSNegCondition) or math.isnan(dNPosCondition) or math.isnan(dNNegCondition):
+    if maxCond > float(conf["bspline"]["threshold"]) or math.isnan(dSPosCondition) or math.isnan(dSNegCondition) or math.isnan(dNPosCondition) or math.isnan(dNNegCondition):
         # print(idx)
         if verbose:
             print(idx,len(dSPosNbhs),dSPosCondition,len(dSNegNbhs),dSNegCondition,len(dNPosNbhs),dNPosCondition,len(dNNegNbhs),dNNegCondition)
@@ -1048,7 +1051,7 @@ def isConditionBad(idx,globaldata,verbose):
     else:
         return False
 
-def weightedConditionValueForSetOfPointsNormalWithInputs(index, globaldata, nbh, nx, ny):
+def weightedConditionValueForSetOfPointsNormalWithInputs(index, globaldata, nbh, nx, ny, conf):
     mainptx = float(globaldata[index][1])
     mainpty = float(globaldata[index][2])
     nx = float(nx)
@@ -1067,7 +1070,7 @@ def weightedConditionValueForSetOfPointsNormalWithInputs(index, globaldata, nbh,
         d = math.sqrt(deltaS ** 2 + deltaN ** 2)
         if d == 0:
             continue
-        power = int(config.getConfig()["global"]["weightCondition"])
+        power = int(conf["global"]["weightCondition"])
         w = d ** power
         deltaSumS = deltaSumS + w * (deltaS) ** 2
         deltaSumN = deltaSumN + w * (deltaN) ** 2

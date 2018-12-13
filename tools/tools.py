@@ -20,6 +20,9 @@ def main():
     file1 = open(args.input or "preprocessorfile.txt", "r")
     data = file1.read()
     globaldata = ["start"]
+    # splitdata = StringIO(data)
+    # print(splitdata)
+    # globaldata = np.loadtxt(splitdata)
     splitdata = data.split("\n")
     splitdata = splitdata[:-1]
 
@@ -38,6 +41,7 @@ def main():
     globaldata = core.cleanNeighbours(globaldata)
     wallpoints = core.getWallPointArray(globaldata)
     wallpointsData = core.generateWallPolygons(wallpoints)
+    conf = config.getConfig()
 
     # interiorpts = []
     # interiorpts.extend(range(1, len(globaldata)))
@@ -142,12 +146,12 @@ def main():
             print("Neighbour Array")
             print(nbhs)
             if(flag==0):
-                print(core.getConditionNumberNormal(ptidx,globaldata))
-                xpos = core.getDWallXPosPoints(ptidx,globaldata)
-                xneg = core.getDWallXNegPoints(ptidx,globaldata)
+                print(core.getConditionNumberNormal(ptidx,globaldata, conf))
+                xpos = core.getDWallXPosPoints(ptidx,globaldata, conf)
+                xneg = core.getDWallXNegPoints(ptidx,globaldata, conf)
                 print("xpos",len(xpos),"xneg",len(xneg))
             else:
-                print(core.getConditionNumber(ptidx,globaldata))
+                print(core.getConditionNumber(ptidx,globaldata, conf))
                 xpos = core.getDXPosPoints(ptidx,globaldata)
                 xneg = core.getDXNegPoints(ptidx,globaldata)
                 ypos = core.getDYPosPoints(ptidx,globaldata)
