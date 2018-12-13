@@ -25,9 +25,15 @@
 ## To cut a file
 * sed -n '1,<wall points end line>p' preprocessorfile_cleaned.txt > wall
 
-## Remember that shape generates modified shape file.
-* python3 ./shapemod/shape.py -w <Path to First Geometry File> <Path to second Geometry File>
-* ALWAYS ADD THIS BEFORE ANY POINT GENERATION. A file called shape_generated.txt is generated. Quadtree should use this file instead of it's usual shape text file.
-
 ## Geometry
 * Each polygon is saved as an individual file. The delimiter between x and y co-ordinates is a tab (\t)
+
+## To change from clockwise to anticlockwise and vice versa
+* config.json -> global -> wallPointOrientation -> cw (ccw)
+
+## FIRST TIME INSTRUCTIONS
+* Rename config.json.example -> config.json
+  
+# Remember that shape generates modified shape file.
+* python3 ./shapemod/shape.py -w <Path to First Geometry File> <Path to second Geometry File>
+* ALWAYS ADD THIS BEFORE ANY POINT GENERATION. A file called shape_generated.txt is generated. Quadtree should use this file instead of it's usual shape text file.
