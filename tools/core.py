@@ -537,11 +537,7 @@ def isNonAeroDynamic(index, cordpt, globaldata, wallPolygonData):
     cordpty = float(cordpt.split(",")[1])
     line = shapely.geometry.LineString([[main_pointx, main_pointy], [cordptx, cordpty]])
     responselist = []
-    for item in wallPolygonData:
-        polygonpts = []
-        for item2 in item:
-            polygonpts.append([float(item2.split(",")[0]), float(item2.split(",")[1])])
-        polygontocheck = shapely.geometry.Polygon(polygonpts)
+    for polygontocheck in wallPolygonData:
         merged = linemerge([polygontocheck.boundary, line])
         borders = unary_union(merged)
         polygons = polygonize(borders)
