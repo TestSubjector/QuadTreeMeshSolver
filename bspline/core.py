@@ -1040,3 +1040,9 @@ def doesItIntersect(idx, quadrant, globaldata, wallpoints):
         return True
     else:
         return False
+
+def getWallGeometry(walldata, globaldata, itm):
+    itmx, itmy = getPoint(itm, globaldata)
+    for idx,itm in enumerate(walldata):
+        if [itmx, itmy] in itm:
+            return itm
