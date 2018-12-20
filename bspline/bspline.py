@@ -22,11 +22,16 @@ def main():
     parser.add_argument("-b", "--bspline", nargs="+")
     parser.add_argument("-n", "--normal", nargs="?")
     parser.add_argument("-m", "--midpointspline", nargs="+")
+    parser.add_argument("-p", "--forcemidpointspline", nargs="?")
     args = parser.parse_args()
 
     normalApproach = False
     if args.normal:
         normalApproach = core.str_to_bool(args.normal)
+
+    forcemidpointspline = False
+    if args.forcemidpointspline:
+        forcemidpointspline = core.str_to_bool(args.forcemidpointspline)
 
     log.info("Loading Data")
     log.debug("Arguments")
@@ -57,7 +62,10 @@ def main():
     else:
         globaldata.insert(0,"start")
 
-    POINT_CONTROL = int(config.getConfig()["bspline"]["pointControl"])
+    if not forcemidpointspline:
+        POINT_CONTROL = int(config.getConfig()["bspline"]["pointControl"])
+    else:
+        POINT_CONTROL = 3
 
     globaldata = core.cleanNeighbours(globaldata)
     wallPts = core.getWallPointArray(globaldata)
