@@ -596,3 +596,34 @@ void descent_foreign(quadtree_node_t *node, coords_t *shape_list)
     }
   }
 }
+
+void quadtree_hillwalk(quadtree_node_t *root, void (*descent_hill)(quadtree_node_t *node),
+                             void (*ascent)(quadtree_node_t *node))
+{
+  if (root->nw != NULL)
+  {
+    quadtree_hillwalk(root->nw, descent_hill, ascent);
+  }
+  if (root->ne != NULL)
+  {
+    quadtree_hillwalk(root->ne, descent_hill, ascent);
+  }
+  if (root->sw != NULL)
+  {
+    quadtree_hillwalk(root->sw, descent_hill, ascent);
+  }
+  if (root->se != NULL)
+  {
+    quadtree_hillwalk(root->se, descent_hill, ascent);
+  }
+  (*descent_hill)(root);
+  (*ascent)(root);
+}
+
+void descent_hill(quadtree_node_t *node)
+{
+  if ((quadtree_node_isempty(node)))
+  {
+    hill_derefinement(node, 1);
+  }
+}

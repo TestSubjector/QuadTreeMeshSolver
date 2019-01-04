@@ -218,7 +218,7 @@ int wallpoint_insert_flag;
 void extraoutput(int append, char *filename, double nw_bound_xcord, double nw_bound_ycord, double se_bound_xcord, double se_bound_ycord);
 
 coords_t *derefined_list;
-void derefine(coords_t *derefined_list, int derefine_counter);
+void derefine_fromlist(coords_t *derefined_list, int derefine_counter);
 quadtree_node_t *quadtree_parent_search(double x, double y);
 int derefine_search(coords_t *derefined_list, double x, double y, int derefine_counter);
 
@@ -227,5 +227,10 @@ void centroidify(quadtree_node_t *node, coords_t *shape_list);
 void quadtree_foreignwalk(quadtree_node_t *root, void (*descent_foreign)(quadtree_node_t *node, coords_t *shape_list),
                              void (*ascent)(quadtree_node_t *node), coords_t *shape_list);
 void descent_foreign(quadtree_node_t *node, coords_t *shape_list);                            
+
+void quadtree_hillwalk(quadtree_node_t *root, void (*descent_hill)(quadtree_node_t *node),
+                             void (*ascent)(quadtree_node_t *node));
+void descent_hill(quadtree_node_t *node);
+void hill_derefinement(quadtree_node_t *hill_node, int flag);
 
 #endif

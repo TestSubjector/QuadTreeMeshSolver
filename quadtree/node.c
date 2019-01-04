@@ -2634,3 +2634,479 @@ int maxDepth(quadtree_node_t *node)
         }
     }
 }
+
+void hill_derefinement(quadtree_node_t *hill_node, int flag)
+{
+    quadtree_node_t *parent_node;
+    if (quadtree_node_isempty(hill_node))
+    {
+        parent_node = quadtree_parent_search((hill_node->bounds->nw->x + hill_node->bounds->se->x) / 2, (hill_node->bounds->nw->y + hill_node->bounds->se->y) / 2);
+    }
+    else
+    {
+        printf("\n A node with children /leaf illegally accesed the 'hill_derefinement' function.");
+        exit(3);
+    }
+
+    common_treeroute(tree->root, hill_node);
+    int path_size = patharray[40];
+    double xcord = (hill_node->bounds->nw->x + hill_node->bounds->se->x) / 2;
+    double ycord = (hill_node->bounds->nw->y + hill_node->bounds->se->y) / 2;
+
+    int k = 0;                     
+    int pathstep = -1;              
+    int direction = 0;             
+    int ancestor_pos = -1;
+    int north = 1;
+    int east = 1;
+    int south = 1;
+    int west = 1;
+    int north_check = 0;
+    int south_check = 0;
+    int east_check = 0;
+    int west_check = 0;
+    quadtree_node_t *north_node = NULL;
+    quadtree_node_t *east_node = NULL;
+    quadtree_node_t *south_node = NULL;
+    quadtree_node_t *west_node = NULL;
+
+    // Any of the 4 child nodes is a wallpoint, don't derefine
+    if(quadtree_node_isleaf(parent_node->nw) || quadtree_node_isleaf(parent_node->ne) || quadtree_node_isleaf(parent_node->sw) || quadtree_node_isleaf(parent_node->se))
+    {
+        return;
+    }
+
+    // East
+    for (k = path_size - 1; k >= 0; k--) // Traversing from leaf to root of tree
+    {
+        pathstep = patharray[k];
+        if (pathstep == 1)
+        {
+            ancestor_pos = k;
+            break;
+        }
+        else if (pathstep == 2)
+        {
+            continue;
+        }
+        else if (pathstep == 3)
+        {
+            ancestor_pos = k;
+            break;
+        }
+        else if (pathstep == 4)
+        {
+            continue;
+        }
+        else if (pathstep == 0)
+        {
+            printf("\n Warning - Patharray has zero value problems in hill code");
+        }
+        else
+        {
+            printf("\n ERROR - Some random value corrupted patharray in hill code");
+            exit(3);
+        }
+    }
+    if (ancestor_pos != -1)
+    {
+        quadtree_node_t *root = tree->root;
+        int path_step = 0;
+        int i = 0;
+        
+        root = reach_ancestor(root, patharray, ancestor_pos);
+        for (i = ancestor_pos; i <= patharray[40] - 1; i++)
+        {
+            path_step = patharray[i];
+            
+            if (quadtree_node_isempty(root))
+            {
+                east_node = root;
+                break;
+            }
+            else if (quadtree_node_isleaf(root))
+            {
+                east_node = root;
+                break;
+            }
+            if ((i == patharray[40] - 1) && (quadtree_node_ispointer(root)))
+            {
+                east = 0;
+                break;
+            }
+
+            if (path_step == 1)
+            {
+                root = root->ne;
+            }
+            else if (path_step == 2)
+            {
+                root = root->nw;
+            }
+            else if (path_step == 3)
+            {
+                root = root->se;
+            }
+            else if (path_step == 4)
+            {
+                root = root->sw;
+            }
+            else
+            {
+                printf("ERROR : 2nd stage path traversal for neighbour set went awry in hill code");
+            }
+
+            if (quadtree_node_isempty(root))
+            {
+                east_node = root;
+                break;
+            }
+            else if (quadtree_node_isleaf(root))
+            {
+                east_node = root;
+                break;
+            }
+            else if ((i == patharray[40] - 1) && (quadtree_node_ispointer(root)))
+            {
+                east = 0;
+                break;
+            }
+        }
+        ancestor_pos = -1;
+    }
+
+    if(east == 0)
+    {
+        return;
+    }
+
+    // West
+    for (k = path_size - 1; k >= 0; k--)
+    {
+        pathstep = patharray[k];
+        if (pathstep == 1)
+        {
+            continue;
+        }
+        else if (pathstep == 2)
+        {
+            // printf("\n Found common ancestor for Western neighbour");
+            ancestor_pos = k;
+            break;
+        }
+        else if (pathstep == 3)
+        {
+            continue;
+        }
+        else if (pathstep == 4)
+        {
+            // printf("\n Found common ancestor for Western neighbour");
+            ancestor_pos = k;
+            break;
+        }
+        else if (pathstep == 0)
+        {
+            printf("\n Warning - Patharray has zero value problems in valley code");
+        }
+        else
+        {
+            printf("\n ERROR - Some random value corrupted patharray in valley code");
+            exit(3);
+        }
+    }
+    if (ancestor_pos != -1)
+    {
+        quadtree_node_t *root = tree->root;
+        int path_step = 0;
+        int i = 0;
+        
+        root = reach_ancestor(root, patharray, ancestor_pos);
+        for (i = ancestor_pos; i <= patharray[40] - 1; i++)
+        {
+            path_step = patharray[i];
+            
+            if (quadtree_node_isempty(root))
+            {
+                west_node = root;
+                break;
+            }
+            else if (quadtree_node_isleaf(root))
+            {
+                west_node = root;
+                break;
+            }
+            else if ((i == patharray[40] - 1) && (quadtree_node_ispointer(root)))
+            {
+                west = 0;
+                break;
+            }
+            
+            if (path_step == 1)
+            {
+                root = root->ne;
+            }
+            else if (path_step == 2)
+            {
+                root = root->nw;
+            }
+            else if (path_step == 3)
+            {
+                root = root->se;
+            }
+            else if (path_step == 4)
+            {
+                root = root->sw;
+            }
+            else
+            {
+                printf("ERROR : 2nd stage path traversal for neighbour set went awry in hill code");
+            }
+
+            if (quadtree_node_isempty(root))
+            {
+                west_node = root;
+                break;
+            }
+            else if (quadtree_node_isleaf(root))
+            {
+                west_node = root;
+                break;
+            }
+            else if ((i == patharray[40] - 1) && (quadtree_node_ispointer(root)))
+            {
+                west = 0;
+                break;
+            }
+        }
+        ancestor_pos = -1;
+    }
+
+    if(west == 0)
+    {
+        return;
+    }
+
+    // North
+    for (k = path_size - 1; k >= 0; k--)
+    {
+        pathstep = patharray[k];
+        if (pathstep == 1)
+        {
+            continue;
+        }
+        else if (pathstep == 2)
+        {
+            continue;
+        }
+        else if (pathstep == 3)
+        {
+            // printf("\n Found common ancestor for Northern neighbour");
+            ancestor_pos = k;
+            break;
+        }
+        else if (pathstep == 4)
+        {
+            // printf("\n Found common ancestor for Northern neighbour");
+            ancestor_pos = k;
+            break;
+        }
+        else if (pathstep == 0)
+        {
+            printf("\n Warning - Patharray has zero value problems in valley code");
+        }
+        else
+        {
+            printf("\n ERROR - Some random value corrupted patharray in valley code");
+            exit(3);
+        }
+    }
+    if (ancestor_pos != -1)
+    {
+        quadtree_node_t *root = tree->root;
+        int path_step = 0;
+        int i = 0;
+        
+        root = reach_ancestor(root, patharray, ancestor_pos);
+        for (i = ancestor_pos; i <= patharray[40] - 1; i++)
+        {
+            path_step = patharray[i];
+            
+            if (quadtree_node_isempty(root))
+            {
+                north_node = root;
+                break;
+            }
+            else if (quadtree_node_isleaf(root))
+            {
+                north_node = root;
+                break;
+            }
+            else if ((i == patharray[40] - 1) && (quadtree_node_ispointer(root)))
+            {
+                north = 0;
+                break;
+            }
+            
+            if (path_step == 1)
+            {
+                root = root->sw;
+            }
+            else if (path_step == 2)
+            {
+                root = root->se;
+            }
+            else if (path_step == 3)
+            {
+                root = root->nw;
+            }
+            else if (path_step == 4)
+            {
+                root = root->ne;
+            }
+            else
+            {
+                printf("ERROR : 2nd stage path traversal for neighbour set went awry in hill code");
+            }
+
+            if (quadtree_node_isempty(root))
+            {
+                north_node = root;
+                break;
+            }
+            else if (quadtree_node_isleaf(root))
+            {
+                north_node = root;
+                break;
+            }
+            else if ((i == patharray[40] - 1) && (quadtree_node_ispointer(root)))
+            {
+                north = 0;
+                break;
+            }
+        }
+        ancestor_pos = -1;
+    }
+
+    if(north == 0)
+    {
+        return;
+    }
+
+    // South
+    for (k = path_size - 1; k >= 0; k--)
+    {
+        pathstep = patharray[k];
+        if (pathstep == 1)
+        {
+            // printf("\n Found common ancestor for Southern neighbour");
+            ancestor_pos = k;
+            break;
+        }
+        else if (pathstep == 2)
+        {
+            // printf("\n Found common ancestor for Southern neighbour");
+            ancestor_pos = k;
+            break;
+        }
+        else if (pathstep == 3)
+        {
+            continue;
+        }
+        else if (pathstep == 4)
+        {
+            continue;
+        }
+        else if (pathstep == 0)
+        {
+            printf("\n Warning - Patharray has zero value problems in valley code");
+        }
+        else
+        {
+            printf("\n ERROR - Some random value corrupted patharray in valley code");
+            exit(3);
+        }
+    }
+    if (ancestor_pos != -1)
+    {
+        quadtree_node_t *root = tree->root;
+        int path_step = 0;
+        int i = 0;
+        
+        root = reach_ancestor(root, patharray, ancestor_pos);
+        for (i = ancestor_pos; i <= patharray[40] - 1; i++)
+        {
+            path_step = patharray[i];
+
+            if (quadtree_node_isempty(root))
+            {
+                south_node = root;
+                break;
+            }
+            else if (quadtree_node_isleaf(root))
+            {
+                south_node = root;
+                break;
+            }
+            else if ((i == patharray[40] - 1) && (quadtree_node_ispointer(root)))
+            {
+                south = 0;
+                break;
+            }
+
+            if (path_step == 1)
+            {
+                root = root->sw;
+            }
+            else if (path_step == 2)
+            {
+                root = root->se;
+            }
+            else if (path_step == 3)
+            {
+                root = root->nw;
+            }
+            else if (path_step == 4)
+            {
+                root = root->ne;
+            }
+            else
+            {
+                printf("ERROR : 2nd stage path traversal for neighbour set went awry in hill code");
+            }
+
+            if (quadtree_node_isempty(root))
+            {
+                south_node = root;
+                break;
+            }
+            else if (quadtree_node_isleaf(root))
+            {
+                south_node = root;
+                break;
+            }
+            else if ((i == patharray[40] - 1) && (quadtree_node_ispointer(root)))
+            {
+                south = 0;
+                break;
+            }
+        }
+        ancestor_pos = -1;
+    }
+
+    if(south == 0)
+    {
+        return;
+    }
+
+    if(north + south + east + west == 4)
+    {
+        quadtree_node_free(parent_node->nw);
+        quadtree_node_free(parent_node->ne);
+        quadtree_node_free(parent_node->sw);
+        quadtree_node_free(parent_node->se);
+        parent_node->nw = NULL;
+        parent_node->ne = NULL;
+        parent_node->sw = NULL;
+        parent_node->se = NULL;
+    }
+}

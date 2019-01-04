@@ -67,6 +67,8 @@ void main_tree(int initial_coord_length, coords_t *coords_list, coords_t *adapte
     }
     
     quadtree_valleywalk(tree->root, descent_valley, ascent);
+    quadtree_hillwalk(tree->root, descent_hill, ascent);
+
 
     // free(leaf_array);
     // leaf_array = malloc(sizeof(quadtree_node_t) * MAX);
@@ -90,7 +92,7 @@ void main_tree(int initial_coord_length, coords_t *coords_list, coords_t *adapte
     // quadtree_refinementwalk(tree->root, descent_refinement, ascent);
 
     quadtree_walk(tree->root, descent, ascent);
-    printf("\n Max Depth of tree is %d", maxDepth(tree->root));
+    printf("\nMax Depth of tree is %d", maxDepth(tree->root));
 
     quadtree_neighbourset(tree->root);
 
@@ -127,6 +129,10 @@ void main_tree(int initial_coord_length, coords_t *coords_list, coords_t *adapte
                         i -= 400;
                     }
                 }
+
+                quadtree_valleywalk(tree->root, descent_valley, ascent);
+                quadtree_hillwalk(tree->root, descent_hill, ascent);
+
                 continue;
             }
 
@@ -141,7 +147,7 @@ void main_tree(int initial_coord_length, coords_t *coords_list, coords_t *adapte
             {
                 if(wallpoint_insert_flag == 2)
                 {
-                    derefine(derefined_list, derefine_counter);
+                    derefine_fromlist(derefined_list, derefine_counter);
                     free(derefined_list);
                     printf("\n Derefining Points");
                 }
