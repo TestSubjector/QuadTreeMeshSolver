@@ -65,7 +65,6 @@ void main_tree(int initial_coord_length, coords_t *coords_list, coords_t *adapte
             i -= 400;
         }
     }
-    height_of_tree = maxDepth(tree->root);
     
     quadtree_valleywalk(tree->root, descent_valley, ascent);
 
@@ -200,6 +199,7 @@ void main_tree(int initial_coord_length, coords_t *coords_list, coords_t *adapte
         neighbouroutput(1, "neighbour.txt", 1000, 1000, 1000, 1000);
     }
     
+    height_of_tree = maxDepth(tree->root);
     free(leaf_array);
     quadtree_free(tree);
 }

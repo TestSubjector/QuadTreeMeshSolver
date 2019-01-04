@@ -289,7 +289,7 @@ int *common_treeroute(quadtree_node_t *root, quadtree_node_t *node)
     }
     else
     {
-        printf("ERROR: The leaf finding process encountered an error, you know what that means");
+        printf("\n ERROR: The leaf finding process encountered an error, you know what that means \n");
         exit(2);
     }
     patharray[40] = path_iter; // Store height from root to leaf
@@ -2184,6 +2184,7 @@ void valley_refinement(quadtree_node_t *valley_node, int flag)
     quadtree_node_t *south_node = NULL;
     quadtree_node_t *west_node = NULL;
 
+    // East
     for (k = path_size - 1; k >= 0; k--) // Traversing from leaf to root of tree
     {
         pathstep = patharray[k];
@@ -2222,33 +2223,18 @@ void valley_refinement(quadtree_node_t *valley_node, int flag)
         int i = 0;
         
         root = reach_ancestor(root, patharray, ancestor_pos);
-
         for (i = ancestor_pos; i <= patharray[40]; i++)
         {
             path_step = patharray[i];
-            if (path_step == 1)
-            {
-                root = root->ne;
-            }
-            else if (path_step == 2)
-            {
-                root = root->nw;
-            }
-            else if (path_step == 3)
-            {
-                root = root->se;
-            }
-            else if (path_step == 4)
-            {
-                root = root->sw;
-            }
-
+            
             if (quadtree_node_isempty(root))
             {
+                east_node = root;
                 break;
             }
             else if (quadtree_node_isleaf(root))
             {
+                east_node = root;
                 break;
             }
             else if ((i == patharray[40]) && (quadtree_node_ispointer(root)))
@@ -2256,10 +2242,49 @@ void valley_refinement(quadtree_node_t *valley_node, int flag)
                 east = 1;
                 break;
             }
+
+            if (path_step == 1)
+            {
+                root = root->ne;
+            }
+            else if (path_step == 2)
+            {
+                root = root->nw;
+            }
+            else if (path_step == 3)
+            {
+                root = root->se;
+            }
+            else if (path_step == 4)
+            {
+                root = root->sw;
+            }
+            else
+            {
+                printf("ERROR : 2nd stage path traversal for neighbour set went awry in valley code");
+            }
+
+            if (quadtree_node_isempty(root))
+            {
+                east_node = root;
+                break;
+            }
+            else if (quadtree_node_isleaf(root))
+            {
+                east_node = root;
+                break;
+            }
+            else if ((i == patharray[40]) && (quadtree_node_ispointer(root)))
+            {
+                east = 1;
+                break;
+            }
+
         }
         ancestor_pos = -1;
     }
 
+    // West
     for (k = path_size - 1; k >= 0; k--)
     {
         pathstep = patharray[k];
@@ -2300,47 +2325,68 @@ void valley_refinement(quadtree_node_t *valley_node, int flag)
         int i = 0;
         
         root = reach_ancestor(root, patharray, ancestor_pos);
-        for (i = ancestor_pos; i <= patharray[40] - 1; i++)
+        for (i = ancestor_pos; i <= patharray[40]; i++)
         {
             path_step = patharray[i];
-            if (path_step == 1)
-            {
-                root = root->ne;
-            }
-            else if (path_step == 2)
-            {
-                root = root->nw;
-            }
-            else if (path_step == 3)
-            {
-                root = root->se;
-            }
-            else if (path_step == 4)
-            {
-                root = root->sw;
-            }
-            else
-            {
-                printf("ERROR : 2nd stage path traversal for neighbour set went awry in valley code");
-            }
-
+            
             if (quadtree_node_isempty(root))
             {
+                west_node = root;
                 break;
             }
             else if (quadtree_node_isleaf(root))
             {
+                west_node = root;
                 break;
             }
-            else if ((i == patharray[40] - 1) && (quadtree_node_ispointer(root)))
+            else if ((i == patharray[40]) && (quadtree_node_ispointer(root)))
             {
                 west = 1;
                 break;
             }
+            
+            if (path_step == 1)
+            {
+                root = root->ne;
+            }
+            else if (path_step == 2)
+            {
+                root = root->nw;
+            }
+            else if (path_step == 3)
+            {
+                root = root->se;
+            }
+            else if (path_step == 4)
+            {
+                root = root->sw;
+            }
+            else
+            {
+                printf("ERROR : 2nd stage path traversal for neighbour set went awry in valley code");
+            }
+
+            if (quadtree_node_isempty(root))
+            {
+                west_node = root;
+                break;
+            }
+            else if (quadtree_node_isleaf(root))
+            {
+                west_node = root;
+                break;
+            }
+            else if ((i == patharray[40]) && (quadtree_node_ispointer(root)))
+            {
+                west = 1;
+                break;
+            }
+
         }
         ancestor_pos = -1;
     }
 
+    // North
     for (k = path_size - 1; k >= 0; k--)
     {
         pathstep = patharray[k];
@@ -2381,10 +2427,26 @@ void valley_refinement(quadtree_node_t *valley_node, int flag)
         int i = 0;
         
         root = reach_ancestor(root, patharray, ancestor_pos);
-
-        for (i = ancestor_pos; i <= patharray[40] - 1; i++)
+        for (i = ancestor_pos; i <= patharray[40]; i++)
         {
             path_step = patharray[i];
+            
+            if (quadtree_node_isempty(root))
+            {
+                north_node = root;
+                break;
+            }
+            else if (quadtree_node_isleaf(root))
+            {
+                north_node = root;
+                break;
+            }
+            else if ((i == patharray[40]) && (quadtree_node_ispointer(root)))
+            {
+                north = 1;
+                break;
+            }
+            
             if (path_step == 1)
             {
                 root = root->sw;
@@ -2408,10 +2470,12 @@ void valley_refinement(quadtree_node_t *valley_node, int flag)
 
             if (quadtree_node_isempty(root))
             {
+                north_node = root;
                 break;
             }
             else if (quadtree_node_isleaf(root))
             {
+                north_node = root;
                 break;
             }
             else if ((i == patharray[40]) && (quadtree_node_ispointer(root)))
@@ -2423,6 +2487,7 @@ void valley_refinement(quadtree_node_t *valley_node, int flag)
         ancestor_pos = -1;
     }
 
+    // South
     for (k = path_size - 1; k >= 0; k--)
     {
         pathstep = patharray[k];
@@ -2463,9 +2528,26 @@ void valley_refinement(quadtree_node_t *valley_node, int flag)
         int i = 0;
         
         root = reach_ancestor(root, patharray, ancestor_pos);
-        for (i = ancestor_pos; i <= patharray[40] - 1; i++)
+        for (i = ancestor_pos; i <= patharray[40]; i++)
         {
             path_step = patharray[i];
+
+            if (quadtree_node_isempty(root))
+            {
+                south_node = root;
+                break;
+            }
+            else if (quadtree_node_isleaf(root))
+            {
+                south_node = root;
+                break;
+            }
+            else if ((i == patharray[40]) && (quadtree_node_ispointer(root)))
+            {
+                south = 1;
+                break;
+            }
+
             if (path_step == 1)
             {
                 root = root->sw;
@@ -2489,26 +2571,43 @@ void valley_refinement(quadtree_node_t *valley_node, int flag)
 
             if (quadtree_node_isempty(root))
             {
+                south_node = root;
                 break;
             }
             else if (quadtree_node_isleaf(root))
             {
+                south_node = root;
                 break;
             }
             else if ((i == patharray[40]) && (quadtree_node_ispointer(root)))
             {
                 south = 1;
-
                 break;
             }
         }
         ancestor_pos = -1;
     }
 
-    if((north + south == 2) || (east + west == 2))
+    if((north + south + east + west >= 2))
     {
         // printf("\n ABCD");
         split_node_newpoints(tree, valley_node);
+        if(east == 0 && (quadtree_node_isempty(east_node) || quadtree_node_isempty(east_node)))
+        {
+            valley_refinement(east_node, 1);
+        }
+        if(west == 0 && (quadtree_node_isempty(west_node) || quadtree_node_isempty(west_node)))
+        {
+            valley_refinement(west_node, 1);
+        }
+        if(north == 0 && (quadtree_node_isempty(north_node) || quadtree_node_isempty(north_node)))
+        {
+            valley_refinement(north_node, 1);
+        }
+        if(south == 0 && (quadtree_node_isempty(south_node) || quadtree_node_isempty(south_node)))
+        {
+            valley_refinement(south_node, 1);
+        }
     }
 }
 
