@@ -533,11 +533,10 @@ void quadtree_valleywalk(quadtree_node_t *root, void (*descent_valley)(quadtree_
 
 void descent_valley(quadtree_node_t *node)
 {
-  // printf("\n 1");
   if ((quadtree_node_isempty(node)) || (quadtree_node_isleaf(node)))
   {
-    double xcord = (node->bounds->nw->x + node->bounds->se->x) / 2;
-    double ycord = (node->bounds->nw->y + node->bounds->se->y) / 2;
+    // double xcord = (node->bounds->nw->x + node->bounds->se->x) / 2;
+    // double ycord = (node->bounds->nw->y + node->bounds->se->y) / 2;
     // if(xcord == 0.966796875 && (ycord == -0.029296875 || ycord == 0.029296875))
     // {
     //   checker = 2;
