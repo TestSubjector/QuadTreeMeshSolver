@@ -578,7 +578,8 @@ void descent_foreign(quadtree_node_t *node, coords_t *shape_list)
   if (quadtree_node_isleaf(node))
   {
     int centroid_flag = 0;
-    for(int i = 0; i < shape_line_count; i++)
+    int i = 0;
+    for(i = 0; i < shape_line_count; i++)
     {
       if(node->point->x == shape_list[i].x && node->point->y == shape_list[i].y)
       {
