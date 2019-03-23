@@ -6,25 +6,25 @@ set -e
 if [ $1 -eq 1 ]
 then
     cp -rf ./files/neighbour.txt ./backup_files/neighbour.txt
-    cp -rf ./files/output.txt ./backup_files/output.txt 
-    cp -rf ./files/preprocessorfile_cleaned.txt ./backup_files/preprocessorfile_cleaned.txt 
+    cp -rf ./files/output.txt ./backup_files/output.txt
+    cp -rf ./files/preprocessorfile_cleaned.txt ./backup_files/preprocessorfile_cleaned.txt
     cp -rf ./files/preprocessorfile_rechecker.txt ./backup_files/preprocessorfile_rechecker.txt
     cp -rf ./files/preprocessorfile.txt ./backup_files/preprocessorfile.txt
     # cp -rf ./files/preprocessorfile_normal.txt ./backup_files/preprocessorfile_normal.txt
-    cp -rf wall.json ./backup_files/wall.json 
-    cp -rf History.txt ./backup_files/History.txt 
+    cp -rf wall.json ./backup_files/wall.json
+    cp -rf History.txt ./backup_files/History.txt
     echo Backup completed
 # Reinstate Backup Files
 elif [ $1 -eq 2 ]
-then 
+then
     cp -rf ./backup_files/neighbour.txt ./files/neighbour.txt
-    cp -rf ./backup_files/output.txt ./files/output.txt 
+    cp -rf ./backup_files/output.txt ./files/output.txt
     cp -rf ./backup_files/preprocessorfile_cleaned.txt ./files/preprocessorfile_cleaned.txt
     cp -rf ./backup_files/preprocessorfile_rechecker.txt ./files/preprocessorfile_rechecker.txt
     cp -rf ./backup_files/preprocessorfile.txt ./files/preprocessorfile.txt
     cp -rf ./backup_files/preprocessorfile_normal.txt ./files/preprocessorfile_normal.txt
     cp -rf ./backup_files/wall.json wall.json
-    cp -rf ./backup_files/History.txt History.txt  
+    cp -rf ./backup_files/History.txt History.txt
 
     echo Backup reinstated
 # Clean directory
@@ -48,6 +48,20 @@ then
     cp -rlf ./pseudopoints.txt ./files/pseudopoints.txt
     rm ./pseudopoints.txt
     echo Adaptation points added
+elif [ $1 -eq 5 ]
+then
+    # Iteration Backup
+    # Run as ./preprocessing.sh 5 Iteration_Number Folder{1,2,3,4,5 from the required f1,f2,f3,f4,f5 folder}_Number
+    GEOMETRY="twobody" # The folder in which the iterations will be stored
+    mkdir ./backup_files/$GEOMETRY/$2
+    cp -rf ./files/f$3/neighbour.txt ./backup_files/$GEOMETRY/$2/neighbour.txt
+    cp -rf ./files/f$3/output.txt ./backup_files/$GEOMETRY/$2/output.txt
+    cp -rf ./files/f$3/preprocessorfile_cleaned.txt ./backup_files/$GEOMETRY/$2/preprocessorfile_cleaned.txt
+    cp -rf ./files/f$3/preprocessorfile_rechecker.txt ./backup_files/$GEOMETRY/$2/preprocessorfile_rechecker.txt
+    cp -rf ./files/f$3/preprocessorfile.txt ./backup_files/$GEOMETRY/$2/preprocessorfile.txt
+    cp -rf ./files/f$3/preprocessorfile.txt ./backup_files/$GEOMETRY/$2/preprocessorfile.txt
+    cp -rf ./files/f$3/adapted.txt ./backup_files/$GEOMETRY/$2/adapted.txt
+    cp -rf ./files/f$3/wall.json ./backup_files/$GEOMETRY/$2/wall.json
 else
     rm ./History.txt |
     for value in {1..5}
@@ -92,8 +106,7 @@ else
 
         python3 ./bspline/bspline.py -i ./files/f$value/preprocessorfile_normal.txt
         cp -rf ./wall.json ./files/f$value/wall.json
-        
+
     done
     echo All Done
 fi
-
