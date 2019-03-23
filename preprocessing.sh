@@ -57,13 +57,16 @@ else
 
         cp -rf ./adapted.txt ./files/f$value/adapted.txt
 
+        #Shape Generation
+        python3 shapemod/shape.py -w quadtree/input/fine/airfoil quadtree/input/fine/flap
+
         # Neighbour Generation
-        ./quadtree/main ./quadtree/input/new/twospline_airfoil_flap.txt ./adapted.txt ./quadtree/input/new/shapespline_airfoil_flap.txt
+        ./quadtree/main /home/nischay/Git/QuadTreeMeshSolver/quadtree/input/fine/airfoil_flap ./adapted.txt ./shape_generated.txt
         cp -rlf ./neighbour.txt ./files/f$value/neighbour.txt
         rm ./neighbour.txt
 
         # Indexing
-        python3 ./generator/generate.py -n ./files/f$value/neighbour.txt -w ./generator/twoshapebspline/airfoil ./generator/twoshapebspline/flap
+        python3 ./generator/generate.py -n ./files/f$value/neighbour.txt -w /home/nischay/Git/QuadTreeMeshSolver/quadtree/input/fine/airfoil /home/nischay/Git/QuadTreeMeshSolver/quadtree/input/fine/flap
         cp -rlf ./output.txt ./files/f$value/output.txt
         cp -rlf ./preprocessorfile.txt ./files/f$value/preprocessorfile.txt
         rm ./output.txt

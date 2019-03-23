@@ -22,16 +22,18 @@ def main():
     try:
         bsplineWallData = dict(load_obj("wall"))
     except IOError:
-        bsplineWallData = "None"
+        bsplineWallData = None
     for idx,itm in enumerate(wallarg):
         log.info("Loading Geometry " + str(itm))
         file2 = open(str(itm) or "airfoil_160.txt", "r")
         geometrydata = file2.read()
         file2.close()
         geometrydata = geometrydata.split("\n")
+        if len(geometrydata[-1]) == 0:
+            geometrydata.pop(-1)
         geometrydataOrg = wallFloat(geometrydata)
 
-        if bsplineWallData != "None":
+        if bsplineWallData != None:
             insertionKeys = list(bsplineWallData.keys())
             for itm in insertionKeys:
                 postInsert = True

@@ -38,9 +38,10 @@ def checkIfInside(xcord,ycord,wallData,wallDataorg,bsplineWallData):
 
 def wallFloat(walldata):
     result = []
-    for itm in walldata:
-        itmdata = itm.split("\t")
-        result.append([float(itmdata[0]), float(itmdata[1])])
+    for idx, itm in enumerate(walldata):
+        if len(itm) > 0:
+            itmdata = itm.split("\t")
+            result.append([float(itmdata[0]), float(itmdata[1])])
     return result
 
 
