@@ -67,6 +67,15 @@ def getPoint(index, globaldata):
     pty = float(ptdata[2])
     return ptx, pty
 
+def getPointExcludeOuter(index, globaldata):
+    if getFlag(index, globaldata) != 2:
+        index = int(index)
+        ptdata = globaldata[index]
+        ptx = float(ptdata[1])
+        pty = float(ptdata[2])
+        return (ptx, pty)
+    else:
+        return (False, False)
 
 def getPointxy(index, globaldata):
     index = int(index)
@@ -1173,6 +1182,31 @@ def fullRefine(globaldata):
                 text_file.writelines(["%s %s " % (ptX,ptY)])
                 text_file.writelines("\n")
         text_file.writelines("1000 1000\n")
+
+def fullRefineOuter(globaldata):
+    with open("adapted.txt", "a+") as text_file:
+        for idx,_ in enumerate(globaldata):
+            if idx > 0:
+                ptX,ptY = getPointExcludeOuter(idx,globaldata)
+                if ptX != False and ptY != False:
+                    text_file.writelines(["%s %s " % (ptX,ptY)])
+                    text_file.writelines("\n")
+        text_file.writelines("1000 1000\n")
+
+def refineCustom(globaldata):
+    res = input("Enter the Point Types delimited by space you want to refine: ")
+    if len(res) > 0:
+        res = list(map(int,res.split(" ")))
+        with open("adapted.txt", "a+") as text_file:
+            for idx,_ in enumerate(globaldata):
+                if idx > 0:
+                    flag = getFlag(idx, globaldata)
+                    if flag in res:
+                        ptX,ptY = getPointExcludeOuter(idx,globaldata)
+                        if ptX != False and ptY != False:
+                            text_file.writelines(["%s %s " % (ptX,ptY)])
+                            text_file.writelines("\n")
+            text_file.writelines("1000 1000\n")
 
 
 def oldMode(globaldata):

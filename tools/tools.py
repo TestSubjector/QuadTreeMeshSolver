@@ -62,6 +62,8 @@ def main():
         print("Type 'cache' to push the file you read into cache.")
         print("Type 'integrity' to check wall.json integrity")
         print("Type 'full' to perform one full refinement")
+        print("Type 'fullno' to perform one full refinement (excluding outer)")
+        print("Type 'customrefine' to perform custom refinement")
         print("Type 'clean' to cleanse the soul of adapted.txt")
         print("Type 'old' to convert preprocessorfile to old format")
         print("Type 'bad2' to print all points with 2 in it's split connectivity")
@@ -104,6 +106,12 @@ def main():
         elif ptidx == "full":
             core.clearScreen()
             core.fullRefine(globaldata)
+        elif ptidx == "fullno":
+            core.clearScreen()
+            core.fullRefineOuter(globaldata)
+        elif ptidx == "customrefine":
+            core.clearScreen()
+            core.refineCustom(globaldata)
         elif ptidx == "old":
             core.clearScreen()
             core.oldMode(globaldata)
