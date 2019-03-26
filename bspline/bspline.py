@@ -23,6 +23,7 @@ def main():
     parser.add_argument("-n", "--normal", nargs="?")
     parser.add_argument("-m", "--midpointspline", nargs="+")
     parser.add_argument("-p", "--forcemidpointspline", nargs="?")
+    parser.add_argument("-q", "--checkquadrant", nargs="?")
     args = parser.parse_args()
 
     normalApproach = False
@@ -33,9 +34,21 @@ def main():
     if args.forcemidpointspline:
         forcemidpointspline = core.str_to_bool(args.forcemidpointspline)
 
+    quadrantcheck = True
+    if args.checkquadrant:
+        quadrantcheck = core.str_to_bool(args.checkquadrant)
+
     log.info("Loading Data")
     log.debug("Arguments")
     log.debug(args)
+    if quadrantcheck == False:
+        log.warn("Warning: Quadrant Check is disabled")
+    
+    if normalApproach == False:
+        log.info("Info: Normal Bsplining is occuring")
+
+    if forcemidpointspline == True:
+        log.warn("Warning: Mid Point BSpline has been forced. Point Control set to 3")
 
     globaldata = config.getKeyVal("globaldata")
 
@@ -101,7 +114,7 @@ def main():
                         newpts = bsplinegen.generateBSplineBetween(bsplineArray[data[2]],data[1],data[0],POINT_CONTROL)
                     else:
                         newpts = bsplinegen.generateBSplineBetween(bsplineArray[data[2]],data[0],data[1],POINT_CONTROL)
-                if not forcemidpointspline:
+                if quadrantcheck:
                     newpts = bsplinegen.getPointsOnlyInQuadrant(newpts,bsplineArray[data[2]][int(data[0])],bsplineArray[data[2]][int(data[1])],globaldata)
                 newpts = core.findNearestPoint(perpendicularpts[idx],newpts)
                 if newpts == False:
