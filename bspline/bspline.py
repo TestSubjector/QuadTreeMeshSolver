@@ -101,8 +101,12 @@ def main():
                         newpts = bsplinegen.generateBSplineBetween(bsplineArray[data[2]],data[1],data[0],POINT_CONTROL)
                     else:
                         newpts = bsplinegen.generateBSplineBetween(bsplineArray[data[2]],data[0],data[1],POINT_CONTROL)
-                newpts = bsplinegen.getPointsOnlyInQuadrant(newpts,bsplineArray[data[2]][int(data[0])],bsplineArray[data[2]][int(data[1])],globaldata)
+                if not forcemidpointspline:
+                    newpts = bsplinegen.getPointsOnlyInQuadrant(newpts,bsplineArray[data[2]][int(data[0])],bsplineArray[data[2]][int(data[1])],globaldata)
                 newpts = core.findNearestPoint(perpendicularpts[idx],newpts)
+                if newpts == False:
+                    print("Error: Increase your Bspline Point Control Attribute")
+                    exit()
             else:
                 newpts = list(perpendicularpts[idx])
             printProgressBar(idx + 1, len(problempts), prefix="Progress:", suffix="Complete", length=50)
