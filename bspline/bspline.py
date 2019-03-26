@@ -44,7 +44,7 @@ def main():
     if quadrantcheck == False:
         log.warn("Warning: Quadrant Check is disabled")
     
-    if normalApproach == False:
+    if normalApproach == True:
         log.info("Info: Normal Bsplining is occuring")
 
     if forcemidpointspline == True:
