@@ -139,7 +139,7 @@ def main():
     with open("adapted.txt", "a+") as text_file:
         text_file.writelines("1000 1000\n2000 2000\n")
         for item1 in additionPts:
-            text_file.writelines(["%s " % item for item in item1])
+            text_file.writelines(["%s %s " % (item[0], item[1]) for item in item1])
             text_file.writelines("\n")
         text_file.writelines("1000 1000\n")
     core.save_obj(writingDict,"wall")

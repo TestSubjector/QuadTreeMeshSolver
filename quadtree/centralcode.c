@@ -46,7 +46,7 @@ void main_tree(int initial_coord_length, coords_t *coords_list, coords_t *adapte
     }
 
     if(foreign_flag != 0)
-    { 
+    {
         centroidify(tree->root, shape_list);
     }
 
@@ -65,10 +65,9 @@ void main_tree(int initial_coord_length, coords_t *coords_list, coords_t *adapte
             i -= 400;
         }
     }
-    
+
     quadtree_valleywalk(tree->root, descent_valley, ascent);
     quadtree_hillwalk(tree->root, descent_hill, ascent);
-
 
     // free(leaf_array);
     // leaf_array = malloc(sizeof(quadtree_node_t) * MAX);
@@ -104,7 +103,7 @@ void main_tree(int initial_coord_length, coords_t *coords_list, coords_t *adapte
     {
         int derefine_counter;
         quadtree_node_t *refined_node = NULL;
-        
+
         for(j = 0; j < adapted_line_count; j++)
         {
             if(adapted_list[j].x == 1000 && adapted_list[j].y == 1000)
@@ -132,14 +131,13 @@ void main_tree(int initial_coord_length, coords_t *coords_list, coords_t *adapte
 
                 quadtree_valleywalk(tree->root, descent_valley, ascent);
                 quadtree_hillwalk(tree->root, descent_hill, ascent);
-
                 continue;
             }
 
             if(adapted_list[j].x == 2000 && adapted_list[j].y == 2000)
             {
                 printf("\n Bsplining Points");
-                wallpoint_insert_flag = 1; 
+                wallpoint_insert_flag = 1;
                 continue;
             }
 
@@ -155,7 +153,7 @@ void main_tree(int initial_coord_length, coords_t *coords_list, coords_t *adapte
                 {
                     derefine_counter = 0;
                     derefined_list = malloc(sizeof(coords_t) * (MAX));
-                    wallpoint_insert_flag = 2; 
+                    wallpoint_insert_flag = 2;
                 }
                 continue;
             }
@@ -204,7 +202,7 @@ void main_tree(int initial_coord_length, coords_t *coords_list, coords_t *adapte
         // To get number of neighbours of last point
         neighbouroutput(1, "neighbour.txt", 1000, 1000, 1000, 1000);
     }
-    
+
     height_of_tree = maxDepth(tree->root);
     free(leaf_array);
     quadtree_free(tree);
@@ -247,7 +245,7 @@ int main(int argc, char *argv[])
 
     char *shape_filename = argv[3];
     shape_line_count = fileinput(shape_list, shape_filename);
-    
+
     // printf("\n %d", adapted_line_count);
 
     main_tree(line_count, coords_list, adapted_list, shape_list, leaf_array);

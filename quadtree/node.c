@@ -512,7 +512,7 @@ void balance_neighbours(quadtree_t *tree, int patharray[41], int ancestor_pos, i
                     }
                     else if (diagonal_pathstep == 0)
                     {
-                        // TODO - Fix this problem 
+                        // TODO - Fix this problem
                         //  printf("\n Warning - Diagonal_Patharray has zero value problems");
                     }
                     else
@@ -760,7 +760,7 @@ void balance_neighbours(quadtree_t *tree, int patharray[41], int ancestor_pos, i
                     }
                 }
             }
-            
+
             root = tree->root;
             j = ancestor_pos;
             int diagonal_path_step = 0;
@@ -1536,7 +1536,7 @@ void balance_neighboursset(int patharray[41], int ancestor_pos, int direction)
                 else if (quadtree_node_isleaf(node->se))
                 {
                     neighbourset(1, filename, node->se->point->x, node->se->point->y);
-                    eastern_diagonal_neighbourset(node->se, 1); 
+                    eastern_diagonal_neighbourset(node->se, 1);
                 }
 
                 if (quadtree_node_isempty(node->sw))
@@ -2139,7 +2139,7 @@ void southern_diagonal_neighbourset(quadtree_node_t *node, int mainnode_directio
                 {
                     neighbourset(1, filename, root->nw->point->x, root->nw->point->y);
                 }
-            }    
+            }
 
             if(mainnode_direction == 2)
             {
@@ -2154,7 +2154,7 @@ void southern_diagonal_neighbourset(quadtree_node_t *node, int mainnode_directio
                 {
                     neighbourset(1, filename, root->ne->point->x, root->ne->point->y);
                 }
-            }    
+            }
             break;
         }
     }
@@ -2167,9 +2167,9 @@ void valley_refinement(quadtree_node_t *valley_node, int flag)
     double xcord = (valley_node->bounds->nw->x + valley_node->bounds->se->x) / 2;
     double ycord = (valley_node->bounds->nw->y + valley_node->bounds->se->y) / 2;
 
-    int k = 0;                     
-    int pathstep = -1;              
-    int direction = 0;             
+    int k = 0;
+    int pathstep = -1;
+    int direction = 0;
     int ancestor_pos = -1;
     int north = 0;
     int east = 0;
@@ -2221,12 +2221,12 @@ void valley_refinement(quadtree_node_t *valley_node, int flag)
         quadtree_node_t *root = tree->root;
         int path_step = 0;
         int i = 0;
-        
+
         root = reach_ancestor(root, patharray, ancestor_pos);
         for (i = ancestor_pos; i <= patharray[40]; i++)
         {
             path_step = patharray[i];
-            
+
             if (quadtree_node_isempty(root))
             {
                 east_node = root;
@@ -2323,12 +2323,12 @@ void valley_refinement(quadtree_node_t *valley_node, int flag)
         quadtree_node_t *root = tree->root;
         int path_step = 0;
         int i = 0;
-        
+
         root = reach_ancestor(root, patharray, ancestor_pos);
         for (i = ancestor_pos; i <= patharray[40]; i++)
         {
             path_step = patharray[i];
-            
+
             if (quadtree_node_isempty(root))
             {
                 west_node = root;
@@ -2344,7 +2344,7 @@ void valley_refinement(quadtree_node_t *valley_node, int flag)
                 west = 1;
                 break;
             }
-            
+
             if (path_step == 1)
             {
                 root = root->ne;
@@ -2425,12 +2425,12 @@ void valley_refinement(quadtree_node_t *valley_node, int flag)
         quadtree_node_t *root = tree->root;
         int path_step = 0;
         int i = 0;
-        
+
         root = reach_ancestor(root, patharray, ancestor_pos);
         for (i = ancestor_pos; i <= patharray[40]; i++)
         {
             path_step = patharray[i];
-            
+
             if (quadtree_node_isempty(root))
             {
                 north_node = root;
@@ -2446,7 +2446,7 @@ void valley_refinement(quadtree_node_t *valley_node, int flag)
                 north = 1;
                 break;
             }
-            
+
             if (path_step == 1)
             {
                 root = root->sw;
@@ -2526,7 +2526,7 @@ void valley_refinement(quadtree_node_t *valley_node, int flag)
         quadtree_node_t *root = tree->root;
         int path_step = 0;
         int i = 0;
-        
+
         root = reach_ancestor(root, patharray, ancestor_pos);
         for (i = ancestor_pos; i <= patharray[40]; i++)
         {
@@ -2613,7 +2613,7 @@ void valley_refinement(quadtree_node_t *valley_node, int flag)
 
 int maxDepth(quadtree_node_t *node)
 {
-    if (!node) 
+    if (!node)
         return 0;
     else
     {
@@ -2621,8 +2621,8 @@ int maxDepth(quadtree_node_t *node)
         int neDepth = maxDepth(node->ne);
         int swDepth = maxDepth(node->sw);
         int seDepth = maxDepth(node->se);
-    
-        if (nwDepth >= neDepth && nwDepth >= swDepth && nwDepth >= seDepth) 
+
+        if (nwDepth >= neDepth && nwDepth >= swDepth && nwDepth >= seDepth)
             return(nwDepth+1);
         else if (neDepth >= nwDepth && neDepth >= swDepth && nwDepth >= seDepth)
             return(neDepth+1);
@@ -2653,9 +2653,9 @@ void hill_derefinement(quadtree_node_t *hill_node, int flag)
     double xcord = (hill_node->bounds->nw->x + hill_node->bounds->se->x) / 2;
     double ycord = (hill_node->bounds->nw->y + hill_node->bounds->se->y) / 2;
 
-    int k = 0;                     
-    int pathstep = -1;              
-    int direction = 0;             
+    int k = 0;
+    int pathstep = -1;
+    int direction = 0;
     int ancestor_pos = -1;
     int north = 1;
     int east = 1;
@@ -2713,12 +2713,12 @@ void hill_derefinement(quadtree_node_t *hill_node, int flag)
         quadtree_node_t *root = tree->root;
         int path_step = 0;
         int i = 0;
-        
+
         root = reach_ancestor(root, patharray, ancestor_pos);
         for (i = ancestor_pos; i <= patharray[40] - 1; i++)
         {
             path_step = patharray[i];
-            
+
             if (quadtree_node_isempty(root))
             {
                 east_node = root;
@@ -2819,12 +2819,12 @@ void hill_derefinement(quadtree_node_t *hill_node, int flag)
         quadtree_node_t *root = tree->root;
         int path_step = 0;
         int i = 0;
-        
+
         root = reach_ancestor(root, patharray, ancestor_pos);
         for (i = ancestor_pos; i <= patharray[40] - 1; i++)
         {
             path_step = patharray[i];
-            
+
             if (quadtree_node_isempty(root))
             {
                 west_node = root;
@@ -2840,7 +2840,7 @@ void hill_derefinement(quadtree_node_t *hill_node, int flag)
                 west = 0;
                 break;
             }
-            
+
             if (path_step == 1)
             {
                 root = root->ne;
@@ -2925,12 +2925,12 @@ void hill_derefinement(quadtree_node_t *hill_node, int flag)
         quadtree_node_t *root = tree->root;
         int path_step = 0;
         int i = 0;
-        
+
         root = reach_ancestor(root, patharray, ancestor_pos);
         for (i = ancestor_pos; i <= patharray[40] - 1; i++)
         {
             path_step = patharray[i];
-            
+
             if (quadtree_node_isempty(root))
             {
                 north_node = root;
@@ -2946,7 +2946,7 @@ void hill_derefinement(quadtree_node_t *hill_node, int flag)
                 north = 0;
                 break;
             }
-            
+
             if (path_step == 1)
             {
                 root = root->sw;
@@ -3031,7 +3031,7 @@ void hill_derefinement(quadtree_node_t *hill_node, int flag)
         quadtree_node_t *root = tree->root;
         int path_step = 0;
         int i = 0;
-        
+
         root = reach_ancestor(root, patharray, ancestor_pos);
         for (i = ancestor_pos; i <= patharray[40] - 1; i++)
         {
