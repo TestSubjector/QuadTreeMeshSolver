@@ -104,7 +104,7 @@ else
         cp -rlf ./preprocessorfile_normal.txt ./files/f$value/preprocessorfile_normal.txt
         rm ./preprocessorfile_normal.txt
 
-        python3 ./bspline/bspline.py -i ./files/f$value/preprocessorfile_normal.txt -p True
+        python3 ./bspline/bspline.py -i ./files/f$value/preprocessorfile_normal.txt -p True -q False
         cp -rf ./wall.json ./files/f$value/wall.json
 
     done
