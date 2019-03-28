@@ -46,9 +46,10 @@ def main():
     wallpointsData = core.generateWallPolygons(wallpoints)
 
     log.info("Running Non Aero Checks")
-
-    # globaldata = core.checkAeroGlobal(globaldata,globaldata,wallpointsData)
     globaldata = core.checkAeroGlobal2(globaldata,wallpointsData,wallcount)
+
+    log.info("Generating triangle data")
+    core.generateOutput(globaldata, wallpoints, wallpointsData)
 
     globaldata.pop(0)
 
