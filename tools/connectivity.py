@@ -1,5 +1,6 @@
 import core
 from config import getConfig
+from tqdm import tqdm
 
 def connectivityCheck(globaldata, wallouter = True, interior = False):
     conf = getConfig()
