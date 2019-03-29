@@ -1,7 +1,7 @@
 import argparse
-from progress import printProgressBar
 import core
 import reportgen
+from tqdm import tqdm
 
 def main():
     # Command Line Arguments
@@ -20,10 +20,7 @@ def main():
     print("Processed Pre-Processor File")
     print("Converting to readable format")
 
-    for idx, itm in enumerate(splitdata):
-        printProgressBar(
-            idx, len(splitdata) - 1, prefix="Progress:", suffix="Complete", length=50
-        )
+    for _, itm in enumerate(tqdm(splitdata)):
         itm = itm.split(" ")
         itm.pop(-1)
         entry = itm

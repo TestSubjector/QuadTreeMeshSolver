@@ -79,3 +79,4 @@ pseudopoints.txt
 config.json
 outer.txt
 *.poly
+plots/

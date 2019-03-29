@@ -1,9 +1,9 @@
 import core
-from progress import printProgressBar
 import inspect
 import collections
 from config import getConfig
 import connectivity
+from tqdm import tqdm
 
 def triangleBalance(globaldata,polygonData,wallpoints,idx):
     if idx > 0:
@@ -82,10 +82,7 @@ def triangleBalance2(globaldata,wallpoints):
     WALL_THRESHOLD = int(getConfig()["triangulate"]["leftright"]["wallThreshold"])
     AGGRESSIVE_MAX_NEIGHBOURS = -int(getConfig()["triangulate"]["leftright"]["aggressiveMaxNeighbours"])
     NORMAL_MAX_NEIGHBOURS = -int(getConfig()["triangulate"]["leftright"]["normalMaxNeighbours"])
-    for idx,_ in enumerate(globaldata):
-        printProgressBar(
-            idx, len(globaldata) - 1, prefix="Progress:", suffix="Complete", length=50
-        )
+    for idx, _ in enumerate(tqdm(globaldata)):
         if idx > 0:
             flag = int(core.getFlag(idx,globaldata))
             xposf,xnegf,yposf,ynegf = core.getFlags(idx,globaldata)
@@ -120,10 +117,7 @@ def triangleBalance2(globaldata,wallpoints):
 def triangleBalance3(globaldata,wallpoints):
     WALL_THRESHOLD = int(getConfig()["triangulate"]["leftright"]["wallThreshold"])
     AGGRESSIVE_MAX_NEIGHBOURS = -int(getConfig()["triangulate"]["leftright"]["aggressiveMaxNeighbours"])
-    for idx,_ in enumerate(globaldata):
-        printProgressBar(
-            idx, len(globaldata) - 1, prefix="Progress:", suffix="Complete", length=50
-        )
+    for idx, itm in enumerate(tqdm(globaldata)):
         if idx > 0:
             flag = int(core.getFlag(idx,globaldata))
             xposf,xnegf,yposf,ynegf = core.getFlags(idx,globaldata)

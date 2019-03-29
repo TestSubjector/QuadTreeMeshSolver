@@ -1,11 +1,10 @@
-# from progress import *
+
 import math
 import shapely.geometry
 from shapely import wkt
 from shapely.ops import linemerge, unary_union, polygonize
 import os
 import errno
-from progress import *
 from logger import *
 import multiprocessing
 from multiprocessing.pool import ThreadPool

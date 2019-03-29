@@ -1,5 +1,4 @@
 import argparse
-from progress import printProgressBar
 from core import *
 from connectivity import *
 from balance import *
@@ -9,7 +8,7 @@ from shapely.geometry import MultiPoint
 from shapely.ops import triangulate
 log = logging.getLogger(__name__)
 log.addHandler(logging.StreamHandler())
-import pyximport; pyximport.install(pyimport = True)
+from tqdm import tqdm
 
 def main():
     # Command Line Arguments
@@ -35,10 +34,7 @@ def main():
         log.info("Processed Pre-Processor File")
         log.info("Converting to readable format")
 
-        for idx, itm in enumerate(splitdata):
-            printProgressBar(
-                idx, len(splitdata) - 1, prefix="Progress:", suffix="Complete", length=50
-            )
+        for _, itm in enumerate(tqdm(splitdata)):
             itm = itm.split(" ")
             itm.pop(-1)
             entry = itm

@@ -1,6 +1,5 @@
 import numpy as np
 import math
-from progress import printProgressBar
 import shapely.geometry
 from shapely import wkt
 from shapely.ops import linemerge, unary_union, polygonize
@@ -18,8 +17,10 @@ import connectivity
 from collections import Counter
 import os
 from time import sleep
+import shutil
 log = logging.getLogger(__name__)
 log.addHandler(logging.StreamHandler())
+from tqdm import tqdm
 
 def appendNeighbours(index, globaldata, newpts):
     pt = getIndexFromPoint(newpts, globaldata)
@@ -800,7 +801,7 @@ def getDistance(point1,point2,globaldata):
     result = math.sqrt(ptx + pty)
     return result
 
-def wallConnectivityCheck(globaldata):
+def wallConnectivityCheck(globaldata, verbose=False):
     madechanges = False
     for idx,_ in enumerate(globaldata):
         if idx > 0:
@@ -809,11 +810,12 @@ def wallConnectivityCheck(globaldata):
                 xpos,xneg,_,_ = getFlags(idx,globaldata)
                 if xpos == 1 or xneg == 1:
                     print(idx) 
-                    madechanges = True
-                    ptcordx, ptcordy = getPoint(idx,globaldata)
-                    with open("adapted.txt", "a+") as text_file:
-                        text_file.writelines(["%s %s " % (ptcordx, ptcordy)])
-                        text_file.writelines("\n")
+                    if not verbose:
+                        madechanges = True
+                        ptcordx, ptcordy = getPoint(idx,globaldata)
+                        with open("adapted.txt", "a+") as text_file:
+                            text_file.writelines(["%s %s " % (ptcordx, ptcordy)])
+                            text_file.writelines("\n")
     if madechanges == True:
         with open("adapted.txt", "a+") as text_file:
             text_file.writelines("1000 1000\n")
@@ -1383,3 +1385,22 @@ def random_points_within(poly, num_points):
             points.append(random_point)
 
     return points
+
+def subPlot(globaldata, wallpoints):
+    if os.path.isdir("plots"):
+        shutil.rmtree("plots")
+        os.mkdir("plots")
+    else:
+        os.mkdir("plots")
+    with open("plots/wall_combined", "w+") as the_file_main:
+        superidx = 0
+        for idx, itm in enumerate(wallpoints):
+            with open("plots/wall_{}".format(idx), "w+") as the_file:
+                for idx2, itm2 in enumerate(itm):
+                    superidx += 1
+                    pt = itm2.split(",")
+                    ptx = float(pt[0])
+                    pty = float(pt[1])
+                    the_file.write("{} {} {}\n".format(idx2 + 1, ptx, pty))
+                    the_file_main.write("{} {} {}\n".format(superidx, ptx, pty))
+    print("Generated Subplots")

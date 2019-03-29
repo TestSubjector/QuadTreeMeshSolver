@@ -1,17 +1,9 @@
 import core
 from config import getConfig
-import progress
 
 def connectivityCheck(globaldata, wallouter = True, interior = False):
     conf = getConfig()
-    for idx,itm in enumerate(globaldata):
-        progress.printProgressBar(
-            idx,
-            len(globaldata) - 1,
-            prefix="Progress:",
-            suffix="Complete",
-            length=50,
-        )
+    for idx,itm in enumerate(tqdm(globaldata)):
         if(idx >0):
             if (core.getFlag(idx,globaldata) == 0 or core.getFlag(idx,globaldata) == 2) and wallouter == True:
                 result = connectivityCheckWallandOuterPoint(idx,globaldata, conf)

@@ -1,18 +1,12 @@
 from core import *
 from config import getConfig
+from tqdm import trange, tqdm
 
 
 def connectivityCheck(globaldata, badPoints):
     badPointsNew = []
     if len(badPoints) == 0:
-        for idx,itm in enumerate(globaldata):
-            printProgressBar(
-                idx,
-                len(globaldata) - 1,
-                prefix="Progress:",
-                suffix="Complete",
-                length=50,
-            )
+        for idx in trange(len(globaldata)):
             if(idx >0):
                 if(getFlag(idx,globaldata) == 0 or getFlag(idx,globaldata) == 2):
                     result = connectivityCheckWallandOuterPoint(idx,globaldata)
@@ -25,14 +19,7 @@ def connectivityCheck(globaldata, badPoints):
                         badPointsNew.append(idx)
                     globaldata = setFlags(idx,globaldata,result)
     else:
-        for index,idx in enumerate(badPoints):
-            printProgressBar(
-                index,
-                len(badPoints) - 1,
-                prefix="Progress:",
-                suffix="Complete",
-                length=50,
-            )
+        for index,idx in enumerate(tqdm(badPoints)):
             if(idx >0):
                 if(getFlag(idx,globaldata) == 0 or getFlag(idx,globaldata) == 2):
                     result = connectivityCheckWallandOuterPoint(idx,globaldata)

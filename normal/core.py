@@ -3,7 +3,6 @@ import math
 import shapely.geometry
 from shapely import wkt
 from shapely.ops import linemerge, unary_union, polygonize
-from progress import printProgressBar
 import config
 import scipy.interpolate as si
 import matplotlib.pyplot as plt
@@ -15,6 +14,7 @@ import json
 from shapely.geometry import Polygon, Point
 log = logging.getLogger(__name__)
 log.addHandler(logging.StreamHandler())
+from tqdm import tqdm
 
 
 def appendNeighbours(index, globaldata, newpts):
@@ -774,10 +774,7 @@ def replaceNeighbours(index,nbhs,globaldata):
 def cleanWallPoints(globaldata):
     wallpoints = getWallPointArrayIndex(globaldata)
     wallpointsflat = [item for sublist in wallpoints for item in sublist]
-    for idx,itm in enumerate(globaldata):
-        printProgressBar(
-            idx, len(globaldata) - 1, prefix="Progress:", suffix="Complete", length=50
-        )
+    for idx,itm in enumerate(tqdm(globaldata)):
         if(idx > 0):
             if(getFlag(idx,globaldata) == 0):
                 nbhcords =  getNeighbours(idx,globaldata)
@@ -812,8 +809,7 @@ def checkPoints(globaldata,selectbspline,normal):
     ptListArray = []
     perpendicularListArray = []
     if len(selectbspline) == 0:
-        for idx,_ in enumerate(globaldata):
-            printProgressBar(idx, len(globaldata) - 1, prefix="Progress:", suffix="Complete", length=50)
+        for idx,_ in enumerate(tqdm(globaldata)):
             if idx > 0:
                 flag = getFlag(idx,globaldata)
                 if flag == 1:
@@ -828,8 +824,7 @@ def checkPoints(globaldata,selectbspline,normal):
                             ptListArray.append(ptList)
                             perpendicularListArray.append((perpendicularPt))
     else:
-        for idx,itm in enumerate(selectbspline):
-            printProgressBar(idx, len(selectbspline), prefix="Progress:", suffix="Complete", length=50)  
+        for idx,itm in enumerate(tqdm(selectbspline)):
             ptList = findNearestNeighbourWallPoints(itm,globaldata,wallptData,wallptDataOr)
             perpendicularPt = getPerpendicularPoint(itm,globaldata,normal)
             if (perpendicularPt) not in perpendicularListArray:
@@ -1017,10 +1012,7 @@ def setNormals(pseudopts,globaldata):
 
     pseudoptDict = {}
 
-    for idx2,idx in enumerate(pseudopts):
-        printProgressBar(
-            idx2, len(pseudopts) - 1, prefix="Progress:", suffix="Complete", length=50
-        )
+    for idx2,idx in enumerate(tqdm(pseudopts)):
         ptList = findNearestNeighbourWallPoints(idx,globaldata,wallptData,wallptDataOr)
         ptListIndex = convertPointsToIndex(ptList,globaldata)
         pseudoptDict[idx] = ptListIndex

@@ -1,5 +1,4 @@
 import core
-from progress import printProgressBar
 import argparse
 import connectivity
 from shapely.geometry import MultiPoint
@@ -8,6 +7,7 @@ import balance
 import logging
 log = logging.getLogger(__name__)
 log.addHandler(logging.StreamHandler())
+from tqdm import tqdm
 
 def main():
     # Command Line Arguments
@@ -29,10 +29,7 @@ def main():
     print("Processed Pre-Processor File")
     print("Converting to readable format")
 
-    for idx, itm in enumerate(splitdata):
-        printProgressBar(
-            idx, len(splitdata) - 1, prefix="Progress:", suffix="Complete", length=50
-        )
+    for _, itm in enumerate(tqdm(splitdata)):
         itm = itm.split(" ")
         itm.pop(-1)
         entry = itm
@@ -49,6 +46,7 @@ def main():
     # interiorpts = MultiPoint(interiorpts)
     # interiortriangles = triangulate(interiorpts)
     # polydata = balance.getPolygon(interiortriangles)
+    # plot 'preprocessorfile.txt' using 2:3:(sprintf("%d", $1)) with labels notitle
     core.clearScreen()
 
     while True:
@@ -58,6 +56,7 @@ def main():
         print("Type 'wcc!' to run Wall Connectivity Check on all Wall Points and return nearest point.")
         print("Type 'wcc!!' to run Wall Connectivity Check on all Wall Points and generate a corresponding sensor file.")
         print("Type 'wcc!!!' to run Wall Connectivity Check on all Wall Points and try fixing sparsity.")
+        print("Type 'wcc!!!!' to run Wall Connectivity Check on all Wall Points and just print them.")
         print("Type 'icc' to run Interior Connectivity Check on all Interior Points.")
         print("Type 'cache' to push the file you read into cache.")
         print("Type 'integrity' to check wall.json integrity")
@@ -70,6 +69,7 @@ def main():
         print("Type 'bad1' to print all points with 1 in it's split connectivity")
         print("Type 'split' to output the different type of points in a file")
         print("Type 'config' to start Config Manager")
+        print("Type 'sub' to create subplots")
         ptidx = input("Which point do you want to fix? ")
         if ptidx == "exit!":
             exit()
@@ -91,6 +91,10 @@ def main():
             core.clearScreen()
             globaldata = connectivity.connectivityCheck(globaldata, True, False)
             core.sparseNullifier(globaldata)  
+        elif ptidx == "wcc!!!!":
+            core.clearScreen()
+            globaldata = connectivity.connectivityCheck(globaldata, True, False)
+            core.wallConnectivityCheck(globaldata, verbose=True)
         elif ptidx == "icc":
             core.clearScreen()
             core.interiorConnectivityCheck(globaldata)
@@ -129,6 +133,9 @@ def main():
         elif ptidx == "config":
             core.clearScreen()
             core.configManager() 
+        elif ptidx == "sub":
+            core.clearScreen()
+            core.subPlot(globaldata, wallpoints) 
         isPointIndex = False
         try:
             ptidx = int(ptidx)

@@ -1,6 +1,5 @@
 import numpy as np
 import math
-from progress import printProgressBar
 import shapely.geometry
 from shapely import wkt
 from shapely.ops import linemerge, unary_union, polygonize
@@ -8,6 +7,7 @@ import config
 import logging
 log = logging.getLogger(__name__)
 log.addHandler(logging.StreamHandler())
+from tqdm import tqdm
 
 def appendNeighbours(index, globaldata, newpts):
     pt = getIndexFromPoint(newpts, globaldata)
@@ -572,10 +572,7 @@ def getWallEndPoints(globaldata):
 def cleanWallPoints(globaldata):
     wallpoints = getWallPointArrayIndex(globaldata)
     wallpointsflat = [item for sublist in wallpoints for item in sublist]
-    for idx,itm in enumerate(globaldata):
-        printProgressBar(
-            idx, len(globaldata) - 1, prefix="Progress:", suffix="Complete", length=50
-        )
+    for idx,_ in enumerate(tqdm(globaldata)):
         if(idx > 0):
             if(getFlag(idx,globaldata) == 0):
                 nbhcords =  getNeighbours(idx,globaldata)

@@ -3,7 +3,6 @@ import math
 import shapely.geometry
 from shapely import wkt
 from shapely.ops import linemerge, unary_union, polygonize
-from progress import printProgressBar
 import config
 from scipy import spatial
 import logging
@@ -12,7 +11,7 @@ import bsplinegen
 import json
 log = logging.getLogger(__name__)
 log.addHandler(logging.StreamHandler())
-
+from tqdm import tqdm
 
 def appendNeighbours(index, globaldata, newpts):
     pt = getIndexFromPoint(newpts, globaldata)
@@ -655,10 +654,7 @@ def replaceNeighbours(index,nbhs,globaldata):
 def cleanWallPoints(globaldata):
     wallpoints = getWallPointArrayIndex(globaldata)
     wallpointsflat = [item for sublist in wallpoints for item in sublist]
-    for idx,itm in enumerate(globaldata):
-        printProgressBar(
-            idx, len(globaldata) - 1, prefix="Progress:", suffix="Complete", length=50
-        )
+    for idx,itm in enumerate(tqdm(globaldata)):
         if(idx > 0):
             if(getFlag(idx,globaldata) == 0):
                 nbhcords =  getNeighbours(idx,globaldata)
@@ -691,25 +687,25 @@ def checkPoints(globaldata,selectbspline,normal):
     ptListArray = []
     perpendicularListArray = []
     if not selectbspline:
-        for idx,_ in enumerate(globaldata):
-            printProgressBar(idx, len(globaldata) - 1, prefix="Progress:", suffix="Complete", length=50)
+        for idx,_ in enumerate(tqdm(globaldata)):
             if idx > 0:
                 flag = getFlag(idx,globaldata)
                 if flag == 1:
                     result = isConditionBad(idx,globaldata)
-                    if(result):
-                        # print(idx)
-                        ptList = findNearestNeighbourWallPoints(idx,globaldata,wallptData,wallptDataOr)
-                        perpendicularPt = getPerpendicularPoint(idx,globaldata,normal)
-                        # print(ptList)
-                        # print(perpendicularListArray)
-                        if (perpendicularPt) not in perpendicularListArray:
-                            ptListArray.append(ptList)
-                            perpendicularListArray.append((perpendicularPt))
+                    nancheck = isConditionNan(idx, globaldata)
+                    if nancheck:
+                        log.warn("Warning: Point Index {} has a NaN. Manual Intervention is required to fix it.".format(idx))
+                    else:
+                        if(result):
+                            ptList = findNearestNeighbourWallPoints(idx,globaldata,wallptData,wallptDataOr)
+                            perpendicularPt = getPerpendicularPoint(idx,globaldata,normal)
+                            # print(perpendicularListArray)
+                            if (perpendicularPt) not in perpendicularListArray:
+                                ptListArray.append(ptList)
+                                perpendicularListArray.append((perpendicularPt))
     else:
         selectbspline = list(map(int, selectbspline))
-        for idx,itm in enumerate(selectbspline):
-            printProgressBar(idx, len(selectbspline), prefix="Progress:", suffix="Complete", length=50)  
+        for idx,itm in enumerate(tqdm(selectbspline)):
             ptList = findNearestNeighbourWallPoints(itm,globaldata,wallptData,wallptDataOr)
             perpendicularPt = getPerpendicularPoint(itm,globaldata,normal)
             if (perpendicularPt) not in perpendicularListArray:
@@ -868,6 +864,17 @@ def isConditionBad(idx,globaldata):
     maxCond = max(dSPosCondition,dSNegCondition,dNPosCondition,dNNegCondition)
     if maxCond > float(config.getConfig()["bspline"]["threshold"]) or math.isnan(dSPosCondition) or math.isnan(dSNegCondition) or math.isnan(dNPosCondition) or math.isnan(dNNegCondition):
         # print(idx)
+        return True
+    else:
+        return False
+
+def isConditionNan(idx, globaldata):
+    nx,ny = getNormals(idx,globaldata)
+    condResult = calculateNormalConditionValues(idx,globaldata,nx,ny)
+    dSPosNbhs,dSNegNbhs,dNPosNbhs,dNNegNbhs = condResult["spos"], condResult["sneg"], condResult["npos"], condResult["nneg"]
+    dSPosCondition,dSNegCondition,dNPosCondition,dNNegCondition = condResult["sposCond"], condResult["snegCond"], condResult["nposCond"], condResult["nnegCond"]
+    maxCond = max(dSPosCondition,dSNegCondition,dNPosCondition,dNNegCondition)
+    if math.isnan(dSPosCondition) or math.isnan(dSNegCondition) or math.isnan(dNPosCondition) or math.isnan(dNNegCondition):
         return True
     else:
         return False

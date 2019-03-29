@@ -1,5 +1,4 @@
 import argparse
-from progress import printProgressBar
 import sys
 sys.path.append('../')
 import core
@@ -12,8 +11,7 @@ import math
 import itertools
 log = logging.getLogger(__name__)
 log.addHandler(logging.StreamHandler())
-import pyximport; pyximport.install(pyimport = True)
-
+from tqdm import tqdm
 
 def main():
     # Command Line Arguments
@@ -24,11 +22,16 @@ def main():
     parser.add_argument("-m", "--midpointspline", nargs="+")
     parser.add_argument("-p", "--forcemidpointspline", nargs="?")
     parser.add_argument("-q", "--checkquadrant", nargs="?")
+    parser.add_argument("-c", "--cache", nargs="?")
     args = parser.parse_args()
 
     normalApproach = False
     if args.normal:
         normalApproach = core.str_to_bool(args.normal)
+
+    cache = True
+    if args.cache:
+        cache = core.str_to_bool(args.cache)
 
     forcemidpointspline = False
     if args.forcemidpointspline:
@@ -49,8 +52,14 @@ def main():
 
     if forcemidpointspline == True:
         log.warn("Warning: Mid Point BSpline has been forced. Point Control set to 3")
+        if normalApproach:
+            log.warn("Warning: Normal BSpline has been disabled")
+        normalApproach = False
 
-    globaldata = config.getKeyVal("globaldata")
+    if cache:
+        globaldata = config.getKeyVal("globaldata")
+    else:
+        globaldata = None
 
     if globaldata == None:
 
@@ -63,10 +72,7 @@ def main():
         log.info("Processed Pre-Processor File")
         log.info("Converting to readable format")
 
-        for idx, itm in enumerate(splitdata):
-            printProgressBar(
-                idx, len(splitdata) - 1, prefix="Progress:", suffix="Complete", length=50
-            )
+        for idx, itm in enumerate(tqdm(splitdata)):
             itm = itm.split(" ")
             itm.pop(-1)
             entry = itm
@@ -91,7 +97,7 @@ def main():
 
 
     if args.midpointspline:
-        print("Mid point bspling for ", len(args.midpointspline))
+        log.info("Mid point bspling for {}".format(len(args.midpointspline)))
         midspline = list(map(int,args.midpointspline))
         # midspline[:] = [x - 1 for x in midspline]
         POINT_CONTROL = 3
@@ -99,12 +105,12 @@ def main():
         writingDict = dict(core.load_obj("wall"))
     except IOError:
         writingDict = {}
-    print(writingDict)
+    # print(writingDict)
     if not args.midpointspline:
         problempts,perpendicularpts = core.checkPoints(globaldata,args.bspline,normalApproach)
-        print("Bsplining", len(problempts), "points.")
-        print("Starting BSpline")
-        for idx,itm in enumerate(problempts): 
+        log.info("Bsplining {} points".format(len(problempts)))
+        log.info("Starting BSpline")
+        for idx,itm in enumerate(tqdm(problempts)): 
             data = core.feederData(itm,wallPts)
             if config.getConfig()["bspline"]["polygon"] == False:
                 if config.getConfig()["global"]["wallPointOrientation"] == "ccw":
@@ -118,18 +124,17 @@ def main():
                     newpts = bsplinegen.getPointsOnlyInQuadrant(newpts,bsplineArray[data[2]][int(data[0])],bsplineArray[data[2]][int(data[1])],globaldata)
                 newpts = core.findNearestPoint(perpendicularpts[idx],newpts)
                 if newpts == False:
-                    print("Error: Increase your Bspline Point Control Attribute")
+                    log.error("Error: Increase your Bspline Point Control Attribute")
                     exit()
             else:
                 newpts = list(perpendicularpts[idx])
-            printProgressBar(idx + 1, len(problempts), prefix="Progress:", suffix="Complete", length=50)
             try:
                 writingDict[data[3]] = writingDict[data[3]] + [newpts]
             except KeyError:
                 writingDict[data[3]] = [newpts]
             additionPts.append([newpts])
     else:
-        for idx,itm in enumerate(midspline):
+        for idx,itm in enumerate(tqdm(midspline)):
             wallData = core.getWallGeometry(bsplineArray, globaldata, itm)
             itmx, itmy = core.getPoint(itm, globaldata)
             pos = np.array(wallData).tolist().index([itmx, itmy])
@@ -144,7 +149,6 @@ def main():
                     newpts = bsplinegen.generateBSplineBetween(wallData,nextPt,pos,POINT_CONTROL)
                 else:
                     newpts = bsplinegen.generateBSplineBetween(wallData,pos,nextPt,POINT_CONTROL)
-            printProgressBar(idx + 1, len(midspline), prefix="Progress:", suffix="Complete", length=50)
             itmxy = core.getPointxy(itm, globaldata)
             newpts = newpts[0]
             try:

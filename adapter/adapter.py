@@ -160,7 +160,7 @@ def main():
         writingDict = dict(load_obj("wall"))
     except IOError:
         writingDict = {}
-    print(writingDict)
+    # print(writingDict)
     print("Bsplining", len(perPndList), "points.")
     bsplineArray = []
     additionPts = []

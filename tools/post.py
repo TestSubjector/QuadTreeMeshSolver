@@ -1,11 +1,11 @@
 import core
-from progress import printProgressBar
 import argparse
 import logging
 log = logging.getLogger(__name__)
 log.addHandler(logging.StreamHandler())
 from matplotlib import pyplot as plt
 from shapely.geometry.polygon import LinearRing, Polygon
+from tqdm import tqdm, trange
 
 def main():
     # Command Line Arguments
@@ -24,10 +24,7 @@ def main():
     log.info("Processed Pre-Processor File")
     log.info("Converting to readable format")
 
-    for idx, itm in enumerate(splitdata):
-        printProgressBar(
-            idx, len(splitdata) - 1, prefix="Progress:", suffix="Complete", length=50
-        )
+    for _, itm in enumerate(tqdm(splitdata)):
         itm = itm.split(" ")
         itm.pop(-1)
         entry = itm
@@ -44,8 +41,7 @@ def main():
 
     log.info("Running Non Aero Checks")
 
-    for idx in range(1,len(globaldata)):
-        printProgressBar(idx, len(globaldata) - 1, prefix="Progress:", suffix="Complete", length=50)    
+    for idx in trange(1,len(globaldata)):  
         nbhs = core.getNeighbours(idx,globaldata)
         for itm in nbhs:
             cord = core.getPointxy(itm,globaldata)
