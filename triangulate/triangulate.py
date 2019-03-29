@@ -99,8 +99,8 @@ def main():
         globaldata = triangleBalance3(globaldata,wallpts)
     log.info("Running Connectivity Recheck")
     globaldata,badPoints = connectivityCheck(globaldata,badPoints)
-    log.info("Writing Deletion Points")
-    problempts = findDeletionPoints(globaldata)
+    # log.info("Writing Deletion Points")
+    # problempts = findDeletionPoints(globaldata)
     
     globaldata = cleanNeighbours(globaldata)
 
@@ -110,10 +110,10 @@ def main():
 
     config.setKeyVal("globaldata",globaldata)
 
-    with open("removal_points.txt", "w") as text_file:
-        for item1 in problempts:
-            text_file.writelines(["%s " % item1])
-            text_file.writelines("\n")
+    # with open("removal_points.txt", "w") as text_file:
+    #     for item1 in problempts:
+    #         text_file.writelines(["%s " % item1])
+    #         text_file.writelines("\n")
 
     log.info("Writing Preprocessor File")
 
