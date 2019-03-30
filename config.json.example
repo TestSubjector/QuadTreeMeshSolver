@@ -10,7 +10,8 @@
     "bspline": {
         "threshold": 15,
         "pointControl": 200,
-        "polygon": false
+        "polygon": false,
+        "pseudoDist": 1E-5
     },
     "normalWall": {
         "inflatedPolygonDistance": 0.001,

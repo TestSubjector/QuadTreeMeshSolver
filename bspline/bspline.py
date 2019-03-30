@@ -19,11 +19,13 @@ def main():
     parser.add_argument("-i", "--input", const=str, nargs="?")
     parser.add_argument("-b", "--bspline", nargs="+")
     parser.add_argument("-n", "--normal", nargs="?")
-    parser.add_argument("-m", "--midpointspline", nargs="+")
     parser.add_argument("-p", "--forcemidpointspline", nargs="?")
     parser.add_argument("-q", "--checkquadrant", nargs="?")
     parser.add_argument("-c", "--cache", nargs="?")
+    parser.add_argument("-s", "--pseudocheck", nargs="?")
     args = parser.parse_args()
+
+    configData = config.getConfig()
 
     normalApproach = False
     if args.normal:
@@ -41,6 +43,10 @@ def main():
     if args.checkquadrant:
         quadrantcheck = core.str_to_bool(args.checkquadrant)
 
+    pseudocheck = False
+    if args.pseudocheck:
+        pseudocheck = core.str_to_bool(args.pseudocheck)
+
     log.info("Loading Data")
     log.debug("Arguments")
     log.debug(args)
@@ -48,13 +54,19 @@ def main():
         log.warn("Warning: Quadrant Check is disabled")
     
     if normalApproach == True:
-        log.info("Info: Normal Bsplining is occuring")
+        log.info("Info: Normal Bsplining is occuring with point control {}".format(configData['bspline']['pointControl']))
+    else:
+        log.info("Info: Mid Point BSplining is occuring with point control {}".format(configData['bspline']['pointControl']))
 
     if forcemidpointspline == True:
         log.warn("Warning: Mid Point BSpline has been forced. Point Control set to 3")
         if normalApproach:
             log.warn("Warning: Normal BSpline has been disabled")
         normalApproach = False
+
+    if pseudocheck:
+        log.info("Info: Pseudo Points are being checked and fixed.")
+        log.info("Pseudo Distance is set to {}" .format(configData['bspline']['pseudoDist']))
 
     if cache:
         globaldata = config.getKeyVal("globaldata")
@@ -82,7 +94,7 @@ def main():
         globaldata.insert(0,"start")
 
     if not forcemidpointspline:
-        POINT_CONTROL = int(config.getConfig()["bspline"]["pointControl"])
+        POINT_CONTROL = int(configData["bspline"]["pointControl"])
     else:
         POINT_CONTROL = 3
 
@@ -94,69 +106,48 @@ def main():
     for itm in wallPts:
         bsplineData = np.array(core.undelimitXY(itm))
         bsplineArray.append(bsplineData)
-
-
-    if args.midpointspline:
-        log.info("Mid point bspling for {}".format(len(args.midpointspline)))
-        midspline = list(map(int,args.midpointspline))
-        # midspline[:] = [x - 1 for x in midspline]
-        POINT_CONTROL = 3
     try:
         writingDict = dict(core.load_obj("wall"))
     except IOError:
         writingDict = {}
-    # print(writingDict)
-    if not args.midpointspline:
-        problempts,perpendicularpts = core.checkPoints(globaldata,args.bspline,normalApproach)
-        log.info("Bsplining {} points".format(len(problempts)))
-        log.info("Starting BSpline")
-        for idx,itm in enumerate(tqdm(problempts)): 
-            data = core.feederData(itm,wallPts)
-            if config.getConfig()["bspline"]["polygon"] == False:
-                if config.getConfig()["global"]["wallPointOrientation"] == "ccw":
+    shapelyWallData = None
+    if pseudocheck == True:
+        log.info("Caching Wall Geometries")
+        shapelyWallData = core.convertToShapely(wallPts)
+    log.info("Searching for bad points")
+    problempts,perpendicularpts = core.checkPoints(globaldata, args.bspline, normalApproach, configData, pseudocheck, shapelyWallData)
+    log.info("Bsplining {} points".format(len(problempts)))
+    log.info("Starting BSpline")
+    for idx,itm in enumerate(tqdm(problempts)): 
+        data = core.feederData(itm,wallPts)
+        if configData["bspline"]["polygon"] == False:
+            if configData["global"]["wallPointOrientation"] == "ccw":
+                newpts = bsplinegen.generateBSplineBetween(bsplineArray[data[2]],data[0],data[1],POINT_CONTROL)
+            else:
+                if data[0] == 1:
+                    newpts = bsplinegen.generateBSplineBetween(bsplineArray[data[2]],data[1],data[0],POINT_CONTROL)
+                else:
                     newpts = bsplinegen.generateBSplineBetween(bsplineArray[data[2]],data[0],data[1],POINT_CONTROL)
-                else:
-                    if data[0] == 1:
-                        newpts = bsplinegen.generateBSplineBetween(bsplineArray[data[2]],data[1],data[0],POINT_CONTROL)
-                    else:
-                        newpts = bsplinegen.generateBSplineBetween(bsplineArray[data[2]],data[0],data[1],POINT_CONTROL)
-                if quadrantcheck:
-                    newpts = bsplinegen.getPointsOnlyInQuadrant(newpts,bsplineArray[data[2]][int(data[0])],bsplineArray[data[2]][int(data[1])],globaldata)
-                newpts = core.findNearestPoint(perpendicularpts[idx],newpts)
-                if newpts == False:
-                    log.error("Error: Increase your Bspline Point Control Attribute")
+            if quadrantcheck:
+                newpts = bsplinegen.getPointsOnlyInQuadrant(newpts,bsplineArray[data[2]][int(data[0])],bsplineArray[data[2]][int(data[1])],globaldata)
+                if len(newpts) == 0:
+                    log.error("Error: Quadrant Check failed. No point exist.")
                     exit()
-            else:
-                newpts = list(perpendicularpts[idx])
-            try:
-                writingDict[data[3]] = writingDict[data[3]] + [newpts]
-            except KeyError:
-                writingDict[data[3]] = [newpts]
-            additionPts.append([newpts])
-    else:
-        for idx,itm in enumerate(tqdm(midspline)):
-            wallData = core.getWallGeometry(bsplineArray, globaldata, itm)
-            itmx, itmy = core.getPoint(itm, globaldata)
-            pos = np.array(wallData).tolist().index([itmx, itmy])
-            if pos == len(wallData) - 1:
-                nextPt = 0
-            else:
-                nextPt = pos + 1
-            if config.getConfig()["global"]["wallPointOrientation"] == "ccw":
-                newpts = bsplinegen.generateBSplineBetween(wallData,pos, nextPt ,POINT_CONTROL)
-            else:
-                if itm == 1:
-                    newpts = bsplinegen.generateBSplineBetween(wallData,nextPt,pos,POINT_CONTROL)
-                else:
-                    newpts = bsplinegen.generateBSplineBetween(wallData,pos,nextPt,POINT_CONTROL)
-            itmxy = core.getPointxy(itm, globaldata)
-            newpts = newpts[0]
-            try:
-                writingDict[itmxy] = writingDict[itmxy] + [newpts]
-            except KeyError:
-                writingDict[itmxy] = [newpts]
-            additionPts.append([newpts])
-        additionPts = list(itertools.chain.from_iterable(additionPts))
+            newpts = core.findNearestPoint(perpendicularpts[idx],newpts)
+            if newpts == False:
+                log.error("Error: Increase your Bspline Point Control Attribute")
+                exit()
+        else:
+            newpts = list(perpendicularpts[idx])
+        try:
+            data = list(writingDict[data[3]])
+            data.append(newpts)
+            writingDict[data[3]] = data
+        except KeyError:
+            writingDict[data[3]] = [newpts]
+        additionPts.append(newpts)
+    print(writingDict)
+    exit()
     with open("adapted.txt", "a+") as text_file:
         text_file.writelines("1000 1000\n2000 2000\n")
         for item1 in additionPts:

@@ -9,6 +9,7 @@ import logging
 import itertools
 import bsplinegen
 import json
+import time
 log = logging.getLogger(__name__)
 log.addHandler(logging.StreamHandler())
 from tqdm import tqdm
@@ -73,7 +74,7 @@ def convertIndexToPoints(indexarray, globaldata):
     return ptlist
 
 
-def weightedConditionValueForSetOfPoints(index, globaldata, points):
+def weightedConditionValueForSetOfPoints(index, globaldata, points, configData):
     index = int(index)
     mainptx = float(globaldata[index][1])
     mainpty = float(globaldata[index][2])
@@ -90,7 +91,7 @@ def weightedConditionValueForSetOfPoints(index, globaldata, points):
         d = math.sqrt(deltaX ** 2 + deltaY ** 2)
         if d == 0:
             continue
-        power = int(config.getConfig()["global"]["weightCondition"])
+        power = int(configData["global"]["weightCondition"])
         w = d ** power
         deltaSumXX = deltaSumXX + w * (deltaX ** 2)
         deltaSumYY = deltaSumYY + w * (deltaY ** 2)
@@ -138,36 +139,36 @@ def deltaNeighbourCalculation(currentneighbours, currentcord, isxcord, isnegativ
     return xpos, ypos, xneg, yneg, temp
 
 
-def getWeightedInteriorConditionValueofXPos(index, globaldata):
+def getWeightedInteriorConditionValueofXPos(index, globaldata, configData):
     nbhs = convertIndexToPoints(getNeighbours(index, globaldata), globaldata)
     _, _, _, _, mypoints = deltaNeighbourCalculation(
         nbhs, getPointxy(index, globaldata), True, False
     )
-    return weightedConditionValueForSetOfPoints(index, globaldata, mypoints)
+    return weightedConditionValueForSetOfPoints(index, globaldata, mypoints, configData)
 
 
-def getWeightedInteriorConditionValueofXNeg(index, globaldata):
+def getWeightedInteriorConditionValueofXNeg(index, globaldata, configData):
     nbhs = convertIndexToPoints(getNeighbours(index, globaldata), globaldata)
     _, _, _, _, mypoints = deltaNeighbourCalculation(
         nbhs, getPointxy(index, globaldata), True, True
     )
-    return weightedConditionValueForSetOfPoints(index, globaldata, mypoints)
+    return weightedConditionValueForSetOfPoints(index, globaldata, mypoints, configData)
 
 
-def getWeightedInteriorConditionValueofYPos(index, globaldata):
+def getWeightedInteriorConditionValueofYPos(index, globaldata, configData):
     nbhs = convertIndexToPoints(getNeighbours(index, globaldata), globaldata)
     _, _, _, _, mypoints = deltaNeighbourCalculation(
         nbhs, getPointxy(index, globaldata), False, False
     )
-    return weightedConditionValueForSetOfPoints(index, globaldata, mypoints)
+    return weightedConditionValueForSetOfPoints(index, globaldata, mypoints, configData)
 
 
-def getWeightedInteriorConditionValueofYNeg(index, globaldata):
+def getWeightedInteriorConditionValueofYNeg(index, globaldata, configData):
     nbhs = convertIndexToPoints(getNeighbours(index, globaldata), globaldata)
     _, _, _, _, mypoints = deltaNeighbourCalculation(
         nbhs, getPointxy(index, globaldata), False, True
     )
-    return weightedConditionValueForSetOfPoints(index, globaldata, mypoints)
+    return weightedConditionValueForSetOfPoints(index, globaldata, mypoints, configData)
 
 
 def getDXPosPoints(index, globaldata):
@@ -234,11 +235,11 @@ def getDYNegPointsFromSet(index, globaldata, points):
     return mypoints
 
 
-def checkConditionNumber(index, globaldata, threshold):
-    xpos = getWeightedInteriorConditionValueofXPos(index, globaldata)
-    xneg = getWeightedInteriorConditionValueofXNeg(index, globaldata)
-    ypos = getWeightedInteriorConditionValueofYPos(index, globaldata)
-    yneg = getWeightedInteriorConditionValueofYNeg(index, globaldata)
+def checkConditionNumber(index, globaldata, threshold, configData):
+    xpos = getWeightedInteriorConditionValueofXPos(index, globaldata, configData)
+    xneg = getWeightedInteriorConditionValueofXNeg(index, globaldata, configData)
+    ypos = getWeightedInteriorConditionValueofYPos(index, globaldata, configData)
+    yneg = getWeightedInteriorConditionValueofYNeg(index, globaldata, configData)
     dSPointXPos = getDXPosPoints(index, globaldata)
     dSPointXNeg = getDXNegPoints(index, globaldata)
     dSPointYPos = getDYPosPoints(index, globaldata)
@@ -260,11 +261,11 @@ def checkConditionNumber(index, globaldata, threshold):
     else:
         return False
 
-def checkConditionNumberWall(index, globaldata, threshold):
-    xpos = getWeightedInteriorConditionValueofXPos(index, globaldata)
-    xneg = getWeightedInteriorConditionValueofXNeg(index, globaldata)
-    ypos = getWeightedInteriorConditionValueofYPos(index, globaldata)
-    yneg = getWeightedInteriorConditionValueofYNeg(index, globaldata)
+def checkConditionNumberWall(index, globaldata, threshold, configData):
+    xpos = getWeightedInteriorConditionValueofXPos(index, globaldata, configData)
+    xneg = getWeightedInteriorConditionValueofXNeg(index, globaldata, configData)
+    ypos = getWeightedInteriorConditionValueofYPos(index, globaldata, configData)
+    yneg = getWeightedInteriorConditionValueofYNeg(index, globaldata, configData)
     dSPointXPos = getDXPosPoints(index, globaldata)
     dSPointXNeg = getDXNegPoints(index, globaldata)
     dSPointYPos = getDYPosPoints(index, globaldata)
@@ -309,14 +310,14 @@ def cleanNeighbours(globaldata):
     return globaldata
 
 
-def fixXPosMain(index, globaldata, threshold, wallpoints, control):
+def fixXPosMain(index, globaldata, threshold, wallpoints, control, configData):
     if control > 0:
         return
     else:
         control = control + 1
     currentnbhs = getNeighbours(index, globaldata)
     currentnbhs = [int(x) for x in currentnbhs]
-    conditionNumber = getWeightedInteriorConditionValueofXPos(index, globaldata)
+    conditionNumber = getWeightedInteriorConditionValueofXPos(index, globaldata, configData)
     numberofxpos = getDXPosPoints(index, globaldata)
     if conditionNumber > threshold or len(numberofxpos) < 3:
         totalnbhs = []
@@ -332,7 +333,7 @@ def fixXPosMain(index, globaldata, threshold, wallpoints, control):
                 if not isNonAeroDynamic(index,ptcheck,globaldata,wallpoints):
                     checkset = [ptcheck] + numberofxpos
                     newcheck = weightedConditionValueForSetOfPoints(
-                        index, globaldata, checkset
+                        index, globaldata, checkset, configData
                     )
                     if newcheck < conditionNumber:
                         conditionSet.append([ptcheck, newcheck])
@@ -340,20 +341,20 @@ def fixXPosMain(index, globaldata, threshold, wallpoints, control):
                 conditionSet.sort(key=lambda x: x[1])
                 if not isNonAeroDynamic(index,conditionSet[0][0],globaldata,wallpoints):
                     globaldata = appendNeighbours(index, globaldata, conditionSet[0][0])
-                    fixXPosMain(index, globaldata, threshold, wallpoints, control)
+                    fixXPosMain(index, globaldata, threshold, wallpoints, control, configData)
             else:
                 None
     return globaldata
 
 
-def fixXNegMain(index, globaldata, threshold, wallpoints, control):
+def fixXNegMain(index, globaldata, threshold, wallpoints, control, configData):
     if control > 0:
         return
     else:
         control = control + 1
     currentnbhs = getNeighbours(index, globaldata)
     currentnbhs = [int(x) for x in currentnbhs]
-    conditionNumber = getWeightedInteriorConditionValueofXNeg(index, globaldata)
+    conditionNumber = getWeightedInteriorConditionValueofXNeg(index, globaldata, configData)
     numberofxpos = getDXNegPoints(index, globaldata)
     if conditionNumber > threshold or len(numberofxpos) < 3:
         totalnbhs = []
@@ -369,7 +370,7 @@ def fixXNegMain(index, globaldata, threshold, wallpoints, control):
                 if not isNonAeroDynamic(index,ptcheck,globaldata,wallpoints):
                     checkset = [ptcheck] + numberofxpos
                     newcheck = weightedConditionValueForSetOfPoints(
-                        index, globaldata, checkset
+                        index, globaldata, checkset, configData
                     )
                     if newcheck < conditionNumber:
                         conditionSet.append([ptcheck, newcheck])
@@ -377,20 +378,20 @@ def fixXNegMain(index, globaldata, threshold, wallpoints, control):
                 conditionSet.sort(key=lambda x: x[1])
                 if not isNonAeroDynamic(index,conditionSet[0][0],globaldata,wallpoints):
                     globaldata = appendNeighbours(index, globaldata, conditionSet[0][0])
-                    fixXNegMain(index, globaldata, threshold, wallpoints, control)
+                    fixXNegMain(index, globaldata, threshold, wallpoints, control, configData)
             else:
                 None
     return globaldata
 
 
-def fixYPosMain(index, globaldata, threshold, wallpoints, control):
+def fixYPosMain(index, globaldata, threshold, wallpoints, control, configData):
     if control > 0:
         return
     else:
         control = control + 1
     currentnbhs = getNeighbours(index, globaldata)
     currentnbhs = [int(x) for x in currentnbhs]
-    conditionNumber = getWeightedInteriorConditionValueofYPos(index, globaldata)
+    conditionNumber = getWeightedInteriorConditionValueofYPos(index, globaldata, configData)
     numberofxpos = getDYPosPoints(index, globaldata)
     if conditionNumber > threshold or len(numberofxpos) < 3:
         totalnbhs = []
@@ -406,7 +407,7 @@ def fixYPosMain(index, globaldata, threshold, wallpoints, control):
                 if not isNonAeroDynamic(index,ptcheck,globaldata,wallpoints):
                     checkset = [ptcheck] + numberofxpos
                     newcheck = weightedConditionValueForSetOfPoints(
-                        index, globaldata, checkset
+                        index, globaldata, checkset, configData
                     )
                     if newcheck < conditionNumber:
                         conditionSet.append([ptcheck, newcheck])
@@ -414,20 +415,20 @@ def fixYPosMain(index, globaldata, threshold, wallpoints, control):
                 conditionSet.sort(key=lambda x: x[1])
                 if not isNonAeroDynamic(index,conditionSet[0][0],globaldata,wallpoints):
                     globaldata = appendNeighbours(index, globaldata, conditionSet[0][0])
-                    fixYPosMain(index, globaldata, threshold, wallpoints, control)
+                    fixYPosMain(index, globaldata, threshold, wallpoints, control, configData)
             else:
                 None
     return globaldata
 
 
-def fixYNegMain(index, globaldata, threshold, wallpoints, control):
+def fixYNegMain(index, globaldata, threshold, wallpoints, control, configData):
     if control > 0:
         return
     else:
         control = control + 1
     currentnbhs = getNeighbours(index, globaldata)
     currentnbhs = [int(x) for x in currentnbhs]
-    conditionNumber = getWeightedInteriorConditionValueofYNeg(index, globaldata)
+    conditionNumber = getWeightedInteriorConditionValueofYNeg(index, globaldata, configData)
     numberofxpos = getDYNegPoints(index, globaldata)
     if conditionNumber > threshold or len(numberofxpos) < 3:
         totalnbhs = []
@@ -443,7 +444,7 @@ def fixYNegMain(index, globaldata, threshold, wallpoints, control):
                 if not isNonAeroDynamic(index,ptcheck,globaldata,wallpoints):
                     checkset = [ptcheck] + numberofxpos
                     newcheck = weightedConditionValueForSetOfPoints(
-                        index, globaldata, checkset
+                        index, globaldata, checkset, configData
                     )
                     if newcheck < conditionNumber:
                         conditionSet.append([ptcheck, newcheck])
@@ -451,7 +452,7 @@ def fixYNegMain(index, globaldata, threshold, wallpoints, control):
                 conditionSet.sort(key=lambda x: x[1])
                 if not isNonAeroDynamic(index,conditionSet[0][0],globaldata,wallpoints):
                     globaldata = appendNeighbours(index, globaldata, conditionSet[0][0])
-                    fixYNegMain(index, globaldata, threshold, wallpoints, control)
+                    fixYNegMain(index, globaldata, threshold, wallpoints, control, configData)
             else:
                 None
     return globaldata
@@ -521,7 +522,7 @@ def deltaWallNeighbourCalculationN(
         # print(index,len(currentneighbours),deltaspos,deltasneg,deltaszero)
     return deltaspos, deltasneg, deltaszero, output
 
-def weightedConditionValueForSetOfPointsNormalWithInputs(index, globaldata, nbh, nx, ny):
+def weightedConditionValueForSetOfPointsNormalWithInputs(index, globaldata, nbh, nx, ny, configData):
     mainptx = float(globaldata[index][1])
     mainpty = float(globaldata[index][2])
     nx = float(nx)
@@ -540,7 +541,7 @@ def weightedConditionValueForSetOfPointsNormalWithInputs(index, globaldata, nbh,
         d = math.sqrt(deltaS ** 2 + deltaN ** 2)
         if d == 0:
             continue
-        power = int(config.getConfig()["global"]["weightCondition"])
+        power = int(configData["global"]["weightCondition"])
         w = d ** power
         deltaSumS = deltaSumS + w * (deltaS) ** 2
         deltaSumN = deltaSumN + w * (deltaN) ** 2
@@ -556,11 +557,11 @@ def weightedConditionValueForSetOfPointsNormalWithInputs(index, globaldata, nbh,
     s = max(s) / min(s)
     return s
 
-def setFlags(index, globaldata, threshold):
-    dxpos = getWeightedInteriorConditionValueofXPos(index, globaldata)
-    dxneg = getWeightedInteriorConditionValueofXNeg(index, globaldata)
-    dypos = getWeightedInteriorConditionValueofYPos(index, globaldata)
-    dyneg = getWeightedInteriorConditionValueofYNeg(index, globaldata)
+def setFlags(index, globaldata, threshold, configData):
+    dxpos = getWeightedInteriorConditionValueofXPos(index, globaldata, configData)
+    dxneg = getWeightedInteriorConditionValueofXNeg(index, globaldata, configData)
+    dypos = getWeightedInteriorConditionValueofYPos(index, globaldata, configData)
+    dyneg = getWeightedInteriorConditionValueofYNeg(index, globaldata, configData)
     if dxpos > threshold:
         globaldata[index][7] = 1
     if dxneg > threshold:
@@ -586,8 +587,8 @@ def isNonAeroDynamic(index, cordpt, globaldata, wallpoints):
         borders = unary_union(merged)
         polygons = polygonize(borders)
         i = 0
-        for p in polygons:
-            i = i + 1
+        for _ in polygons:
+            i += 1
         if i == 1:
             responselist.append(False)
         else:
@@ -596,6 +597,23 @@ def isNonAeroDynamic(index, cordpt, globaldata, wallpoints):
         return True
     else:
         return False
+
+def wallDistance(cordpt, wallpoints):
+    point = shapely.geometry.Point((cordpt[0], cordpt[1]))
+    distance = []
+    for item in wallpoints:
+        distance.append(point.distance(item))
+    return distance
+
+def convertToShapely(wallpoints):
+    wallPointsShapely = []
+    for item in wallpoints:
+        polygonpts = []
+        for item2 in item:
+            polygonpts.append([float(item2.split(",")[0]), float(item2.split(",")[1])])
+        polygontocheck = shapely.geometry.Polygon(polygonpts)
+        wallPointsShapely.append(polygontocheck)
+    return wallPointsShapely
 
 def getWallPointArray(globaldata):
     wallpointarray = []
@@ -679,11 +697,11 @@ def getWallEndPoints(globaldata):
         endPoints.append(int(itm[-1]))
     return endPoints
 
-def checkPoints(globaldata,selectbspline,normal):
+def checkPoints(globaldata, selectbspline, normal, configData, pseudocheck, shapelyWallData):
     wallptData = getWallPointArray(globaldata)
     wallptDataOr = wallptData
     wallptData = flattenList(wallptData)
-    ptsToBeAdded = int(config.getConfig()["bspline"]["pointControl"])
+    ptsToBeAdded = int(configData["bspline"]["pointControl"])
     ptListArray = []
     perpendicularListArray = []
     if not selectbspline:
@@ -691,18 +709,28 @@ def checkPoints(globaldata,selectbspline,normal):
             if idx > 0:
                 flag = getFlag(idx,globaldata)
                 if flag == 1:
-                    result = isConditionBad(idx,globaldata)
-                    nancheck = isConditionNan(idx, globaldata)
+                    result = isConditionBad(idx,globaldata, configData)
+                    nancheck = isConditionNan(idx, globaldata, configData)
                     if nancheck:
                         log.warn("Warning: Point Index {} has a NaN. Manual Intervention is required to fix it.".format(idx))
                     else:
                         if(result):
                             ptList = findNearestNeighbourWallPoints(idx,globaldata,wallptData,wallptDataOr)
                             perpendicularPt = getPerpendicularPoint(idx,globaldata,normal)
-                            # print(perpendicularListArray)
                             if (perpendicularPt) not in perpendicularListArray:
                                 ptListArray.append(ptList)
                                 perpendicularListArray.append((perpendicularPt))
+                        else:
+                            if pseudocheck:
+                                px, py = getPoint(idx, globaldata)
+                                dist = min(wallDistance((px, py), shapelyWallData))
+                                if dist <= float(configData['bspline']['pseudoDist']):
+                                    ptList = findNearestNeighbourWallPoints(idx,globaldata,wallptData,wallptDataOr)
+                                    perpendicularPt = getPerpendicularPoint(idx,globaldata,normal)
+                                    if (perpendicularPt) not in perpendicularListArray:
+                                        ptListArray.append(ptList)
+                                        perpendicularListArray.append((perpendicularPt))
+
     else:
         selectbspline = list(map(int, selectbspline))
         for idx,itm in enumerate(tqdm(selectbspline)):
@@ -805,7 +833,6 @@ def distance(ax,ay,bx,by):
 
 def findNearestPoint(ptAtt,splineArray):
     if len(splineArray) == 0:
-        print("Warning no bspline points were available")
         return False
     cord = {"x":0,"y":0}
     dist = distance(ptAtt[0],ptAtt[1],splineArray[0][0],splineArray[0][1])
@@ -823,11 +850,11 @@ def findNearestPoint(ptAtt,splineArray):
 
 def str_to_bool(s):
     if s == 'True':
-         return True
+        return True
     elif s == 'False':
-         return False
+        return False
     else:
-         raise ValueError
+        raise ValueError
 
 
 def updateNormals(idx,globaldata,nx,ny):
@@ -840,7 +867,7 @@ def getNormals(idx,globaldata):
     ny = globaldata[idx][12]
     return nx,ny
 
-def calculateNormalConditionValues(idx,globaldata,nxavg,nyavg):
+def calculateNormalConditionValues(idx,globaldata,nxavg,nyavg, configData):
     nbhs = convertIndexToPoints(getNeighbours(idx,globaldata),globaldata)
     # print(nbhs)
     _,_,_,dSPosNbhs = deltaWallNeighbourCalculation(idx,nbhs,nxavg,nyavg,True,globaldata)
@@ -848,29 +875,29 @@ def calculateNormalConditionValues(idx,globaldata,nxavg,nyavg):
     _,_,_,dNPosNbhs = deltaWallNeighbourCalculationN(idx,nbhs,nxavg,nyavg,True,globaldata)
     _,_,_,dNNegNbhs = deltaWallNeighbourCalculationN(idx,nbhs,nxavg,nyavg,False,globaldata)
     
-    dSPosCondition = weightedConditionValueForSetOfPointsNormalWithInputs(idx,globaldata,dSPosNbhs,nxavg,nyavg)
-    dSNegCondition = weightedConditionValueForSetOfPointsNormalWithInputs(idx,globaldata,dSNegNbhs,nxavg,nyavg)
-    dNPosCondition = weightedConditionValueForSetOfPointsNormalWithInputs(idx,globaldata,dNPosNbhs,nxavg,nyavg)
-    dNNegCondition = weightedConditionValueForSetOfPointsNormalWithInputs(idx,globaldata,dNNegNbhs,nxavg,nyavg)
+    dSPosCondition = weightedConditionValueForSetOfPointsNormalWithInputs(idx,globaldata,dSPosNbhs,nxavg,nyavg, configData)
+    dSNegCondition = weightedConditionValueForSetOfPointsNormalWithInputs(idx,globaldata,dSNegNbhs,nxavg,nyavg, configData)
+    dNPosCondition = weightedConditionValueForSetOfPointsNormalWithInputs(idx,globaldata,dNPosNbhs,nxavg,nyavg, configData)
+    dNNegCondition = weightedConditionValueForSetOfPointsNormalWithInputs(idx,globaldata,dNNegNbhs,nxavg,nyavg, configData)
 
     result = {"spos":dSPosNbhs,"sposCond":dSPosCondition,"sneg":dSNegNbhs,"snegCond":dSNegCondition,"npos":dNPosNbhs,"nposCond":dNPosCondition,"nneg":dNNegNbhs,"nnegCond":dNNegCondition}
     return result
 
-def isConditionBad(idx,globaldata):
+def isConditionBad(idx, globaldata, configData):
     nx,ny = getNormals(idx,globaldata)
-    condResult = calculateNormalConditionValues(idx,globaldata,nx,ny)
+    condResult = calculateNormalConditionValues(idx,globaldata,nx,ny, configData)
     dSPosNbhs,dSNegNbhs,dNPosNbhs,dNNegNbhs = condResult["spos"], condResult["sneg"], condResult["npos"], condResult["nneg"]
     dSPosCondition,dSNegCondition,dNPosCondition,dNNegCondition = condResult["sposCond"], condResult["snegCond"], condResult["nposCond"], condResult["nnegCond"]
     maxCond = max(dSPosCondition,dSNegCondition,dNPosCondition,dNNegCondition)
-    if maxCond > float(config.getConfig()["bspline"]["threshold"]) or math.isnan(dSPosCondition) or math.isnan(dSNegCondition) or math.isnan(dNPosCondition) or math.isnan(dNNegCondition):
+    if maxCond > float(configData["bspline"]["threshold"]) or math.isnan(dSPosCondition) or math.isnan(dSNegCondition) or math.isnan(dNPosCondition) or math.isnan(dNNegCondition):
         # print(idx)
         return True
     else:
         return False
 
-def isConditionNan(idx, globaldata):
+def isConditionNan(idx, globaldata, configData):
     nx,ny = getNormals(idx,globaldata)
-    condResult = calculateNormalConditionValues(idx,globaldata,nx,ny)
+    condResult = calculateNormalConditionValues(idx,globaldata,nx,ny, configData)
     dSPosNbhs,dSNegNbhs,dNPosNbhs,dNNegNbhs = condResult["spos"], condResult["sneg"], condResult["npos"], condResult["nneg"]
     dSPosCondition,dSNegCondition,dNPosCondition,dNNegCondition = condResult["sposCond"], condResult["snegCond"], condResult["nposCond"], condResult["nnegCond"]
     maxCond = max(dSPosCondition,dSNegCondition,dNPosCondition,dNNegCondition)
