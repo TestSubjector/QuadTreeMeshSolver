@@ -58,8 +58,9 @@ then
     cp -rf ./files/f$3/output.txt ./backup_files/$GEOMETRY/$2/output.txt
     cp -rf ./files/f$3/preprocessorfile_cleaned.txt ./backup_files/$GEOMETRY/$2/preprocessorfile_cleaned.txt
     cp -rf ./files/f$3/preprocessorfile_rechecker.txt ./backup_files/$GEOMETRY/$2/preprocessorfile_rechecker.txt
+    cp -rf ./files/f$3/preprocessorfile_normal.txt ./backup_files/$GEOMETRY/$2/preprocessorfile_normal.txt
     cp -rf ./files/f$3/preprocessorfile.txt ./backup_files/$GEOMETRY/$2/preprocessorfile.txt
-    cp -rf ./files/f$3/preprocessorfile.txt ./backup_files/$GEOMETRY/$2/preprocessorfile.txt
+    cp -rf ./files/f$3/preprocessorfile.poly ./backup_files/$GEOMETRY/$2/preprocessorfile.poly
     cp -rf ./files/f$3/adapted.txt ./backup_files/$GEOMETRY/$2/adapted.txt
     cp -rf ./files/f$3/wall.json ./backup_files/$GEOMETRY/$2/wall.json
 else
@@ -90,6 +91,8 @@ else
 
         python3 ./tools/pre.py -i ./files/f$value/preprocessorfile.txt
         cp -rlf ./preprocessorfile_cleaned.txt ./files/f$value/preprocessorfile_cleaned.txt
+        cp -rlf ./preprocessorfile.poly ./files/f$value/preprocessorfile.poly
+        rm ./preprocessorfile.poly
         rm ./preprocessorfile_cleaned.txt
 
         python3 ./triangulate/triangulate.py -i ./files/f$value/preprocessorfile_cleaned.txt -a False True True
