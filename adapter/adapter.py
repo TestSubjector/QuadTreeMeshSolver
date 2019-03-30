@@ -9,18 +9,7 @@ import numpy as np
 import config
 import bsplinegen
 import itertools
-
-
-def printProgressBar(
-    iteration, total, prefix="", suffix="", decimals=1, length=100, fill="█"
-):
-    percent = ("{0:." + str(decimals) + "f}").format(100 * (iteration / float(total)))
-    filledLength = int(length * iteration // total)
-    bar = fill * filledLength + "-" * (length - filledLength)
-    print("\r%s |%s| %s%% %s" % (prefix, bar, percent, suffix), end="\r")
-    if iteration == total:
-        print()
-
+from tqdm import tqdm
 
 def main():
     # Command Line Arguments
@@ -46,10 +35,7 @@ def main():
 
     silentRemove("pseudopoints.txt")
 
-    for idx, itm in enumerate(splitdata):
-        printProgressBar(
-            idx, len(splitdata) - 1, prefix="Progress:", suffix="Complete", length=50
-        )
+    for idx, itm in enumerate(tqdm(splitdata)):
         itm = itm.split(" ")
         itm.pop(-1)
         entry = itm
@@ -60,9 +46,6 @@ def main():
     
 
     # for idx, itm in enumerate(splitdata):
-    #     printProgressBar(
-    #         idx, len(splitdata) - 1, prefix="Progress:", suffix="Complete", length=50
-    #     )
     #     itm = itm.split(" ")
     #     itm.pop(-1)
     #     entry = itm
@@ -94,10 +77,7 @@ def main():
 
     print("Reading Adaptation File")
 
-    for idx2, itm2 in enumerate(data2):
-        printProgressBar(
-            idx2, len(data2) - 1, prefix="Progress:", suffix="Complete", length=50
-        )
+    for idx2, itm2 in enumerate(tqdm(data2)):
         adaptpoint = itm2.split(" ")
         adaptpoint.pop(0)
         if int(adaptpoint[1]) == 1:
@@ -128,8 +108,7 @@ def main():
 
     print("Finding mini quadrants")
 
-    for idax,itm in enumerate(adaptwall):
-        printProgressBar(idax + 1, len(adaptwall), prefix="Progress:", suffix="Complete", length=50)
+    for idax,itm in enumerate(tqdm(adaptwall)):
         idx = getIndexFromPoint(str(itm[0] + "," + str(itm[1])), globaldata)
         perList = getPerpendicularPointsFromQuadrants(idx,globaldata)
         for itm in perList:
@@ -169,7 +148,7 @@ def main():
         bsplineData = np.array(undelimitXY(itm))
         bsplineArray.append(bsplineData)
     print("Starting BSpline")
-    for idx,itm in enumerate(perPndList): 
+    for idx,itm in enumerate(tqdm(perPndList)): 
         data = splineList[idx]
         newpts = bsplinegen.generateBSplineBetween(bsplineArray[int(data[3])],data[0],data[1],int(config.getConfig()["bspline"]["pointControl"]))
         newpts = convertToSuperNicePoints(perPndList[idx],newpts)
@@ -177,7 +156,6 @@ def main():
         if newpts != False:
             if quadrantContains(perPndList[idx][1],newpts):
                 None
-            printProgressBar(idx + 1, len(perPndList), prefix="Progress:", suffix="Complete", length=50)
             try:
                 writingDict[data[4]] = writingDict[data[4]] + [newpts]
             except KeyError:
@@ -191,7 +169,6 @@ def main():
             if newpts != False:
                 if quadrantContains(perPndList[idx][1],newpts):
                     None
-                printProgressBar(idx + 1, len(perPndList), prefix="Progress:", suffix="Complete", length=50)
                 try:
                     writingDict[data[5]] = writingDict[data[5]] + [newpts]
                 except KeyError:
