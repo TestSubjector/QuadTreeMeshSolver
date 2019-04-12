@@ -11,7 +11,8 @@
         "threshold": 15,
         "pointControl": 200,
         "polygon": false,
-        "pseudoDist": 1E-5
+        "pseudoDist": 1E-5,
+        "wallGuard": true
     },
     "normalWall": {
         "inflatedPolygonDistance": 0.001,

@@ -801,6 +801,13 @@ def getDistance(point1,point2,globaldata):
     result = math.sqrt(ptx + pty)
     return result
 
+def wallDistance(cordpt, wallpoints):
+    point = shapely.geometry.Point((cordpt[0], cordpt[1]))
+    distance = []
+    for item in wallpoints:
+        distance.append(point.distance(item))
+    return distance
+
 def wallConnectivityCheck(globaldata, verbose=False):
     madechanges = False
     for idx,_ in enumerate(globaldata):
@@ -900,7 +907,7 @@ def sparseNullifier(globaldata):
 
 def interiorConnectivityCheck(globaldata):
     conf = config.getConfig()
-    for idx,_ in enumerate(globaldata):
+    for idx,_ in enumerate(tqdm(globaldata)):
         if idx > 0:
             flag = getFlag(idx,globaldata)
             if flag == 1:

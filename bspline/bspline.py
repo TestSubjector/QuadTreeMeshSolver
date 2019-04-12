@@ -23,9 +23,14 @@ def main():
     parser.add_argument("-q", "--checkquadrant", nargs="?")
     parser.add_argument("-c", "--cache", nargs="?")
     parser.add_argument("-s", "--pseudocheck", nargs="?")
+    parser.add_argument("-d", "--diagnose", nargs="?")
     args = parser.parse_args()
 
     configData = config.getConfig()
+
+    diagnose = False
+    if args.diagnose:
+        diagnose = core.str_to_bool(args.diagnose)
 
     normalApproach = False
     if args.normal:
@@ -63,6 +68,9 @@ def main():
         if normalApproach:
             log.warn("Warning: Normal BSpline has been disabled")
         normalApproach = False
+
+    if diagnose:
+        log.info("Info: Diagnose has been enabled. No point will actually be saved.")
 
     if pseudocheck:
         log.info("Info: Pseudo Points are being checked and fixed.")
@@ -110,51 +118,60 @@ def main():
         writingDict = dict(core.load_obj("wall"))
     except IOError:
         writingDict = {}
-    shapelyWallData = None
-    if pseudocheck == True:
-        log.info("Caching Wall Geometries")
-        shapelyWallData = core.convertToShapely(wallPts)
+    log.info("Caching Wall Geometries")
+    shapelyWallData = core.convertToShapely(wallPts)
     log.info("Searching for bad points")
-    problempts,perpendicularpts = core.checkPoints(globaldata, args.bspline, normalApproach, configData, pseudocheck, shapelyWallData)
+    problempts,perpendicularpts, badpts = core.checkPoints(globaldata, args.bspline, normalApproach, configData, pseudocheck, shapelyWallData)
     log.info("Bsplining {} points".format(len(problempts)))
     log.info("Starting BSpline")
     for idx,itm in enumerate(tqdm(problempts)): 
-        data = core.feederData(itm,wallPts)
+        data = core.feederData(itm, wallPts)
+        switch = False
         if configData["bspline"]["polygon"] == False:
             if configData["global"]["wallPointOrientation"] == "ccw":
                 newpts = bsplinegen.generateBSplineBetween(bsplineArray[data[2]],data[0],data[1],POINT_CONTROL)
             else:
-                if data[0] == 1:
+                # print(bsplineArray[data[2]][data[1]],bsplineArray[data[2]][data[0]])
+                if data[0] == 0:
                     newpts = bsplinegen.generateBSplineBetween(bsplineArray[data[2]],data[1],data[0],POINT_CONTROL)
+                    switch = True
                 else:
                     newpts = bsplinegen.generateBSplineBetween(bsplineArray[data[2]],data[0],data[1],POINT_CONTROL)
             if quadrantcheck:
-                newpts = bsplinegen.getPointsOnlyInQuadrant(newpts,bsplineArray[data[2]][int(data[0])],bsplineArray[data[2]][int(data[1])],globaldata)
+                newpts = bsplinegen.getPointsOnlyInQuadrant(newpts, badpts[idx], globaldata)
                 if len(newpts) == 0:
-                    log.error("Error: Quadrant Check failed. No point exist.")
-                    exit()
+                    if not pseudocheck:
+                        log.error("Error: Quadrant Check failed. No point exist.")
+                        log.error("Problem point is {}".format(badpts[idx]))
+                        continue
+                    else: 
+                        log.warn("Warn: Quadrant Check failed. No point exists. Ignored since Pseudo Check is enabled.")
+                        continue
             newpts = core.findNearestPoint(perpendicularpts[idx],newpts)
+            print(newpts)
             if newpts == False:
                 log.error("Error: Increase your Bspline Point Control Attribute")
                 exit()
         else:
             newpts = list(perpendicularpts[idx])
+        if switch:
+            wallPtLocation = data[4]
+        else:
+            wallPtLocation = data[3]
         try:
-            data = list(writingDict[data[3]])
-            data.append(newpts)
-            writingDict[data[3]] = data
+            datum = list(writingDict[wallPtLocation])
+            datum.append(newpts)
+            writingDict[wallPtLocation] = datum
         except KeyError:
-            writingDict[data[3]] = [newpts]
+            writingDict[wallPtLocation] = [newpts]
         additionPts.append(newpts)
-    print(writingDict)
-    exit()
-    with open("adapted.txt", "a+") as text_file:
-        text_file.writelines("1000 1000\n2000 2000\n")
-        for item1 in additionPts:
-            text_file.writelines(["%s %s " % (item[0], item[1]) for item in item1])
-            text_file.writelines("\n")
-        text_file.writelines("1000 1000\n")
-    core.save_obj(writingDict,"wall")
+    if not diagnose:
+        with open("adapted.txt", "a+") as text_file:
+            text_file.writelines("1000 1000\n2000 2000\n")
+            for item1 in additionPts:
+                text_file.write("%s %s \n" % (item1[0], item1[1]))
+            text_file.writelines("1000 1000\n")
+        core.save_obj(writingDict,"wall")
     
 if __name__ == "__main__":
     import logging

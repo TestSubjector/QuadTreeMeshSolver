@@ -2,7 +2,7 @@ import numpy as np
 import math
 import shapely.geometry
 from shapely import wkt
-from shapely.ops import linemerge, unary_union, polygonize
+from shapely.ops import linemerge, unary_union, polygonize, nearest_points
 import config
 from scipy import spatial
 import logging
@@ -598,12 +598,38 @@ def isNonAeroDynamic(index, cordpt, globaldata, wallpoints):
     else:
         return False
 
+def isNonAeroDynamicBetter(index, cordpt, globaldata, wallpoints):
+    main_pointx,main_pointy = getPoint(index, globaldata)
+    cordptx = float(cordpt.split(",")[0])
+    cordpty = float(cordpt.split(",")[1])
+    line = shapely.geometry.LineString([[main_pointx, main_pointy], [cordptx, cordpty]])
+    responselist = []
+    for item in wallpoints:
+        merged = linemerge([item.boundary, line])
+        borders = unary_union(merged)
+        polygons = polygonize(borders)
+        i = 0
+        for _ in polygons:
+            i += 1
+        if i == 1:
+            responselist.append(False)
+        else:
+            return True
+    if True in responselist:
+        return True
+    else:
+        return False
+
 def wallDistance(cordpt, wallpoints):
     point = shapely.geometry.Point((cordpt[0], cordpt[1]))
     distance = []
     for item in wallpoints:
         distance.append(point.distance(item))
     return distance
+
+def getNearestWallPoint(cordpt, wallpoints, limit=5):
+    result = sorted(wallpoints, key=lambda pt: distancePoint(tuple(map(float, pt.split(","))), cordpt))
+    return result[:limit]
 
 def convertToShapely(wallpoints):
     wallPointsShapely = []
@@ -697,6 +723,23 @@ def getWallEndPoints(globaldata):
         endPoints.append(int(itm[-1]))
     return endPoints
 
+def getMaxDepth(globaldata):
+    maxDepth = 0
+    for idx in range(1, len(globaldata)):
+        depth = getDepth(idx, globaldata)
+        if depth > maxDepth:
+            maxDepth = depth
+    return maxDepth
+
+def containsWallPoints(globaldata, idx, wallpts):
+    nbhs = getNeighbours(idx, globaldata)
+    S1 = set(nbhs)
+    S2 = set(wallpts)
+    if len(S1.intersection(S2)) == 0:
+        return False
+    else:
+        return True
+
 def checkPoints(globaldata, selectbspline, normal, configData, pseudocheck, shapelyWallData):
     wallptData = getWallPointArray(globaldata)
     wallptDataOr = wallptData
@@ -704,61 +747,88 @@ def checkPoints(globaldata, selectbspline, normal, configData, pseudocheck, shap
     ptsToBeAdded = int(configData["bspline"]["pointControl"])
     ptListArray = []
     perpendicularListArray = []
+    maxDepth = -999
+    badpts = []
+    if pseudocheck:
+        maxDepth = getMaxDepth(globaldata)
     if not selectbspline:
         for idx,_ in enumerate(tqdm(globaldata)):
             if idx > 0:
                 flag = getFlag(idx,globaldata)
                 if flag == 1:
+                    if configData['bspline']['wallGuard']:
+                        if containsWallPoints(globaldata, idx, wallptData):
+                            continue
                     result = isConditionBad(idx,globaldata, configData)
                     nancheck = isConditionNan(idx, globaldata, configData)
                     if nancheck:
                         log.warn("Warning: Point Index {} has a NaN. Manual Intervention is required to fix it.".format(idx))
                     else:
                         if(result):
-                            ptList = findNearestNeighbourWallPoints(idx,globaldata,wallptData,wallptDataOr)
-                            perpendicularPt = getPerpendicularPoint(idx,globaldata,normal)
+                            ptList = findNearestNeighbourWallPoints(idx,globaldata,wallptData,shapelyWallData)
+                            perpendicularPt = getPerpendicularPoint(idx,globaldata,normal, shapelyWallData, ptList)
                             if (perpendicularPt) not in perpendicularListArray:
                                 ptListArray.append(ptList)
                                 perpendicularListArray.append((perpendicularPt))
+                                badpts.append(idx)
                         else:
                             if pseudocheck:
                                 px, py = getPoint(idx, globaldata)
-                                dist = min(wallDistance((px, py), shapelyWallData))
-                                if dist <= float(configData['bspline']['pseudoDist']):
-                                    ptList = findNearestNeighbourWallPoints(idx,globaldata,wallptData,wallptDataOr)
-                                    perpendicularPt = getPerpendicularPoint(idx,globaldata,normal)
-                                    if (perpendicularPt) not in perpendicularListArray:
-                                        ptListArray.append(ptList)
-                                        perpendicularListArray.append((perpendicularPt))
+                                depth = getDepth(idx, globaldata)
+                                if depth <= maxDepth - 3:
+                                    dist = min(wallDistance((px, py), shapelyWallData))
+                                    if dist <= float(configData['bspline']['pseudoDist']):
+                                        with open("shit", "a+") as the_file:
+                                            the_file.write("{} {} {}\n".format(px, py, idx))
+                                        ptList = findNearestNeighbourWallPoints(idx,globaldata,wallptData,shapelyWallData)
+                                        perpendicularPt = getPerpendicularPoint(idx,globaldata,normal, shapelyWallData, ptList)
+                                        if (perpendicularPt) not in perpendicularListArray:
+                                            ptListArray.append(ptList)
+                                            perpendicularListArray.append((perpendicularPt))
+                                            badpts.append(idx)
 
     else:
         selectbspline = list(map(int, selectbspline))
         for idx,itm in enumerate(tqdm(selectbspline)):
-            ptList = findNearestNeighbourWallPoints(itm,globaldata,wallptData,wallptDataOr)
-            perpendicularPt = getPerpendicularPoint(itm,globaldata,normal)
+            ptList = findNearestNeighbourWallPoints(itm, globaldata, wallptData, shapelyWallData)
+            perpendicularPt = getPerpendicularPoint(itm, globaldata, normal, shapelyWallData, ptList)
             if (perpendicularPt) not in perpendicularListArray:
                 ptListArray.append(ptList)
                 perpendicularListArray.append((perpendicularPt))
+                badpts.append(itm)
 
-    return ptListArray,perpendicularListArray
+    return ptListArray, perpendicularListArray, badpts
 
-def findNearestNeighbourWallPoints(idx,globaldata,wallptData,wallptDataOr):
+def findNearestNeighbourWallPoints(idx, globaldata, wallptData, shapelyWallData):
     ptx,pty = getPoint(idx,globaldata)
-    leastdt,leastidx = 1000,1000
-    for itm in wallptData:
-        if not isNonAeroDynamic(idx,itm,globaldata,wallptDataOr):
+    leastdt,leastidx = 1000,-9999
+    # for itm in wallptData:
+    #     if not isNonAeroDynamicBetter(idx,itm,globaldata,shapelyWallData):
+    #         itmx = float(itm.split(",")[0])
+    #         itmy = float(itm.split(",")[1])
+    #         ptDist = math.sqrt((deltaX(itmx,ptx) ** 2) + (deltaY(itmy,pty) ** 2))
+    #         if leastdt > ptDist:
+    #             leastdt = ptDist
+    #             leastidx = getIndexFromPoint(itm,globaldata)
+    better = getNearestWallPoint((ptx, pty), wallptData, limit=10)
+    for itm in better:
+        if not isNonAeroDynamicBetter(idx,itm,globaldata,shapelyWallData):
             itmx = float(itm.split(",")[0])
             itmy = float(itm.split(",")[1])
             ptDist = math.sqrt((deltaX(itmx,ptx) ** 2) + (deltaY(itmy,pty) ** 2))
             if leastdt > ptDist:
                 leastdt = ptDist
                 leastidx = getIndexFromPoint(itm,globaldata)
+    if leastidx == -9999:
+        log.error("Failed to find nearest wallpoint")
+        exit()
     ptsToCheck = convertIndexToPoints(getLeftandRightPoint(leastidx,globaldata),globaldata)
-    leastdt2,leastidx2 = 1000,1000
+
+    leastidx2 = -9999
     leastptx,leastpty = getPoint(leastidx,globaldata)
     currangle = 1000
     for itm in ptsToCheck:
-        if not isNonAeroDynamic(idx,itm,globaldata,wallptDataOr):
+        if not isNonAeroDynamicBetter(idx,itm,globaldata,shapelyWallData):
             itmx = float(itm.split(",")[0])
             itmy = float(itm.split(",")[1])
             ptDist = math.sqrt((deltaX(itmx,ptx) ** 2) + (deltaY(itmy,pty) ** 2))
@@ -779,7 +849,7 @@ def feederData(wallpts,wallptData):
     wallpt = wallpts[0]
     for idx,itm in enumerate(wallptData):
         if wallpt in itm:
-            return [itm.index(wallpts[0]),itm.index(wallpts[1]),idx,wallpt]
+            return [itm.index(wallpts[0]),itm.index(wallpts[1]),idx,wallpt, wallpts[1]]
 
 def undelimitXY(a):
     finallist = []
@@ -799,11 +869,10 @@ def load_obj(name ):
         return json.load(f)
 
 
-def getPerpendicularPoint(idx,globaldata,normal):
+def getPerpendicularPoint(idx, globaldata, normal, shapelyWallData, pts):
     wallptData = getWallPointArray(globaldata)
     wallptDataOr = wallptData
     wallptData = flattenList(wallptData)
-    pts = findNearestNeighbourWallPoints(idx,globaldata,wallptData,wallptDataOr)
     mainpt = getPointxy(idx,globaldata)
     mainptx = float(mainpt.split(",")[0])
     mainpty = float(mainpt.split(",")[1])
@@ -829,6 +898,13 @@ def midPt(x1,x2,y1,y2):
     return x3,y3
 
 def distance(ax,ay,bx,by):
+    return math.sqrt((ax - bx)**2 + (ay - by)**2)
+
+def distancePoint(x, y):
+    ax = x[0]
+    ay = x[1]
+    bx = y[0]
+    by = y[1]
     return math.sqrt((ax - bx)**2 + (ay - by)**2)
 
 def findNearestPoint(ptAtt,splineArray):

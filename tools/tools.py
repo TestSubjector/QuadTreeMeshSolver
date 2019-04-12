@@ -184,6 +184,7 @@ def main():
             print("(8) Exit without saving any changes")
             print("(9) Go Back")
             print("(10) Increase connectivity set to 3")
+            print("(11) Find nearest distance to wall points")
             whatkind = int(input("What option do you want to select? "))
             if whatkind == 1:
                 # tris = balance.getNeighboursFromTriangle(ptidx,globaldata,polydata)
@@ -225,6 +226,10 @@ def main():
                 tris = core.getAeroPointsFromSet(ptidx,tris,globaldata,wallpointsData)
                 tris = core.convertPointsToIndex(tris,globaldata)
                 globaldata = balance.forcePointsToFix(ptidx,tris,globaldata)
+            elif whatkind == 11:
+                core.clearScreen()
+                px, py = core.getPoint(ptidx, globaldata)
+                print("Nearest Distance: {}".format(min(core.wallDistance((px, py), wallpointsData))))
             else:
                 core.clearScreen()
                 break
