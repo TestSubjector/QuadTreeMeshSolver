@@ -122,7 +122,7 @@ def deltaX(xcord, orgxcord):
 def deltaY(ycord, orgycord):
     return float(orgycord - ycord)
 
-def normalCalculation(index, globaldata, wallpoint):
+def normalCalculation(index, globaldata, wallpoint, configData):
     nx = 0
     ny = 0
     cordx = float(globaldata[index][1])
@@ -150,7 +150,7 @@ def normalCalculation(index, globaldata, wallpoint):
     if not wallpoint:
         nx = nx / det
     else:
-        direction = config.getConfig()["global"]["wallPointOrientation"]
+        direction = configData["global"]["wallPointOrientation"]
         if direction == "cw":
             nx = (-nx) / det
         elif direction == "ccw":
@@ -158,8 +158,8 @@ def normalCalculation(index, globaldata, wallpoint):
     ny = ny / det
     return nx, ny
 
-def weightedConditionValueForSetOfPointsNormal(index, globaldata, nbh):
-    nx,ny = normalCalculation(index,globaldata,True)
+def weightedConditionValueForSetOfPointsNormal(index, globaldata, nbh, configData):
+    nx,ny = normalCalculation(index, globaldata, True, configData)
     mainptx = float(globaldata[index][1])
     mainpty = float(globaldata[index][2])
     nx = float(nx)
@@ -178,7 +178,7 @@ def weightedConditionValueForSetOfPointsNormal(index, globaldata, nbh):
         d = math.sqrt(deltaS ** 2 + deltaN ** 2)
         if d == 0:
             continue
-        power = int(config.getConfig()["global"]["weightCondition"])
+        power = int(configData["global"]["weightCondition"])
         w = d ** power
         deltaSumS = deltaSumS + w * (deltaS) ** 2
         deltaSumN = deltaSumN + w * (deltaN) ** 2
@@ -244,22 +244,22 @@ def deltaNeighbourCalculation(currentneighbours, currentcord, isxcord, isnegativ
             yneg = yneg + 1
     return xpos, ypos, xneg, yneg, temp
 
-def getWeightedNormalConditionValueofWallXPos(index, globaldata):
+def getWeightedNormalConditionValueofWallXPos(index, globaldata, configData):
     nbhs = convertIndexToPoints(getNeighbours(index, globaldata), globaldata)
-    nx,ny = normalCalculation(index,globaldata,True)
+    nx,ny = normalCalculation(index,globaldata,True, configData)
     _, _, _, mypoints = deltaWallNeighbourCalculation(index,
         nbhs,nx,ny, True, globaldata
     )
-    return weightedConditionValueForSetOfPointsNormal(index, globaldata, mypoints)
+    return weightedConditionValueForSetOfPointsNormal(index, globaldata, mypoints, configData)
 
 
-def getWeightedNormalConditionValueofWallXNeg(index, globaldata):
+def getWeightedNormalConditionValueofWallXNeg(index, globaldata, configData):
     nbhs = convertIndexToPoints(getNeighbours(index, globaldata), globaldata)
-    nx,ny = normalCalculation(index,globaldata,True)
+    nx,ny = normalCalculation(index,globaldata,True, configData)
     _, _, _, mypoints = deltaWallNeighbourCalculation(index,
         nbhs,nx,ny, False, globaldata
     )
-    return weightedConditionValueForSetOfPointsNormal(index, globaldata, mypoints)
+    return weightedConditionValueForSetOfPointsNormal(index, globaldata, mypoints, configData)
 
 
 
@@ -310,18 +310,18 @@ def getDXNegPoints(index, globaldata):
     )
     return mypoints
 
-def getDWallXPosPoints(index, globaldata):
+def getDWallXPosPoints(index, globaldata, configData):
     nbhs = convertIndexToPoints(getNeighbours(index, globaldata), globaldata)
-    nx,ny = normalCalculation(index,globaldata,True)
+    nx,ny = normalCalculation(index, globaldata, True, configData)
     _, _, _, mypoints = deltaWallNeighbourCalculation(index,
         nbhs,nx,ny, True, globaldata
     )
     return mypoints
 
 
-def getDWallXNegPoints(index, globaldata):
+def getDWallXNegPoints(index, globaldata, configData):
     nbhs = convertIndexToPoints(getNeighbours(index, globaldata), globaldata)
-    nx,ny = normalCalculation(index,globaldata,True)
+    nx,ny = normalCalculation(index, globaldata, True, configData)
     _, _, _, mypoints = deltaWallNeighbourCalculation(index,
         nbhs,nx,ny, False, globaldata
     )
@@ -407,18 +407,18 @@ def getDYNegPointsFromSetRaw(index, globaldata, points):
     )
     return mypoints
 
-def getDWallXPosPointsFromSetRaw(index, globaldata, points):
+def getDWallXPosPointsFromSetRaw(index, globaldata, points, configData):
     nbhs = points
-    nx,ny = normalCalculation(index,globaldata,True)
+    nx,ny = normalCalculation(index, globaldata, True, configData)
     _, _, _, mypoints = deltaWallNeighbourCalculation(index,
         nbhs,nx,ny, True, globaldata
     )
     return mypoints
 
 
-def getDWallXNegPointsFromSetRaw(index, globaldata, points):
+def getDWallXNegPointsFromSetRaw(index, globaldata, points, configData):
     nbhs = points
-    nx,ny = normalCalculation(index,globaldata,True)
+    nx,ny = normalCalculation(index, globaldata, True, configData)
     _, _, _, mypoints = deltaWallNeighbourCalculation(index,
         nbhs,nx,ny, False, globaldata
     )

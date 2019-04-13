@@ -3,44 +3,44 @@ from config import getConfig
 from tqdm import trange, tqdm
 
 
-def connectivityCheck(globaldata, badPoints):
+def connectivityCheck(globaldata, badPoints, configData):
     badPointsNew = []
     if len(badPoints) == 0:
         for idx in trange(len(globaldata)):
             if(idx >0):
                 if(getFlag(idx,globaldata) == 0 or getFlag(idx,globaldata) == 2):
-                    result = connectivityCheckWallandOuterPoint(idx,globaldata)
+                    result = connectivityCheckWallandOuterPoint(idx,globaldata, configData)
                     if 1 in result or 2 in result:
                         badPointsNew.append(idx)
                     globaldata = setFlags(idx,globaldata,result)
                 else:
-                    result = connectivityCheckInteriorPoint(idx,globaldata)
+                    result = connectivityCheckInteriorPoint(idx,globaldata, configData)
                     if 1 in result or 2 in result:
                         badPointsNew.append(idx)
                     globaldata = setFlags(idx,globaldata,result)
     else:
-        for index,idx in enumerate(tqdm(badPoints)):
+        for _,idx in enumerate(tqdm(badPoints)):
             if(idx >0):
                 if(getFlag(idx,globaldata) == 0 or getFlag(idx,globaldata) == 2):
-                    result = connectivityCheckWallandOuterPoint(idx,globaldata)
+                    result = connectivityCheckWallandOuterPoint(idx,globaldata, configData)
                     if 1 in result or 2 in result:
                         badPointsNew.append(idx)
                     globaldata = setFlags(idx,globaldata,result)
                 else:
-                    result = connectivityCheckInteriorPoint(idx,globaldata)
+                    result = connectivityCheckInteriorPoint(idx,globaldata, configData)
                     if 1 in result or 2 in result:
                         badPointsNew.append(idx)
                     globaldata = setFlags(idx,globaldata,result)
     return globaldata,badPointsNew
 
 
-def connectivityCheckWallandOuterPoint(index,globaldata):
+def connectivityCheckWallandOuterPoint(index, globaldata, configData):
     result = []
-    WALL_OUTER_THRESHOLD = int(getConfig()["triangulate"]["triangle"]["wallandOuterThreshold"])
-    xpos = len(getDWallXPosPoints(index,globaldata))
-    xneg = len(getDWallXNegPoints(index,globaldata))
-    xposConditionValue = getWeightedNormalConditionValueofWallXPos(index,globaldata)
-    xnegConditionValue = getWeightedNormalConditionValueofWallXNeg(index,globaldata)
+    WALL_OUTER_THRESHOLD = int(configData["triangulate"]["triangle"]["wallandOuterThreshold"])
+    xpos = len(getDWallXPosPoints(index,globaldata, configData))
+    xneg = len(getDWallXNegPoints(index,globaldata, configData))
+    xposConditionValue = getWeightedNormalConditionValueofWallXPos(index,globaldata, configData)
+    xnegConditionValue = getWeightedNormalConditionValueofWallXNeg(index,globaldata, configData)
     if(xposConditionValue < WALL_OUTER_THRESHOLD):
         if(xpos < 3):
             result.append(2)
@@ -59,9 +59,9 @@ def connectivityCheckWallandOuterPoint(index,globaldata):
     result.append(0)
     return result
 
-def connectivityCheckInteriorPoint(index,globaldata):
+def connectivityCheckInteriorPoint(index, globaldata, configData):
     result = []
-    INTERIOR_THRESHOLD = int(getConfig()["triangulate"]["triangle"]["interiorThreshold"])
+    INTERIOR_THRESHOLD = int(configData["triangulate"]["triangle"]["interiorThreshold"])
     xpos = len(getDXPosPoints(index,globaldata))
     xneg = len(getDXNegPoints(index,globaldata))
     ypos = len(getDYPosPoints(index,globaldata))
