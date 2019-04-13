@@ -531,6 +531,28 @@ def isNonAeroDynamic(index, cordpt, globaldata, wallPolygonData):
     else:
         return False
 
+def isNonAeroDynamicBetter(index, cordpt, globaldata, wallpoints):
+    main_pointx,main_pointy = getPoint(index, globaldata)
+    cordptx = float(cordpt.split(",")[0])
+    cordpty = float(cordpt.split(",")[1])
+    line = shapely.geometry.LineString([[main_pointx, main_pointy], [cordptx, cordpty]])
+    responselist = []
+    for item in wallpoints:
+        merged = linemerge([item.boundary, line])
+        borders = unary_union(merged)
+        polygons = polygonize(borders)
+        i = 0
+        for _ in polygons:
+            i += 1
+        if i == 1:
+            responselist.append(False)
+        else:
+            return True
+    if True in responselist:
+        return True
+    else:
+        return False
+
 def generateWallPolygons(wallpoints):
     wallPolygonData = []
     for item in wallpoints:
@@ -540,6 +562,16 @@ def generateWallPolygons(wallpoints):
         polygontocheck = shapely.geometry.Polygon(polygonpts)
         wallPolygonData.append(polygontocheck)
     return wallPolygonData
+
+def convertToShapely(wallpoints):
+    wallPointsShapely = []
+    for item in wallpoints:
+        polygonpts = []
+        for item2 in item:
+            polygonpts.append([float(item2.split(",")[0]), float(item2.split(",")[1])])
+        polygontocheck = shapely.geometry.Polygon(polygonpts)
+        wallPointsShapely.append(polygontocheck)
+    return wallPointsShapely
 
 def getAeroPointsFromSet(index,cordlist,globaldata,wallpoints):
     finallist = []

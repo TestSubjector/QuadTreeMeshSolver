@@ -101,6 +101,7 @@ def main():
         globaldata = balance.triangleBalance3(globaldata, wallpts, configData, badPoints)
     log.info("Running Connectivity Recheck")
     globaldata,badPoints = connectivity.connectivityCheck(globaldata, badPoints, configData)
+    log.warning("Total Number of Points unable to be fixed: {}".format(len(badPoints)))
     # log.info("Writing Deletion Points")
     # problempts = findDeletionPoints(globaldata)
     

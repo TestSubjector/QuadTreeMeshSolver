@@ -162,7 +162,7 @@ def fixXpos(idx,globaldata,nbhs,control,conditionNumber,aggressive,polygonData,w
             checkset = [itm] + mychecknbhs
             newcheck = weightedConditionValueForSetOfPoints(idx,globaldata,checkset)
             if newcheck < conditionNumber:
-                if not isNonAeroDynamic(idx,itm,globaldata,wallpoints):
+                if not isNonAeroDynamicBetter(idx,itm,globaldata,wallpoints):
                     conditionSet.append([itm, newcheck])
         if len(conditionSet) > 0:
             conditionSet.sort(key=lambda x: x[1])
@@ -197,7 +197,7 @@ def fixXneg(idx,globaldata,nbhs,control,conditionNumber,aggressive,polygonData,w
             checkset = [itm] + mychecknbhs
             newcheck = weightedConditionValueForSetOfPoints(idx,globaldata,checkset)
             if newcheck < conditionNumber:
-                if not isNonAeroDynamic(idx,itm,globaldata,wallpoints):
+                if not isNonAeroDynamicBetter(idx,itm,globaldata,wallpoints):
                     conditionSet.append([itm, newcheck])
         if len(conditionSet) > 0:
             conditionSet.sort(key=lambda x: x[1])
@@ -232,7 +232,7 @@ def fixYpos(idx,globaldata,nbhs,control,conditionNumber,aggressive,polygonData,w
             checkset = [itm] + mychecknbhs
             newcheck = weightedConditionValueForSetOfPoints(idx,globaldata,checkset)
             if newcheck < conditionNumber:
-                if not isNonAeroDynamic(idx,itm,globaldata,wallpoints):
+                if not isNonAeroDynamicBetter(idx,itm,globaldata,wallpoints):
                     conditionSet.append([itm, newcheck])
         if len(conditionSet) > 0:
             conditionSet.sort(key=lambda x: x[1])
@@ -268,7 +268,7 @@ def fixYneg(idx,globaldata,nbhs,control,conditionNumber,aggressive,polygonData,w
             checkset = [itm] + mychecknbhs
             newcheck = weightedConditionValueForSetOfPoints(idx,globaldata,checkset)
             if newcheck < conditionNumber:
-                if not isNonAeroDynamic(idx,itm,globaldata,wallpoints):
+                if not isNonAeroDynamicBetter(idx,itm,globaldata,wallpoints):
                     conditionSet.append([itm, newcheck])
         if len(conditionSet) > 0:
             conditionSet.sort(key=lambda x: x[1])
@@ -303,7 +303,7 @@ def fixWXpos(idx,globaldata,nbhs,control,conditionNumber,aggressive,polygonData,
             checkset = [itm] + mychecknbhs
             newcheck = weightedConditionValueForSetOfPointsNormal(idx,globaldata,checkset, configData)
             if newcheck < conditionNumber:
-                if not isNonAeroDynamic(idx,itm,globaldata,wallpoints):
+                if not isNonAeroDynamicBetter(idx,itm,globaldata,wallpoints):
                     conditionSet.append([itm, newcheck])
         if len(conditionSet) > 0:
             conditionSet.sort(key=lambda x: x[1])
@@ -338,7 +338,7 @@ def fixWXneg(idx,globaldata,nbhs,control,conditionNumber,aggressive,polygonData,
             checkset = [itm] + mychecknbhs
             newcheck = weightedConditionValueForSetOfPointsNormal(idx,globaldata,checkset, configData)
             if newcheck < conditionNumber:
-                if not isNonAeroDynamic(idx,itm,globaldata,wallpoints):
+                if not isNonAeroDynamicBetter(idx,itm,globaldata,wallpoints):
                     conditionSet.append([itm, newcheck])
         if len(conditionSet) > 0:
             conditionSet.sort(key=lambda x: x[1])
@@ -373,7 +373,7 @@ def fixWXpos2(idx,globaldata,nbhs,control,conditionNumber,aggressive,wallpoints,
             checkset = [itm] + mychecknbhs
             newcheck = weightedConditionValueForSetOfPointsNormal(idx,globaldata,checkset, configData)
             if newcheck < conditionNumber:
-                if not isNonAeroDynamic(idx,itm,globaldata,wallpoints):
+                if not isNonAeroDynamicBetter(idx,itm,globaldata,wallpoints):
                     conditionSet.append([itm, newcheck])
         if len(conditionSet) > 0:
             conditionSet.sort(key=lambda x: x[1])
@@ -408,7 +408,7 @@ def fixWXneg2(idx,globaldata,nbhs,control,conditionNumber,aggressive,wallpoints,
             checkset = [itm] + mychecknbhs
             newcheck = weightedConditionValueForSetOfPointsNormal(idx,globaldata,checkset, configData)
             if newcheck < conditionNumber:
-                if not isNonAeroDynamic(idx,itm,globaldata,wallpoints):
+                if not isNonAeroDynamicBetter(idx,itm,globaldata,wallpoints):
                     conditionSet.append([itm, newcheck])
         if len(conditionSet) > 0:
             conditionSet.sort(key=lambda x: x[1])
@@ -443,7 +443,7 @@ def fixWXpos3(idx,globaldata,nbhs,control,conditionNumber,aggressive,wallpoints,
             checkset = [itm] + mychecknbhs
             newcheck = weightedConditionValueForSetOfPointsNormal(idx,globaldata,checkset, configData)
             if newcheck < conditionNumber:
-                if not isNonAeroDynamic(idx,itm,globaldata,wallpoints):
+                if not isNonAeroDynamicBetter(idx,itm,globaldata,wallpoints):
                     conditionSet.append([itm, newcheck])
         if len(conditionSet) > 0:
             conditionSet.sort(key=lambda x: x[1])
@@ -480,7 +480,7 @@ def fixWXneg3(idx,globaldata,nbhs,control,conditionNumber,aggressive,wallpoints,
             checkset = [itm] + mychecknbhs
             newcheck = weightedConditionValueForSetOfPointsNormal(idx,globaldata,checkset, configData)
             if newcheck < conditionNumber:
-                if not isNonAeroDynamic(idx,itm,globaldata,wallpoints):
+                if not isNonAeroDynamicBetter(idx,itm,globaldata,wallpoints):
                     conditionSet.append([itm, newcheck])
         if len(conditionSet) > 0:
             conditionSet.sort(key=lambda x: x[1])

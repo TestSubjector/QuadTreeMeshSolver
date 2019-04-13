@@ -3,6 +3,7 @@ import logging
 import pickle
 import json
 import math
+from tqdm import trange
 log = logging.getLogger(__name__)
 log.addHandler(logging.StreamHandler())
 
@@ -82,7 +83,7 @@ def loadWall(geometrydata,hashtable,globaldata,idf):
 
 def loadInterior(data, hashtable, globaldata, index):
     log.info("Beginning Interior Point and Wall Point Neighbour Processing")
-    for i in range(len(data)):
+    for i in trange(len(data)):
         # printProgressBar(i, len(data) - 1, prefix = 'Progress:', suffix = 'Complete', length = 50)
         cleandata = str(data[i]).split(" ")
         depth = int(cleandata[2])

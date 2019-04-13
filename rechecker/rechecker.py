@@ -1,6 +1,5 @@
 import argparse
-from progress import printProgressBar
-from core import *
+import core
 import copy
 import config
 import logging
@@ -20,6 +19,7 @@ def main():
     log.debug(args)
 
     globaldata = config.getKeyVal("globaldata")
+    configData = config.getConfig()
 
     if globaldata == None:
 
@@ -33,9 +33,6 @@ def main():
         log.info("Converting to readable format")
 
         for idx, itm in enumerate(splitdata):
-            printProgressBar(
-                idx, len(splitdata) - 1, prefix="Progress:", suffix="Complete", length=50
-            )
             itm = itm.split(" ")
             itm.pop(-1)
             entry = itm
@@ -44,30 +41,35 @@ def main():
     else:
         globaldata.insert(0,"start")
 
-    globaldata = cleanNeighbours(globaldata)
+    globaldata = core.cleanNeighbours(globaldata)
 
-    wallpoints = getWallPointArray(globaldata)
+    wallpoints = core.getWallPointArray(globaldata)
+    wallpoints = core.convertToShapely(wallpoints)
 
     THRESHOLD = int(config.getConfig()["rechecker"]["conditionValueThreshold"])
 
-    badList = checkConditionNumber(globaldata, THRESHOLD)
+    badList = core.checkConditionNumber(globaldata, THRESHOLD, configData)
+    log.info("Problematic Points to be fixed: {}".format(len(badList)))
 
     # for idx, itm in enumerate(globaldata):
     #     if idx > 0 and getFlag(idx, globaldata) == 0:
     #         checkConditionNumberWall(idx, globaldata, 30)
 
     for idx in badList:
-        globaldata = fixXPosMain(idx, globaldata, THRESHOLD, wallpoints, -1)
+        globaldata = core.fixXPosMain(idx, globaldata, THRESHOLD, wallpoints, -1, configData)
     for idx in badList:
-        globaldata = fixXNegMain(idx, globaldata, THRESHOLD, wallpoints, -1)
+        globaldata = core.fixXNegMain(idx, globaldata, THRESHOLD, wallpoints, -1, configData)
     for idx in badList:
-        globaldata = fixYPosMain(idx, globaldata, THRESHOLD, wallpoints, -1)
+        globaldata = core.fixYPosMain(idx, globaldata, THRESHOLD, wallpoints, -1, configData)
     for idx in badList:
-        globaldata = fixYNegMain(idx, globaldata, THRESHOLD, wallpoints, -1)
-            
-    log.info("New")
+        globaldata = core.fixYNegMain(idx, globaldata, THRESHOLD, wallpoints, -1, configData)
 
-    checkConditionNumberSelectively(globaldata, THRESHOLD, badList)
+    badList = core.checkConditionNumberSelectively(globaldata, THRESHOLD, badList, configData)
+
+    if len(badList) == 0:
+        log.info("All problematic points have been fixed")
+    else:
+        log.warning("Total Number of Points unable to be fixed: {}".format(len(badList)))
 
     # print("Set Flag")
 
@@ -75,7 +77,7 @@ def main():
     #     if(idx > 0 and getFlag(idx,globaldata) == 1):
     #         globaldata = setFlags(idx,globaldata,60)
 
-    globaldata = cleanNeighbours(globaldata)
+    globaldata = core.cleanNeighbours(globaldata)
 
     globaldata.pop(0)
 
