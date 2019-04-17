@@ -2592,19 +2592,19 @@ void valley_refinement(quadtree_node_t *valley_node, int flag)
     {
         // printf("\n ABCD");
         split_node_newpoints(tree, valley_node);
-        if(east == 0 && (quadtree_node_isempty(east_node) || quadtree_node_isempty(east_node)))
+        if(east == 0 && (east_node != NULL && quadtree_node_isempty(east_node)))
         {
             valley_refinement(east_node, 1);
         }
-        if(west == 0 && (quadtree_node_isempty(west_node) || quadtree_node_isempty(west_node)))
+        if(west == 0 && (west_node != NULL && quadtree_node_isempty(west_node)))
         {
             valley_refinement(west_node, 1);
         }
-        if(north == 0 && (quadtree_node_isempty(north_node) || quadtree_node_isempty(north_node)))
+        if(north == 0 && (north_node != NULL && quadtree_node_isempty(north_node)))
         {
             valley_refinement(north_node, 1);
         }
-        if(south == 0 && (quadtree_node_isempty(south_node) || quadtree_node_isempty(south_node)))
+        if(south == 0 && (south_node != NULL && quadtree_node_isempty(south_node)))
         {
             valley_refinement(south_node, 1);
         }

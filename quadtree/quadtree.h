@@ -6,7 +6,7 @@
 #include <math.h>
 #include "bool.h"
 
-#define MAX 200000
+#define MAX 700000
 
 // A point information
 // Stores x,y and maybe z later (so we get an octree)!
