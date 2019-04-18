@@ -8,12 +8,14 @@ import logging
 log = logging.getLogger(__name__)
 log.addHandler(logging.StreamHandler())
 from tqdm import tqdm
+import numpy as np
 
 def main():
     # Command Line Arguments
     parser = argparse.ArgumentParser()
     parser.add_argument("-i", "--input", const=str, nargs="?")
     args = parser.parse_args()
+    np.seterr(divide='ignore')
 
     print("Loading Data")
 

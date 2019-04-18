@@ -12,6 +12,7 @@ import itertools
 log = logging.getLogger(__name__)
 log.addHandler(logging.StreamHandler())
 from tqdm import tqdm
+import numpy as np
 
 def main():
     # Command Line Arguments
@@ -25,6 +26,7 @@ def main():
     parser.add_argument("-s", "--pseudocheck", nargs="?")
     parser.add_argument("-d", "--diagnose", nargs="?")
     args = parser.parse_args()
+    np.seterr(divide='ignore')
 
     configData = config.getConfig()
 

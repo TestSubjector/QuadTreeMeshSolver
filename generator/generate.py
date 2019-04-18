@@ -1,11 +1,6 @@
 import argparse
 from load import *
 from boundary import *
-from interior import *
-from balance import *
-from wall import *
-from outer import *
-from logger import *
 import config
 import logging
 log = logging.getLogger(__name__)
@@ -21,8 +16,6 @@ def main():
     log.debug("Arguments Set")
     log.debug(args)
 
-    CONDITIONTHRESHOLD = 2000
-
     # Opening the Neighbourhood file
     try:
         file1 = open(args.neighbour or "neighbour.txt", "r")
@@ -35,10 +28,11 @@ def main():
     data = data.split("\n")
     data.pop(0)  # Pops the first blank line
 
-    config.setPrefix()
+    # if not args.neighbour:
+    #     log.critical("Cannot find neighbor file")
+    #     exit()
 
-    interiorPointsCount = 0
-    outerPointsCount = 0
+    config.setPrefix()
 
     wallarg = args.wall
     wallpoints = []
