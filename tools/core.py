@@ -1321,6 +1321,46 @@ def configManager():
             break
     return None
 
+def plotManager(globaldata, wallpoints):
+    while True:
+        clearScreen()
+        print("*******************************")
+        print("Plot Manager")
+        print("*******************************")
+        print("Type 'exit' to go back")
+        print("Type 'problem' to generate problematic points plot (1 Level)")
+        print("Type 'problem!' to generate problematic points plot (2 Level)")
+        print("Type 'sub' to create subplots")
+        ptidx = input("Awaiting Command: ")
+        if ptidx == 'problem':
+            problemPlot(globaldata, wallpoints)
+            sleep(1)
+            clearScreen()
+            break
+        elif ptidx == 'problem!':
+            problemPlot(globaldata, wallpoints, twoLevel=True)
+            sleep(1)
+            clearScreen()
+            break
+        elif ptidx == 'sub':
+            subPlot(globaldata, wallpoints) 
+            sleep(1)
+            clearScreen()
+            break
+        elif ptidx == 'exit':
+            clearScreen()
+            print("Going back")
+            sleep(1)
+            clearScreen()
+            break
+        else:
+            clearScreen()
+            print("Invalid input going back")
+            sleep(1)
+            clearScreen()
+            break
+    return None
+
 def clearScreen():
     os.system('cls' if os.name == 'nt' else 'clear')
 
@@ -1393,12 +1433,13 @@ def random_points_within(poly, num_points):
 
     return points
 
-def subPlot(globaldata, wallpoints):
-    if os.path.isdir("plots"):
-        shutil.rmtree("plots")
-        os.mkdir("plots")
-    else:
-        os.mkdir("plots")
+def subPlot(globaldata, wallpoints, noClean=False):
+    if noClean == False:
+        if os.path.isdir("plots"):
+            shutil.rmtree("plots")
+            os.mkdir("plots")
+        else:
+            os.mkdir("plots")
     with open("plots/wall_combined", "w+") as the_file_main:
         superidx = 0
         for idx, itm in enumerate(wallpoints):
@@ -1411,3 +1452,36 @@ def subPlot(globaldata, wallpoints):
                     the_file.write("{} {} {}\n".format(idx2 + 1, ptx, pty))
                     the_file_main.write("{} {} {}\n".format(superidx, ptx, pty))
     print("Generated Subplots")
+
+def problemPlot(globaldata, wallpoints, twoLevel=False):
+    conf = config.getConfig()
+    problemPts = []
+    finalPts = []
+    if os.path.isdir("plots"):
+        shutil.rmtree("plots")
+        os.mkdir("plots")
+    else:
+        os.mkdir("plots")
+    for idx, _ in enumerate(tqdm(globaldata)):
+        if idx > 0:
+            flag = getFlag(idx, globaldata)
+            if flag == 1:
+                if isConditionBad(idx, globaldata, True, conf):
+                    problemPts.append(idx)
+    for idx in problemPts:
+        finalPts += getNeighbours(idx, globaldata)
+        finalPts += [idx]
+    if twoLevel:
+        finalPts2 = []
+        for idx in finalPts:
+            finalPts2 += getNeighbours(idx, globaldata)
+            finalPts2 += [idx]
+    finalPts = list(set(finalPts2))
+    with open("plots/problem_plot", "w+") as the_file_main:
+        for idx in finalPts:
+            flag = getFlag(idx, globaldata)
+            if flag != 0:
+                ptx, pty = getPoint(idx, globaldata)
+                the_file_main.write("{} {} {}\n".format(idx, ptx, pty))
+    subPlot(globaldata, wallpoints, noClean=True)
+    print("Generated Problem Plot")

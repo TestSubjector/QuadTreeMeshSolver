@@ -69,7 +69,7 @@ def main():
         print("Type 'bad1' to print all points with 1 in it's split connectivity")
         print("Type 'split' to output the different type of points in a file")
         print("Type 'config' to start Config Manager")
-        print("Type 'sub' to create subplots")
+        print("Type 'plot' to start Plot Manager")
         ptidx = input("Which point do you want to fix? ")
         if ptidx == "exit!":
             exit()
@@ -133,9 +133,9 @@ def main():
         elif ptidx == "config":
             core.clearScreen()
             core.configManager() 
-        elif ptidx == "sub":
+        elif ptidx == "plot":
             core.clearScreen()
-            core.subPlot(globaldata, wallpoints) 
+            core.plotManager(globaldata, wallpoints)
         isPointIndex = False
         try:
             ptidx = int(ptidx)
