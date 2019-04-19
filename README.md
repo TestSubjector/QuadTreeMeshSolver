@@ -7,4 +7,4 @@
 ## To clean
 * make clean
 
-Acknowledgments - [thejefflarson](https://github.com/thejefflarson) for much of the Quadtree code.
+Acknowledgments - [thejefflarson](https://github.com/thejefflarson) for much of the basic components of the Quadtree code.
