@@ -73,15 +73,15 @@ else
         cp -rf ./adapted.txt ./files/f$value/adapted.txt
 
         #Shape Generation
-        python3 shapemod/shape.py -w /home/nischay/Git/QuadTreeMeshSolver/grids/airfoil_coarse_320
+        python3 shapemod/shape.py -w /home/nischay/Git/QuadTreeMeshSolver/grids/airfoil_coarse_320/airfoil_320
 
         # Neighbour Generation
-        ./quadtree/main /home/nischay/Git/QuadTreeMeshSolver/grids/airfoil_coarse_320 ./adapted.txt ./shape_generated.txt
+        ./quadtree/main /home/nischay/Git/QuadTreeMeshSolver/grids/airfoil_coarse_320/airfoil_320 ./adapted.txt ./shape_generated.txt
         cp -rlf ./neighbour.txt ./files/f$value/neighbour.txt
         rm ./neighbour.txt
 
         # Indexing
-        python3 ./generator/generate.py -n ./files/f$value/neighbour.txt -w /home/nischay/Git/QuadTreeMeshSolver/grids/airfoil_coarse_320
+        python3 ./generator/generate.py -n ./files/f$value/neighbour.txt -w /home/nischay/Git/QuadTreeMeshSolver/grids/airfoil_coarse_320/airfoil_320
         cp -rlf ./output.txt ./files/f$value/output.txt
         cp -rlf ./preprocessorfile.txt ./files/f$value/preprocessorfile.txt
         rm ./output.txt
