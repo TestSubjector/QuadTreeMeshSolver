@@ -52,7 +52,7 @@ elif [ $1 -eq 5 ]
 then
     # Iteration Backup
     # Run as ./preprocessing.sh 5 Iteration_Number Folder{1,2,3,4,5 from the required f1,f2,f3,f4,f5 folder}_Number
-    GEOMETRY="fourbody" # The folder in which the iterations will be stored
+    GEOMETRY="airfoil_320" # The folder in which the iterations will be stored
     mkdir ./backup_files/$GEOMETRY/$2
     cp -rf ./files/f$3/neighbour.txt ./backup_files/$GEOMETRY/$2/neighbour.txt
     cp -rf ./files/f$3/output.txt ./backup_files/$GEOMETRY/$2/output.txt
@@ -73,15 +73,15 @@ else
         cp -rf ./adapted.txt ./files/f$value/adapted.txt
 
         #Shape Generation
-        python3 shapemod/shape.py -w /home/nischay/Git/FourBody/grids/suddhoo_4_shape/shape_1 /home/nischay/Git/FourBody/grids/suddhoo_4_shape/shape_2 /home/nischay/Git/FourBody/grids/suddhoo_4_shape/shape_3 /home/nischay/Git/FourBody/grids/suddhoo_4_shape/shape_4
+        python3 shapemod/shape.py -w /home/nischay/Git/QuadTreeMeshSolver/grids/airfoil_coarse_320
 
         # Neighbour Generation
-        ./quadtree/main /home/nischay/Git/FourBody/grids/suddhoo_4_shape/shape_1_2_3_4 ./adapted.txt ./shape_generated.txt
+        ./quadtree/main /home/nischay/Git/QuadTreeMeshSolver/grids/airfoil_coarse_320 ./adapted.txt ./shape_generated.txt
         cp -rlf ./neighbour.txt ./files/f$value/neighbour.txt
         rm ./neighbour.txt
 
         # Indexing
-        python3 ./generator/generate.py -n ./files/f$value/neighbour.txt -w /home/nischay/Git/FourBody/grids/suddhoo_4_shape/shape_1 /home/nischay/Git/FourBody/grids/suddhoo_4_shape/shape_2 /home/nischay/Git/FourBody/grids/suddhoo_4_shape/shape_3 /home/nischay/Git/FourBody/grids/suddhoo_4_shape/shape_4
+        python3 ./generator/generate.py -n ./files/f$value/neighbour.txt -w /home/nischay/Git/QuadTreeMeshSolver/grids/airfoil_coarse_320
         cp -rlf ./output.txt ./files/f$value/output.txt
         cp -rlf ./preprocessorfile.txt ./files/f$value/preprocessorfile.txt
         rm ./output.txt

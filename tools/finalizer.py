@@ -43,6 +43,8 @@ def main():
     with open("preprocessorfile_final.txt", "w+") as the_file:
         for itm in tqdm(globaldata):
             stuff = itm[:7]
+            stuff.append(itm[11])
+            stuff.append(itm[12])
             stuff.append(itm[13])
             stuff.append(itm[19])
             stuff.extend(itm[20:])

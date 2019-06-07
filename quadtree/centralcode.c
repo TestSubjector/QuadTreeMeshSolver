@@ -21,7 +21,7 @@ int foreign_flag = 1;
 
 void main_tree(int initial_coord_length, coords_t *coords_list, coords_t *adapted_list, coords_t *shape_list, quadtree_node_t *leaf_array)
 {
-    tree = quadtree_new(-25, -25, 25, 25);
+    tree = quadtree_new(-20, -20, 20, 20);
     if (tree == NULL)
     {
         printf("\n ERROR : Memory allocation to the main quad_tree was unsuccessful");
