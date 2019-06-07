@@ -80,3 +80,5 @@ config.json
 outer.txt
 *.poly
 plots/
+quadtree/neighbour.txt
+quadtree/output.text
