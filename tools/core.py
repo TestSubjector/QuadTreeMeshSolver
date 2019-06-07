@@ -638,7 +638,8 @@ def checkAeroGlobal2(globaldata,wallpointsData,wallcount):
     coresavail = multiprocessing.cpu_count()
     log.info("Found " + str(coresavail) + " available core(s).")
     log.info("BOOSTU BOOSTU BOOSTU")
-    MAX_CORES = int(config.getConfig()["generator"]["maxCoresForReplacement"])
+    configData = config.getConfig()
+    MAX_CORES = int(configData["generator"]["maxCoresForReplacement"])
     log.info("Max Cores Allowed " + str(MAX_CORES))
     t1 = time.clock()
     pool = ThreadPool(min(MAX_CORES,coresavail))
@@ -646,7 +647,7 @@ def checkAeroGlobal2(globaldata,wallpointsData,wallcount):
     chunksize = math.ceil(len(globaldata)/min(MAX_CORES,coresavail))
     globalchunks = list(chunks(globaldata,chunksize))
     for itm in globalchunks:
-        results.append(pool.apply_async(checkAeroGlobal, args=(itm, globaldata,wallpointsData,wallcount)))
+        results.append(pool.apply_async(checkAeroGlobal, args=(itm, globaldata, wallpointsData, wallcount, configData)))
     pool.close()
     pool.join()
     results = [r.get() for r in results]
@@ -660,25 +661,28 @@ def checkAeroGlobal2(globaldata,wallpointsData,wallcount):
     log.info("Replacement Done")
     return globaldata
 
-def checkAeroGlobal(chunk,globaldata,wallpointsData,wallcount):
+def checkAeroGlobal(chunk, globaldata, wallpointsData, wallcount, configData):
     # t1 = time.clock()
-    for index,itm in enumerate(chunk):
+    distance = configData["preChecker"]["distanceLimiter"]
+    for index, itm in enumerate(chunk):
         if itm is not "start":
-            idx = itm[0]
-            # printProgressBar(idx, len(globaldata) - 1, prefix="Progress:", suffix="Complete", length=50)    
-            nbhs = getNeighbours(idx,globaldata)
-            nbhs = list(map(int, nbhs))
-            # if True:
-            if min(nbhs) < wallcount:
-                nonaeronbhs = []
-                for itm in nbhs:
-                    cord = getPointxy(itm,globaldata)
-                    if isNonAeroDynamic(idx,cord,globaldata,wallpointsData):
-                        nonaeronbhs.append(itm)
-                finalnbhs = list(set(nbhs) - set(nonaeronbhs))
-                if(len(nbhs) != len(finalnbhs)):
-                    chunk = fillNeighboursIndex(index,chunk,finalnbhs)
-                    log.debug("Point %s has a non aero point with index %s",idx,itm)
+            idx = int(itm[0])
+            ptx, pty = getPoint(idx, globaldata)
+            if min(wallDistance((ptx, pty), wallpointsData)) <= distance:
+                # printProgressBar(idx, len(globaldata) - 1, prefix="Progress:", suffix="Complete", length=50)    
+                nbhs = getNeighbours(idx, globaldata)
+                nbhs = list(map(int, nbhs))
+                # if True:
+                if min(nbhs) < wallcount:
+                    nonaeronbhs = []
+                    for itm in nbhs:
+                        cord = getPointxy(itm,globaldata)
+                        if isNonAeroDynamic(idx,cord,globaldata,wallpointsData):
+                            nonaeronbhs.append(itm)
+                    finalnbhs = list(set(nbhs) - set(nonaeronbhs))
+                    if(len(nbhs) != len(finalnbhs)):
+                        chunk = fillNeighboursIndex(index,chunk,finalnbhs)
+                        log.debug("Point %s has a non aero point with index %s",idx,itm)
     # t2 = time.clock()
     # log.info(t2 - t1)
     return chunk
@@ -982,7 +986,6 @@ def findNearestNeighbourWallPoints(idx,globaldata,wallptData,wallptDataOr):
     # if leastidx == 1:
     #     leastidx,leastidx2 = leastidx2,leastidx
     return convertIndexToPoints([leastidx,leastidx2],globaldata)
-
 
 def getNearestProblemPoint(idx,globaldata, conf):
     xpos = getDWallXPosPoints(idx,globaldata, conf)
