@@ -4,13 +4,17 @@ from shapely.geometry import Polygon as Polygon2
 import argparse
 from progress import printProgressBar
 import copy
-from core import *
 import numpy as np
 import config
 import logging
 log = logging.getLogger(__name__)
 log.addHandler(logging.StreamHandler())
 import pyximport; pyximport.install(pyimport = True)
+import sys
+import os
+
+sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), os.pardir))
+from core import *
 
 
 def main():

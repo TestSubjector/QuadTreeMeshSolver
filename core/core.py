@@ -1609,3 +1609,77 @@ def setNormals(pseudopts,globaldata):
     print(len(pseudopts))
 
     return globaldata
+
+def checkConditionNumberBad(globaldata, threshold, configData):
+    badList = []
+    for index,itm in enumerate(globaldata):
+        if index > 0 and getFlag(index, globaldata) == 1:
+            xpos = getWeightedInteriorConditionValueofXPos(index, globaldata, configData)
+            xneg = getWeightedInteriorConditionValueofXNeg(index, globaldata, configData)
+            ypos = getWeightedInteriorConditionValueofYPos(index, globaldata, configData)
+            yneg = getWeightedInteriorConditionValueofYNeg(index, globaldata, configData)
+            dSPointXPos = getDXPosPoints(index, globaldata)
+            dSPointXNeg = getDXNegPoints(index, globaldata)
+            dSPointYPos = getDYPosPoints(index, globaldata)
+            dSPointYNeg = getDYNegPoints(index, globaldata)
+            if (
+                xneg > threshold
+                or len(dSPointXNeg) < 2 or len(dSPointXPos) < 2 or len(dSPointYNeg) < 2 or len(dSPointYPos) < 2 
+                or math.isnan(xneg)
+                or xpos > threshold
+                or math.isnan(xpos)
+                or ypos > threshold
+                or math.isnan(ypos)
+                or yneg > threshold
+                or math.isnan(yneg)
+            ):
+                print(
+                    index,
+                    len(dSPointXPos),
+                    xpos,
+                    len(dSPointXNeg),
+                    xneg,
+                    len(dSPointYPos),
+                    ypos,
+                    len(dSPointYNeg),
+                    yneg,
+                )
+                badList.append(index)
+    return badList
+
+def checkConditionNumberSelectively(globaldata, threshold, badList, configData):
+    badList = []
+    for index in badList:
+        if getFlag(index, globaldata) == 1:
+            xpos = getWeightedInteriorConditionValueofXPos(index, globaldata, configData)
+            xneg = getWeightedInteriorConditionValueofXNeg(index, globaldata, configData)
+            ypos = getWeightedInteriorConditionValueofYPos(index, globaldata, configData)
+            yneg = getWeightedInteriorConditionValueofYNeg(index, globaldata, configData)
+            dSPointXPos = getDXPosPoints(index, globaldata)
+            dSPointXNeg = getDXNegPoints(index, globaldata)
+            dSPointYPos = getDYPosPoints(index, globaldata)
+            dSPointYNeg = getDYNegPoints(index, globaldata)
+            if (
+                xneg > threshold
+                or len(dSPointXNeg) < 2 or len(dSPointXPos) < 2 or len(dSPointYNeg) < 2 or len(dSPointYPos) < 2 
+                or math.isnan(xneg)
+                or xpos > threshold
+                or math.isnan(xpos)
+                or ypos > threshold
+                or math.isnan(ypos)
+                or yneg > threshold
+                or math.isnan(yneg)
+            ):
+                print(
+                    index,
+                    len(dSPointXPos),
+                    xpos,
+                    len(dSPointXNeg),
+                    xneg,
+                    len(dSPointYPos),
+                    ypos,
+                    len(dSPointYNeg),
+                    yneg,
+                )
+                badList.append(index)
+    return badList

@@ -1,12 +1,15 @@
 import argparse
-import core
 import copy
 import config
 import logging
 log = logging.getLogger(__name__)
 log.addHandler(logging.StreamHandler())
-import pyximport; pyximport.install(pyimport = True)
+import sys
+import os
 
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), os.pardir))
+from core import core
+import pyximport; pyximport.install(pyimport = True)
 
 def main():
     # Command Line Arguments
@@ -46,9 +49,11 @@ def main():
     wallpoints = core.getWallPointArray(globaldata)
     wallpoints = core.convertToShapely(wallpoints)
 
-    THRESHOLD = int(config.getConfig()["rechecker"]["conditionValueThreshold"])
+    configData = config.getConfig()
 
-    badList = core.checkConditionNumber(globaldata, THRESHOLD, configData)
+    THRESHOLD = int(configData["rechecker"]["conditionValueThreshold"])
+
+    badList = core.checkConditionNumberBad(globaldata, THRESHOLD, configData)
     log.info("Problematic Points to be fixed: {}".format(len(badList)))
 
     # for idx, itm in enumerate(globaldata):
