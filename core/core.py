@@ -2,7 +2,9 @@ import numpy as np
 import math
 import shapely.geometry
 from shapely import wkt
+from shapely.geometry import Polygon, Point
 from shapely.ops import linemerge, unary_union, polygonize, nearest_points
+import shapely
 import config
 from scipy import spatial
 import logging
@@ -13,6 +15,8 @@ import time
 log = logging.getLogger(__name__)
 log.addHandler(logging.StreamHandler())
 from tqdm import tqdm
+import os
+import errno
 
 def appendNeighbours(index, globaldata, newpts):
     pt = getIndexFromPoint(newpts, globaldata)
@@ -39,6 +43,13 @@ def getNeighbours(index, globaldata):
 def getIndexFromPoint(pt, globaldata):
     ptx = float(pt.split(",")[0])
     pty = float(pt.split(",")[1])
+    for itm in globaldata:
+        if str(itm[1]) == str(ptx) and str(itm[2]) == str(pty):
+            return int(itm[0])
+
+def getIndexFromPointTuple(pt, globaldata):
+    ptx = pt[0]
+    pty = pt[1]
     for itm in globaldata:
         if str(itm[1]) == str(ptx) and str(itm[2]) == str(pty):
             return int(itm[0])
@@ -845,6 +856,70 @@ def findNearestNeighbourWallPoints(idx, globaldata, wallptData, shapelyWallData)
         leastidx,leastidx2 = leastidx2,leastidx
     return convertIndexToPoints([leastidx,leastidx2],globaldata)
 
+# def findNearestNeighbourWallPoints(idx,globaldata,wallptData,wallptDataOr):
+#     ptx,pty = getPoint(idx,globaldata)
+#     leastdt,leastidx = 1000,1000
+#     for itm in wallptData:
+#         if not isNonAeroDynamic(idx,itm,globaldata,wallptDataOr):
+#             itmx = float(itm.split(",")[0])
+#             itmy = float(itm.split(",")[1])
+#             ptDist = math.sqrt((deltaX(itmx,ptx) ** 2) + (deltaY(itmy,pty) ** 2))
+#             if leastdt > ptDist:
+#                 leastdt = ptDist
+#                 leastidx = getIndexFromPoint(itm,globaldata)
+#     ptsToCheck = convertIndexToPoints(getLeftandRightPoint(leastidx,globaldata),globaldata)
+#     leastdt2,leastidx2 = 1000,1000
+#     leastptx,leastpty = getPoint(leastidx,globaldata)
+#     currangle = 1000
+#     for itm in ptsToCheck:
+#         if not isNonAeroDynamic(idx,itm,globaldata,wallptDataOr):
+#             itmx = float(itm.split(",")[0])
+#             itmy = float(itm.split(",")[1])
+#             ptDist = math.sqrt((deltaX(itmx,ptx) ** 2) + (deltaY(itmy,pty) ** 2))
+#             anglecal = angle(ptx,pty,leastptx,leastpty,itmx,itmy)
+#             if currangle == 1000:
+#                 currangle = anglecal
+#                 leastidx2 = getIndexFromPoint(itm,globaldata)
+#             elif anglecal < currangle:
+#                 currangle = anglecal
+#                 leastidx2 = getIndexFromPoint(itm,globaldata)
+#     if leastidx > leastidx2 and leastidx2 != 1:
+#         leastidx,leastidx2 = leastidx2,leastidx
+#     if leastidx == 1 and leastidx2 > 1:
+#         leastidx,leastidx2 = leastidx2,leastidx
+#     return convertIndexToPoints([leastidx,leastidx2],globaldata)
+
+def findNearestNeighbourWallPointsManual(pt,globaldata,wallptData,wallptDataOr):
+    ptx,pty = pt[0],pt[1]
+    leastdt,leastidx = 1000,1000
+    for itm in wallptData:
+        itmx = float(itm.split(",")[0])
+        itmy = float(itm.split(",")[1])
+        ptDist = math.sqrt((deltaX(itmx,ptx) ** 2) + (deltaY(itmy,pty) ** 2))
+        if leastdt > ptDist:
+            leastdt = ptDist
+            leastidx = getIndexFromPoint(itm,globaldata)
+    ptsToCheck = convertIndexToPoints(getLeftandRightPoint(leastidx,globaldata),globaldata)
+    leastdt2,leastidx2 = 1000,1000
+    leastptx,leastpty = getPoint(leastidx,globaldata)
+    currangle = 1000
+    for itm in ptsToCheck:
+        itmx = float(itm.split(",")[0])
+        itmy = float(itm.split(",")[1])
+        ptDist = math.sqrt((deltaX(itmx,ptx) ** 2) + (deltaY(itmy,pty) ** 2))
+        anglecal = angle(ptx,pty,leastptx,leastpty,itmx,itmy)
+        if currangle == 1000:
+            currangle = anglecal
+            leastidx2 = getIndexFromPoint(itm,globaldata)
+        elif anglecal < currangle:
+            currangle = anglecal
+            leastidx2 = getIndexFromPoint(itm,globaldata)
+    if leastidx > leastidx2 and leastidx2 != 1:
+        leastidx,leastidx2 = leastidx2,leastidx
+    if leastidx == 1 and leastidx2 > 1:
+        leastidx,leastidx2 = leastidx2,leastidx
+    return convertIndexToPoints([leastidx,leastidx2],globaldata)
+
 def feederData(wallpts,wallptData):
     wallpt = wallpts[0]
     for idx,itm in enumerate(wallptData):
@@ -885,6 +960,42 @@ def getPerpendicularPoint(idx, globaldata, normal, shapelyWallData, pts):
     else:
         return midPt(pts1x,pts2x,pts1y,pts2y)
 
+# def getPerpendicularPoint(idx,globaldata,normal):
+#     wallptData = getWallPointArray(globaldata)
+#     wallptDataOr = wallptData
+#     wallptData = flattenList(wallptData)
+#     pts = findNearestNeighbourWallPoints(idx,globaldata,wallptData,wallptDataOr)
+#     mainpt = getPointxy(idx,globaldata)
+#     mainptx = float(mainpt.split(",")[0])
+#     mainpty = float(mainpt.split(",")[1])
+#     pts1x = float(pts[0].split(",")[0])
+#     pts1y = float(pts[0].split(",")[1])
+#     pts2x = float(pts[1].split(",")[0])
+#     pts2y = float(pts[1].split(",")[1])
+#     if normal:
+#         return perpendicularPt(pts1x,pts2x,mainptx,pts1y,pts2y,mainpty)
+#     else:
+#         return midPt(pts1x,pts2x,pts1y,pts2y)
+
+def getPerpendicularPointManual(pt,globaldata,normal,quadrant):
+    wallptData = getWallPointArray(globaldata)
+    wallptDataOr = wallptData
+    wallptData = flattenList(wallptData)
+    pts = findNearestNeighbourWallPointsManual(pt,globaldata,wallptData,wallptDataOr)
+    mainptx = pt[0]
+    mainpty = pt[1]
+    pts1x = float(pts[0].split(",")[0])
+    pts1y = float(pts[0].split(",")[1])
+    pts2x = float(pts[1].split(",")[0])
+    pts2y = float(pts[1].split(",")[1])
+    if normal:
+        pptx,ppty = perpendicularPt(pts1x,pts2x,mainptx,pts1y,pts2y,mainpty)
+        if quadrantContains(quadrant,(pptx,ppty)):
+            return pptx,ppty
+        else:
+            return None
+    else:
+        return midPt(pts1x,pts2x,pts1y,pts2y)
 
 def perpendicularPt(x1,x2,x3,y1,y2,y3):
     k = ((y2-y1) * (x3-x1) - (x2-x1) * (y3-y1)) / ((y2-y1)**2 + (x2-x1)**2)
@@ -1156,3 +1267,137 @@ def getWallGeometry(walldata, globaldata, itm):
     for idx,itm in enumerate(walldata):
         if [itmx, itmy] in itm:
             return itm
+
+def silentRemove(filename):
+    try:
+        os.remove(filename)
+    except OSError as e:  # this would be "except OSError, e:" before Python 2.6
+        if e.errno != errno.ENOENT:  # errno.ENOENT = no such file or directory
+            raise  # re-raise exception if a different error occurred
+
+def normalCalculation(index, globaldata, wallpoint):
+    nx = 0
+    ny = 0
+    cordx = float(globaldata[index][1])
+    cordy = float(globaldata[index][2])
+    pointdata = globaldata[index]
+    leftpoint = getPointxy(pointdata[3], globaldata)
+    rightpoint = getPointxy(pointdata[4], globaldata)
+    leftpointx = float(leftpoint.split(",")[0])
+    leftpointy = float(leftpoint.split(",")[1])
+    rightpointx = float(rightpoint.split(",")[0])
+    rightpointy = float(rightpoint.split(",")[1])
+    if not wallpoint:
+        nx1 = leftpointy - cordy
+        nx2 = cordy - rightpointy
+        ny1 = leftpointx - cordx
+        ny2 = cordx - rightpointx
+    else:
+        nx1 = cordy - leftpointy
+        nx2 = rightpointy - cordy
+        ny1 = cordx - leftpointx
+        ny2 = rightpointx - cordx
+    nx = (nx1 + nx2) / 2
+    ny = (ny1 + ny2) / 2
+    det = math.sqrt((nx * nx) + (ny * ny))
+    if not wallpoint:
+        nx = nx / det
+    else:
+        direction = config.getConfig()["global"]["wallPointOrientation"]
+        if direction == "cw":
+            nx = (-nx) / det
+        elif direction == "ccw":
+            nx = nx / det
+    ny = ny / det
+    return nx, ny
+
+def convertPointToShapelyPoint(pointarry):
+    pointnewarry = []
+    for itm in pointarry:
+        xcord = float(itm.split(",")[0])
+        ycord = float(itm.split(",")[1])
+        pointnewarry.append((xcord, ycord))
+    return pointnewarry
+
+def nonAdaptWallPolygon(globaldata, wallpoints, dist, interiorpts):
+    print("Creating Inflated Wall Point")
+    pseudopts = []
+    inflatedWall = []
+    for itm in wallpoints:
+        idx = getIndexFromPoint(itm,globaldata)
+        orgWallpt = getPointxy(idx, globaldata)
+        nx, ny = normalCalculation(idx, globaldata, True)
+        orgWallptx = float(orgWallpt.split(",")[0])
+        orgWallpty = float(orgWallpt.split(",")[1])
+        normalVector = np.array([nx, ny])
+        orgVector = np.array([orgWallptx, orgWallpty])
+        newWallpt = orgVector + dist * normalVector
+        newWallpt = tuple(newWallpt.tolist())
+        inflatedWall.append(newWallpt)
+    wallptsData = convertPointToShapelyPoint(wallpoints)
+    wallpointGeo = Polygon(wallptsData)
+    lastpt = wallptsData[0]
+    newpt = (lastpt[0] + dist, lastpt[1])
+    inflatedWall.pop(0)
+    inflatedWall.insert(0, newpt)
+    inflatedwallpointGeo = Polygon(inflatedWall)
+    print("Checking for Pseudo Points")
+    # fig, ax = plt.subplots()
+    # x1,y1 = wallpointGeo.exterior.xy
+    # x2,y2 = inflatedwallpointGeo.exterior.xy
+    # # ax = fig.add_subplot(111)
+    # # ax.scatter(x1, y1, color='red', alpha=0.7, zorder=2)
+    # # ax.set_title('Polygon')
+    # # ax = fig.add_subplot(111)
+    # # ax.scatter(x2, y2, color='blue', alpha=0.7, zorder=2)
+    # # ax.set_title('Polygon2')
+    # # ax = fig.add_subplot(111)
+    # ax.plot(x1, y1, color='red', alpha=0.7, zorder=2)
+    # ax.plot(x2, y2, color='blue', alpha=0.7, zorder=2)
+    # plt.show()
+    for itm in interiorpts:
+        itmval = convertPointToShapelyPoint(convertIndexToPoints([itm], globaldata))[0]
+        interiorpoint = Point(itmval)
+        if inflatedwallpointGeo.contains(interiorpoint):
+            pseudopts.append(itm)
+    print("Found", len(pseudopts), "points which aren't gonna be adapted!")
+    with open("pseudopoints.txt", "a") as text_file:
+        for item1 in pseudopts:
+            text_file.writelines(str(item1))
+            text_file.writelines("\t\n")
+    return pseudopts
+
+def createEdgeCircle(globaldata, edgePoints, dist, interiorpts):
+    pseudopts = []
+    for idx,edge in enumerate(edgePoints):
+        ptx,pty = getPoint(edge,globaldata)
+        circle = Point(ptx,pty).buffer(dist[idx])
+        for itm in interiorpts:
+            itmval = convertPointToShapelyPoint(convertIndexToPoints([itm], globaldata))[0]
+            interiorpoint = Point(itmval)
+            if circle.contains(interiorpoint):
+                pseudopts.append(itm)
+    print("Found", len(pseudopts), "points which aren't gonna be adapted!")
+    with open("pseudopoints.txt", "a") as text_file:
+        for item1 in pseudopts:
+            text_file.writelines(str(item1))
+            text_file.writelines("\t\n")
+    return pseudopts
+
+def getDistance(point1,point2,globaldata):
+    ptax,ptay = getPoint(point1,globaldata)
+    ptbx,ptby = getPoint(point2,globaldata)
+    ptx = deltaX(ptax,ptbx)**2
+    pty = deltaY(ptay,ptby)**2
+    result = math.sqrt(ptx + pty)
+    return result
+
+def convertToSuperNicePoints(quadrant,data):
+    quadCheck = quadrant[1]
+    finallist = []
+    for itm in data:
+        if quadrantContains(quadCheck,itm):
+            finallist.append(itm)
+        else:
+            None
+    return finallist

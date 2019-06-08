@@ -4,12 +4,17 @@ from shapely.ops import triangulate, cascaded_union
 from shapely.geometry import MultiPoint
 from shapely.geometry import Polygon as Polygon2
 import copy
-from core import *
 import numpy as np
 import config
 import bsplinegen
 import itertools
 from tqdm import tqdm
+import sys
+import os
+
+sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), os.pardir))
+from core import *
+
 
 def main():
     # Command Line Arguments

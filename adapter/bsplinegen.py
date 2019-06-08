@@ -6,6 +6,11 @@ from scipy.interpolate import splprep, splev
 from scipy import spatial
 import config
 import core
+import sys
+import os
+
+sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), os.pardir))
+from core import core
 
 # cv: Input array of the body
 # point_division: Number of new points required between given point indexes
