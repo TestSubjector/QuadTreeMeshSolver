@@ -1,5 +1,9 @@
-import core
 import math
+import sys
+import os
+
+sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), os.pardir))
+from core import core
 
 def generateReportConnectivity(globaldata):
     resultInterior = {"total":0,"leastxpos":0,"maxxpos":0,"leastxneg":0,"maxxneg":0,"leastypos":0,"maxypos":0,"leastyneg":0,"maxyneg":0,"xposavg":0,"xnegavg":0,"yposavg":0,"ynegavg":0,"_init":False}

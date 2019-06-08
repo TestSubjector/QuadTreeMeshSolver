@@ -20,6 +20,12 @@ log.addHandler(logging.StreamHandler())
 from tqdm import tqdm
 import os
 import errno
+import multiprocessing
+from multiprocessing.pool import ThreadPool
+import re
+from collections import Counter
+from time import sleep
+import shutil
 
 def appendNeighbours(index, globaldata, newpts):
     pt = getIndexFromPoint(newpts, globaldata)
@@ -35,6 +41,19 @@ def getFlag(indexval, list):
     indexval = int(indexval)
     return int(list[indexval][5])
 
+def setFlags(index,globaldata,flags):
+    globaldata[index][7] = flags[0]
+    globaldata[index][8] = flags[1]
+    globaldata[index][9] = flags[2]
+    globaldata[index][10] = flags[3]
+    return globaldata
+
+def getFlags(index,globaldata):
+    flagxpos = int(globaldata[index][7])
+    flagxneg = int(globaldata[index][8])
+    flagypos = int(globaldata[index][9])
+    flagyneg = int(globaldata[index][10])
+    return flagxpos,flagxneg,flagypos,flagyneg
 
 def getNeighbours(index, globaldata):
     index = int(index)
@@ -210,6 +229,72 @@ def getDYNegPointsFromSet(index, globaldata, points):
     nbhs = convertIndexToPoints(points, globaldata)
     _, _, _, _, mypoints = deltaNeighbourCalculation(
         nbhs, getPointxy(index, globaldata), False, True
+    )
+    return mypoints
+
+
+def getDWallXPosPoints(index, globaldata, conf):
+    nbhs = convertIndexToPoints(getNeighbours(index, globaldata), globaldata)
+    nx,ny = normalCalculation(index,globaldata,True, conf)
+    _, _, _, mypoints = deltaWallNeighbourCalculation(index,
+        nbhs,nx,ny, True, globaldata
+    )
+    return mypoints
+
+
+def getDWallXNegPoints(index, globaldata, conf):
+    nbhs = convertIndexToPoints(getNeighbours(index, globaldata), globaldata)
+    nx,ny = normalCalculation(index,globaldata,True, conf)
+    _, _, _, mypoints = deltaWallNeighbourCalculation(index,
+        nbhs,nx,ny, False, globaldata
+    )
+    return mypoints
+
+def getDXPosPointsFromSetRaw(index, globaldata, points):
+    nbhs = points
+    _, _, _, _, mypoints = deltaNeighbourCalculation(
+        nbhs, getPointxy(index, globaldata), True, False
+    )
+    return mypoints
+
+
+def getDXNegPointsFromSetRaw(index, globaldata, points):
+    nbhs = points
+    _, _, _, _, mypoints = deltaNeighbourCalculation(
+        nbhs, getPointxy(index, globaldata), True, True
+    )
+    return mypoints
+
+
+def getDYPosPointsFromSetRaw(index, globaldata, points, conf):
+    nbhs = points
+    _, _, _, _, mypoints = deltaNeighbourCalculation(
+        nbhs, getPointxy(index, globaldata), False, False
+    )
+    return mypoints
+
+
+def getDYNegPointsFromSetRaw(index, globaldata, points, conf):
+    nbhs = points
+    _, _, _, _, mypoints = deltaNeighbourCalculation(
+        nbhs, getPointxy(index, globaldata), False, True
+    )
+    return mypoints
+
+def getDWallXPosPointsFromSetRaw(index, globaldata, points, conf):
+    nbhs = points
+    nx,ny = normalCalculation(index,globaldata,True, conf)
+    _, _, _, mypoints = deltaWallNeighbourCalculation(index,
+        nbhs,nx,ny, True, globaldata
+    )
+    return mypoints
+
+
+def getDWallXNegPointsFromSetRaw(index, globaldata, points, conf):
+    nbhs = points
+    nx,ny = normalCalculation(index,globaldata,True, conf)
+    _, _, _, mypoints = deltaWallNeighbourCalculation(index,
+        nbhs,nx,ny, False, globaldata
     )
     return mypoints
 
@@ -664,13 +749,24 @@ def setFlags(index, globaldata, threshold, configData):
         globaldata[index][10] = 1
     return globaldata
 
-def isNonAeroDynamic(index, cordpt, globaldata, wallpoints):
+def isNonAeroDynamic(index, cordpt, globaldata, wallData):
     main_pointx,main_pointy = getPoint(index, globaldata)
     cordptx = float(cordpt.split(",")[0])
     cordpty = float(cordpt.split(",")[1])
     line = shapely.geometry.LineString([[main_pointx, main_pointy], [cordptx, cordpty]])
     responselist = []
-    for item in wallpoints:
+
+    if len(wallData) == 0:
+        return False
+    
+    if isinstance(wallData[0], Polygon):
+        return nonAeroDynamicPolygonHelper(line, wallData)
+    else:
+        return nonAeroDynamicPointHelper(line, wallData)
+
+def nonAeroDynamicPointHelper(line, wallData):
+    responselist = []
+    for item in wallData:
         polygonpts = []
         for item2 in item:
             polygonpts.append([float(item2.split(",")[0]), float(item2.split(",")[1])])
@@ -681,6 +777,24 @@ def isNonAeroDynamic(index, cordpt, globaldata, wallpoints):
         i = 0
         for _ in polygons:
             i += 1
+        if i == 1:
+            responselist.append(False)
+        else:
+            responselist.append(True)
+    if True in responselist:
+        return True
+    else:
+        return False
+
+def nonAeroDynamicPolygonHelper(line, wallPolygonData):
+    responselist = []
+    for polygontocheck in wallPolygonData:
+        merged = linemerge([polygontocheck.boundary, line])
+        borders = unary_union(merged)
+        polygons = polygonize(borders)
+        i = 0
+        for _ in polygons:
+            i = i + 1
         if i == 1:
             responselist.append(False)
         else:
@@ -778,6 +892,21 @@ def getLeftandRightPoint(index,globaldata):
     nbhs.append(leftpt)
     nbhs.append(rightpt)
     return nbhs
+
+def getLeftPoint(index, globaldata):
+    index = int(index)
+    ptdata = globaldata[index]
+    return ptdata[3]
+
+def getPointExcludeOuter(index, globaldata):
+    if getFlag(index, globaldata) != 2:
+        index = int(index)
+        ptdata = globaldata[index]
+        ptx = float(ptdata[1])
+        pty = float(ptdata[2])
+        return (ptx, pty)
+    else:
+        return (False, False)
 
 def replaceNeighbours(index,nbhs,globaldata):
     data = globaldata[index]
@@ -1683,3 +1812,685 @@ def checkConditionNumberSelectively(globaldata, threshold, badList, configData):
                 )
                 badList.append(index)
     return badList
+
+def chunks(l, n):
+    for i in range(0, len(l), n):
+        yield l[i : i + n]
+
+def generateWallPolygons(wallpoints):
+    wallPolygonData = []
+    for item in wallpoints:
+        polygonpts = []
+        for item2 in item:
+            polygonpts.append([float(item2.split(",")[0]), float(item2.split(",")[1])])
+        polygontocheck = shapely.geometry.Polygon(polygonpts)
+        wallPolygonData.append(polygontocheck)
+    return wallPolygonData
+
+def getAeroPointsFromSet(index,cordlist,globaldata,wallpoints):
+    finallist = []
+    for itm in cordlist:
+        if isNonAeroDynamic(index,itm,globaldata,wallpoints) == False:
+            finallist.append(itm)
+    return finallist
+
+def getConditionNumber(index, globaldata, conf):
+    xpos = getWeightedInteriorConditionValueofXPos(index, globaldata, conf)
+    xneg = getWeightedInteriorConditionValueofXNeg(index, globaldata, conf)
+    ypos = getWeightedInteriorConditionValueofYPos(index, globaldata, conf)
+    yneg = getWeightedInteriorConditionValueofYNeg(index, globaldata, conf)
+    result = {"xpos":xpos,"xneg":xneg,"ypos":ypos,"yneg":yneg}
+    return result
+
+def getConditionNumberNormal(index,globaldata, conf):
+    xpos = getWeightedNormalConditionValueofWallXPos(index,globaldata, conf)
+    xneg = getWeightedNormalConditionValueofWallXNeg(index,globaldata, conf)
+    result = {"xpos":xpos,"xneg":xneg,"ypos":"NA","yneg":"NA"}
+    return result
+
+def fillNeighboursIndex(index,globaldata,nbhs):
+    nbhs = list(set(nbhs))
+    globaldata[int(index)][20:] = nbhs
+    globaldata[int(index)][19] = len(nbhs)
+    return globaldata
+
+
+def checkAeroGlobal2(globaldata,wallpointsData,wallcount):
+    coresavail = multiprocessing.cpu_count()
+    log.info("Found " + str(coresavail) + " available core(s).")
+    log.info("BOOSTU BOOSTU BOOSTU")
+    configData = config.getConfig()
+    MAX_CORES = int(configData["generator"]["maxCoresForReplacement"])
+    log.info("Max Cores Allowed " + str(MAX_CORES))
+    t1 = time.clock()
+    pool = ThreadPool(min(MAX_CORES,coresavail))
+    results = []
+    chunksize = math.ceil(len(globaldata)/min(MAX_CORES,coresavail))
+    globalchunks = list(chunks(globaldata,chunksize))
+    for itm in globalchunks:
+        results.append(pool.apply_async(checkAeroGlobal, args=(itm, globaldata, wallpointsData, wallcount, configData)))
+    pool.close()
+    pool.join()
+    results = [r.get() for r in results]
+    globaldata = []
+    stuff = []
+    for itm in results:
+        stuff = stuff + itm
+    globaldata = stuff
+    t2 = time.clock()
+    log.info(t2 - t1)
+    log.info("Replacement Done")
+    return globaldata
+
+def checkAeroGlobal(chunk, globaldata, wallpointsData, wallcount, configData):
+    # t1 = time.clock()
+    distance = configData["preChecker"]["distanceLimiter"]
+    for index, itm in enumerate(chunk):
+        if itm is not "start":
+            idx = int(itm[0])
+            ptx, pty = getPoint(idx, globaldata)
+            if min(wallDistance((ptx, pty), wallpointsData)) <= distance:
+                # printProgressBar(idx, len(globaldata) - 1, prefix="Progress:", suffix="Complete", length=50)    
+                nbhs = getNeighbours(idx, globaldata)
+                nbhs = list(map(int, nbhs))
+                # if True:
+                if min(nbhs) < wallcount:
+                    nonaeronbhs = []
+                    for itm in nbhs:
+                        cord = getPointxy(itm,globaldata)
+                        if isNonAeroDynamic(idx,cord,globaldata,wallpointsData):
+                            nonaeronbhs.append(itm)
+                    finalnbhs = list(set(nbhs) - set(nonaeronbhs))
+                    if(len(nbhs) != len(finalnbhs)):
+                        chunk = fillNeighboursIndex(index,chunk,finalnbhs)
+                        log.debug("Point %s has a non aero point with index %s",idx,itm)
+    # t2 = time.clock()
+    # log.info(t2 - t1)
+    return chunk
+
+def getSquarePlot(x, y, side):
+    return [(x+(side/2), y+(side/2)), (x-(side/2), y+(side/2)), (x-(side/2), y-(side/2)), (x+(side/2), y-(side/2))]
+
+def findHeadOfWall(wallpoints):
+    headPts = []
+    for wallptset in wallpoints:
+        minx = 1000
+        currpt = 0
+        for pt in wallptset:
+            ptx = float(pt.split(",")[0])
+            pty = float(pt.split(",")[1])
+            if minx > ptx:
+                minx = ptx
+                currpt = pt
+        headPts.append(currpt)
+    return headPts
+
+def returnPointDist(globaldata):
+    stats = {"interior":0,"outer":0,"wall":0}
+    for idx,itm in enumerate(globaldata):
+        if idx > 0:
+            flag = getFlag(idx,globaldata)
+            if flag == 1:
+                stats["interior"] = stats["interior"] + 1
+            elif flag == 2:
+                stats["outer"] = stats["outer"] + 1
+            else:
+                stats["wall"] = stats["wall"] + 1
+    return stats
+
+def createBoxPolygon(wallpoints):
+    BOX_SIDE_SIZE = float(config.getConfig()["box"]["boxSideLength"])
+    headData = findHeadOfWall(wallpoints)
+    boxData = []
+    for itm in headData:
+        x = float(itm.split(",")[0])
+        y = float(itm.split(",")[1])
+        squareData = getSquarePlot(x,y,BOX_SIDE_SIZE)
+        squarePoly = Polygon(squareData)
+        boxData.append(squarePoly)
+    return boxData[:1]
+
+
+def findBoxAdaptPoints(globaldata,wallpoints):
+    boxPoly = createBoxPolygon(wallpoints)
+    adaptPoints = []
+    for idx,_ in enumerate(globaldata):
+        if idx > 0:
+            flag = getFlag(idx,globaldata)
+            ptx,pty = getPoint(idx,globaldata)
+            pt = (ptx,pty)
+            pt = Point(pt)
+            for boxP in boxPoly:
+                if boxP.intersects(pt):
+                    adaptPoints.append(idx)
+    return adaptPoints
+
+def getBoxPlot(XRange,YRange):
+    return [(XRange[0],YRange[0]),(XRange[0],YRange[1]),(XRange[1],YRange[1]),(XRange[1],YRange[0])]
+
+def findGeneralBoxAdaptPoints(globaldata):
+    XRange = tuple(config.getConfig()["box"]["XRange"])
+    YRange = tuple(config.getConfig()["box"]["YRange"])
+    boxPoly = getBoxPlot(XRange,YRange)
+    boxPoly = Polygon(boxPoly)
+    adaptPoints = []
+    for idx,_ in enumerate(globaldata):
+        if idx > 0:
+            flag = getFlag(idx,globaldata)
+            ptx,pty = getPoint(idx,globaldata)
+            pt = (ptx,pty)
+            pt = Point(pt)
+            if boxPoly.intersects(pt):
+                adaptPoints.append(idx)
+    return adaptPoints
+
+def pushCache(globaldata):
+    globaldata.pop(0)
+    config.setKeyVal("globaldata",globaldata)
+    log.info("Pushed to Cache!")
+
+def verifyIntegrity():
+    loadWall = dict(config.load_obj("wall"))
+    with open("adapted.txt","r") as fileman:
+        data = fileman.read()
+    matchdata = re.findall("(?<=2000 2000)([\S\s]*?)(?=1000 1000)",str(data))
+    pointsToCheck = []
+    for itm in matchdata:
+        itmsplit = itm.split("\n")
+        itmsplit.pop(0)
+        itmsplit.pop(-1)
+        itmsplit = [s.strip() for s in itmsplit]
+        pointsToCheck = pointsToCheck + itmsplit
+    pointsToCheckOld = pointsToCheck
+    itCount = len(pointsToCheck)
+    pointsToCheck = list(set(pointsToCheck))
+    finCount = len(pointsToCheck)
+    if itCount != finCount:
+        print("Warning repeated elements detected in adapted file")
+        print([k for k,v in Counter(pointsToCheckOld).items() if v>1])
+    pointsToCheck = [tuple(float(y) for y in s.split(" ")) for s in pointsToCheck]
+
+    allItems = loadWall.values()
+    allItems = list(itertools.chain(*allItems))
+    allItems = [tuple(s) for s in allItems]
+    # print(allItems)
+    try:
+        notPresent = set(pointsToCheck) - set(allItems)
+        if len(notPresent) > 0:
+            print("Not Present in Adapted File")
+            print(list(notPresent))
+        notPresent = set(allItems) - set(pointsToCheck)
+        if len(notPresent) > 0:
+            print("Not Present in Wall File")
+            print(list(notPresent))
+    except TypeError:
+        print("Either adapted.txt or wall.json is invalid")
+    # (?<=2000 2000)([\S\s]*?)(?=1000 1000)
+
+def cleanAdapted():
+    None
+
+def fullRefine(globaldata):
+    with open("adapted.txt", "a+") as text_file:
+        for idx,_ in enumerate(globaldata):
+            if idx > 0:
+                ptX,ptY = getPoint(idx,globaldata)
+                text_file.writelines(["%s %s " % (ptX,ptY)])
+                text_file.writelines("\n")
+        text_file.writelines("1000 1000\n")
+
+def fullRefineOuter(globaldata):
+    with open("adapted.txt", "a+") as text_file:
+        for idx,_ in enumerate(globaldata):
+            if idx > 0:
+                ptX,ptY = getPointExcludeOuter(idx,globaldata)
+                if ptX != False and ptY != False:
+                    text_file.writelines(["%s %s " % (ptX,ptY)])
+                    text_file.writelines("\n")
+        text_file.writelines("1000 1000\n")
+
+def refineCustom(globaldata):
+    res = input("Enter the Point Types delimited by space you want to refine: ")
+    if len(res) > 0:
+        res = list(map(int,res.split(" ")))
+        with open("adapted.txt", "a+") as text_file:
+            for idx,_ in enumerate(globaldata):
+                if idx > 0:
+                    flag = getFlag(idx, globaldata)
+                    if flag in res:
+                        ptX,ptY = getPointExcludeOuter(idx,globaldata)
+                        if ptX != False and ptY != False:
+                            text_file.writelines(["%s %s " % (ptX,ptY)])
+                            text_file.writelines("\n")
+            text_file.writelines("1000 1000\n")
+
+
+def oldMode(globaldata):
+    globaldata.pop(0)
+    with open("preprocessorfile_oldmode.txt", "w") as text_file:
+        for item1 in globaldata:
+            item1.pop(14)
+            item1.pop(14)
+            item1.pop(14)
+            item1.pop(14)
+            item1.pop(14)
+            text_file.writelines(["%s " % item for item in item1])
+            text_file.writelines("\n") 
+
+def printBadness(val, globaldata):
+    for idx,_ in enumerate(globaldata):
+        if idx > 0:
+            flag = getFlag(idx,globaldata)
+            if flag == 1:
+                xpos,xneg,ypos,yneg = getFlags(idx,globaldata)
+                if xpos == val or xneg == val or ypos == val or yneg == val:
+                    print(idx)
+
+def splitWrite(globaldata):
+    outer = []
+    inter = []
+    wall = []
+    for idx in range(len(globaldata)):
+        if idx > 0:
+            flag = getFlag(idx,globaldata)
+            ptx,pty = getPoint(idx,globaldata)
+            if flag == 0:
+                wall.append((ptx,pty))
+            elif flag == 1:
+                inter.append((ptx,pty))
+            elif flag == 2:
+                outer.append((ptx,pty))
+    with open("outerpts.txt", "w") as text_file:
+        for itm in outer:
+            text_file.writelines(["%s %s " % (itm[0],itm[1])])
+            text_file.writelines("\n")
+    with open("interpts.txt", "w") as text_file:
+        for itm in inter:
+            text_file.writelines(["%s %s " % (itm[0],itm[1])])
+            text_file.writelines("\n")
+    with open("wallpts.txt", "w") as text_file:
+        for itm in wall:
+            text_file.writelines(["%s %s " % (itm[0],itm[1])])
+            text_file.writelines("\n")
+
+def configManager():
+    while True:
+        clearScreen()
+        configData = config.load_obj("config")
+        print("*******************************")
+        print("Current Configuration")
+        print("BSpline Condition Number: %s" % configData["bspline"]["threshold"])
+        print("Rechecker Condition Number: %s" % configData["rechecker"]["conditionValueThreshold"])
+        print("*******************************")
+        print("Type 'exit' to go back")
+        print("Type 'thres' to change threshold value (Normal and BSpline Only)")
+        print("Type 'thres!' to change threshold value")
+        ptidx = input("Awaiting Command: ")
+        if ptidx == 'thres':
+            thresholdval = int(input("Enter threshold value: "))
+            configData["bspline"]["threshold"] = thresholdval
+            configData["normalWall"]["conditionValueThreshold"] = thresholdval
+            config.save_obj(configData,"config")
+            clearScreen()
+            print("Updated Configuration")
+            sleep(1)
+            clearScreen()
+            break
+        elif ptidx == 'thres!':
+            thresholdval = int(input("Enter threshold value: "))
+            configData["bspline"]["threshold"] = thresholdval
+            configData["normalWall"]["conditionValueThreshold"] = thresholdval
+            configData["rechecker"]["conditionValueThreshold"] = thresholdval
+            configData["triangulate"]["leftright"]["wallThreshold"] = thresholdval
+            configData["triangulate"]["general"]["wallThreshold"] = thresholdval
+            config.save_obj(configData,"config")
+            clearScreen()
+            print("Updated Configuration")
+            sleep(1)
+            clearScreen()
+            break
+        elif ptidx == 'exit':
+            clearScreen()
+            print("Going back")
+            sleep(1)
+            clearScreen()
+            break
+        else:
+            clearScreen()
+            print("Invalid input going back")
+            sleep(1)
+            clearScreen()
+            break
+    return None
+
+def plotManager(globaldata, wallpoints):
+    while True:
+        clearScreen()
+        print("*******************************")
+        print("Plot Manager")
+        print("*******************************")
+        print("Type 'exit' to go back")
+        print("Type 'problem' to generate problematic points plot (1 Level)")
+        print("Type 'problem!' to generate problematic points plot (2 Level)")
+        print("Type 'sub' to create subplots")
+        ptidx = input("Awaiting Command: ")
+        if ptidx == 'problem':
+            problemPlot(globaldata, wallpoints)
+            sleep(1)
+            clearScreen()
+            break
+        elif ptidx == 'problem!':
+            problemPlot(globaldata, wallpoints, twoLevel=True)
+            sleep(1)
+            clearScreen()
+            break
+        elif ptidx == 'sub':
+            subPlot(globaldata, wallpoints) 
+            sleep(1)
+            clearScreen()
+            break
+        elif ptidx == 'exit':
+            clearScreen()
+            print("Going back")
+            sleep(1)
+            clearScreen()
+            break
+        else:
+            clearScreen()
+            print("Invalid input going back")
+            sleep(1)
+            clearScreen()
+            break
+    return None
+
+def clearScreen():
+    os.system('cls' if os.name == 'nt' else 'clear')
+
+def generateOutput(globaldata, wallPointArray, wallShapely):
+    numPts = len(globaldata) - 1
+    with open("preprocessorfile.poly", "w+") as the_file:
+        the_file.write("# Generated by QuadTree Mesh Solver\n\n")
+        the_file.write("{} 2 0 1\n".format(numPts))
+        geoidx = 0
+        segments = 0
+        for wallidx, itm in enumerate(wallPointArray):
+            the_file.write("# Shape {}\n".format(wallidx + 1))
+            for itm2 in itm:
+                wallx = float(itm2.split(",")[0])
+                wally = float(itm2.split(",")[1])
+                geoidx += 1
+                segments += 1
+                the_file.write("{} {} {} {}\n".format(geoidx, wallx, wally, (wallidx + 1)))
+        the_file.write("# Interior Points and Outer Points\n")
+        captureOuter = None
+        for i in range(geoidx + 1, len(globaldata)):
+            ptx, pty = getPoint(i, globaldata)
+            flag = getFlag(i, globaldata)
+            if flag == 2:
+                segments += 1
+                if captureOuter == None:
+                    captureOuter = i
+            the_file.write("{} {} {} {}\n".format(i, ptx, pty, flag + 100))
+        the_file.write("# Line Segments\n")
+        the_file.write("{} 1\n".format(segments))
+        the_file.write("# Wall Line Segments\n")    
+        segidx = 0    
+        wallPtIndices = getWallPointArrayIndex(globaldata)
+        for wallidxI, itm in enumerate(wallPtIndices):
+            for idx, wallidx in enumerate(itm):
+                if idx == len(itm) - 1:
+                    nextPt = itm[0]
+                else:
+                    nextPt = itm[idx + 1]
+                segidx += 1
+                the_file.write("{} {} {} {}\n".format(segidx, wallidx, nextPt, (wallidxI + 1)))
+        currPt = captureOuter
+        the_file.write("# Outer Line Segments\n")   
+        while True:
+            nextPt = getLeftPoint(currPt, globaldata)
+            segidx += 1
+            the_file.write("{} {} {} {}\n".format(segidx, currPt, nextPt, 102))
+            currPt = nextPt
+            if int(nextPt) == int(captureOuter):
+                break
+        the_file.write("{}\n".format(len(wallPointArray)))
+        holeidx = 0
+        the_file.write("# Holes\n")   
+        for itm in wallShapely:
+            holeidx += 1
+            avgpt = random_points_within(itm, 1)[0]
+            avgpt = list(avgpt.coords)[0]
+            the_file.write("{} {} {}\n".format(holeidx, avgpt[0], avgpt[1]))
+
+
+def random_points_within(poly, num_points):
+    min_x, min_y, max_x, max_y = poly.bounds
+
+    points = []
+
+    while len(points) < num_points:
+        random_point = Point([np.random.uniform(min_x, max_x), np.random.uniform(min_y, max_y)])
+        if (random_point.within(poly)):
+            points.append(random_point)
+
+    return points
+
+def subPlot(globaldata, wallpoints, noClean=False):
+    if noClean == False:
+        if os.path.isdir("plots"):
+            shutil.rmtree("plots")
+            os.mkdir("plots")
+        else:
+            os.mkdir("plots")
+    with open("plots/wall_combined", "w+") as the_file_main:
+        superidx = 0
+        for idx, itm in enumerate(wallpoints):
+            with open("plots/wall_{}".format(idx), "w+") as the_file:
+                for idx2, itm2 in enumerate(itm):
+                    superidx += 1
+                    pt = itm2.split(",")
+                    ptx = float(pt[0])
+                    pty = float(pt[1])
+                    the_file.write("{} {} {}\n".format(idx2 + 1, ptx, pty))
+                    the_file_main.write("{} {} {}\n".format(superidx, ptx, pty))
+    print("Generated Subplots")
+
+def problemPlot(globaldata, wallpoints, twoLevel=False):
+    conf = config.getConfig()
+    problemPts = []
+    finalPts = []
+    if os.path.isdir("plots"):
+        shutil.rmtree("plots")
+        os.mkdir("plots")
+    else:
+        os.mkdir("plots")
+    for idx, _ in enumerate(tqdm(globaldata)):
+        if idx > 0:
+            flag = getFlag(idx, globaldata)
+            if flag == 1:
+                if isConditionBad(idx, globaldata, True, conf):
+                    problemPts.append(idx)
+    for idx in problemPts:
+        finalPts += getNeighbours(idx, globaldata)
+        finalPts += [idx]
+    if twoLevel:
+        finalPts2 = []
+        for idx in finalPts:
+            finalPts2 += getNeighbours(idx, globaldata)
+            finalPts2 += [idx]
+    finalPts = list(set(finalPts2))
+    with open("plots/problem_plot", "w+") as the_file_main:
+        for idx in finalPts:
+            flag = getFlag(idx, globaldata)
+            if flag != 0:
+                ptx, pty = getPoint(idx, globaldata)
+                the_file_main.write("{} {} {}\n".format(idx, ptx, pty))
+    subPlot(globaldata, wallpoints, noClean=True)
+    print("Generated Problem Plot")
+
+def getNearestProblemPoint(idx,globaldata, conf):
+    xpos = getDWallXPosPoints(idx,globaldata, conf)
+    xneg = getDWallXNegPoints(idx,globaldata, conf)
+    leftright = getLeftandRightPoint(idx,globaldata)
+    mainptx,mainpty = getPoint(idx,globaldata)
+    mainpt = (mainptx,mainpty)
+    currang = 0
+    currpt = 0
+    if len(xpos) == 1:
+        leftright.remove(xpos[0])
+        wallx = float(leftright[0].split(",")[0])
+        wally = float(leftright[0].split(",")[1])
+        wallpt = (wallx,wally)
+        for itm in xneg:
+            itmx = float(itm.split(",")[0])
+            itmy = float(itm.split(",")[1])
+            itmpt = (itmx,itmy)
+            try:
+                angitm = angle(wallx,wally,mainptx,mainpty,itmx,itmy)
+            except:
+                print(wallx,wally,mainptx,mainpty,itmx,itmy)
+            if currang < angitm:
+                curang = angitm
+                currpt = itm
+    if len(xneg) == 1:
+        leftright.remove(xneg[0])
+        wallx = float(leftright[0].split(",")[0])
+        wally = float(leftright[0].split(",")[1])
+        wallpt = (wallx,wally)
+        for itm in xpos:
+            itmx = float(itm.split(",")[0])
+            itmy = float(itm.split(",")[1])
+            itmpt = (itmx,itmy)
+            try:
+                angitm = angle(wallx,wally,mainptx,mainpty,itmx,itmy)
+            except:
+                print(wallx,wally,mainptx,mainpty,itmx,itmy)
+            if currang < angitm:
+                curang = angitm
+                currpt = itm
+    return currpt
+
+def interiorConnectivityCheck(globaldata):
+    conf = config.getConfig()
+    for idx,_ in enumerate(tqdm(globaldata)):
+        if idx > 0:
+            flag = getFlag(idx,globaldata)
+            if flag == 1:
+                # checkConditionNumber(idx,globaldata,int(config.getConfig()["bspline"]["threshold"]))
+                isConditionBad(idx,globaldata,True, conf)
+
+def sparseNullifier(globaldata):
+    madechanges = False
+    sensorBox = []
+    conf = config.getConfig()
+    for idx,_ in enumerate(globaldata):
+        if idx > 0:
+            flag = getFlag(idx,globaldata)
+            if flag == 0:
+                xpos,xneg,_,_ = getFlags(idx,globaldata)
+                if xpos == 1:
+                    getXposPoints = getDWallXPosPoints(idx,globaldata, conf)
+                    for itm in getXposPoints:
+                        index = getIndexFromPoint(itm,globaldata)
+                        flag = getFlag(index,globaldata)
+                        if flag == 0:
+                            madechanges = True
+                            sensorBox.append(index)
+                if xneg == 1:
+                    getXnegPoints = getDWallXNegPoints(idx,globaldata, conf)
+                    for itm in getXnegPoints:
+                        index = getIndexFromPoint(itm,globaldata)
+                        flag = getFlag(index,globaldata)
+                        if flag == 0:
+                            madechanges = True
+                            sensorBox.append(index)
+    if madechanges == True:
+        with open("sensor_flag.dat", "w") as text_file:
+            for idx,itm in enumerate(globaldata):
+                if idx > 0:
+                    if idx in sensorBox:
+                        text_file.writelines("  " + str(idx) + "  1\n")
+                    else:
+                        text_file.writelines("  " + str(idx) + "  0\n")
+                   
+def wallConnectivityCheckNearest(globaldata):
+    madechanges = False
+    conf = config.getConfig()
+    for idx,_ in enumerate(globaldata):
+        if idx > 0:
+            flag = getFlag(idx,globaldata)
+            if flag == 0:
+                xpos,xneg,_,_ = getFlags(idx,globaldata)
+                if xpos == 1 or xneg == 1:
+                    print(idx) 
+                    madechanges = True
+                    ptcord = getNearestProblemPoint(idx,globaldata, conf)
+                    if ptcord != 0:
+                        ptcordx = float(ptcord.split(",")[0])
+                        ptcordy = float(ptcord.split(",")[1])
+                    with open("adapted.txt", "a+") as text_file:
+                        text_file.writelines(["%s %s " % (ptcordx, ptcordy)])
+                        text_file.writelines("\n")
+    if madechanges == True:
+        with open("adapted.txt", "a+") as text_file:
+            text_file.writelines("1000 1000\n")   
+
+def wallConnectivityCheckSensor(globaldata):
+    madechanges = False
+    sensorBox = []
+    for idx,_ in enumerate(globaldata):
+        if idx > 0:
+            flag = getFlag(idx,globaldata)
+            if flag == 0:
+                xpos,xneg,_,_ = getFlags(idx,globaldata)
+                if xpos == 1 or xneg == 1:
+                    print(idx) 
+                    madechanges = True
+                    sensorBox.append(idx)
+    if madechanges == True:
+        with open("sensor_flag.dat", "w") as text_file:
+            for idx,itm in enumerate(globaldata):
+                if idx > 0:
+                    if idx in sensorBox:
+                        text_file.writelines("  " + str(idx) + "  1\n")
+                    else:
+                        text_file.writelines("  " + str(idx) + "  0\n")
+
+def wallConnectivityCheck(globaldata, verbose=False):
+    madechanges = False
+    for idx,_ in enumerate(globaldata):
+        if idx > 0:
+            flag = getFlag(idx,globaldata)
+            if flag == 0:
+                xpos,xneg,_,_ = getFlags(idx,globaldata)
+                if xpos == 1 or xneg == 1:
+                    print(idx) 
+                    if not verbose:
+                        madechanges = True
+                        ptcordx, ptcordy = getPoint(idx,globaldata)
+                        with open("adapted.txt", "a+") as text_file:
+                            text_file.writelines(["%s %s " % (ptcordx, ptcordy)])
+                            text_file.writelines("\n")
+    if madechanges == True:
+        with open("adapted.txt", "a+") as text_file:
+            text_file.writelines("1000 1000\n")
+
+def findAverageWallDistance(globaldata,wallpoints):
+    result = {"max":0,"min":100000000,"total":0,"sum":0,"avg":0}
+    flat_list = (item for sublist in wallpoints for item in sublist)
+    flat_list = tuple(map(int,flat_list))
+    for idx,_ in enumerate(globaldata):
+        if idx > 0:
+            nbhs = tuple(getNeighbours(idx,globaldata))
+            nbhs = tuple(map(int,nbhs))
+            nbhs = set(nbhs).intersection(set(flat_list))
+            for itm in nbhs:
+                dist = getDistance(idx,itm,globaldata)
+                result["total"] = result["total"] + 1
+                result["sum"] = result["sum"] + dist
+                if dist < result["min"]:
+                    result["min"] = dist
+                if dist > result["max"]:
+                    result["max"] = dist
+    result["avg"] = result["sum"] / result["total"]
+    return result

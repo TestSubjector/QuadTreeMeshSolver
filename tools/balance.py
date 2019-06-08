@@ -1,9 +1,13 @@
-import core
 import inspect
 import collections
 from config import getConfig
 import connectivity
 from tqdm import tqdm
+import sys
+import os
+
+sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), os.pardir))
+from core import core
 
 def triangleBalance(globaldata,polygonData,wallpoints,idx):
     if idx > 0:

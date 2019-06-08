@@ -1,4 +1,3 @@
-import core
 import argparse
 import connectivity
 from shapely.geometry import MultiPoint
@@ -9,6 +8,11 @@ log = logging.getLogger(__name__)
 log.addHandler(logging.StreamHandler())
 from tqdm import tqdm
 import numpy as np
+import sys
+import os
+
+sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), os.pardir))
+from core import core
 
 def main():
     # Command Line Arguments
