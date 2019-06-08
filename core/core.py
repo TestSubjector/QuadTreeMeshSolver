@@ -2494,3 +2494,12 @@ def findAverageWallDistance(globaldata,wallpoints):
                     result["max"] = dist
     result["avg"] = result["sum"] / result["total"]
     return result
+
+def getAverageDistances(globaldata):
+    interior,wall,interiortot,walltot = 0,0,0,0
+    for idx,_ in enumerate(globaldata):
+        if idx > 0:
+            flag = int(getFlag(idx,globaldata))
+            if flag == 0:
+                cordpt = getPointxy(idx,globaldata)
+                leftright = getLeftandRightPoint()
