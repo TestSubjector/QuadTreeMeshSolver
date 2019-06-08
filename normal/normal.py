@@ -1,5 +1,4 @@
 import argparse
-import core
 import copy
 import logging
 import config
@@ -9,6 +8,11 @@ import itertools
 log = logging.getLogger(__name__)
 log.addHandler(logging.StreamHandler())
 from tqdm import tqdm
+import sys
+import os
+
+sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), os.pardir))
+from core import core
 
 def main():
     # Command Line Arguments
@@ -21,6 +25,8 @@ def main():
     log.debug(args)
 
     globaldata = config.getKeyVal("globaldata")
+
+    configData = config.getConfig()
 
     if globaldata == None:
 
@@ -42,13 +48,13 @@ def main():
     else:
         globaldata.insert(0,"start")
     
-    pseudoPts = core.inflatedWallPolygon(globaldata,float(config.getConfig()["normalWall"]["inflatedPolygonDistance"]))
+    pseudoPts = core.inflatedWallPolygon(globaldata,float(configData["normalWall"]["inflatedPolygonDistance"]), configData)
     log.info("Found " + str(len(pseudoPts)) + " pseudo points")
 
     globaldata = core.setNormals(pseudoPts,globaldata)
 
     for _,idx in enumerate(pseudoPts):
-        core.checkConditionNumberLogger(idx,globaldata,float(config.getConfig()["normalWall"]["conditionValueThreshold"]))
+        core.checkConditionNumberLogger(idx,globaldata,float(configData["normalWall"]["conditionValueThreshold"]))
 
     f = open("history.txt","a+")
     f.write("\n ====== \n")

@@ -7,9 +7,12 @@ from shapely.ops import linemerge, unary_union, polygonize, nearest_points
 import shapely
 import config
 from scipy import spatial
+import scipy.interpolate as si
+from scipy.interpolate import splprep, splev
+import matplotlib.pyplot as plt
 import logging
 import itertools
-import bsplinegen
+import pickle
 import json
 import time
 log = logging.getLogger(__name__)
@@ -83,41 +86,6 @@ def convertIndexToPoints(indexarray, globaldata):
         ptx, pty = getPoint(item, globaldata)
         ptlist.append((str(ptx) + "," + str(pty)))
     return ptlist
-
-
-def weightedConditionValueForSetOfPoints(index, globaldata, points, configData):
-    index = int(index)
-    mainptx = float(globaldata[index][1])
-    mainpty = float(globaldata[index][2])
-    deltaSumXX = 0
-    deltaSumYY = 0
-    deltaSumXY = 0
-    data = []
-    nbhs = points
-    for nbhitem in nbhs:
-        nbhitemX = float(nbhitem.split(",")[0])
-        nbhitemY = float(nbhitem.split(",")[1])
-        deltaX = nbhitemX - mainptx
-        deltaY = nbhitemY - mainpty
-        d = math.sqrt(deltaX ** 2 + deltaY ** 2)
-        if d == 0:
-            continue
-        power = int(configData["global"]["weightCondition"])
-        w = d ** power
-        deltaSumXX = deltaSumXX + w * (deltaX ** 2)
-        deltaSumYY = deltaSumYY + w * (deltaY ** 2)
-        deltaSumXY = deltaSumXY + w * (deltaX) * (deltaY)
-    data.append(deltaSumXX)
-    data.append(deltaSumXY)
-    data.append(deltaSumXY)
-    data.append(deltaSumYY)
-    random = np.array(data)
-    shape = (2, 2)
-    random = random.reshape(shape)
-    s = np.linalg.svd(random, full_matrices=False, compute_uv=False)
-    s = max(s) / min(s)
-    return s
-
 
 def deltaX(xcord, orgxcord):
     return float(orgxcord - xcord)
@@ -296,6 +264,32 @@ def checkConditionNumberWall(index, globaldata, threshold, configData):
             yneg,
         )
 
+def checkConditionNumberLogger(index, globaldata, threshold):
+    xpos = getWeightedInteriorConditionValueofXPos(index, globaldata)
+    xneg = getWeightedInteriorConditionValueofXNeg(index, globaldata)
+    ypos = getWeightedInteriorConditionValueofYPos(index, globaldata)
+    yneg = getWeightedInteriorConditionValueofYNeg(index, globaldata)
+    dSPointXPos = getDXPosPoints(index, globaldata)
+    dSPointXNeg = getDXNegPoints(index, globaldata)
+    dSPointYPos = getDYPosPoints(index, globaldata)
+    dSPointYNeg = getDYNegPoints(index, globaldata)
+    if (
+        xneg > threshold
+        or len(dSPointXNeg) < 2 or len(dSPointXPos) < 2 or len(dSPointYNeg) < 2 or len(dSPointYPos) < 2 
+        or math.isnan(xneg)
+        or xpos > threshold
+        or math.isnan(xpos)
+        or ypos > threshold
+        or math.isnan(ypos)
+        or yneg > threshold
+        or math.isnan(yneg)
+    ):
+        f = open("History.txt","a+")
+        f.write(str(index) + " " + str(len(dSPointXPos)) + " " + str(xpos) + " " + str(len(dSPointXNeg)) + " " + str(xneg) + " " + str(len(dSPointYPos)) + " " + str(ypos) + " " + str(len(dSPointYNeg)) + " " + str(yneg))
+        f.close
+        return True
+    else:
+        return False
 
 def cleanNeighbours(globaldata):
     log.info("Beginning Duplicate Neighbour Detection")
@@ -567,6 +561,93 @@ def weightedConditionValueForSetOfPointsNormalWithInputs(index, globaldata, nbh,
     s = np.linalg.svd(random, full_matrices=False, compute_uv=False)
     s = max(s) / min(s)
     return s
+
+def weightedConditionValueForSetOfPointsNormal(index, globaldata, nbh):
+    nx,ny = normalCalculation(index,globaldata,True)
+    mainptx = float(globaldata[index][1])
+    mainpty = float(globaldata[index][2])
+    nx = float(nx)
+    ny = float(ny)
+    tx = float(ny)
+    ty = -float(nx)
+    deltaSumS = 0
+    deltaSumN = 0
+    deltaSumSN = 0
+    data = []
+    for nbhitem in nbh:
+        nbhitemX = float(nbhitem.split(",")[0])
+        nbhitemY = float(nbhitem.split(",")[1])
+        deltaS = (tx * (nbhitemX - mainptx)) + (ty * (nbhitemY - mainpty))
+        deltaN = (nx * (nbhitemX - mainptx)) + (ny * (nbhitemY - mainpty))
+        d = math.sqrt(deltaS ** 2 + deltaN ** 2)
+        if d == 0:
+            continue
+        power = int(config.getConfig()["global"]["weightCondition"])
+        w = d ** power
+        deltaSumS = deltaSumS + w * (deltaS) ** 2
+        deltaSumN = deltaSumN + w * (deltaN) ** 2
+        deltaSumSN = deltaSumSN + w * (deltaS) * (deltaN)
+    data.append(deltaSumS)
+    data.append(deltaSumSN)
+    data.append(deltaSumSN)
+    data.append(deltaSumN)
+    random = np.array(data)
+    shape = (2, 2)
+    random = random.reshape(shape)
+    s = np.linalg.svd(random, full_matrices=False, compute_uv=False)
+    s = max(s) / min(s)
+    return s
+
+def weightedConditionValueForSetOfPoints(index, globaldata, points, configData):
+    index = int(index)
+    mainptx = float(globaldata[index][1])
+    mainpty = float(globaldata[index][2])
+    deltaSumXX = 0
+    deltaSumYY = 0
+    deltaSumXY = 0
+    data = []
+    nbhs = points
+    for nbhitem in nbhs:
+        nbhitemX = float(nbhitem.split(",")[0])
+        nbhitemY = float(nbhitem.split(",")[1])
+        deltaX = nbhitemX - mainptx
+        deltaY = nbhitemY - mainpty
+        d = math.sqrt(deltaX ** 2 + deltaY ** 2)
+        if d == 0:
+            continue
+        power = int(configData["global"]["weightCondition"])
+        w = d ** power
+        deltaSumXX = deltaSumXX + w * (deltaX ** 2)
+        deltaSumYY = deltaSumYY + w * (deltaY ** 2)
+        deltaSumXY = deltaSumXY + w * (deltaX) * (deltaY)
+    data.append(deltaSumXX)
+    data.append(deltaSumXY)
+    data.append(deltaSumXY)
+    data.append(deltaSumYY)
+    random = np.array(data)
+    shape = (2, 2)
+    random = random.reshape(shape)
+    s = np.linalg.svd(random, full_matrices=False, compute_uv=False)
+    s = max(s) / min(s)
+    return s
+
+def getWeightedNormalConditionValueofWallXPos(index, globaldata):
+    nbhs = convertIndexToPoints(getNeighbours(index, globaldata), globaldata)
+    nx,ny = normalCalculation(index,globaldata,True)
+    _, _, _, mypoints = deltaWallNeighbourCalculation(index,
+        nbhs,nx,ny, True, globaldata
+    )
+    return weightedConditionValueForSetOfPointsNormal(index, globaldata, mypoints)
+
+
+def getWeightedNormalConditionValueofWallXNeg(index, globaldata):
+    nbhs = convertIndexToPoints(getNeighbours(index, globaldata), globaldata)
+    nx,ny = normalCalculation(index,globaldata,True)
+    _, _, _, mypoints = deltaWallNeighbourCalculation(index,
+        nbhs,nx,ny, False, globaldata
+    )
+    return weightedConditionValueForSetOfPointsNormal(index, globaldata, mypoints)
+
 
 def setFlags(index, globaldata, threshold, configData):
     dxpos = getWeightedInteriorConditionValueofXPos(index, globaldata, configData)
@@ -1401,3 +1482,130 @@ def convertToSuperNicePoints(quadrant,data):
         else:
             None
     return finallist
+
+def inflatedWallPolygon(globaldata, dist, configData):
+    log.info("Creating Inflated Wall Point")
+    wallpoints = getWallPointArrayIndex(globaldata)
+    inflatedWallSet = []
+    for itm in wallpoints:
+        inflatedWall = []
+        for itm2 in itm:
+            idx = itm2
+            orgWallpt = getPointxy(idx, globaldata)
+            nx, ny = normalCalculation(idx, globaldata, True)
+            orgWallptx = float(orgWallpt.split(",")[0])
+            orgWallpty = float(orgWallpt.split(",")[1])
+            normalVector = np.array([nx, ny])
+            orgVector = np.array([orgWallptx, orgWallpty])
+            newWallpt = orgVector + dist * normalVector
+            newWallpt = tuple(newWallpt.tolist())
+            inflatedWall.append(newWallpt)
+        lastpt = itm[0]
+        lastptx,lastpty = getPoint(lastpt,globaldata)
+        newpt = (lastptx, lastpty)
+        inflatedWall.pop(0)
+        inflatedWall.insert(0, newpt)
+        inflatedwallpointGeo = Polygon(inflatedWall)
+        inflatedWallSet.append(inflatedwallpointGeo)
+    log.info("Checking for Pseudo Wall Points")
+    pseudopts = []
+    for idx,_ in enumerate(globaldata):
+        if idx > 0:
+            flag = getFlag(idx,globaldata)
+            if flag == 1:
+                itmval = convertPointToShapelyPoint(convertIndexToPoints([idx], globaldata))[0]
+                interiorpoint = Point(itmval)
+                for itm in inflatedWallSet:
+                    if itm.contains(interiorpoint):
+                        if checkConditionNumber(idx,globaldata,float(configData["normalWall"]["conditionValueThreshold"]), configData):
+                            pseudopts.append(idx)
+    return pseudopts
+
+def setNormals(pseudopts,globaldata):
+    log.info("Calculating Nearest Neighbours")
+    wallptData = getWallPointArray(globaldata)
+    wallptDataOr = wallptData
+    wallptData = flattenList(wallptData)
+
+    pseudoptDict = {}
+
+    for idx2,idx in enumerate(tqdm(pseudopts)):
+        ptList = findNearestNeighbourWallPoints(idx,globaldata,wallptData,wallptDataOr)
+        ptListIndex = convertPointsToIndex(ptList,globaldata)
+        pseudoptDict[idx] = ptListIndex
+
+    log.info("Average Normal Method")
+
+    for idx in pseudopts[:]:
+        ptListIndex = pseudoptDict[idx]
+        nxavg,nyavg = 0,0
+        for itm in ptListIndex:
+            nx,ny = normalCalculation(itm,globaldata,True)
+            nxavg = nxavg + nx
+            nyavg = nyavg + ny
+        nxavg = nxavg / 2
+        nyavg = nyavg / 2
+
+        condResult = calculateNormalConditionValues(idx,globaldata,nxavg,nyavg)
+
+        dSPosNbhs,dSNegNbhs,dNPosNbhs,dNNegNbhs = condResult["spos"], condResult["sneg"], condResult["npos"], condResult["nneg"]
+        dSPosCondition,dSNegCondition,dNPosCondition,dNNegCondition = condResult["sposCond"], condResult["snegCond"], condResult["nposCond"], condResult["nnegCond"]
+
+        checkConditionNumber(idx,globaldata,float(config.getConfig()["normalWall"]["conditionValueThreshold"]))
+
+        print(idx,len(dSPosNbhs),dSPosCondition,len(dSNegNbhs),dSNegCondition,len(dNPosNbhs),dNPosCondition,len(dNNegNbhs),dNNegCondition)
+        
+        maxCond = max(dSPosCondition,dSNegCondition,dNPosCondition,dNNegCondition)
+        if maxCond > float(config.getConfig()["normalWall"]["conditionValueThreshold"]) or math.isnan(dSPosCondition) or math.isnan(dSNegCondition) or math.isnan(dNPosCondition) or math.isnan(dNNegCondition):
+            None
+        else:
+            globaldata = updateNormals(idx,globaldata,nxavg,nyavg)
+            pseudopts.remove(idx)
+
+    log.info("Left Normal Method")
+
+    for idx in pseudopts[:]:
+        ptListIndex = pseudoptDict[idx]
+        nxavg,nyavg = normalCalculation(ptListIndex[0],globaldata,True)
+
+        condResult = calculateNormalConditionValues(idx,globaldata,nxavg,nyavg)
+
+        dSPosNbhs,dSNegNbhs,dNPosNbhs,dNNegNbhs = condResult["spos"], condResult["sneg"], condResult["npos"], condResult["nneg"]
+        dSPosCondition,dSNegCondition,dNPosCondition,dNNegCondition = condResult["sposCond"], condResult["snegCond"], condResult["nposCond"], condResult["nnegCond"]
+
+        checkConditionNumber(idx,globaldata,float(config.getConfig()["normalWall"]["conditionValueThreshold"]))
+
+        print(idx,len(dSPosNbhs),dSPosCondition,len(dSNegNbhs),dSNegCondition,len(dNPosNbhs),dNPosCondition,len(dNNegNbhs),dNNegCondition)
+        
+        maxCond = max(dSPosCondition,dSNegCondition,dNPosCondition,dNNegCondition)
+        if maxCond > float(config.getConfig()["normalWall"]["conditionValueThreshold"]) or math.isnan(dSPosCondition) or math.isnan(dSNegCondition) or math.isnan(dNPosCondition) or math.isnan(dNNegCondition):
+            None
+        else:
+            globaldata = updateNormals(idx,globaldata,nxavg,nyavg)
+            pseudopts.remove(idx)
+
+    log.info("Right Normal Method")
+
+    for idx in pseudopts[:]:
+        ptListIndex = pseudoptDict[idx]
+        nxavg,nyavg = normalCalculation(ptListIndex[1],globaldata,True)
+
+        condResult = calculateNormalConditionValues(idx,globaldata,nxavg,nyavg)
+
+        dSPosNbhs,dSNegNbhs,dNPosNbhs,dNNegNbhs = condResult["spos"], condResult["sneg"], condResult["npos"], condResult["nneg"]
+        dSPosCondition,dSNegCondition,dNPosCondition,dNNegCondition = condResult["sposCond"], condResult["snegCond"], condResult["nposCond"], condResult["nnegCond"]
+
+        checkConditionNumber(idx,globaldata,float(config.getConfig()["normalWall"]["conditionValueThreshold"]))
+
+        print(idx,len(dSPosNbhs),dSPosCondition,len(dSNegNbhs),dSNegCondition,len(dNPosNbhs),dNPosCondition,len(dNNegNbhs),dNNegCondition)
+        
+        maxCond = max(dSPosCondition,dSNegCondition,dNPosCondition,dNNegCondition)
+        if maxCond > float(config.getConfig()["normalWall"]["conditionValueThreshold"]) or math.isnan(dSPosCondition) or math.isnan(dSNegCondition) or math.isnan(dNPosCondition) or math.isnan(dNNegCondition):
+            None
+        else:
+            globaldata = updateNormals(idx,globaldata,nxavg,nyavg)
+            pseudopts.remove(idx)
+
+    print(len(pseudopts))
+
+    return globaldata
