@@ -1,30 +1,14 @@
 import numpy as np
-import math
+import os, errno, multiprocessing, math, logging, itertools, json, time, re, shutil, config
 import shapely.geometry
-from shapely.geometry import Polygon, Point
 from shapely.ops import linemerge, unary_union, polygonize
 import shapely
-import config
-from scipy import spatial
-from scipy.interpolate import splprep, splev
-import matplotlib.pyplot as plt
-import logging
-import itertools
-import pickle
-import json
-import time
 log = logging.getLogger(__name__)
 log.addHandler(logging.StreamHandler())
 from tqdm import tqdm
-import os
-import errno
-import multiprocessing
 from multiprocessing.pool import ThreadPool
-import re
 from collections import Counter
 from time import sleep
-import shutil
-import config
 
 def appendNeighbours(index, globaldata, newpts):
     pt = getIndexFromPoint(newpts, globaldata)
@@ -757,7 +741,7 @@ def isNonAeroDynamic(index, cordpt, globaldata, wallData):
     if len(wallData) == 0:
         return False
     
-    if isinstance(wallData[0], Polygon):
+    if isinstance(wallData[0], shapely.geometry.Polygon):
         return nonAeroDynamicPolygonHelper(line, wallData)
     else:
         return nonAeroDynamicPointHelper(line, wallData)
@@ -1333,7 +1317,7 @@ def angle(x1, y1, x2, y2, x3, y3):
     bc = c - b
 
     cosine_angle = np.dot(ba, bc) / (np.linalg.norm(ba) * np.linalg.norm(bc))
-    angle = np.arccos(cosine_angle)
+    angle = math.acos(cosine_angle)
 
     return np.degrees(angle)
 
@@ -1566,12 +1550,12 @@ def nonAdaptWallPolygon(globaldata, wallpoints, dist, interiorpts, configData):
         newWallpt = tuple(newWallpt.tolist())
         inflatedWall.append(newWallpt)
     wallptsData = convertPointToShapelyPoint(wallpoints)
-    wallpointGeo = Polygon(wallptsData)
+    wallpointGeo = shapely.geometry.Polygon(wallptsData)
     lastpt = wallptsData[0]
     newpt = (lastpt[0] + dist, lastpt[1])
     inflatedWall.pop(0)
     inflatedWall.insert(0, newpt)
-    inflatedwallpointGeo = Polygon(inflatedWall)
+    inflatedwallpointGeo = shapely.geometry.Polygon(inflatedWall)
     print("Checking for Pseudo Points")
     # fig, ax = plt.subplots()
     # x1,y1 = wallpointGeo.exterior.xy
@@ -1588,7 +1572,7 @@ def nonAdaptWallPolygon(globaldata, wallpoints, dist, interiorpts, configData):
     # plt.show()
     for itm in interiorpts:
         itmval = convertPointToShapelyPoint(convertIndexToPoints([itm], globaldata))[0]
-        interiorpoint = Point(itmval)
+        interiorpoint = shapely.geometry.Point(itmval)
         if inflatedwallpointGeo.contains(interiorpoint):
             pseudopts.append(itm)
     print("Found", len(pseudopts), "points which aren't gonna be adapted!")
@@ -1602,10 +1586,10 @@ def createEdgeCircle(globaldata, edgePoints, dist, interiorpts):
     pseudopts = []
     for idx,edge in enumerate(edgePoints):
         ptx,pty = getPoint(edge,globaldata)
-        circle = Point(ptx,pty).buffer(dist[idx])
+        circle = shapely.geometry.Point(ptx,pty).buffer(dist[idx])
         for itm in interiorpts:
             itmval = convertPointToShapelyPoint(convertIndexToPoints([itm], globaldata))[0]
-            interiorpoint = Point(itmval)
+            interiorpoint = shapely.geometry.Point(itmval)
             if circle.contains(interiorpoint):
                 pseudopts.append(itm)
     print("Found", len(pseudopts), "points which aren't gonna be adapted!")
@@ -1655,7 +1639,7 @@ def inflatedWallPolygon(globaldata, dist, configData):
         newpt = (lastptx, lastpty)
         inflatedWall.pop(0)
         inflatedWall.insert(0, newpt)
-        inflatedwallpointGeo = Polygon(inflatedWall)
+        inflatedwallpointGeo = shapely.geometry.Polygon(inflatedWall)
         inflatedWallSet.append(inflatedwallpointGeo)
     log.info("Checking for Pseudo Wall Points")
     pseudopts = []
@@ -1664,7 +1648,7 @@ def inflatedWallPolygon(globaldata, dist, configData):
             flag = getFlag(idx,globaldata)
             if flag == 1:
                 itmval = convertPointToShapelyPoint(convertIndexToPoints([idx], globaldata))[0]
-                interiorpoint = Point(itmval)
+                interiorpoint = shapely.geometry.Point(itmval)
                 for itm in inflatedWallSet:
                     if itm.contains(interiorpoint):
                         if checkConditionNumber(idx,globaldata,float(configData["normalWall"]["conditionValueThreshold"]), configData):
@@ -1969,20 +1953,20 @@ def createBoxPolygon(wallpoints, configData):
         x = float(itm.split(",")[0])
         y = float(itm.split(",")[1])
         squareData = getSquarePlot(x,y,BOX_SIDE_SIZE)
-        squarePoly = Polygon(squareData)
+        squarePoly = shapely.geometry.Polygon(squareData)
         boxData.append(squarePoly)
     return boxData[:1]
 
 
-def findBoxAdaptPoints(globaldata,wallpoints):
-    boxPoly = createBoxPolygon(wallpoints)
+def findBoxAdaptPoints(globaldata,wallpoints, configData):
+    boxPoly = createBoxPolygon(wallpoints, configData)
     adaptPoints = []
     for idx,_ in enumerate(globaldata):
         if idx > 0:
             flag = getFlag(idx,globaldata)
             ptx,pty = getPoint(idx,globaldata)
             pt = (ptx,pty)
-            pt = Point(pt)
+            pt = shapely.geometry.Point(pt)
             for boxP in boxPoly:
                 if boxP.intersects(pt):
                     adaptPoints.append(idx)
@@ -1995,14 +1979,14 @@ def findGeneralBoxAdaptPoints(globaldata, configData):
     XRange = tuple(configData["box"]["XRange"])
     YRange = tuple(configData["box"]["YRange"])
     boxPoly = getBoxPlot(XRange,YRange)
-    boxPoly = Polygon(boxPoly)
+    boxPoly = shapely.geometry.Polygon(boxPoly)
     adaptPoints = []
     for idx,_ in enumerate(globaldata):
         if idx > 0:
             flag = getFlag(idx,globaldata)
             ptx,pty = getPoint(idx,globaldata)
             pt = (ptx,pty)
-            pt = Point(pt)
+            pt = shapely.geometry.Point(pt)
             if boxPoly.intersects(pt):
                 adaptPoints.append(idx)
     return adaptPoints
@@ -2292,7 +2276,7 @@ def random_points_within(poly, num_points):
     points = []
 
     while len(points) < num_points:
-        random_point = Point([np.random.uniform(min_x, max_x), np.random.uniform(min_y, max_y)])
+        random_point = shapely.geometry.Point([np.random.uniform(min_x, max_x), np.random.uniform(min_y, max_y)])
         if (random_point.within(poly)):
             points.append(random_point)
 
