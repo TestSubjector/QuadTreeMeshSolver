@@ -51,10 +51,10 @@ def main():
     pseudoPts = core.inflatedWallPolygon(globaldata,float(configData["normalWall"]["inflatedPolygonDistance"]), configData)
     log.info("Found " + str(len(pseudoPts)) + " pseudo points")
 
-    globaldata = core.setNormals(pseudoPts,globaldata)
+    globaldata = core.setNormals(pseudoPts, globaldata, configData)
 
     for _,idx in enumerate(pseudoPts):
-        core.checkConditionNumberLogger(idx,globaldata,float(configData["normalWall"]["conditionValueThreshold"]))
+        core.checkConditionNumberLogger(idx,globaldata,float(configData["normalWall"]["conditionValueThreshold"]), configData)
 
     f = open("history.txt","a+")
     f.write("\n ====== \n")

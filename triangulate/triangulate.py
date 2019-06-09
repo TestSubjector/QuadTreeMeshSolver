@@ -1,8 +1,6 @@
 import argparse
-from core import *
 import connectivity
 import balance
-import temp
 import logging
 from shapely.geometry import MultiPoint
 from shapely.ops import triangulate
@@ -10,6 +8,10 @@ log = logging.getLogger(__name__)
 log.addHandler(logging.StreamHandler())
 from tqdm import tqdm
 import config
+import sys, os
+
+sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), os.pardir))
+from core import core
 
 def main():
     # Command Line Arguments
@@ -45,29 +47,29 @@ def main():
     else:
         globaldata.insert(0,"start")
 
-    globaldata = cleanNeighbours(globaldata)
+    globaldata = core.cleanNeighbours(globaldata)
 
-    wallpts = getWallPointArray(globaldata)
+    wallpts = core.getWallPointArray(globaldata)
 
     algo1,algo2,algo3 = True,True,True
 
     if len(args.algorithm) == 3:
-        algo = list(map(str_to_bool,args.algorithm))
+        algo = list(map(core.str_to_bool,args.algorithm))
         algo1 = algo[0]
         algo2 = algo[1]
         algo3 = algo[2]
 
     # Removes Traces of Wall Points from the last wallpoint neighbours
 
-    lastWallPoints = getWallEndPoints(globaldata)
-    globaldata = cleanWallPointsSelectivity(globaldata, lastWallPoints)
+    lastWallPoints = core.getWallEndPoints(globaldata)
+    globaldata = core.cleanWallPointsSelectivity(globaldata, lastWallPoints)
 
     log.info("Generating Wall Polygons for Aerochecks")
-    wallpts = generateWallPolygons(wallpts)
+    wallpts = core.generateWallPolygons(wallpts)
     log.info("Detected " + str(len(wallpts)) + " geometry(s).")
     log.info("Wall Polygon Generation Complete")
     print("Deleting Unneeded Wall Points (Except Left and Right Points)")
-    globaldata = cleanWallPoints(globaldata)
+    globaldata = core.cleanWallPoints(globaldata)
     badPoints = []
 
     if algo1 == True:
@@ -76,7 +78,7 @@ def main():
 
         interiorpts = []
         interiorpts.extend(range(1, len(globaldata)))
-        interiorpts = convertPointToShapelyPoint(convertIndexToPoints(interiorpts,globaldata))
+        interiorpts = core.convertPointToShapelyPoint(core.convertIndexToPoints(interiorpts,globaldata))
         interiorpts = MultiPoint(interiorpts)
         interiortriangles = triangulate(interiorpts)
 
@@ -105,9 +107,9 @@ def main():
     # log.info("Writing Deletion Points")
     # problempts = findDeletionPoints(globaldata)
     
-    globaldata = cleanNeighbours(globaldata)
+    globaldata = core.cleanNeighbours(globaldata)
 
-    temp.writeConditionValuesForWall(globaldata, configData)
+    connectivity.writeConditionValuesForWall(globaldata, configData)
 
     globaldata.pop(0)
 
