@@ -17,7 +17,7 @@ def main():
 
     log.info("Loading Data")
 
-    globaldata = config.getKeyVal("globaldata")
+    globaldata = core.getKeyVal("globaldata")
 
     if globaldata != None:
 
@@ -53,7 +53,7 @@ def main():
 
     globaldata.pop(0)
 
-    config.setKeyVal("globaldata",globaldata)
+    core.setKeyVal("globaldata",globaldata)
 
     log.info("Writing file to disk")
 
@@ -68,11 +68,14 @@ if __name__ == "__main__":
     import os
     import json
     import logging.config
-    import config
+    import sys
+    sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), os.pardir))
+    from core import core
+    
 
     default_path='logging.json'
     path = default_path
-    level = config.getConfig()["global"]["logger"]["level"]
+    level = core.getConfig()["global"]["logger"]["level"]
 
     if level == "DEBUG":
         level = logging.DEBUG
@@ -88,7 +91,7 @@ if __name__ == "__main__":
     if os.path.exists(path):
         with open(path, 'rt') as f:
             config = json.load(f)
-        logging.config.dictConfig(config)
+        logging.core.dictConfig(config)
     else:
-        logging.basicConfig(level=level,filename=config.getConfig()["global"]["logger"]["logPath"],format="%(asctime)s %(name)s %(levelname)s: %(message)s", datefmt="%m/%d/%Y %I:%M:%S %p")
+        logging.basicConfig(level=level,filename=core.getConfig()["global"]["logger"]["logPath"],format="%(asctime)s %(name)s %(levelname)s: %(message)s", datefmt="%m/%d/%Y %I:%M:%S %p")
     main()

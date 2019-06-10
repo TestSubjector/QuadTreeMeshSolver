@@ -50,7 +50,7 @@ def main():
 
     globaldata = cleanNeighbours(globaldata)
     wallpoints = getWallPointArray(globaldata)
-    globaldata = addNewPoints(globaldata, removalFlags, int(config.getConfig()["remover"]["conditionValueAdditionThreshold"]), 1, wallpoints)
+    globaldata = addNewPoints(globaldata, removalFlags, int(core.getConfig()["remover"]["conditionValueAdditionThreshold"]), 1, wallpoints)
     globaldata = cleanNeighbours(globaldata)
 
     # The New Index (with bad points removed) || 5 --> 4
@@ -115,7 +115,7 @@ def main():
         if int(individiualPoint[5]) != 1:
             continue
         index = int(individiualPoint[0])
-        checkConditionNumber(index, newglobaldata, aliasArray, int(config.getConfig()["remover"]["conditionValueDeletionThreshold"]), problempts)
+        checkConditionNumber(index, newglobaldata, aliasArray, int(core.getConfig()["remover"]["conditionValueDeletionThreshold"]), problempts)
 
     print("***********************************")
     log.info("Writing Removal Points To File")
@@ -144,11 +144,14 @@ if __name__ == "__main__":
     import os
     import json
     import logging.config
-    import config
+    import sys
+    sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), os.pardir))
+    from core import core
+    
 
     default_path='logging.json'
     path = default_path
-    level = config.getConfig()["global"]["logger"]["level"]
+    level = core.getConfig()["global"]["logger"]["level"]
 
     if level == "DEBUG":
         level = logging.DEBUG
@@ -166,5 +169,5 @@ if __name__ == "__main__":
             config = json.load(f)
         logging.config.dictConfig(config)
     else:
-        logging.basicConfig(level=level,filename=config.getConfig()["global"]["logger"]["logPath"],format="%(asctime)s %(name)s %(levelname)s: %(message)s", datefmt="%m/%d/%Y %I:%M:%S %p")
+        logging.basicConfig(level=level,filename=core.getConfig()["global"]["logger"]["logPath"],format="%(asctime)s %(name)s %(levelname)s: %(message)s", datefmt="%m/%d/%Y %I:%M:%S %p")
     main()

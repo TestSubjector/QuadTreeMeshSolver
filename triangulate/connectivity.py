@@ -1,4 +1,3 @@
-from config import getConfig
 from tqdm import trange, tqdm
 import sys, os
 

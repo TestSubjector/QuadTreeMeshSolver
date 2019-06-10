@@ -1,7 +1,6 @@
 import argparse
 import copy
 import logging
-import config
 import numpy as np
 import math
 import itertools
@@ -24,9 +23,9 @@ def main():
     log.debug("Arguments")
     log.debug(args)
 
-    globaldata = config.getKeyVal("globaldata")
+    globaldata = core.getKeyVal("globaldata")
 
-    configData = config.getConfig()
+    configData = core.getConfig()
 
     if globaldata == None:
 
@@ -56,13 +55,9 @@ def main():
     for _,idx in enumerate(pseudoPts):
         core.checkConditionNumberLogger(idx,globaldata,float(configData["normalWall"]["conditionValueThreshold"]), configData)
 
-    f = open("history.txt","a+")
-    f.write("\n ====== \n")
-    f.close()
-
     globaldata.pop(0)
 
-    config.setKeyVal("globaldata",globaldata)
+    core.setKeyVal("globaldata",globaldata)
 
     with open("preprocessorfile_normal.txt", "w") as text_file:
         for item1 in globaldata:
@@ -78,11 +73,14 @@ if __name__ == "__main__":
     import os
     import json
     import logging.config
-    import config
+    import sys
+    sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), os.pardir))
+    from core import core
+    
 
     default_path='logging.json'
     path = default_path
-    level = config.getConfig()["global"]["logger"]["level"]
+    level = core.getConfig()["global"]["logger"]["level"]
 
     if level == "DEBUG":
         level = logging.DEBUG
@@ -100,5 +98,5 @@ if __name__ == "__main__":
             config = json.load(f)
         logging.config.dictConfig(config)
     else:
-        logging.basicConfig(level=level,filename=config.getConfig()["global"]["logger"]["logPath"],format="%(asctime)s %(name)s %(levelname)s: %(message)s", datefmt="%m/%d/%Y %I:%M:%S %p")
+        logging.basicConfig(level=level,filename=core.getConfig()["global"]["logger"]["logPath"],format="%(asctime)s %(name)s %(levelname)s: %(message)s", datefmt="%m/%d/%Y %I:%M:%S %p")
     main()

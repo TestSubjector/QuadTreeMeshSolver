@@ -8,10 +8,14 @@ import errno
 import multiprocessing
 from multiprocessing.pool import ThreadPool
 import time
-import config
+
 import logging
 log = logging.getLogger(__name__)
 log.addHandler(logging.StreamHandler())
+
+import sys
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), os.pardir))
+from core import core
 
 
 def silentRemove(filename):
@@ -313,7 +317,7 @@ def generateReplacement(hashtable, globaldata):
     coresavail = multiprocessing.cpu_count()
     log.info("Found " + str(coresavail) + " available core(s).")
     log.info("BOOSTU BOOSTU BOOSTU")
-    MAX_CORES = int(config.getConfig()["generator"]["maxCoresForReplacement"])
+    MAX_CORES = int(core.getConfig()["generator"]["maxCoresForReplacement"])
     log.info("Max Cores Allowed " + str(MAX_CORES))
     t1 = time.clock()
     pool = ThreadPool(min(MAX_CORES,coresavail))

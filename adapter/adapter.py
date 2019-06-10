@@ -5,13 +5,10 @@ from shapely.geometry import MultiPoint
 from shapely.geometry import Polygon as Polygon2
 import copy
 import numpy as np
-import config
-import bsplinegen
 import itertools
 from tqdm import tqdm
 import sys
 import os
-import config
 
 sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), os.pardir))
 from core import core
@@ -34,12 +31,10 @@ def main():
     derefine = []
     splitdata = data.split("\n")
     splitdata = splitdata[:-1]
-    outerpts = []
-    interiorpts = []
-    pseudopts = []
-    globaldata_main = ["start"]
 
     core.silentRemove("pseudopoints.txt")
+
+    configData = core.getConfig()
 
     for idx, itm in enumerate(tqdm(splitdata)):
         itm = itm.split(" ")
@@ -61,11 +56,11 @@ def main():
 
     # wallpts = adaptGetWallPointArray(globaldata_main)
     # for itm in wallpts:
-    #     pseudopts.extend(nonAdaptWallPolygon(globaldata_main, itm, float(config.getConfig()["global"]["nonAdaptRegion"]), generalpts))
+    #     pseudopts.extend(nonAdaptWallPolygon(globaldata_main, itm, float(configData["global"]["nonAdaptRegion"]), generalpts))
 
-    # edgePts = tuple(config.getConfig()["global"]["edgePoints"])
+    # edgePts = tuple(configData["global"]["edgePoints"])
 
-    # pseudopts.extend(createEdgeCircle(globaldata_main,edgePts,config.getConfig()["global"]["nonAdaptEdgePointRadius"],generalpts))
+    # pseudopts.extend(createEdgeCircle(globaldata_main,edgePts,configData["global"]["nonAdaptEdgePointRadius"],generalpts))
 
     # print("Freeze Points",len(pseudopts))
     print("Processed Pre-Processor File")
@@ -96,7 +91,7 @@ def main():
                 else:
                     wallidx = core.getIndexFromPoint(xycord,globaldata)
                     walldepth = core.getDepth(wallidx,globaldata)
-                    WALL_LIMIT = int(config.getConfig()["adapter"]["minWallAdaptDepth"])
+                    WALL_LIMIT = int(configData["adapter"]["minWallAdaptDepth"])
                     if walldepth >= WALL_LIMIT:
                         adaptwall.append([xcord, ycord])
                     else:
@@ -142,7 +137,7 @@ def main():
         splineList.append(splineData)
 
     try:
-        writingDict = dict(config.load_obj("wall"))
+        writingDict = dict(core.load_obj("wall"))
     except IOError:
         writingDict = {}
     # print(writingDict)
@@ -156,7 +151,7 @@ def main():
     print("Starting BSpline")
     for idx,itm in enumerate(tqdm(perPndList)): 
         data = splineList[idx]
-        newpts = bsplinegen.generateBSplineBetween(bsplineArray[int(data[3])],data[0],data[1],int(config.getConfig()["bspline"]["pointControl"]))
+        newpts = core.generateBSplineBetween(bsplineArray[int(data[3])],data[0],data[1],int(configData["bspline"]["pointControl"]))
         newpts = core.convertToSuperNicePoints(perPndList[idx],newpts)
         newpts = core.findNearestPoint(perPndList[idx][0],newpts)
         if newpts != False:
@@ -169,7 +164,7 @@ def main():
             additionPts.append([newpts])
         else:
             data = splineList[idx]
-            newpts = bsplinegen.generateBSplineBetween(bsplineArray[int(data[3])],data[1],data[2],int(config.getConfig()["bspline"]["pointControl"]))
+            newpts = core.generateBSplineBetween(bsplineArray[int(data[3])],data[1],data[2],int(configData["bspline"]["pointControl"]))
             newpts = core.convertToSuperNicePoints(perPndList[idx],newpts)
             newpts = core.findNearestPoint(perPndList[idx][0],newpts)
             if newpts != False:
@@ -181,7 +176,7 @@ def main():
                     writingDict[data[5]] = [newpts]
                 additionPts.append([newpts])
     additionPts = list(itertools.chain.from_iterable(additionPts))
-    config.save_obj(writingDict,"wall")
+    core.save_obj(writingDict,"wall")
 
     print("Writing adapted text")
 

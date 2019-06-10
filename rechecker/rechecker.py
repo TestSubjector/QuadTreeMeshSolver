@@ -1,6 +1,5 @@
 import argparse
 import copy
-import config
 import logging
 log = logging.getLogger(__name__)
 log.addHandler(logging.StreamHandler())
@@ -9,7 +8,6 @@ import os
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), os.pardir))
 from core import core
-import pyximport; pyximport.install(pyimport = True)
 
 def main():
     # Command Line Arguments
@@ -21,8 +19,8 @@ def main():
     log.debug("Arguments")
     log.debug(args)
 
-    globaldata = config.getKeyVal("globaldata")
-    configData = config.getConfig()
+    globaldata = core.getKeyVal("globaldata")
+    configData = core.getConfig()
 
     if globaldata == None:
 
@@ -49,7 +47,7 @@ def main():
     wallpoints = core.getWallPointArray(globaldata)
     wallpoints = core.convertToShapely(wallpoints)
 
-    configData = config.getConfig()
+    configData = core.getConfig()
 
     THRESHOLD = int(configData["rechecker"]["conditionValueThreshold"])
 
@@ -86,7 +84,7 @@ def main():
 
     globaldata.pop(0)
 
-    config.setKeyVal("globaldata",globaldata)
+    core.setKeyVal("globaldata",globaldata)
 
     with open("preprocessorfile_rechecker.txt", "w") as text_file:
         for item1 in globaldata:
@@ -101,11 +99,17 @@ if __name__ == "__main__":
     import os
     import json
     import logging.config
-    import config
+    import sys
+    sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), os.pardir))
+    from core import core
+    import sys
+    sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), os.pardir))
+    from core import core
+
 
     default_path='logging.json'
     path = default_path
-    level = config.getConfig()["global"]["logger"]["level"]
+    level = core.getConfig()["global"]["logger"]["level"]
 
     if level == "DEBUG":
         level = logging.DEBUG
@@ -123,5 +127,5 @@ if __name__ == "__main__":
             config = json.load(f)
         logging.config.dictConfig(config)
     else:
-        logging.basicConfig(level=level,filename=config.getConfig()["global"]["logger"]["logPath"],format="%(asctime)s %(name)s %(levelname)s: %(message)s", datefmt="%m/%d/%Y %I:%M:%S %p")
+        logging.basicConfig(level=level,filename=core.getConfig()["global"]["logger"]["logPath"],format="%(asctime)s %(name)s %(levelname)s: %(message)s", datefmt="%m/%d/%Y %I:%M:%S %p")
     main()

@@ -1,8 +1,6 @@
 import argparse
 import copy
 import logging
-import bsplinegen
-import config
 import numpy as np
 import math
 import itertools
@@ -31,7 +29,7 @@ def main():
     args = parser.parse_args()
     np.seterr(divide='ignore')
 
-    configData = config.getConfig()
+    configData = core.getConfig()
 
     diagnose = False
     if args.diagnose:
@@ -82,7 +80,7 @@ def main():
         log.info("Pseudo Distance is set to {}" .format(configData['bspline']['pseudoDist']))
 
     if cache:
-        globaldata = config.getKeyVal("globaldata")
+        globaldata = core.getKeyVal("globaldata")
     else:
         globaldata = None
 
@@ -134,16 +132,16 @@ def main():
         switch = False
         if configData["bspline"]["polygon"] == False:
             if configData["global"]["wallPointOrientation"] == "ccw":
-                newpts = bsplinegen.generateBSplineBetween(bsplineArray[data[2]],data[0],data[1],POINT_CONTROL)
+                newpts = core.generateBSplineBetween(bsplineArray[data[2]],data[0],data[1],POINT_CONTROL)
             else:
                 # print(bsplineArray[data[2]][data[1]],bsplineArray[data[2]][data[0]])
                 if data[0] == 0:
-                    newpts = bsplinegen.generateBSplineBetween(bsplineArray[data[2]],data[1],data[0],POINT_CONTROL)
+                    newpts = core.generateBSplineBetween(bsplineArray[data[2]],data[1],data[0],POINT_CONTROL)
                     switch = True
                 else:
-                    newpts = bsplinegen.generateBSplineBetween(bsplineArray[data[2]],data[0],data[1],POINT_CONTROL)
+                    newpts = core.generateBSplineBetween(bsplineArray[data[2]],data[0],data[1],POINT_CONTROL)
             if quadrantcheck:
-                newpts = bsplinegen.getPointsOnlyInQuadrant(newpts, badpts[idx], globaldata)
+                newpts = core.getPointsOnlyInQuadrant(newpts, badpts[idx], globaldata)
                 if len(newpts) == 0:
                     if not pseudocheck:
                         log.error("Error: Quadrant Check failed. No point exist.")
@@ -183,11 +181,14 @@ if __name__ == "__main__":
     import os
     import json
     import logging.config
-    import config
+    import sys
+    sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), os.pardir))
+    from core import core
+    
 
     default_path='logging.json'
     path = default_path
-    level = config.getConfig()["global"]["logger"]["level"]
+    level = core.getConfig()["global"]["logger"]["level"]
 
     if level == "DEBUG":
         level = logging.DEBUG
@@ -205,5 +206,5 @@ if __name__ == "__main__":
             config = json.load(f)
         logging.config.dictConfig(config)
     else:
-        logging.basicConfig(level=level,filename=config.getConfig()["global"]["logger"]["logPath"],format="%(asctime)s %(name)s %(levelname)s: %(message)s", datefmt="%m/%d/%Y %I:%M:%S %p")
+        logging.basicConfig(level=level,filename=core.getConfig()["global"]["logger"]["logPath"],format="%(asctime)s %(name)s %(levelname)s: %(message)s", datefmt="%m/%d/%Y %I:%M:%S %p")
     main()
