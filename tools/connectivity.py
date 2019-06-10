@@ -12,11 +12,11 @@ def connectivityCheck(globaldata, wallouter = True, interior = False):
         if(idx >0):
             if (core.getFlag(idx,globaldata) == 0 or core.getFlag(idx,globaldata) == 2) and wallouter == True:
                 result = connectivityCheckWallandOuterPoint(idx,globaldata, conf)
-                globaldata = core.setFlags(idx,globaldata,result)
+                globaldata = core.setFlagsFromList(idx,globaldata,result)
             else:
                 if interior == True:
                     result = connectivityCheckInteriorPoint(idx,globaldata, conf)
-                    globaldata = core.setFlags(idx,globaldata,result)
+                    globaldata = core.setFlagsFromList(idx,globaldata,result)
     return globaldata
 
 

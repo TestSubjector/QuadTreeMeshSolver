@@ -5,7 +5,6 @@ import math
 from scipy.interpolate import splprep, splev
 from scipy import spatial
 import config
-import core
 import sys
 import os
 

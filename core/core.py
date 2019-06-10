@@ -1048,7 +1048,7 @@ def findNearestNeighbourWallPoints(idx, globaldata, wallptData, shapelyWallData)
     if leastidx == -9999:
         log.error("Failed to find nearest wallpoint")
         exit()
-    ptsToCheck = convertIndexToPoints(getLeftandRightPoint(leastidx,globaldata),globaldata)
+    ptsToCheck = convertIndexToPoints(getLeftandRightPointIndex(leastidx,globaldata),globaldata)
 
     leastidx2 = -9999
     leastptx,leastpty = getPoint(leastidx,globaldata)
@@ -1114,7 +1114,7 @@ def findNearestNeighbourWallPointsManual(pt,globaldata,wallptData,wallptDataOr):
         if leastdt > ptDist:
             leastdt = ptDist
             leastidx = getIndexFromPoint(itm,globaldata)
-    ptsToCheck = convertIndexToPoints(getLeftandRightPoint(leastidx,globaldata),globaldata)
+    ptsToCheck = convertIndexToPoints(getLeftandRightPointIndex(leastidx,globaldata),globaldata)
     leastdt2,leastidx2 = 1000,1000
     leastptx,leastpty = getPoint(leastidx,globaldata)
     currangle = 1000
@@ -1232,6 +1232,15 @@ def distancePoint(x, y):
     bx = y[0]
     by = y[1]
     return math.sqrt((ax - bx)**2 + (ay - by)**2)
+
+def undelimitXY(a):
+    finallist = []
+    for itm in a:
+        cord = []
+        cord.append(float(itm.split(",")[0]))
+        cord.append(float(itm.split(",")[1]))
+        finallist.append(cord)
+    return finallist
 
 def findNearestPoint(ptAtt,splineArray):
     if len(splineArray) == 0:
@@ -1661,7 +1670,6 @@ def setNormals(pseudopts,globaldata, configData):
     wallptDataOr = wallptData
     wallptData = flattenList(wallptData)
     wallptDataOr = convertToShapely(wallptDataOr)
-
 
     pseudoptDict = {}
 
@@ -2456,7 +2464,7 @@ def wallConnectivityCheckSensor(globaldata):
                     sensorBox.append(idx)
     if madechanges == True:
         with open("sensor_flag.dat", "w") as text_file:
-            for idx,itm in enumerate(globaldata):
+            for idx,_ in enumerate(globaldata):
                 if idx > 0:
                     if idx in sensorBox:
                         text_file.writelines("  " + str(idx) + "  1\n")
@@ -2501,3 +2509,19 @@ def findAverageWallDistance(globaldata,wallpoints):
                     result["max"] = dist
     result["avg"] = result["sum"] / result["total"]
     return result
+
+def adaptGetWallPointArray(globaldata):
+    wallpointarray = []
+    startgeo = 0
+    newstuff = []
+    for idx,itm in enumerate(globaldata):
+        if idx > 0:
+            geoflag = int(itm[6])
+            if(startgeo == geoflag and getFlag(idx,globaldata) == 0):
+                newstuff.append(getPointxy(idx,globaldata))
+            if(startgeo != geoflag and getFlag(idx,globaldata) == 0):
+                newstuff = []
+                wallpointarray.append(newstuff)
+                newstuff.append(getPointxy(idx,globaldata))
+                startgeo = startgeo + 1
+    return wallpointarray

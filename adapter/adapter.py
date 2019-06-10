@@ -11,9 +11,10 @@ import itertools
 from tqdm import tqdm
 import sys
 import os
+import config
 
 sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), os.pardir))
-from core import *
+from core import core
 
 
 def main():
@@ -38,7 +39,7 @@ def main():
     pseudopts = []
     globaldata_main = ["start"]
 
-    silentRemove("pseudopoints.txt")
+    core.silentRemove("pseudopoints.txt")
 
     for idx, itm in enumerate(tqdm(splitdata)):
         itm = itm.split(" ")
@@ -46,8 +47,8 @@ def main():
         entry = itm
         globaldata.append(entry)
 
-    wallPoints = adaptGetWallPointArray(globaldata)
-    wallPointsFlatten = flattenList(wallPoints)
+    wallPoints = core.adaptGetWallPointArray(globaldata)
+    wallPointsFlatten = core.flattenList(wallPoints)
     
 
     # for idx, itm in enumerate(splitdata):
@@ -93,8 +94,8 @@ def main():
                 if xycord not in wallPointsFlatten:
                     adaptdata.append([xcord, ycord])
                 else:
-                    wallidx = getIndexFromPoint(xycord,globaldata)
-                    walldepth = getDepth(wallidx,globaldata)
+                    wallidx = core.getIndexFromPoint(xycord,globaldata)
+                    walldepth = core.getDepth(wallidx,globaldata)
                     WALL_LIMIT = int(config.getConfig()["adapter"]["minWallAdaptDepth"])
                     if walldepth >= WALL_LIMIT:
                         adaptwall.append([xcord, ycord])
@@ -114,10 +115,10 @@ def main():
     print("Finding mini quadrants")
 
     for idax,itm in enumerate(tqdm(adaptwall)):
-        idx = getIndexFromPoint(str(itm[0] + "," + str(itm[1])), globaldata)
-        perList = getPerpendicularPointsFromQuadrants(idx,globaldata)
+        idx = core.getIndexFromPoint(str(itm[0] + "," + str(itm[1])), globaldata)
+        perList = core.getPerpendicularPointsFromQuadrants(idx,globaldata)
         for itm in perList:
-            if quadrantContains(itm[1],itm[0]):
+            if core.quadrantContains(itm[1],itm[0]):
                 perPndList.append(itm)
             else:
                 print("Warning Quadrant Point Mismatch")
@@ -129,19 +130,19 @@ def main():
 
     for itm in perPndList:
         wallPointCord = itm[2]
-        wallPointCurrent = getIndexFromPointTuple(wallPointCord, globaldata)
-        leftRight = convertIndexToPoints(getLeftandRightPoint(wallPointCurrent,globaldata),globaldata)
+        wallPointCurrent = core.getIndexFromPointTuple(wallPointCord, globaldata)
+        leftRight = core.convertIndexToPoints(core.getLeftandRightPoint(wallPointCurrent,globaldata),globaldata)
         leftRight.insert(1,str(wallPointCord[0]) + "," + str(wallPointCord[1]))
         # print(leftRight)
         # nbhPts = findNearestNeighbourWallPointsManual(itm[0],globaldata,wallPointsFlatten,wallPoints)
         
-        splineData = feederData(leftRight,wallPoints)
+        splineData = core.feederData(leftRight,wallPoints)
         print(itm)
         # print(splineData)
         splineList.append(splineData)
 
     try:
-        writingDict = dict(load_obj("wall"))
+        writingDict = dict(config.load_obj("wall"))
     except IOError:
         writingDict = {}
     # print(writingDict)
@@ -150,16 +151,16 @@ def main():
     additionPts = []
 
     for itm in wallPoints:
-        bsplineData = np.array(undelimitXY(itm))
+        bsplineData = np.array(core.undelimitXY(itm))
         bsplineArray.append(bsplineData)
     print("Starting BSpline")
     for idx,itm in enumerate(tqdm(perPndList)): 
         data = splineList[idx]
         newpts = bsplinegen.generateBSplineBetween(bsplineArray[int(data[3])],data[0],data[1],int(config.getConfig()["bspline"]["pointControl"]))
-        newpts = convertToSuperNicePoints(perPndList[idx],newpts)
-        newpts = findNearestPoint(perPndList[idx][0],newpts)
+        newpts = core.convertToSuperNicePoints(perPndList[idx],newpts)
+        newpts = core.findNearestPoint(perPndList[idx][0],newpts)
         if newpts != False:
-            if quadrantContains(perPndList[idx][1],newpts):
+            if core.quadrantContains(perPndList[idx][1],newpts):
                 None
             try:
                 writingDict[data[4]] = writingDict[data[4]] + [newpts]
@@ -169,10 +170,10 @@ def main():
         else:
             data = splineList[idx]
             newpts = bsplinegen.generateBSplineBetween(bsplineArray[int(data[3])],data[1],data[2],int(config.getConfig()["bspline"]["pointControl"]))
-            newpts = convertToSuperNicePoints(perPndList[idx],newpts)
-            newpts = findNearestPoint(perPndList[idx][0],newpts)
+            newpts = core.convertToSuperNicePoints(perPndList[idx],newpts)
+            newpts = core.findNearestPoint(perPndList[idx][0],newpts)
             if newpts != False:
-                if quadrantContains(perPndList[idx][1],newpts):
+                if core.quadrantContains(perPndList[idx][1],newpts):
                     None
                 try:
                     writingDict[data[5]] = writingDict[data[5]] + [newpts]
@@ -180,7 +181,7 @@ def main():
                     writingDict[data[5]] = [newpts]
                 additionPts.append([newpts])
     additionPts = list(itertools.chain.from_iterable(additionPts))
-    save_obj(writingDict,"wall")
+    config.save_obj(writingDict,"wall")
 
     print("Writing adapted text")
 
