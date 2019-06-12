@@ -79,13 +79,13 @@ else:
 
 	print("Preprocessing File Updated")
 
-	orientation_file = open(os.path.join("grids/", folder, "/", file_order[0]))
+	orientation_file = open(os.path.join("grids", folder, file_order[0]))
 	orient = core.orientation(orientation_file, verbose=False)
 	orientation_file.close()
 	
 	for file in file_order[1:]:
 		orientation_file = open("grids/" + folder + "/" + file)
-		if core.orientation(orientation_file) != orient:
+		if core.orientation(orientation_file, verbose=False) != orient:
 			print("Orientation of all grids are not same. Exiting.")
 			exit()
 		orientation_file.close()
