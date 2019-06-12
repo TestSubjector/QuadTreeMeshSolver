@@ -1,61 +1,61 @@
 {
+    "adapter": {
+        "minWallAdaptDepth": 16
+    },
+    "bspline": {
+        "pointControl": 200,
+        "polygon": false,
+        "pseudoDist": 0.00001,
+        "threshold": 15,
+        "wallGuard": true
+    },
     "generator": {
         "maxCoresForReplacement": 20
     },
-    "preChecker":{
-        "distanceLimiter": 1e-4
-    },
-    "bspline": {
-        "threshold": 15,
-        "pointControl": 200,
-        "polygon": false,
-        "pseudoDist": 1E-5,
-        "wallGuard": true
-    },
-    "normalWall": {
-        "inflatedPolygonDistance": 0.001,
-        "conditionValueThreshold": 15
-    },
-    "rechecker": {
-        "maxPoints": 2,
-        "conditionValueThreshold": 15
-    },
-    "triangulate": {
-        "triangle": {
-            "interiorThreshold": 30,
-            "wallandOuterThreshold": 30,
-            "aggressiveMaxNeighbours": 2,
-            "normalMaxNeighbours": 1
-        },
-        "leftright": {
-            "wallThreshold": 15,
-            "aggressiveMaxNeighbours": 2,
-            "normalMaxNeighbours": 1
-        },
-        "general": {
-            "wallThreshold": 15,
-            "aggressiveMaxNeighbours": 2
-        }
-    },
     "global": {
-        "weightCondition": 0,
+        "edgePoints": [],
         "logger": {
             "level": "INFO",
             "logPath": "log.log"
         },
-        "nonAdaptRegion": 0,
         "nonAdaptEdgePointRadius": [],
-        "edgePoints": [],
+        "nonAdaptRegion": 0,
         "redis": {
-            "host": "localhost",
-            "port": 6379,
-            "password": "",
             "db": 0,
+            "host": "localhost",
+            "password": "",
+            "port": 6379,
             "prefix": "NONE"
         },
-        "wallPointOrientation": "cw"
+        "wallPointOrientation": "cw",
+        "weightCondition": 0
     },
-    "adapter":{
-        "minWallAdaptDepth": 16
+    "normalWall": {
+        "conditionValueThreshold": 15,
+        "inflatedPolygonDistance": 0.001
+    },
+    "preChecker": {
+        "distanceLimiter": 0.0001
+    },
+    "rechecker": {
+        "conditionValueThreshold": 15,
+        "maxPoints": 2
+    },
+    "triangulate": {
+        "general": {
+            "aggressiveMaxNeighbours": 2,
+            "wallThreshold": 15
+        },
+        "leftright": {
+            "aggressiveMaxNeighbours": 2,
+            "normalMaxNeighbours": 1,
+            "wallThreshold": 15
+        },
+        "triangle": {
+            "aggressiveMaxNeighbours": 2,
+            "interiorThreshold": 30,
+            "normalMaxNeighbours": 1,
+            "wallandOuterThreshold": 30
+        }
     }
 }
