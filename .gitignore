@@ -18,7 +18,8 @@ config.json
 outerpts.txt
 interpts.txt
 wallpts.txt
-
+*.ipynb
+preprocessing.txt
 # C extensions
 *.so
 
