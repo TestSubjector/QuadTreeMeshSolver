@@ -24,3 +24,5 @@
 22. Added node direction
 23. Removed compiler warnings, added function for on-demand addition of parameter to file (so that 21. or 22. type changes are cleaner)
 24. Add foreign_flag for foreign point_generation input received.
+25. Added hills and valley code.
+26. Added checks for the valley code related to outer points.
