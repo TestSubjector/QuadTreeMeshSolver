@@ -2681,15 +2681,15 @@ def setPrefix():
         data["global"]["redis"]["prefix"] = PREFIX
         save_obj(data,"config")
 
-def save_obj(obj, name):
+def save_obj(obj, name, indent=None):
     with open(name + '.json', 'w') as f:
-        json.dump(obj, f)
+        json.dump(obj, f, indent=indent)
 
 def load_obj(name):
     with open(name + '.json', 'r') as f:
         return json.load(f)
 
-def orientation(file):
+def orientation(file, verbose=True):
     reader = csv.reader(file, delimiter = "\t")
 
     plist = []
@@ -2717,14 +2717,20 @@ def orientation(file):
         else:
             ccwTurns += 1
 
-    if cwTurns == 0 or ccwTurns == 0:
-        print("\tGeometry: Convex")
-    else:
-        print("\tGeometry: Not Convex")
+    if verbose:
+        if cwTurns == 0 or ccwTurns == 0:
+            print("\tGeometry: Convex")
+        else:
+            print("\tGeometry: Not Convex")
 
-    if cwTurns > ccwTurns:
-        print("\tOrientation: Clockwise")
-        return "cw"
+        if cwTurns > ccwTurns:
+            print("\tOrientation: Clockwise")
+            return "cw"
+        else:
+            print("\tOrientation: Anti Clockwise")
+            return "ccw"
     else:
-        print("\tOrientation: Anti Clockwise")
-        return "ccw"
+        if cwTurns > ccwTurns:
+            return "cw"
+        else:
+            return "ccw"

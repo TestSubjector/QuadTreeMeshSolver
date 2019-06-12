@@ -70,15 +70,13 @@ else
         cp -rf ./adapted.txt ./files/f$value/adapted.txt | touch adapted.txt && echo "Creating Adaption File"
 
         #Shape Generation
-        python3 shapemod/shape.py -w ./grids/airfoil_coarse_320/airfoil_320
-
-        # Neighbour Generation
-        ./quadtree/main ./grids/airfoil_coarse_320/airfoil_320 ./adapted.txt ./shape_generated.txt
+        python3 shapemod/shape.py -w ./grids/airfoil_coarse_320/airfoil320
+       ./quadtree/main ./grids/airfoil_coarse_320/airfoil320 ./adapted.txt ./shape_generated.txt
         cp -rlf ./neighbour.txt ./files/f$value/neighbour.txt
         rm ./neighbour.txt
 
         # Indexing
-        python3 ./generator/generate.py -n ./files/f$value/neighbour.txt -w ./grids/airfoil_coarse_320/airfoil_320
+        python3 ./generator/generate.py -n ./files/f$value/neighbour.txt -w ./grids/airfoil_coarse_320/airfoil320
         cp -rlf ./output.txt ./files/f$value/output.txt
         cp -rlf ./preprocessorfile.txt ./files/f$value/preprocessorfile.txt
         rm ./output.txt
