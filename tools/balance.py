@@ -1,6 +1,5 @@
 import inspect
 import collections
-from config import getConfig
 import connectivity
 from tqdm import tqdm
 import sys
@@ -10,15 +9,16 @@ sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), os.par
 from core import core
 
 def triangleBalance(globaldata,polygonData,wallpoints,idx):
+    configData = core.getConfig()
     if idx > 0:
         flag = int(core.getFlag(idx,globaldata))
-        WALL_OUTER_THRESHOLD = int(getConfig()["triangulate"]["triangle"]["wallandOuterThreshold"])
-        INTERIOR_THRESHOLD = int(getConfig()["triangulate"]["triangle"]["interiorThreshold"])
-        AGGRESSIVE_MAX_NEIGHBOURS = -int(getConfig()["triangulate"]["triangle"]["aggressiveMaxNeighbours"])
-        NORMAL_MAX_NEIGHBOURS = -int(getConfig()["triangulate"]["triangle"]["normalMaxNeighbours"])
+        WALL_OUTER_THRESHOLD = int(configData["triangulate"]["triangle"]["wallandOuterThreshold"])
+        INTERIOR_THRESHOLD = int(configData["triangulate"]["triangle"]["interiorThreshold"])
+        AGGRESSIVE_MAX_NEIGHBOURS = -int(configData["triangulate"]["triangle"]["aggressiveMaxNeighbours"])
+        NORMAL_MAX_NEIGHBOURS = -int(configData["triangulate"]["triangle"]["normalMaxNeighbours"])
         ## Interior Points
         if flag == 1:
-            result = connectivity.connectivityCheckInteriorPoint(idx,globaldata)
+            result = connectivity.connectivityCheckInteriorPoint(idx,globaldata, configData)
             xposf = result[0]
             xnegf = result[1]
             yposf = result[2]
@@ -83,9 +83,9 @@ def triangleBalance(globaldata,polygonData,wallpoints,idx):
     return globaldata
 
 def triangleBalance2(globaldata,wallpoints):
-    WALL_THRESHOLD = int(getConfig()["triangulate"]["leftright"]["wallThreshold"])
-    AGGRESSIVE_MAX_NEIGHBOURS = -int(getConfig()["triangulate"]["leftright"]["aggressiveMaxNeighbours"])
-    NORMAL_MAX_NEIGHBOURS = -int(getConfig()["triangulate"]["leftright"]["normalMaxNeighbours"])
+    WALL_THRESHOLD = int(core.getConfig()["triangulate"]["leftright"]["wallThreshold"])
+    AGGRESSIVE_MAX_NEIGHBOURS = -int(core.getConfig()["triangulate"]["leftright"]["aggressiveMaxNeighbours"])
+    NORMAL_MAX_NEIGHBOURS = -int(core.getConfig()["triangulate"]["leftright"]["normalMaxNeighbours"])
     for idx, _ in enumerate(tqdm(globaldata)):
         if idx > 0:
             flag = int(core.getFlag(idx,globaldata))
@@ -119,8 +119,8 @@ def triangleBalance2(globaldata,wallpoints):
     return globaldata
 
 def triangleBalance3(globaldata,wallpoints):
-    WALL_THRESHOLD = int(getConfig()["triangulate"]["leftright"]["wallThreshold"])
-    AGGRESSIVE_MAX_NEIGHBOURS = -int(getConfig()["triangulate"]["leftright"]["aggressiveMaxNeighbours"])
+    WALL_THRESHOLD = int(core.getConfig()["triangulate"]["leftright"]["wallThreshold"])
+    AGGRESSIVE_MAX_NEIGHBOURS = -int(core.getConfig()["triangulate"]["leftright"]["aggressiveMaxNeighbours"])
     for idx, itm in enumerate(tqdm(globaldata)):
         if idx > 0:
             flag = int(core.getFlag(idx,globaldata))

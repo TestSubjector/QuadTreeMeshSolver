@@ -1004,8 +1004,6 @@ def checkPoints(globaldata, selectbspline, normal, configData, pseudocheck, shap
                                 if depth <= maxDepth - 3:
                                     dist = min(wallDistance((px, py), shapelyWallData))
                                     if dist <= float(configData['bspline']['pseudoDist']):
-                                        with open("shit", "a+") as the_file:
-                                            the_file.write("{} {} {}\n".format(px, py, idx))
                                         ptList = findNearestNeighbourWallPoints(idx,globaldata,wallptData,shapelyWallData)
                                         perpendicularPt = getPerpendicularPoint(idx,globaldata,normal, shapelyWallData, ptList)
                                         if (perpendicularPt) not in perpendicularListArray:

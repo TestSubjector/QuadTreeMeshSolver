@@ -1,4 +1,4 @@
-from config import getConfig
+
 from tqdm import tqdm
 import sys
 import os
@@ -7,7 +7,7 @@ sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), os.par
 from core import core
 
 def connectivityCheck(globaldata, wallouter = True, interior = False):
-    conf = getConfig()
+    conf = core.getConfig()
     for idx,itm in enumerate(tqdm(globaldata)):
         if(idx >0):
             if (core.getFlag(idx,globaldata) == 0 or core.getFlag(idx,globaldata) == 2) and wallouter == True:

@@ -105,78 +105,78 @@ def main():
     print(len(adaptwall))
     print(len(derefine))
 
-    perPndList = []
+    # perPndList = []
 
-    print("Finding mini quadrants")
+    # print("Finding mini quadrants")
 
-    for idax,itm in enumerate(tqdm(adaptwall)):
-        idx = core.getIndexFromPoint(str(itm[0] + "," + str(itm[1])), globaldata)
-        perList = core.getPerpendicularPointsFromQuadrants(idx,globaldata)
-        for itm in perList:
-            if core.quadrantContains(itm[1],itm[0]):
-                perPndList.append(itm)
-            else:
-                print("Warning Quadrant Point Mismatch")
-                print(itm)
+    # for idax,itm in enumerate(tqdm(adaptwall)):
+    #     idx = core.getIndexFromPoint(str(itm[0] + "," + str(itm[1])), globaldata)
+    #     perList = core.getPerpendicularPointsFromQuadrants(idx,globaldata)
+    #     for itm in perList:
+    #         if core.quadrantContains(itm[1],itm[0]):
+    #             perPndList.append(itm)
+    #         else:
+    #             print("Warning Quadrant Point Mismatch")
+    #             print(itm)
 
-    perPndList = list(set(perPndList))
+    # perPndList = list(set(perPndList))
 
-    splineList = []
+    # splineList = []
 
-    for itm in perPndList:
-        wallPointCord = itm[2]
-        wallPointCurrent = core.getIndexFromPointTuple(wallPointCord, globaldata)
-        leftRight = core.convertIndexToPoints(core.getLeftandRightPoint(wallPointCurrent,globaldata),globaldata)
-        leftRight.insert(1,str(wallPointCord[0]) + "," + str(wallPointCord[1]))
-        # print(leftRight)
-        # nbhPts = findNearestNeighbourWallPointsManual(itm[0],globaldata,wallPointsFlatten,wallPoints)
+    # for itm in perPndList:
+    #     wallPointCord = itm[2]
+    #     wallPointCurrent = core.getIndexFromPointTuple(wallPointCord, globaldata)
+    #     leftRight = core.convertIndexToPoints(core.getLeftandRightPointIndex(wallPointCurrent,globaldata),globaldata)
+    #     leftRight.insert(1,str(wallPointCord[0]) + "," + str(wallPointCord[1]))
+    #     # print(leftRight)
+    #     # nbhPts = findNearestNeighbourWallPointsManual(itm[0],globaldata,wallPointsFlatten,wallPoints)
         
-        splineData = core.feederData(leftRight,wallPoints)
-        print(itm)
-        # print(splineData)
-        splineList.append(splineData)
+    #     splineData = core.feederData(leftRight,wallPoints)
+    #     print(itm)
+    #     # print(splineData)
+    #     splineList.append(splineData)
 
-    try:
-        writingDict = dict(core.load_obj("wall"))
-    except IOError:
-        writingDict = {}
-    # print(writingDict)
-    print("Bsplining", len(perPndList), "points.")
-    bsplineArray = []
-    additionPts = []
+    # try:
+    #     writingDict = dict(core.load_obj("wall"))
+    # except IOError:
+    #     writingDict = {}
+    # # print(writingDict)
+    # print("Bsplining", len(perPndList), "points.")
+    # bsplineArray = []
+    # additionPts = []
 
-    for itm in wallPoints:
-        bsplineData = np.array(core.undelimitXY(itm))
-        bsplineArray.append(bsplineData)
-    print("Starting BSpline")
-    for idx,itm in enumerate(tqdm(perPndList)): 
-        data = splineList[idx]
-        newpts = core.generateBSplineBetween(bsplineArray[int(data[3])],data[0],data[1],int(configData["bspline"]["pointControl"]))
-        newpts = core.convertToSuperNicePoints(perPndList[idx],newpts)
-        newpts = core.findNearestPoint(perPndList[idx][0],newpts)
-        if newpts != False:
-            if core.quadrantContains(perPndList[idx][1],newpts):
-                None
-            try:
-                writingDict[data[4]] = writingDict[data[4]] + [newpts]
-            except KeyError:
-                writingDict[data[4]] = [newpts]
-            additionPts.append([newpts])
-        else:
-            data = splineList[idx]
-            newpts = core.generateBSplineBetween(bsplineArray[int(data[3])],data[1],data[2],int(configData["bspline"]["pointControl"]))
-            newpts = core.convertToSuperNicePoints(perPndList[idx],newpts)
-            newpts = core.findNearestPoint(perPndList[idx][0],newpts)
-            if newpts != False:
-                if core.quadrantContains(perPndList[idx][1],newpts):
-                    None
-                try:
-                    writingDict[data[5]] = writingDict[data[5]] + [newpts]
-                except KeyError:
-                    writingDict[data[5]] = [newpts]
-                additionPts.append([newpts])
-    additionPts = list(itertools.chain.from_iterable(additionPts))
-    core.save_obj(writingDict,"wall")
+    # for itm in wallPoints:
+    #     bsplineData = np.array(core.undelimitXY(itm))
+    #     bsplineArray.append(bsplineData)
+    # print("Starting BSpline")
+    # for idx,itm in enumerate(tqdm(perPndList)): 
+    #     data = splineList[idx]
+    #     newpts = core.generateBSplineBetween(bsplineArray[int(data[3])],data[0],data[1],int(configData["bspline"]["pointControl"]))
+    #     newpts = core.convertToSuperNicePoints(perPndList[idx],newpts)
+    #     newpts = core.findNearestPoint(perPndList[idx][0],newpts)
+    #     if newpts != False:
+    #         if core.quadrantContains(perPndList[idx][1],newpts):
+    #             None
+    #         try:
+    #             writingDict[data[4]] = writingDict[data[4]] + [newpts]
+    #         except KeyError:
+    #             writingDict[data[4]] = [newpts]
+    #         additionPts.append([newpts])
+    #     else:
+    #         data = splineList[idx]
+    #         newpts = core.generateBSplineBetween(bsplineArray[int(data[3])],data[1],data[2],int(configData["bspline"]["pointControl"]))
+    #         newpts = core.convertToSuperNicePoints(perPndList[idx],newpts)
+    #         newpts = core.findNearestPoint(perPndList[idx][0],newpts)
+    #         if newpts != False:
+    #             if core.quadrantContains(perPndList[idx][1],newpts):
+    #                 None
+    #             try:
+    #                 writingDict[data[5]] = writingDict[data[5]] + [newpts]
+    #             except KeyError:
+    #                 writingDict[data[5]] = [newpts]
+    #             additionPts.append([newpts])
+    # additionPts = list(itertools.chain.from_iterable(additionPts))
+    # core.save_obj(writingDict,"wall")
 
     print("Writing adapted text")
 
@@ -191,11 +191,11 @@ def main():
             text_file.writelines(["%s " % item for item in item1])
             text_file.writelines("\n")
         text_file.writelines("1000 1000\n")
-        text_file.writelines("2000 2000\n")
-        for item1 in additionPts:
-            text_file.writelines(["%s " % item for item in item1])
-            text_file.writelines("\n")
-        text_file.writelines("1000 1000\n")
+        # text_file.writelines("2000 2000\n")
+        # for item1 in additionPts:
+        #     text_file.writelines(["%s " % item for item in item1])
+        #     text_file.writelines("\n")
+        # text_file.writelines("1000 1000\n")
     print("Done")
 
 
