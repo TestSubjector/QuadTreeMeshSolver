@@ -1,5 +1,5 @@
 import numpy as np
-import os, errno, multiprocessing, math, logging, itertools, json, time, re, shutil
+import os, errno, multiprocessing, math, logging, itertools, json, time, re, shutil, csv, redis, uuid
 import shapely.geometry
 from shapely.ops import linemerge, unary_union, polygonize
 import shapely
@@ -11,7 +11,6 @@ from collections import Counter
 from time import sleep
 from scipy.interpolate import splprep, splev
 from scipy import spatial
-import json, redis, uuid
 
 def appendNeighbours(index, globaldata, newpts):
     pt = getIndexFromPoint(newpts, globaldata)
@@ -2689,3 +2688,43 @@ def save_obj(obj, name):
 def load_obj(name):
     with open(name + '.json', 'r') as f:
         return json.load(f)
+
+def orientation(file):
+    reader = csv.reader(file, delimiter = "\t")
+
+    plist = []
+    for x,y in reader:
+        plist.append((float(x), float(y)))
+    
+    def f(x1, y1, x2, y2, x3, y3):
+        crossProduct = (x2 - x1) * (y3 - y2) - (x3 - x2) * (y2 - y1)
+        if crossProduct > 0:
+            return "ccw"
+        else:
+            return "cw"
+
+    cwTurns = 0
+    ccwTurns = 0
+    plist.append(plist[0])
+    plist.append(plist[1])
+
+    for j in range(len(plist) - 2):
+        (x1, y1) = plist[j]
+        (x2, y2) = plist[j+1]
+        (x3, y3) = plist[j+2]
+        if (f(x1, y1, x2, y2, x3, y3) == "cw"):
+            cwTurns += 1
+        else:
+            ccwTurns += 1
+
+    if cwTurns == 0 or ccwTurns == 0:
+        print("\tGeometry: Convex")
+    else:
+        print("\tGeometry: Not Convex")
+
+    if cwTurns > ccwTurns:
+        print("\tOrientation: Clockwise")
+        return "cw"
+    else:
+        print("\tOrientation: Anti Clockwise")
+        return "ccw"
