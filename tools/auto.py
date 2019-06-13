@@ -9,6 +9,7 @@ for idx, f in enumerate(choices):
 	print("({}) Grid {}".format(idx, f))
 
 choice = int(input("Please select grid: "))
+
 try:
 	folder = choices[choice]
 except:
@@ -99,3 +100,12 @@ else:
 
 	print("Configuration File Updated")
 
+if "adapted.txt" in os.listdir():
+	choice = input("Do you want to remove adapted.txt? (Y/n): ").lower()
+	if choice == 'y':
+		os.remove("adapted.txt")
+
+if "wall.json" in os.listdir():
+	choice = input("Do you want to remove wall.json? (Y/n): ").lower()
+	if choice == 'y':
+		os.remove("wall.json")	
