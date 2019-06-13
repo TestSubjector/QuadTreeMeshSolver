@@ -101,8 +101,17 @@ def main():
 		else:
 			configData["global"]["wallPointOrientation"] = "cw"
 		core.save_obj(configData, "config", indent=4)
-
 		log.info("Configuration File Updated")
+
+		if "adapted.txt" in os.listdir():
+			choice = input("Do you want to remove adapted.txt? (Y/n): ").lower()
+			if choice == 'y':
+				os.remove("adapted.txt")
+
+		if "wall.json" in os.listdir():
+			choice = input("Do you want to remove wall.json? (Y/n): ").lower()
+			if choice == 'y':
+				os.remove("wall.json")
 
 if __name__ == "__main__":
     import logging
