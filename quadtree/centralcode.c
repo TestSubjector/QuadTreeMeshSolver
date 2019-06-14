@@ -112,13 +112,15 @@ void main_tree(int initial_coord_length, coords_t *coords_list, coords_t *adapte
             {
                 printf("\n Stop Hill & Valleys Usage");
                 hills_and_valleys_block_flag = 1;
+                wallpoint_insert_flag == 3;
                 continue;
             }
 
             if(adapted_list[j].x == 5000 && adapted_list[j].y == 5000)
             {
-                printf("\n Stop Hill & Valleys Usage");
+                printf("\n Restart Hill & Valleys Usage");
                 hills_and_valleys_block_flag = 0;
+                wallpoint_insert_flag == 3;
                 continue;
             }
 

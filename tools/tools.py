@@ -76,11 +76,15 @@ def main():
         print("Type 'split' to output the different type of points in a file")
         print("Type 'config' to start Config Manager")
         print("Type 'plot' to start Plot Manager")
-        ptidx = input("Which point do you want to fix? ")
+        print("Type 'hills' to start Hills and Valleys Manager")
+        ptidx = input("Which point do you want to fix? ").lower()
+
         if ptidx == "exit!":
             exit()
         if ptidx == "exit":
             break
+        elif ptidx == "hills":
+            core.hills_manager()
         elif ptidx == "wcc":
             core.clearScreen()
             globaldata = connectivity.connectivityCheck(globaldata, True, False)
@@ -206,7 +210,7 @@ def main():
                 # globadata = balance.fixXneg
                 None
             elif whatkind == 3:
-                # tris = balance.getNeighboursFromTriangle(ptidx,globaldata,polydata)
+                # tris = balance.getNeighboursFromTriangle(isPointIndex,globaldata,polydata)
                 # tris = core.getAeroPointsFromSet(ptidx,tris,globaldata,wallpointsData)
                 # tris = core.convertPointsToIndex(tris,globaldata)
                 # globaldata = core.replaceNeighbours(ptidx,tris,globaldata)
