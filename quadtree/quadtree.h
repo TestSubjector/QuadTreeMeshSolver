@@ -226,11 +226,13 @@ int foreign_flag;
 void centroidify(quadtree_node_t *node, coords_t *shape_list);
 void quadtree_foreignwalk(quadtree_node_t *root, void (*descent_foreign)(quadtree_node_t *node, coords_t *shape_list),
                              void (*ascent)(quadtree_node_t *node), coords_t *shape_list);
-void descent_foreign(quadtree_node_t *node, coords_t *shape_list);                            
+void descent_foreign(quadtree_node_t *node, coords_t *shape_list);
 
 void quadtree_hillwalk(quadtree_node_t *root, void (*descent_hill)(quadtree_node_t *node),
                              void (*ascent)(quadtree_node_t *node));
 void descent_hill(quadtree_node_t *node);
 void hill_derefinement(quadtree_node_t *hill_node, int flag);
+
+int hills_and_valleys_block_flag;
 
 #endif
