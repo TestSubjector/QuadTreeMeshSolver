@@ -26,3 +26,4 @@
 24. Add foreign_flag for foreign point_generation input received.
 25. Added hills and valley code.
 26. Added checks for the valley code related to outer points.
+27. Added method to start/stop hills and valley refinement from a certain iteration.
