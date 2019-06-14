@@ -60,7 +60,6 @@ def getNeighbours(index, globaldata):
     ptdata = list(map(int, list(ptdata[20:])))
     return ptdata
 
-
 def getIndexFromPoint(pt, globaldata):
     ptx = float(pt.split(",")[0])
     pty = float(pt.split(",")[1])

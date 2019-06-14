@@ -6,7 +6,7 @@ log.addHandler(logging.StreamHandler())
 import sys
 import os
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), os.pardir))
-
+from tqdm import tqdm
 from core import core
 
 def main():
@@ -32,7 +32,8 @@ def main():
     interiorpts = core.getInteriorPointArrayIndex(globaldata)
     # print(interiorpts)
     # If the interior point has a wallpoint as neighbour
-    for idx in interiorpts:
+    log.info("Scanning Interior Points for Possible Shifting")
+    for idx in tqdm(interiorpts):
         if core.containsWallPoints(globaldata, idx, wallpoints):
             # print(idx)
             toplx,toply,bottomrx,bottomry = core.getBoundingPointsOfQuadrant(idx, globaldata)
@@ -62,12 +63,14 @@ def main():
 
                     # print(nx, ny)
     globaldata.pop(0)
+    core.setKeyVal("globaldata",globaldata)
+    log.info("Writing file to disk")
     with open("preprocessorfile_shift.txt", "w") as text_file:
         for item1 in globaldata:
             text_file.writelines(["%s " % item for item in item1])
             text_file.writelines("\n")
 
-    log.info("Data Converted")
+    log.info("Geometry Shifted Converted")
 
 
 if __name__ == "__main__":
