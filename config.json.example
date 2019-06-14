@@ -1,23 +1,23 @@
 {
     "adapter": {
-        "minWallAdaptDepth": 16
-    },
+        "minWallAdaptDepth": 24
+        },
     "bspline": {
         "pointControl": 200,
         "polygon": false,
-        "pseudoDist": 0.00001,
-        "threshold": 15,
+        "pseudoDist": 0.0008,
+        "threshold": 60,
         "wallGuard": true
-    },
+        },
     "generator": {
         "maxCoresForReplacement": 20
-    },
+        },
     "global": {
         "edgePoints": [],
         "logger": {
             "level": "INFO",
             "logPath": "log.log"
-        },
+            },
         "nonAdaptEdgePointRadius": [],
         "nonAdaptRegion": 0,
         "redis": {
@@ -26,36 +26,39 @@
             "password": "",
             "port": 6379,
             "prefix": "NONE"
-        },
+            },
         "wallPointOrientation": "cw",
         "weightCondition": 0
-    },
+        },
     "normalWall": {
-        "conditionValueThreshold": 15,
+        "conditionValueThreshold": 60,
         "inflatedPolygonDistance": 0.001
-    },
+        },
     "preChecker": {
         "distanceLimiter": 0.0001
-    },
+        },
     "rechecker": {
         "conditionValueThreshold": 15,
         "maxPoints": 2
-    },
+        },
+    "shift":{
+        "shiftFlag": 1
+        },
     "triangulate": {
         "general": {
             "aggressiveMaxNeighbours": 2,
             "wallThreshold": 15
-        },
+            },
         "leftright": {
             "aggressiveMaxNeighbours": 2,
             "normalMaxNeighbours": 1,
             "wallThreshold": 15
-        },
+            },
         "triangle": {
             "aggressiveMaxNeighbours": 2,
             "interiorThreshold": 30,
             "normalMaxNeighbours": 1,
             "wallandOuterThreshold": 30
+            }
         }
     }
-}
