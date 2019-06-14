@@ -1,4 +1,4 @@
-import os, sys
+import os, sys, stat
 import logging
 log = logging.getLogger(__name__)
 log.addHandler(logging.StreamHandler())
@@ -27,14 +27,14 @@ def main():
 		
 		file = file_list[0]
 		
-		prefile = open("preprocessing.sh", "r")
+		prefile = open("preprocessing.sh.example", "r")
 		lines = prefile.readlines()
 
 		for line in lines:
 
-			if line[:3] == "GEO":
-				lines[lines.index(line)] = "GEOMETRY=" + "\"" + folder + "\"" + " # The folder in which the iterations will be stored\n"
-			elif line == "        #Shape Generation\n":
+			if line[4:7] == "GEO":
+				lines[lines.index(line)] = "    GEOMETRY=" + "\"" + folder + "\"" + " # The folder in which the iterations will be stored\n"
+			elif line == "        # Shape Generation\n":
 				lines[lines.index(line) + 1] = "        python3 shapemod/shape.py -w" + " ./grids/" + folder + "/" + file + "\n"
 			elif line == "        # Indexing\n":
 				lines[lines.index(line) + 1] = "        python3 ./generator/generate.py -n ./files/f$value/neighbour.txt -w" + " ./grids/" + folder + "/" + file + "\n"
@@ -44,6 +44,9 @@ def main():
 		new_file = open("preprocessing.sh", "w")
 		for line in lines: 
 			new_file.write(line)
+
+		st = os.stat("preprocessing.sh")
+		os.chmod("preprocessing.sh", st.st_mode | stat.S_IEXEC)
 
 		log.info("Preprocessing File Updated")
 
@@ -60,7 +63,7 @@ def main():
 	else: 
 		
 		file_order = file_list[-2].split("_")
-		prefile = open("preprocessing.sh", "r")
+		prefile = open("preprocessing.sh.example", "r")
 		lines = prefile.readlines()
 
 		seg = ""	#constructing segment to write
@@ -69,9 +72,9 @@ def main():
 
 		for line in lines:
 			
-			if line[:3] == "GEO":
-				lines[lines.index(line)] = "GEOMETRY=" + "\"" + folder + "\"" + " # The folder in which the iterations will be stored\n"
-			elif line == "        #Shape Generation\n":
+			if line[4:7] == "GEO":
+				lines[lines.index(line)] = "    GEOMETRY=" + "\"" + folder + "\"" + " # The folder in which the iterations will be stored\n"
+			elif line == "        # Shape Generation\n":
 				lines[lines.index(line) + 1] = "        python3 shapemod/shape.py -w" + seg + "\n"
 			elif line == "        # Indexing\n":
 				lines[lines.index(line) + 1] = "        python3 ./generator/generate.py -n ./files/f$value/neighbour.txt -w" + seg + "\n"
@@ -81,6 +84,9 @@ def main():
 		new_file = open("preprocessing.sh", "w")
 		for line in lines: 
 			new_file.write(line)
+
+		st = os.stat("preprocessing.sh")
+		os.chmod("preprocessing.sh", st.st_mode | stat.S_IEXEC)
 
 		log.info("Preprocessing File Updated")
 
@@ -103,15 +109,16 @@ def main():
 		core.save_obj(configData, "config", indent=4)
 		log.info("Configuration File Updated")
 
-		if "adapted.txt" in os.listdir():
-			choice = input("Do you want to remove adapted.txt? (Y/n): ").lower()
-			if choice == 'y':
-				os.remove("adapted.txt")
+	if "adapted.txt" in os.listdir():
+		choice = input("Do you want to remove adapted.txt? (Y/n): ").lower()
+		if choice == 'y':
+			os.remove("adapted.txt")
 
-		if "wall.json" in os.listdir():
-			choice = input("Do you want to remove wall.json? (Y/n): ").lower()
-			if choice == 'y':
-				os.remove("wall.json")
+	if "wall.json" in os.listdir():
+		choice = input("Do you want to remove wall.json? (Y/n): ").lower()
+		if choice == 'y':
+			os.remove("wall.json")
+
 
 if __name__ == "__main__":
     import logging

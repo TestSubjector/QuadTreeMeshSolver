@@ -20,6 +20,7 @@ interpts.txt
 wallpts.txt
 *.ipynb
 preprocessing.txt
+preprocessing.sh
 # C extensions
 *.so
 
