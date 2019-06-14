@@ -50,7 +50,7 @@ elif [ $1 -eq 5 ]
 then
     # Iteration Backup
     # Run as ./preprocessing.sh 5 Iteration_Number Folder{1,2,3,4,5 from the required f1,f2,f3,f4,f5 folder}_Number
-    GEOMETRY="airfoil_320" # The folder in which the iterations will be stored
+    GEOMETRY="airfoil_flap_dense" # The folder in which the iterations will be stored
     mkdir ./backup_files/$GEOMETRY/$2
     cp -rf ./files/f$3/neighbour.txt ./backup_files/$GEOMETRY/$2/neighbour.txt
     cp -rf ./files/f$3/output.txt ./backup_files/$GEOMETRY/$2/output.txt
@@ -69,14 +69,16 @@ else
 
         cp -rf ./adapted.txt ./files/f$value/adapted.txt | touch adapted.txt && echo "Creating Adaption File"
 
-        #Shape Generation
-        python3 shapemod/shape.py -w ./grids/airfoil_flap_slat_dense/airfoil ./grids/airfoil_flap_slat_dense/flap ./grids/airfoil_flap_slat_dense/slat
-       ./quadtree/main ./grids/airfoil_coarse_320/airfoil320 ./adapted.txt ./shape_generated.txt
+        # Shape Generation
+        python3 shapemod/shape.py -w ./grids/airfoil_flap_dense/airfoil ./grids/airfoil_flap_dense/flap
+        
+        # Neighbour Generation
+        ./quadtree/main ./grids/airfoil_coarse_320/airfoil320 ./adapted.txt ./shape_generated.txt
         cp -rlf ./neighbour.txt ./files/f$value/neighbour.txt
         rm ./neighbour.txt
 
         # Indexing
-        python3 ./generator/generate.py -n ./files/f$value/neighbour.txt -w ./grids/airfoil_flap_slat_dense/airfoil ./grids/airfoil_flap_slat_dense/flap ./grids/airfoil_flap_slat_dense/slat
+        python3 ./generator/generate.py -n ./files/f$value/neighbour.txt -w ./grids/airfoil_flap_dense/airfoil ./grids/airfoil_flap_dense/flap
         cp -rlf ./output.txt ./files/f$value/output.txt
         cp -rlf ./preprocessorfile.txt ./files/f$value/preprocessorfile.txt
         rm ./output.txt
