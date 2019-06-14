@@ -2734,3 +2734,46 @@ def orientation(file, verbose=True):
             return "cw"
         else:
             return "ccw"
+
+def hills_manager():
+    adapted_lines = []
+    adapted_file = open("adapted.txt", "r+")
+    adapted_lines = adapted_file.readlines()
+
+    enable = 0
+    disable = 0
+    able = True
+
+    for line in adapted_lines:
+        if line == "4000 4000\n":
+            disable += 1
+        elif line == "5000 5000\n":
+            enable += 1
+
+    clearScreen()
+    print("*****************\n")
+    print("Welcome to Hills and Valleys Manager")
+    if enable < disable:
+        able = False
+        print("Current: DISABLED.")
+    else:
+        print("Current: ENABLED.")
+
+    print("\n*****************\n")
+
+    choice = input("Do you want to toggle? (Y/n): ").lower()
+
+    if choice == "y" and able == True:
+        adapted_lines.append("4000 4000\n")
+        print("\nHills and Valleys is now DISABLED.")
+    if choice == "y" and able == False:
+        adapted_lines.append("5000 5000\n")
+        print("\nHills and Valleys is now ENABLED.")
+
+    print("\n*****************\n")
+    time.sleep(2)
+    clearScreen()
+    adapted_file.seek(0)
+    for line in adapted_lines:
+        adapted_file.write(line)
+    adapted_file.close()   
