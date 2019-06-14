@@ -58,7 +58,7 @@ def getFlags(index,globaldata):
 def getNeighbours(index, globaldata):
     index = int(index)
     ptdata = globaldata[index]
-    ptdata = ptdata[20:]
+    ptdata = map(int,ptdata[20:])
     return ptdata
 
 
@@ -310,7 +310,7 @@ def checkConditionNumber(index, globaldata, threshold, configData):
     dSPointYNeg = getDYNegPoints(index, globaldata)
     if (
         xneg > threshold
-        or len(dSPointXNeg) < 2 or len(dSPointXPos) < 2 or len(dSPointYNeg) < 2 or len(dSPointYPos) < 2 
+        or len(dSPointXNeg) < 2 or len(dSPointXPos) < 2 or len(dSPointYNeg) < 2 or len(dSPointYPos) < 2
         or math.isnan(xneg)
         or xpos > threshold
         or math.isnan(xpos)
@@ -360,7 +360,7 @@ def checkConditionNumberLogger(index, globaldata, threshold, configData):
     dSPointYNeg = getDYNegPoints(index, globaldata)
     if (
         xneg > threshold
-        or len(dSPointXNeg) < 2 or len(dSPointXPos) < 2 or len(dSPointYNeg) < 2 or len(dSPointYPos) < 2 
+        or len(dSPointXNeg) < 2 or len(dSPointXPos) < 2 or len(dSPointYNeg) < 2 or len(dSPointYPos) < 2
         or math.isnan(xneg)
         or xpos > threshold
         or math.isnan(xpos)
@@ -739,7 +739,7 @@ def isNonAeroDynamic(index, cordpt, globaldata, wallData):
 
     if len(wallData) == 0:
         return False
-    
+
     if isinstance(wallData[0], shapely.geometry.Polygon):
         return nonAeroDynamicPolygonHelper(line, wallData)
     else:
@@ -860,6 +860,16 @@ def getWallPointArrayIndex(globaldata):
                 startgeo = startgeo + 1
     return wallpointarray
 
+def getInteriorPointArrayIndex(globaldata):
+    interiorarray = []
+    for idx, _ in enumerate(globaldata):
+        if idx > 0:
+            flag = getFlag(idx, globaldata)
+            if flag == 1:
+                interiorarray.append(idx)
+    return interiorarray
+
+
 def flattenList(ptdata):
     return list(itertools.chain.from_iterable(ptdata))
 
@@ -936,7 +946,7 @@ def cleanWallPointsSelectivity(globaldata,points):
             globaldata = replaceNeighbours(idx,finalcords,globaldata)
     return globaldata
 
-        
+
 def wallRemovedNeighbours(points,wallpoints):
     new_list = [fruit for fruit in points if fruit not in wallpoints]
     return new_list
@@ -964,6 +974,7 @@ def containsWallPoints(globaldata, idx, wallpts):
         return False
     else:
         return True
+
 
 def checkPoints(globaldata, selectbspline, normal, configData, pseudocheck, shapelyWallData):
     wallptData = getWallPointArray(globaldata)
@@ -1273,7 +1284,7 @@ def calculateNormalConditionValues(idx,globaldata,nxavg,nyavg, configData):
     _,_,_,dSNegNbhs = deltaWallNeighbourCalculation(idx,nbhs,nxavg,nyavg,False,globaldata)
     _,_,_,dNPosNbhs = deltaWallNeighbourCalculationN(idx,nbhs,nxavg,nyavg,True,globaldata)
     _,_,_,dNNegNbhs = deltaWallNeighbourCalculationN(idx,nbhs,nxavg,nyavg,False,globaldata)
-    
+
     dSPosCondition = weightedConditionValueForSetOfPointsNormalWithInputs(idx,globaldata,dSPosNbhs,nxavg,nyavg, configData)
     dSNegCondition = weightedConditionValueForSetOfPointsNormalWithInputs(idx,globaldata,dSNegNbhs,nxavg,nyavg, configData)
     dNPosCondition = weightedConditionValueForSetOfPointsNormalWithInputs(idx,globaldata,dNPosNbhs,nxavg,nyavg, configData)
@@ -1347,6 +1358,17 @@ def getBoundingBoxOfQuadrant(index,globaldata):
     bottoml = (bottomlx,bottomly)
     bottomr = (bottomrx,bottomry)
     return (topl,topr,bottomr,bottoml)
+
+def getBoundingPointsOfQuadrant(index,globaldata):
+    toplx = float(globaldata[index][15])
+    toply = float(globaldata[index][16])
+    bottomrx = float(globaldata[index][17])
+    bottomry = float(globaldata[index][18])
+    # topl = (toplx,toply)
+    # topr = (toprx,topry)
+    # bottoml = (bottomlx,bottomly)
+    # bottomr = (bottomrx,bottomry)
+    return (toplx,toply,bottomrx,bottomry)
 
 def getNorthWestQuadrant(index,globaldata):
     box = getBoundingBoxOfQuadrant(index,globaldata)
@@ -1686,7 +1708,7 @@ def setNormals(pseudopts,globaldata, configData):
         checkConditionNumber(idx,globaldata,float(configData["normalWall"]["conditionValueThreshold"]), configData)
 
         print(idx,len(dSPosNbhs),dSPosCondition,len(dSNegNbhs),dSNegCondition,len(dNPosNbhs),dNPosCondition,len(dNNegNbhs),dNNegCondition)
-        
+
         maxCond = max(dSPosCondition,dSNegCondition,dNPosCondition,dNNegCondition)
         if maxCond > float(configData["normalWall"]["conditionValueThreshold"]) or math.isnan(dSPosCondition) or math.isnan(dSNegCondition) or math.isnan(dNPosCondition) or math.isnan(dNNegCondition):
             None
@@ -1708,7 +1730,7 @@ def setNormals(pseudopts,globaldata, configData):
         checkConditionNumber(idx,globaldata,float(configData["normalWall"]["conditionValueThreshold"]), configData)
 
         print(idx,len(dSPosNbhs),dSPosCondition,len(dSNegNbhs),dSNegCondition,len(dNPosNbhs),dNPosCondition,len(dNNegNbhs),dNNegCondition)
-        
+
         maxCond = max(dSPosCondition,dSNegCondition,dNPosCondition,dNNegCondition)
         if maxCond > float(configData["normalWall"]["conditionValueThreshold"]) or math.isnan(dSPosCondition) or math.isnan(dSNegCondition) or math.isnan(dNPosCondition) or math.isnan(dNNegCondition):
             None
@@ -1730,7 +1752,7 @@ def setNormals(pseudopts,globaldata, configData):
         checkConditionNumber(idx,globaldata,float(configData["normalWall"]["conditionValueThreshold"]), configData)
 
         print(idx,len(dSPosNbhs),dSPosCondition,len(dSNegNbhs),dSNegCondition,len(dNPosNbhs),dNPosCondition,len(dNNegNbhs),dNNegCondition)
-        
+
         maxCond = max(dSPosCondition,dSNegCondition,dNPosCondition,dNNegCondition)
         if maxCond > float(configData["normalWall"]["conditionValueThreshold"]) or math.isnan(dSPosCondition) or math.isnan(dSNegCondition) or math.isnan(dNPosCondition) or math.isnan(dNNegCondition):
             None
@@ -1756,7 +1778,7 @@ def checkConditionNumberBad(globaldata, threshold, configData):
             dSPointYNeg = getDYNegPoints(index, globaldata)
             if (
                 xneg > threshold
-                or len(dSPointXNeg) < 2 or len(dSPointXPos) < 2 or len(dSPointYNeg) < 2 or len(dSPointYPos) < 2 
+                or len(dSPointXNeg) < 2 or len(dSPointXPos) < 2 or len(dSPointYNeg) < 2 or len(dSPointYPos) < 2
                 or math.isnan(xneg)
                 or xpos > threshold
                 or math.isnan(xpos)
@@ -1793,7 +1815,7 @@ def checkConditionNumberSelectively(globaldata, threshold, badList, configData):
             dSPointYNeg = getDYNegPoints(index, globaldata)
             if (
                 xneg > threshold
-                or len(dSPointXNeg) < 2 or len(dSPointXPos) < 2 or len(dSPointYNeg) < 2 or len(dSPointYPos) < 2 
+                or len(dSPointXNeg) < 2 or len(dSPointXPos) < 2 or len(dSPointYNeg) < 2 or len(dSPointYPos) < 2
                 or math.isnan(xneg)
                 or xpos > threshold
                 or math.isnan(xpos)
@@ -1893,7 +1915,7 @@ def checkAeroGlobal(chunk, globaldata, wallpointsData, wallcount, configData):
             idx = int(itm[0])
             ptx, pty = getPoint(idx, globaldata)
             if min(wallDistance((ptx, pty), wallpointsData)) <= distance:
-                # printProgressBar(idx, len(globaldata) - 1, prefix="Progress:", suffix="Complete", length=50)    
+                # printProgressBar(idx, len(globaldata) - 1, prefix="Progress:", suffix="Complete", length=50)
                 nbhs = getNeighbours(idx, globaldata)
                 nbhs = list(map(int, nbhs))
                 # if True:
@@ -2078,7 +2100,7 @@ def oldMode(globaldata):
             item1.pop(14)
             item1.pop(14)
             text_file.writelines(["%s " % item for item in item1])
-            text_file.writelines("\n") 
+            text_file.writelines("\n")
 
 def printBadness(val, globaldata):
     for idx,_ in enumerate(globaldata):
@@ -2188,7 +2210,7 @@ def plotManager(globaldata, wallpoints):
             clearScreen()
             break
         elif ptidx == 'sub':
-            subPlot(globaldata, wallpoints) 
+            subPlot(globaldata, wallpoints)
             sleep(1)
             clearScreen()
             break
@@ -2236,8 +2258,8 @@ def generateOutput(globaldata, wallPointArray, wallShapely):
             the_file.write("{} {} {} {}\n".format(i, ptx, pty, flag + 100))
         the_file.write("# Line Segments\n")
         the_file.write("{} 1\n".format(segments))
-        the_file.write("# Wall Line Segments\n")    
-        segidx = 0    
+        the_file.write("# Wall Line Segments\n")
+        segidx = 0
         wallPtIndices = getWallPointArrayIndex(globaldata)
         for wallidxI, itm in enumerate(wallPtIndices):
             for idx, wallidx in enumerate(itm):
@@ -2248,7 +2270,7 @@ def generateOutput(globaldata, wallPointArray, wallShapely):
                 segidx += 1
                 the_file.write("{} {} {} {}\n".format(segidx, wallidx, nextPt, (wallidxI + 1)))
         currPt = captureOuter
-        the_file.write("# Outer Line Segments\n")   
+        the_file.write("# Outer Line Segments\n")
         while True:
             nextPt = getLeftPoint(currPt, globaldata)
             segidx += 1
@@ -2258,7 +2280,7 @@ def generateOutput(globaldata, wallPointArray, wallShapely):
                 break
         the_file.write("{}\n".format(len(wallPointArray)))
         holeidx = 0
-        the_file.write("# Holes\n")   
+        the_file.write("# Holes\n")
         for itm in wallShapely:
             holeidx += 1
             avgpt = random_points_within(itm, 1)[0]
@@ -2415,7 +2437,7 @@ def sparseNullifier(globaldata):
                         text_file.writelines("  " + str(idx) + "  1\n")
                     else:
                         text_file.writelines("  " + str(idx) + "  0\n")
-                   
+
 def wallConnectivityCheckNearest(globaldata):
     madechanges = False
     conf = getConfig()
@@ -2425,7 +2447,7 @@ def wallConnectivityCheckNearest(globaldata):
             if flag == 0:
                 xpos,xneg,_,_ = getFlags(idx,globaldata)
                 if xpos == 1 or xneg == 1:
-                    print(idx) 
+                    print(idx)
                     madechanges = True
                     ptcord = getNearestProblemPoint(idx,globaldata, conf)
                     if ptcord != 0:
@@ -2436,7 +2458,7 @@ def wallConnectivityCheckNearest(globaldata):
                         text_file.writelines("\n")
     if madechanges == True:
         with open("adapted.txt", "a+") as text_file:
-            text_file.writelines("1000 1000\n")   
+            text_file.writelines("1000 1000\n")
 
 def wallConnectivityCheckSensor(globaldata):
     madechanges = False
@@ -2447,7 +2469,7 @@ def wallConnectivityCheckSensor(globaldata):
             if flag == 0:
                 xpos,xneg,_,_ = getFlags(idx,globaldata)
                 if xpos == 1 or xneg == 1:
-                    print(idx) 
+                    print(idx)
                     madechanges = True
                     sensorBox.append(idx)
     if madechanges == True:
@@ -2467,7 +2489,7 @@ def wallConnectivityCheck(globaldata, verbose=False):
             if flag == 0:
                 xpos,xneg,_,_ = getFlags(idx,globaldata)
                 if xpos == 1 or xneg == 1:
-                    print(idx) 
+                    print(idx)
                     if not verbose:
                         madechanges = True
                         ptcordx, ptcordy = getPoint(idx,globaldata)
@@ -2546,7 +2568,7 @@ def bsplineCall(cv, point_division, index1, index2):
     # u : The weighted sum of squared residuals of the spline approximation.
     tck, u = splprep([cv[:,0], cv[:,1]], s=0)
 
-    generated_points = [] 
+    generated_points = []
     update = 2000
     while len(generated_points) < point_division and update < 100000:
         # print(update)
@@ -2561,9 +2583,9 @@ def bsplineCall(cv, point_division, index1, index2):
         new_points = splev(u_new, tck, der = 0)
 
         for i in range(len(new_points[0])):
-            # The cv[x] represents point index (subtracted by one) in between which the new generated points are found 
+            # The cv[x] represents point index (subtracted by one) in between which the new generated points are found
             if (typeObtuseRightAcute(cv[index1][0], cv[index1][1], new_points[0][i],new_points[1][i], cv[index2][0], cv[index2][1])== 1):
-                if(angle(cv[index1][0], cv[index1][1], new_points[0][i],new_points[1][i], cv[index2][0], cv[index2][1]) > 170 and 
+                if(angle(cv[index1][0], cv[index1][1], new_points[0][i],new_points[1][i], cv[index2][0], cv[index2][1]) > 170 and
                     angle(cv[index1][0], cv[index1][1], new_points[0][i],new_points[1][i], cv[index2][0], cv[index2][1]) < 190):
                     generated_points.append([new_points[0][i], new_points[1][i]])
                     # print(new_points[0][i], new_points[1][i])
@@ -2631,7 +2653,7 @@ def verifyPointsBetween(search_list,startpt,stoppt):
     generated_points = []
     for i in range(len(search_list)):
         if (typeObtuseRightAcute(startpt[0], startpt[1], search_list[i][0],search_list[i][1], stoppt[0], stoppt[1])== 1):
-            if(angle(startpt[0], startpt[1], search_list[i][0],search_list[i][1], stoppt[0], stoppt[1]) > 170 and 
+            if(angle(startpt[0], startpt[1], search_list[i][0],search_list[i][1], stoppt[0], stoppt[1]) > 170 and
                 angle(startpt[0], startpt[1], search_list[i][0],search_list[i][1], stoppt[0], stoppt[1]) < 190):
                 generated_points.append([search_list[i][0], search_list[i][1]])
     return generated_points
@@ -2695,7 +2717,7 @@ def orientation(file, verbose=True):
     plist = []
     for x,y in reader:
         plist.append((float(x), float(y)))
-    
+
     def f(x1, y1, x2, y2, x3, y3):
         crossProduct = (x2 - x1) * (y3 - y2) - (x3 - x2) * (y2 - y1)
         if crossProduct > 0:
