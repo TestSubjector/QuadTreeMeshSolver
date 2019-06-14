@@ -22,28 +22,34 @@ def main():
     np.seterr(divide='ignore')
 
     print("Loading Data")
+    loaded = False
+    try:
+        file1 = open(args.input, "r")
+        data = file1.read()
+        globaldata = ["start"]
+        # splitdata = StringIO(data)
+        # print(splitdata)
+        # globaldata = np.loadtxt(splitdata)
+        splitdata = data.split("\n")
+        splitdata = splitdata[:-1]
 
-    file1 = open(args.input or "preprocessorfile.txt", "r")
-    data = file1.read()
-    globaldata = ["start"]
-    # splitdata = StringIO(data)
-    # print(splitdata)
-    # globaldata = np.loadtxt(splitdata)
-    splitdata = data.split("\n")
-    splitdata = splitdata[:-1]
+        print("Processed Pre-Processor File")
+        print("Converting to readable format")
 
-    print("Processed Pre-Processor File")
-    print("Converting to readable format")
+        for _, itm in enumerate(tqdm(splitdata)):
+            itm = itm.split(" ")
+            itm.pop(-1)
+            entry = itm
+            globaldata.append(entry)
 
-    for _, itm in enumerate(tqdm(splitdata)):
-        itm = itm.split(" ")
-        itm.pop(-1)
-        entry = itm
-        globaldata.append(entry)
-
-    globaldata = core.cleanNeighbours(globaldata)
-    wallpoints = core.getWallPointArray(globaldata)
-    wallpointsData = core.generateWallPolygons(wallpoints)
+        globaldata = core.cleanNeighbours(globaldata)
+        wallpoints = core.getWallPointArray(globaldata)
+        wallpointsData = core.generateWallPolygons(wallpoints)
+        loaded = True
+    
+    except:
+        loaded = False
+    
     conf = core.getConfig()
 
     # interiorpts = []
@@ -54,8 +60,7 @@ def main():
     # polydata = balance.getPolygon(interiortriangles)
     # plot 'preprocessorfile.txt' using 2:3:(sprintf("%d", $1)) with labels notitle
     core.clearScreen()
-
-    while True:
+    while True and loaded:
         print("Type 'exit! to quit (Does not save changes).")
         print("Type 'exit to quit (Saves changes).")
         print("Type 'wcc' to run Wall Connectivity Check on all Wall Points.")
@@ -76,7 +81,9 @@ def main():
         print("Type 'split' to output the different type of points in a file")
         print("Type 'config' to start Config Manager")
         print("Type 'plot' to start Plot Manager")
+        print("Type 'config' to start Config Manager")
         print("Type 'hills' to start Hills and Valleys Manager")
+        
         ptidx = input("Which point do you want to fix? ").lower()
 
         if ptidx == "exit!":
@@ -244,12 +251,38 @@ def main():
                 core.clearScreen()
                 break
 
-    globaldata.pop(0)
-    
-    with open("preprocessorfile_tools.txt", "w") as text_file:
-        for item1 in globaldata:
-            text_file.writelines(["%s " % item for item in item1])
-            text_file.writelines("\n") 
+    if loaded:
+        globaldata.pop(0)
+        
+        with open("preprocessorfile_tools.txt", "w") as text_file:
+            for item1 in globaldata:
+                text_file.writelines(["%s " % item for item in item1])
+                text_file.writelines("\n") 
+    else:
+        while True:
+            print("Type 'integrity' to check wall.json integrity")
+            print("Type 'config' to start Config Manager")
+            print("Type 'hills' to start Hills and Valleys Manager")
+            print("Type 'exit' to exit")
+
+            ptidx = input("Enter command: ").lower()
+
+            if ptidx == "integrity":
+                core.clearScreen()
+                core.verifyIntegrity()
+            
+            elif ptidx == "config":
+                core.clearScreen()
+                core.configManager() 
+
+            elif ptidx == "hills":
+                core.clearScreen()
+                core.hills_manager()
+
+            elif ptidx == "exit":
+                exit()
+
+
 
 if __name__ == "__main__":
     import logging
