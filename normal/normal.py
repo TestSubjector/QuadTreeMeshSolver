@@ -65,8 +65,6 @@ def main():
             text_file.writelines("\n")
             
     log.info("Done")
-
-
     
 if __name__ == "__main__":
     import logging
@@ -76,7 +74,6 @@ if __name__ == "__main__":
     import sys
     sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), os.pardir))
     from core import core
-    
 
     default_path='logging.json'
     path = default_path

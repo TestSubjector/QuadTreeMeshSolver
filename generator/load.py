@@ -1,4 +1,3 @@
-# from progress import *
 import logging
 import pickle
 import json
@@ -16,11 +15,8 @@ def loadWall(geometrydata,hashtable,globaldata,idf):
     startpt = index
     lastpt = len(globaldata) + len(geometrydata)
     for i in range(len(geometrydata)):
-        # printProgressBar(i, len(geometrydata) - 1, prefix = 'Progress:', suffix = 'Complete', length = 50)
         xcord = float(geometrydata[i].split()[0])
         ycord = float(geometrydata[i].split()[1])
-        # print(len(geometrydata[i].split(" ")))
-        # print(geometrydata[i].split(" ")[1])
 
         hashtable.append(str(xcord) + "," + str(ycord))
         wallpoint.append(str(xcord) + "," + str(ycord))  # Storing Wallpoints
@@ -84,7 +80,6 @@ def loadWall(geometrydata,hashtable,globaldata,idf):
 def loadInterior(data, hashtable, globaldata, index):
     log.info("Beginning Interior Point and Wall Point Neighbour Processing")
     for i in trange(len(data)):
-        # printProgressBar(i, len(data) - 1, prefix = 'Progress:', suffix = 'Complete', length = 50)
         cleandata = str(data[i]).split(" ")
         depth = int(cleandata[2])
         direction = int(cleandata[3])

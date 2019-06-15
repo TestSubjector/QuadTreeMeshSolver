@@ -1145,7 +1145,7 @@ def feederData(wallpts,wallptData):
     wallpt = wallpts[0]
     for idx,itm in enumerate(wallptData):
         if wallpt in itm:
-            return [itm.index(wallpts[0]),itm.index(wallpts[1]),idx,wallpt, wallpts[1]]
+            return [itm.index(wallpts[0]),itm.index(wallpts[1]), idx, wallpt, wallpts[1]]
 
 def undelimitXY(a):
     finallist = []
@@ -1879,6 +1879,9 @@ def getConditionNumber(index, globaldata, conf):
     yneg = getWeightedInteriorConditionValueofYNeg(index, globaldata, conf)
     result = {"xpos":xpos,"xneg":xneg,"ypos":ypos,"yneg":yneg}
     return result
+
+def getConditionNumberNormalInterior(index, globaldata, conf):
+    None
 
 def getConditionNumberNormal(index,globaldata, conf):
     xpos = getWeightedNormalConditionValueofWallXPos(index,globaldata, conf)

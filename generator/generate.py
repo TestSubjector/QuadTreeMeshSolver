@@ -1,6 +1,7 @@
 import argparse
-from load import *
-from boundary import *
+import load
+import boundary
+import misc
 
 import logging
 log = logging.getLogger(__name__)
@@ -19,7 +20,6 @@ def main():
     log.debug("Arguments Set")
     log.debug(args)
 
-    # Opening the Neighbourhood file
     try:
         file1 = open(args.neighbour or "neighbour.txt", "r")
         data = file1.read()
@@ -31,10 +31,6 @@ def main():
     data = data.split("\n")
     data.pop(0)  # Pops the first blank line
 
-    # if not args.neighbour:
-    #     log.critical("Cannot find neighbor file")
-    #     exit()
-
     core.setPrefix()
 
     wallarg = args.wall
@@ -44,7 +40,7 @@ def main():
 
     log.info("Found " + str(len(wallarg)) + " wall geometry files.")
     try:
-        bsplineWallData = dict(load_obj("wall"))
+        bsplineWallData = dict(core.load_obj("wall"))
     except IOError:
         bsplineWallData = "None"
     for idx,itm in enumerate(wallarg):
@@ -53,8 +49,7 @@ def main():
         geometrydata = file2.read()
         file2.close()
         geometrydata = geometrydata.split("\n")
-        geometrydataOrg = wallFloat(geometrydata)
-        # print(geometrydata)
+        geometrydataOrg = load.wallFloat(geometrydata)
         if bsplineWallData != "None":
             insertionKeys = list(bsplineWallData.keys())
             for itm in insertionKeys:
@@ -66,26 +61,26 @@ def main():
                 itmx = float(itm2.split(",")[0])
                 itmy = float(itm2.split(",")[1])
                 itmCheck = str(itmx) +"\t" + str(itmy)
-                resultMan,insertionidx = checkIfInside(itmx,itmy,geometrydata,geometrydataOrg,bsplineWallData)
+                resultMan,insertionidx = load.checkIfInside(itmx,itmy,geometrydata,geometrydataOrg,bsplineWallData)
                 if resultMan:
-                    ptsToBeAdded = getItem(bsplineWallData,itm)
-                    ptsToBeAdded = sorted(ptsToBeAdded,key = lambda point: distance_squared(itmx,itmy,point[0],point[1]),reverse=postInsert)
+                    ptsToBeAdded = load.getItem(bsplineWallData,itm)
+                    ptsToBeAdded = sorted(ptsToBeAdded,key = lambda point: load.distance_squared(itmx,itmy,point[0],point[1]),reverse=postInsert)
                     for ptCordItm in ptsToBeAdded:
                         dataInsert = str(ptCordItm[0]) + "\t" + str(ptCordItm[1])
                         if postInsert == True:
                             geometrydata.insert(insertionidx + 1,dataInsert)
                         else:
                             geometrydata.insert(insertionidx,dataInsert)
-        hashtable, wallpointsdata, globaldata = loadWall(geometrydata,hashtable,globaldata,idx + 1)
+        hashtable, wallpointsdata, globaldata = load.loadWall(geometrydata,hashtable,globaldata,idx + 1)
         wallpoints.append(wallpointsdata)
 
     log.info("Loading Interior and Outer Points")
-    hashtable, globaldata = loadInterior(data, hashtable, globaldata, len(hashtable))
-    globaldata = cleanNeighbours(globaldata)
-    hashtable, globaldata = detectOuter(hashtable, globaldata)
+    hashtable, globaldata = load.loadInterior(data, hashtable, globaldata, len(hashtable))
+    globaldata = misc.cleanNeighbours(globaldata)
+    hashtable, globaldata = boundary.detectOuter(hashtable, globaldata)
 
-    globaldata = cleanNeighbours(globaldata)
-    globaldata = generateReplacement(hashtable, globaldata)
+    globaldata = misc.cleanNeighbours(globaldata)
+    globaldata = misc.generateReplacement(hashtable, globaldata)
 
     core.setKeyVal("globaldata",globaldata)
 
