@@ -134,12 +134,12 @@ def main():
             if configData["global"]["wallPointOrientation"] == "ccw":
                 newpts = core.generateBSplineBetween(bsplineArray[data[2]],data[0],data[1],POINT_CONTROL)
             else:
+                switch = True
                 # print(bsplineArray[data[2]][data[1]],bsplineArray[data[2]][data[0]])
                 if data[0] == 0:
                     newpts = core.generateBSplineBetween(bsplineArray[data[2]],data[1],data[0],POINT_CONTROL)
-                    switch = True
                 else:
-                    newpts = core.generateBSplineBetween(bsplineArray[data[2]],data[0],data[1],POINT_CONTROL)
+                    newpts = core.generateBSplineBetween(bsplineArray[data[2]],data[1],data[0],POINT_CONTROL)
             if quadrantcheck:
                 newpts = core.getPointsOnlyInQuadrant(newpts, badpts[idx], globaldata)
                 if len(newpts) == 0:

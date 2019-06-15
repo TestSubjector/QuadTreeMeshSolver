@@ -191,62 +191,32 @@ def main():
                 print("xpos",len(xpos),"xneg",len(xneg),"ypos",len(ypos),"yneg",len(yneg))
 
             print("Select Point Repair Option")
-            print("(1) Delete Connectivity and reinstate connectivity using Triangle Data.")
-            print("(2) Delete Connectivity and reinstate connectivity using Triangle Data and balance the remaining using Kumar's Connectivity.")
-            print("(3) Delete Connectivity and reinstate connectivity using Triangle Data and balance the remaining using Nischay's Connectivity.")
-            print("(4) Balance Connectivity using Triangle Data.")
-            print("(5) Balance Connectivity using Triangle Data.")
-            print("(6) Find Point Perpendicular to nearest wall segment")
-            print("(7) Exit")
-            print("(8) Exit without saving any changes")
-            print("(9) Go Back")
-            print("(10) Increase connectivity set to 3")
-            print("(11) Find nearest distance to wall points")
+            print("(1) Find Point Perpendicular to nearest wall segment")
+            print("(2) Exit")
+            print("(3) Exit without saving any changes")
+            print("(4) Go Back")
+            print("(5) Find nearest distance to wall points")
+            print("(6) Print Detailed Connectivity")
             whatkind = int(input("What option do you want to select? "))
             if whatkind == 1:
-                # tris = balance.getNeighboursFromTriangle(ptidx,globaldata,polydata)
-                # tris = core.getAeroPointsFromSet(ptidx,tris,globaldata,wallpointsData)
-                # tris = core.convertPointsToIndex(tris,globaldata)
-                # globaldata = core.replaceNeighbours(ptidx,tris,globaldata)
-                None
-            elif whatkind == 2:
-                # tris = balance.getNeighboursFromTriangle(ptidx,globaldata,polydata)
-                # tris = core.getAeroPointsFromSet(ptidx,tris,globaldata,wallpointsData)
-                # tris = core.convertPointsToIndex(tris,globaldata)
-                # globaldata = core.replaceNeighbours(ptidx,tris,globaldata)
-                # globadata = balance.fixXneg
-                None
-            elif whatkind == 3:
-                # tris = balance.getNeighboursFromTriangle(isPointIndex,globaldata,polydata)
-                # tris = core.getAeroPointsFromSet(ptidx,tris,globaldata,wallpointsData)
-                # tris = core.convertPointsToIndex(tris,globaldata)
-                # globaldata = core.replaceNeighbours(ptidx,tris,globaldata)
-                # globaldata = balance.triangleBalance(globaldata,polydata,wallpointsData,ptidx)
-                None
-            elif whatkind == 4:
-                # globaldata = balance.triangleBalance(globaldata,polydata,wallpointsData,ptidx)
-                None
-            elif whatkind == 5:
-                None
-            elif whatkind == 6:
                 print(core.getPerpendicularPoint(ptidx,globaldata))
-            elif whatkind == 7:
+            elif whatkind == 2:
                 core.clearScreen()
                 break
-            elif whatkind == 8:
+            elif whatkind == 3:
                 exit()
-            elif whatkind == 9:
+            elif whatkind == 4:
                 core.clearScreen()
-                None
-            elif whatkind == 10:
-                tris = core.getNeighbours(ptidx,globaldata)
-                tris = core.getAeroPointsFromSet(ptidx,tris,globaldata,wallpointsData)
-                tris = core.convertPointsToIndex(tris,globaldata)
-                globaldata = balance.forcePointsToFix(ptidx,tris,globaldata)
-            elif whatkind == 11:
+            elif whatkind == 5:
                 core.clearScreen()
                 px, py = core.getPoint(ptidx, globaldata)
                 print("Nearest Distance: {}".format(min(core.wallDistance((px, py), wallpointsData))))
+            elif whatkind == 6:
+                core.clearScreen()
+                print("xpos connectivity: {}, no. of xpos: {}".format(core.convertPointsToIndex(xpos, globaldata), len(xpos)))
+                print("xneg connectivity: {}, no. of xneg: {}".format(core.convertPointsToIndex(xneg, globaldata), len(xneg)))
+                print("ypos connectivity: {}, no. of ypos: {}".format(core.convertPointsToIndex(ypos, globaldata), len(ypos)))
+                print("yneg connectivity: {}, no. of yneg: {}".format(core.convertPointsToIndex(yneg, globaldata), len(yneg)))
             else:
                 core.clearScreen()
                 break

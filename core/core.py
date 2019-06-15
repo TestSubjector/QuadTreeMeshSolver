@@ -1298,7 +1298,6 @@ def isConditionBad(idx, globaldata, configData):
     dSPosCondition,dSNegCondition,dNPosCondition,dNNegCondition = condResult["sposCond"], condResult["snegCond"], condResult["nposCond"], condResult["nnegCond"]
     maxCond = max(dSPosCondition,dSNegCondition,dNPosCondition,dNNegCondition)
     if maxCond > float(configData["bspline"]["threshold"]) or math.isnan(dSPosCondition) or math.isnan(dSNegCondition) or math.isnan(dNPosCondition) or math.isnan(dNNegCondition):
-        # print(idx)
         return True
     else:
         return False
@@ -1310,6 +1309,17 @@ def isConditionNan(idx, globaldata, configData):
     dSPosCondition,dSNegCondition,dNPosCondition,dNNegCondition = condResult["sposCond"], condResult["snegCond"], condResult["nposCond"], condResult["nnegCond"]
     maxCond = max(dSPosCondition,dSNegCondition,dNPosCondition,dNNegCondition)
     if math.isnan(dSPosCondition) or math.isnan(dSNegCondition) or math.isnan(dNPosCondition) or math.isnan(dNNegCondition):
+        return True
+    else:
+        return False
+
+def isConditionInf(idx, globaldata, configData):
+    nx,ny = getNormals(idx,globaldata)
+    condResult = calculateNormalConditionValues(idx,globaldata,nx,ny, configData)
+    dSPosNbhs,dSNegNbhs,dNPosNbhs,dNNegNbhs = condResult["spos"], condResult["sneg"], condResult["npos"], condResult["nneg"]
+    dSPosCondition,dSNegCondition,dNPosCondition,dNNegCondition = condResult["sposCond"], condResult["snegCond"], condResult["nposCond"], condResult["nnegCond"]
+    maxCond = max(dSPosCondition,dSNegCondition,dNPosCondition,dNNegCondition)
+    if math.isinf(dSPosCondition) or math.isinf(dSNegCondition) or math.isinf(dNPosCondition) or math.isinf(dNNegCondition):
         return True
     else:
         return False
@@ -2395,12 +2405,27 @@ def getNearestProblemPoint(idx,globaldata, conf):
 
 def interiorConnectivityCheck(globaldata):
     conf = getConfig()
+    badPtsNan = []
+    badPtsInf = []
+    badPtsAll = []
     for idx,_ in enumerate(tqdm(globaldata)):
         if idx > 0:
             flag = getFlag(idx,globaldata)
             if flag == 1:
                 # checkConditionNumber(idx,globaldata,int(getConfig()["bspline"]["threshold"]))
-                isConditionBad(idx,globaldata, conf)
+                if isConditionNan(idx,globaldata, conf):
+                    badPtsNan.append(idx)
+                if isConditionInf(idx, globaldata, conf):
+                    badPtsInf.append(idx)
+                if isConditionBad(idx, globaldata, conf):
+                    badPtsAll.append(idx)
+    badPtsAll = list(set(badPtsAll) - set(badPtsInf) - set(badPtsNan))
+    badPtsNan = list(map(str, badPtsNan))
+    badPtsInf = list(map(str, badPtsInf))
+    badPtsAll = list(map(str, badPtsAll))
+    print("Bad Points (NaN) Detected: {}".format(" ".join(badPtsNan)))
+    print("Bad Points (Inf) Detected: {}".format(" ".join(badPtsInf)))
+    print("Bad Points (Conn) Detected: {}".format(" ".join(badPtsAll)))
 
 def sparseNullifier(globaldata):
     madechanges = False
