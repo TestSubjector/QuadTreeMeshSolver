@@ -24,7 +24,7 @@ def main():
     splitdata = data.split("\n")
     splitdata = splitdata[:-1]
 
-    headAdpt = core.str_to_bool(args.headadapt) 
+    headAdpt = core.ConvertStringToBool(args.headadapt) 
 
     log.info("Processed Pre-Processor File")
     log.info("Converting to readable format")

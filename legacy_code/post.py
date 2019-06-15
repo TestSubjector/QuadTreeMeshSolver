@@ -48,7 +48,7 @@ def main():
     for idx in trange(1,len(globaldata)):  
         nbhs = core.getNeighbours(idx,globaldata)
         for itm in nbhs:
-            cord = core.getPointxy(itm,globaldata)
+            cord = core.getPointXY(itm,globaldata)
             if core.isNonAeroDynamic(idx,cord,globaldata,wallpointsData):
                 log.warning("Point %s has a non aero point with index %s",idx,itm)
 

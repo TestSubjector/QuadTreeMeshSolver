@@ -85,25 +85,25 @@ def triangleBalance2(globaldata, wallpoints, configData, badPoints):
                     if idx not in core.getWallEndPoints(globaldata):
                         nbhs = nbhs + core.getLeftandRightPoint(idx, globaldata)
                     nbhs = list(set(nbhs))
-                    globaldata = fixWXpos2(idx,globaldata,nbhs,AGGRESSIVE_MAX_NEIGHBOURS,WALL_THRESHOLD,True,wallpoints, configData)
+                    globaldata = fixWallXPosLeftRight(idx,globaldata,nbhs,AGGRESSIVE_MAX_NEIGHBOURS,WALL_THRESHOLD,True,wallpoints, configData)
                 elif xposf == 2:
                     nbhs = core.convertIndexToPoints(core.getNeighbours(idx,globaldata),globaldata)
                     if idx not in core.getWallEndPoints(globaldata):
                         nbhs = nbhs + core.getLeftandRightPoint(idx, globaldata)
                     nbhs = list(set(nbhs))
-                    globaldata = fixWXpos2(idx,globaldata,nbhs,NORMAL_MAX_NEIGHBOURS,WALL_THRESHOLD,False,wallpoints, configData)
+                    globaldata = fixWallXPosLeftRight(idx,globaldata,nbhs,NORMAL_MAX_NEIGHBOURS,WALL_THRESHOLD,False,wallpoints, configData)
                 if xnegf == 1:
                     nbhs = core.convertIndexToPoints(core.getNeighbours(idx,globaldata),globaldata)
                     if idx not in core.getWallEndPoints(globaldata):
                         nbhs = nbhs + core.getLeftandRightPoint(idx, globaldata)
                     nbhs = list(set(nbhs))
-                    globaldata = fixWXneg2(idx,globaldata,nbhs,AGGRESSIVE_MAX_NEIGHBOURS,WALL_THRESHOLD,True,wallpoints, configData)
+                    globaldata = fixWallXNegLeftRight(idx,globaldata,nbhs,AGGRESSIVE_MAX_NEIGHBOURS,WALL_THRESHOLD,True,wallpoints, configData)
                 elif xnegf == 2:
                     nbhs = core.convertIndexToPoints(core.getNeighbours(idx,globaldata),globaldata)
                     if idx not in core.getWallEndPoints(globaldata):
                         nbhs = nbhs + core.getLeftandRightPoint(idx, globaldata)
                     nbhs = list(set(nbhs))
-                    globaldata = fixWXneg2(idx,globaldata,nbhs,NORMAL_MAX_NEIGHBOURS,WALL_THRESHOLD,False,wallpoints, configData)
+                    globaldata = fixWallXNegLeftRight(idx,globaldata,nbhs,NORMAL_MAX_NEIGHBOURS,WALL_THRESHOLD,False,wallpoints, configData)
     return globaldata
 
 def triangleBalance3(globaldata, wallpoints, configData, badPoints):
@@ -120,13 +120,13 @@ def triangleBalance3(globaldata, wallpoints, configData, badPoints):
                     if idx not in core.getWallEndPoints(globaldata):
                         nbhs = nbhs + core.getLeftandRightPoint(idx, globaldata)
                     nbhs = list(set(nbhs))
-                    globaldata = fixWXpos3(idx,globaldata,nbhs,AGGRESSIVE_MAX_NEIGHBOURS,WALL_THRESHOLD,True,wallpoints, configData)
+                    globaldata = fixWallXPosGeneral(idx,globaldata,nbhs,AGGRESSIVE_MAX_NEIGHBOURS,WALL_THRESHOLD,True,wallpoints, configData)
                 if xnegf == 1 or xnegf == 2:
                     nbhs = core.convertIndexToPoints(core.getNeighbours(idx,globaldata),globaldata)
                     if idx not in core.getWallEndPoints(globaldata):
                         nbhs = nbhs + core.getLeftandRightPoint(idx, globaldata)
                     nbhs = list(set(nbhs))
-                    globaldata = fixWXneg3(idx,globaldata,nbhs,AGGRESSIVE_MAX_NEIGHBOURS,WALL_THRESHOLD,True,wallpoints, configData)
+                    globaldata = fixWallXNegGeneral(idx,globaldata,nbhs,AGGRESSIVE_MAX_NEIGHBOURS,WALL_THRESHOLD,True,wallpoints, configData)
     return globaldata
 
 def convertTupleToCord(tupledata):
@@ -156,14 +156,14 @@ def fixXpos(idx,globaldata,nbhs,control,conditionNumber,aggressive,polygonData,w
     else:
         control = control + 1
         mynbhs = core.convertIndexToPoints(core.getNeighbours(idx,globaldata),globaldata)
-        mychecknbhs = core.getDXPosPointsFromSetRaw(idx,globaldata,mynbhs)
+        mychecknbhs = core.getXPosPointsWithInputLegacy(idx,globaldata,mynbhs)
         finalnbhs = list(set(nbhs) - set(mynbhs))
-        finalnbhs = core.getDXPosPointsFromSetRaw(idx,globaldata,finalnbhs)
+        finalnbhs = core.getXPosPointsWithInputLegacy(idx,globaldata,finalnbhs)
         # print(finalnbhs)
         conditionSet = []
         for itm in finalnbhs:
             checkset = [itm] + mychecknbhs
-            newcheck = core.weightedConditionValueForSetOfPoints(idx,globaldata,checkset, configData)
+            newcheck = core.getConditionNumberDictionary(idx,globaldata,checkset, configData)
             if newcheck < conditionNumber:
                 if not core.isNonAeroDynamicBetter(idx,itm,globaldata,wallpoints):
                     conditionSet.append([itm, newcheck])
@@ -191,14 +191,14 @@ def fixXneg(idx,globaldata,nbhs,control,conditionNumber,aggressive,polygonData,w
     else:
         control = control + 1
         mynbhs = core.convertIndexToPoints(core.getNeighbours(idx,globaldata),globaldata)
-        mychecknbhs = core.getDXNegPointsFromSetRaw(idx,globaldata,mynbhs)
+        mychecknbhs = core.getXNegPointsWithInputLegacy(idx,globaldata,mynbhs)
         finalnbhs = list(set(nbhs) - set(mynbhs))
-        finalnbhs = core.getDXNegPointsFromSetRaw(idx,globaldata,finalnbhs)
+        finalnbhs = core.getXNegPointsWithInputLegacy(idx,globaldata,finalnbhs)
         # print(finalnbhs)
         conditionSet = []
         for itm in finalnbhs:
             checkset = [itm] + mychecknbhs
-            newcheck = core.weightedConditionValueForSetOfPoints(idx,globaldata,checkset, configData)
+            newcheck = core.getConditionNumberDictionary(idx,globaldata,checkset, configData)
             if newcheck < conditionNumber:
                 if not core.isNonAeroDynamicBetter(idx,itm,globaldata,wallpoints):
                     conditionSet.append([itm, newcheck])
@@ -226,14 +226,14 @@ def fixYpos(idx,globaldata,nbhs,control,conditionNumber,aggressive,polygonData,w
     else:
         control = control + 1
         mynbhs = core.convertIndexToPoints(core.getNeighbours(idx,globaldata),globaldata)
-        mychecknbhs = core.getDYPosPointsFromSetRaw(idx,globaldata,mynbhs, configData)
+        mychecknbhs = core.getYPosPointsWithInputLegacy(idx,globaldata,mynbhs, configData)
         finalnbhs = list(set(nbhs) - set(mynbhs))
-        finalnbhs = core.getDYPosPointsFromSetRaw(idx,globaldata,finalnbhs, configData)
+        finalnbhs = core.getYPosPointsWithInputLegacy(idx,globaldata,finalnbhs, configData)
         # print(finalnbhs)
         conditionSet = []
         for itm in finalnbhs:
             checkset = [itm] + mychecknbhs
-            newcheck = core.weightedConditionValueForSetOfPoints(idx,globaldata,checkset, configData)
+            newcheck = core.getConditionNumberDictionary(idx,globaldata,checkset, configData)
             if newcheck < conditionNumber:
                 if not core.isNonAeroDynamicBetter(idx,itm,globaldata,wallpoints):
                     conditionSet.append([itm, newcheck])
@@ -261,15 +261,15 @@ def fixYneg(idx,globaldata,nbhs,control,conditionNumber,aggressive,polygonData,w
     else:
         control = control + 1
         mynbhs = core.convertIndexToPoints(core.getNeighbours(idx,globaldata),globaldata)
-        mychecknbhs = core.getDYNegPointsFromSetRaw(idx,globaldata,mynbhs, configData)
+        mychecknbhs = core.getYNegPointsWithInputLegacy(idx,globaldata,mynbhs, configData)
         finalnbhs = list(set(nbhs) - set(mynbhs))
-        finalnbhs = core.getDYNegPointsFromSetRaw(idx,globaldata,finalnbhs, configData)
+        finalnbhs = core.getYNegPointsWithInputLegacy(idx,globaldata,finalnbhs, configData)
         finalnbhs = core.getAeroPointsFromSet(idx,finalnbhs,globaldata,wallpoints)
         # print(finalnbhs)
         conditionSet = []
         for itm in finalnbhs:
             checkset = [itm] + mychecknbhs
-            newcheck = core.weightedConditionValueForSetOfPoints(idx,globaldata,checkset, configData)
+            newcheck = core.getConditionNumberDictionary(idx,globaldata,checkset, configData)
             if newcheck < conditionNumber:
                 if not core.isNonAeroDynamicBetter(idx,itm,globaldata,wallpoints):
                     conditionSet.append([itm, newcheck])
@@ -297,14 +297,14 @@ def fixWXpos(idx,globaldata,nbhs,control,conditionNumber,aggressive,polygonData,
     else:
         control = control + 1
         mynbhs = core.convertIndexToPoints(core.getNeighbours(idx,globaldata),globaldata)
-        mychecknbhs = core.getDWallXPosPointsFromSetRaw(idx,globaldata,mynbhs, configData)
+        mychecknbhs = core.getXPosPointsWithInputLegacy(idx,globaldata,mynbhs, configData)
         finalnbhs = list(set(nbhs) - set(mynbhs))
-        finalnbhs = core.getDWallXPosPointsFromSetRaw(idx,globaldata,finalnbhs, configData)
+        finalnbhs = core.getXPosPointsWithInputLegacy(idx,globaldata,finalnbhs, configData)
         # print(finalnbhs)
         conditionSet = []
         for itm in finalnbhs:
             checkset = [itm] + mychecknbhs
-            newcheck = core.weightedConditionValueForSetOfPointsNormal(idx,globaldata,checkset, configData)
+            newcheck = core.getConditionNumberWithInput(idx,globaldata,checkset, configData)
             if newcheck < conditionNumber:
                 if not core.isNonAeroDynamicBetter(idx,itm,globaldata,wallpoints):
                     conditionSet.append([itm, newcheck])
@@ -320,7 +320,7 @@ def fixWXpos(idx,globaldata,nbhs,control,conditionNumber,aggressive,polygonData,
                     itm_real = core.getIndexFromPoint(itm, globaldata)
                     layernbhs = core.convertIndexToPoints(getNeighboursFromTriangle(itm_real,globaldata,polygonData),globaldata)
                     nbhofnbh = nbhofnbh + layernbhs
-                nbhofnbh = list(set(nbhofnbh) - set([core.getPointxy(idx,globaldata)]))
+                nbhofnbh = list(set(nbhofnbh) - set([core.getPointXY(idx,globaldata)]))
                 fixWXpos(idx,globaldata,nbhofnbh,control,conditionNumber,False,polygonData,wallpoints, configData)
             else:
                 return globaldata
@@ -332,14 +332,14 @@ def fixWXneg(idx,globaldata,nbhs,control,conditionNumber,aggressive,polygonData,
     else:
         control = control + 1
         mynbhs = core.convertIndexToPoints(core.getNeighbours(idx,globaldata),globaldata)
-        mychecknbhs = core.getDWallXNegPointsFromSetRaw(idx,globaldata,mynbhs, configData)
+        mychecknbhs = core.getXNegPointsWithInputLegacy(idx,globaldata,mynbhs, configData)
         finalnbhs = list(set(nbhs) - set(mynbhs))
-        finalnbhs = core.getDWallXNegPointsFromSetRaw(idx,globaldata,finalnbhs, configData)
+        finalnbhs = core.getXNegPointsWithInputLegacy(idx,globaldata,finalnbhs, configData)
         # print(finalnbhs)
         conditionSet = []
         for itm in finalnbhs:
             checkset = [itm] + mychecknbhs
-            newcheck = core.weightedConditionValueForSetOfPointsNormal(idx,globaldata,checkset, configData)
+            newcheck = core.getConditionNumberWithInput(idx,globaldata,checkset, configData)
             if newcheck < conditionNumber:
                 if not core.isNonAeroDynamicBetter(idx,itm,globaldata,wallpoints):
                     conditionSet.append([itm, newcheck])
@@ -355,33 +355,33 @@ def fixWXneg(idx,globaldata,nbhs,control,conditionNumber,aggressive,polygonData,
                     itm_real = core.getIndexFromPoint(itm, globaldata)
                     layernbhs = core.convertIndexToPoints(getNeighboursFromTriangle(itm_real,globaldata,polygonData),globaldata)
                     nbhofnbh = nbhofnbh + layernbhs
-                nbhofnbh = list(set(nbhofnbh) - set([core.getPointxy(idx,globaldata)]))
+                nbhofnbh = list(set(nbhofnbh) - set([core.getPointXY(idx,globaldata)]))
                 fixWXneg(idx,globaldata,nbhofnbh,control,conditionNumber,False,polygonData,wallpoints, configData)
             else:
                 return globaldata
     return globaldata
 
-def fixWXpos2(idx,globaldata,nbhs,control,conditionNumber,aggressive,wallpoints, configData):
+def fixWallXPosLeftRight(idx,globaldata,nbhs,control,conditionNumber,aggressive,wallpoints, configData):
     if control > 0:
         return globaldata
     else:
         control = control + 1
         mynbhs = core.convertIndexToPoints(core.getNeighbours(idx,globaldata),globaldata)
-        mychecknbhs = core.getDWallXPosPointsFromSetRaw(idx,globaldata,mynbhs, configData)
+        mychecknbhs = core.getXPosPointsWithInput(idx,globaldata,mynbhs, configData)
         finalnbhs = list(set(nbhs) - set(mynbhs))
-        finalnbhs = core.getDWallXPosPointsFromSetRaw(idx,globaldata,finalnbhs, configData)
+        finalnbhs = core.getXPosPointsWithInput(idx,globaldata,finalnbhs, configData)
         # print(finalnbhs)
         conditionSet = []
         for itm in finalnbhs:
             checkset = [itm] + mychecknbhs
-            newcheck = core.weightedConditionValueForSetOfPointsNormal(idx,globaldata,checkset, configData)
+            newcheck = core.getConditionNumberWithInput(idx,globaldata,checkset, configData)
             if newcheck < conditionNumber:
                 if not core.isNonAeroDynamicBetter(idx,itm,globaldata,wallpoints):
                     conditionSet.append([itm, newcheck])
         if len(conditionSet) > 0:
             conditionSet.sort(key=lambda x: x[1])
             globaldata = core.appendNeighbours(idx, globaldata, conditionSet[0][0])
-            fixWXpos2(idx,globaldata,nbhs,control,conditionNumber,aggressive,wallpoints, configData)
+            fixWallXPosLeftRight(idx,globaldata,nbhs,control,conditionNumber,aggressive,wallpoints, configData)
         else:
             if aggressive == True:
                 leftright = core.getLeftandRightPoint(idx,globaldata)
@@ -390,33 +390,33 @@ def fixWXpos2(idx,globaldata,nbhs,control,conditionNumber,aggressive,wallpoints,
                     itm_real = core.getIndexFromPoint(itm, globaldata)
                     layernbhs = core.convertIndexToPoints(core.getNeighbours(itm_real,globaldata),globaldata)
                     nbhofnbh = nbhofnbh + layernbhs
-                nbhofnbh = list(set(nbhofnbh) - set([core.getPointxy(idx,globaldata)]))
-                fixWXpos2(idx,globaldata,nbhofnbh,control,conditionNumber,False,wallpoints, configData)
+                nbhofnbh = list(set(nbhofnbh) - set([core.getPointXY(idx,globaldata)]))
+                fixWallXPosLeftRight(idx,globaldata,nbhofnbh,control,conditionNumber,False,wallpoints, configData)
             else:
                 return globaldata
     return globaldata
 
-def fixWXneg2(idx,globaldata,nbhs,control,conditionNumber,aggressive,wallpoints, configData):
+def fixWallXNegLeftRight(idx,globaldata,nbhs,control,conditionNumber,aggressive,wallpoints, configData):
     if control > 0:
         return globaldata
     else:
         control = control + 1
         mynbhs = core.convertIndexToPoints(core.getNeighbours(idx,globaldata),globaldata)
-        mychecknbhs = core.getDWallXNegPointsFromSetRaw(idx,globaldata,mynbhs, configData)
+        mychecknbhs = core.getXNegPointsWithInput(idx,globaldata,mynbhs, configData)
         finalnbhs = list(set(nbhs) - set(mynbhs))
-        finalnbhs = core.getDWallXNegPointsFromSetRaw(idx,globaldata,finalnbhs, configData)
+        finalnbhs = core.getXNegPointsWithInput(idx,globaldata,finalnbhs, configData)
         # print(finalnbhs)
         conditionSet = []
         for itm in finalnbhs:
             checkset = [itm] + mychecknbhs
-            newcheck = core.weightedConditionValueForSetOfPointsNormal(idx,globaldata,checkset, configData)
+            newcheck = core.getConditionNumberWithInput(idx,globaldata,checkset, configData)
             if newcheck < conditionNumber:
                 if not core.isNonAeroDynamicBetter(idx,itm,globaldata,wallpoints):
                     conditionSet.append([itm, newcheck])
         if len(conditionSet) > 0:
             conditionSet.sort(key=lambda x: x[1])
             globaldata = core.appendNeighbours(idx, globaldata, conditionSet[0][0])
-            fixWXneg2(idx,globaldata,nbhs,control,conditionNumber,aggressive,wallpoints, configData)
+            fixWallXNegLeftRight(idx,globaldata,nbhs,control,conditionNumber,aggressive,wallpoints, configData)
         else:
             if aggressive == True:
                 leftright = core.getLeftandRightPoint(idx,globaldata)
@@ -425,33 +425,33 @@ def fixWXneg2(idx,globaldata,nbhs,control,conditionNumber,aggressive,wallpoints,
                     itm_real = core.getIndexFromPoint(itm, globaldata)
                     layernbhs = core.convertIndexToPoints(core.getNeighbours(itm_real,globaldata),globaldata)
                     nbhofnbh = nbhofnbh + layernbhs
-                nbhofnbh = list(set(nbhofnbh) - set([core.getPointxy(idx,globaldata)]))
-                fixWXneg2(idx,globaldata,nbhofnbh,control,conditionNumber,False,wallpoints, configData)
+                nbhofnbh = list(set(nbhofnbh) - set([core.getPointXY(idx,globaldata)]))
+                fixWallXNegLeftRight(idx,globaldata,nbhofnbh,control,conditionNumber,False,wallpoints, configData)
             else:
                 return globaldata
     return globaldata
 
-def fixWXpos3(idx,globaldata,nbhs,control,conditionNumber,aggressive,wallpoints, configData):
+def fixWallXPosGeneral(idx,globaldata,nbhs,control,conditionNumber,aggressive,wallpoints, configData):
     if control > 0:
         return globaldata
     else:
         control = control + 1
         mynbhs = core.convertIndexToPoints(core.getNeighbours(idx,globaldata),globaldata)
-        mychecknbhs = core.getDWallXPosPointsFromSetRaw(idx,globaldata,mynbhs, configData)
+        mychecknbhs = core.getXPosPointsWithInput(idx,globaldata,mynbhs, configData)
         finalnbhs = list(set(nbhs) - set(mynbhs))
-        finalnbhs = core.getDWallXPosPointsFromSetRaw(idx,globaldata,finalnbhs, configData)
+        finalnbhs = core.getXPosPointsWithInput(idx,globaldata,finalnbhs, configData)
         # print(finalnbhs)
         conditionSet = []
         for itm in finalnbhs:
             checkset = [itm] + mychecknbhs
-            newcheck = core.weightedConditionValueForSetOfPointsNormal(idx,globaldata,checkset, configData)
+            newcheck = core.getConditionNumberWithInput(idx,globaldata,checkset, configData)
             if newcheck < conditionNumber:
                 if not core.isNonAeroDynamicBetter(idx,itm,globaldata,wallpoints):
                     conditionSet.append([itm, newcheck])
         if len(conditionSet) > 0:
             conditionSet.sort(key=lambda x: x[1])
             globaldata = core.appendNeighbours(idx, globaldata, conditionSet[0][0])
-            fixWXpos3(idx,globaldata,nbhs,control,conditionNumber,aggressive,wallpoints, configData)
+            fixWallXPosGeneral(idx,globaldata,nbhs,control,conditionNumber,aggressive,wallpoints, configData)
         else:
             if aggressive == True:
                 leftright = core.getLeftandRightPoint(idx,globaldata)
@@ -462,33 +462,33 @@ def fixWXpos3(idx,globaldata,nbhs,control,conditionNumber,aggressive,wallpoints,
                     itm_real = core.getIndexFromPoint(itm, globaldata)
                     layernbhs = core.convertIndexToPoints(core.getNeighbours(itm_real,globaldata),globaldata)
                     nbhofnbh = nbhofnbh + layernbhs
-                nbhofnbh = list(set(nbhofnbh) - set([core.getPointxy(idx,globaldata)]))
-                fixWXpos3(idx,globaldata,nbhofnbh,control,conditionNumber,False,wallpoints, configData)
+                nbhofnbh = list(set(nbhofnbh) - set([core.getPointXY(idx,globaldata)]))
+                fixWallXPosGeneral(idx,globaldata,nbhofnbh,control,conditionNumber,False,wallpoints, configData)
             else:
                 return globaldata
     return globaldata
 
-def fixWXneg3(idx,globaldata,nbhs,control,conditionNumber,aggressive,wallpoints, configData):
+def fixWallXNegGeneral(idx,globaldata,nbhs,control,conditionNumber,aggressive,wallpoints, configData):
     if control > 0:
         return globaldata
     else:
         control = control + 1
         mynbhs = core.convertIndexToPoints(core.getNeighbours(idx,globaldata),globaldata)
-        mychecknbhs = core.getDWallXNegPointsFromSetRaw(idx,globaldata,mynbhs, configData)
+        mychecknbhs = core.getXNegPointsWithInput(idx,globaldata,mynbhs, configData)
         finalnbhs = list(set(nbhs) - set(mynbhs))
-        finalnbhs = core.getDWallXNegPointsFromSetRaw(idx,globaldata,finalnbhs, configData)
+        finalnbhs = core.getXNegPointsWithInput(idx,globaldata,finalnbhs, configData)
         # print(finalnbhs)
         conditionSet = []
         for itm in finalnbhs:
             checkset = [itm] + mychecknbhs
-            newcheck = core.weightedConditionValueForSetOfPointsNormal(idx,globaldata,checkset, configData)
+            newcheck = core.getConditionNumberWithInput(idx,globaldata,checkset, configData)
             if newcheck < conditionNumber:
                 if not core.isNonAeroDynamicBetter(idx,itm,globaldata,wallpoints):
                     conditionSet.append([itm, newcheck])
         if len(conditionSet) > 0:
             conditionSet.sort(key=lambda x: x[1])
             globaldata = core.appendNeighbours(idx, globaldata, conditionSet[0][0])
-            fixWXneg3(idx,globaldata,nbhs,control,conditionNumber,aggressive,wallpoints, configData)
+            fixWallXNegGeneral(idx,globaldata,nbhs,control,conditionNumber,aggressive,wallpoints, configData)
         else:
             if aggressive == True:
                 leftright = core.getLeftandRightPoint(idx,globaldata)
@@ -499,8 +499,8 @@ def fixWXneg3(idx,globaldata,nbhs,control,conditionNumber,aggressive,wallpoints,
                     itm_real = core.getIndexFromPoint(itm, globaldata)
                     layernbhs = core.convertIndexToPoints(core.getNeighbours(itm_real,globaldata),globaldata)
                     nbhofnbh = nbhofnbh + layernbhs
-                nbhofnbh = list(set(nbhofnbh) - set([core.getPointxy(idx,globaldata)]))
-                fixWXneg3(idx,globaldata,nbhofnbh,control,conditionNumber,False,wallpoints, configData)
+                nbhofnbh = list(set(nbhofnbh) - set([core.getPointXY(idx,globaldata)]))
+                fixWallXNegGeneral(idx,globaldata,nbhofnbh,control,conditionNumber,False,wallpoints, configData)
             else:
                 return globaldata
     return globaldata

@@ -54,7 +54,7 @@ def main():
         ptidx = int(ptidx)
 
         print("Point Index:",ptidx)
-        print("Point Co ordinate:",core.getPointxy(ptidx,globaldata))
+        print("Point Co ordinate:",core.getPointXY(ptidx,globaldata))
         flag = core.getFlag(ptidx,globaldata)
         flag = int(flag)
         if flag == 0:
@@ -69,16 +69,16 @@ def main():
         print("Neighbour Array")
         print(nbhs)
         if(flag==0):
-            print(core.getConditionNumberNormal(ptidx,globaldata))
-            xpos = core.getDWallXPosPoints(ptidx,globaldata)
-            xneg = core.getDWallXNegPoints(ptidx,globaldata)
+            print(core.getConditionNumberLegacy(ptidx,globaldata))
+            xpos = core.getXPosPoints(ptidx,globaldata)
+            xneg = core.getXNegPoints(ptidx,globaldata)
             print("xpos",len(xpos),"xneg",len(xneg))
         else:
-            print(core.getConditionNumber(ptidx,globaldata))
-            xpos = core.getDXPosPoints(ptidx,globaldata)
-            xneg = core.getDXNegPoints(ptidx,globaldata)
-            ypos = core.getDYPosPoints(ptidx,globaldata)
-            yneg = core.getDYNegPoints(ptidx,globaldata)
+            print(core.getConditionNumberLegacy(ptidx,globaldata))
+            xpos = core.getDXPosPointsLegacy(ptidx,globaldata)
+            xneg = core.getDXNegPointsLegacy(ptidx,globaldata)
+            ypos = core.getDYPosPointsLegacy(ptidx,globaldata)
+            yneg = core.getDYNegPointsLegacy(ptidx,globaldata)
             print("xpos",len(xpos),"xneg",len(xneg),"ypos",len(ypos),"yneg",len(yneg))
 
 if __name__ == "__main__":

@@ -16,8 +16,8 @@ def generateReportConnectivity(globaldata):
             ## Interior Point
             if(flag==1):
                 nbhs = core.convertIndexToPoints(core.getNeighbours(idx,globaldata),globaldata)
-                curcord = core.getPointxy(idx,globaldata)
-                xpos,xneg,ypos,yneg,_ = core.deltaNeighbourCalculation(nbhs,curcord,False,False)
+                curcord = core.getPointXY(idx,globaldata)
+                xpos,xneg,ypos,yneg,_ = core.deltaNeighbourCalculationLegacy(nbhs,curcord,False,False)
                 interior = interior + 1
                 inxpos = inxpos + xpos
                 inxneg = inxneg + xneg
@@ -49,8 +49,8 @@ def generateReportConnectivity(globaldata):
             #Wall Points
             if(flag==0):
                 nbhs = core.convertIndexToPoints(core.getNeighbours(idx,globaldata),globaldata)
-                curcord = core.getPointxy(idx,globaldata)
-                xpos,xneg,_,_,_ = core.deltaNeighbourCalculation(nbhs,curcord,False,False)
+                curcord = core.getPointXY(idx,globaldata)
+                xpos,xneg,_,_,_ = core.deltaNeighbourCalculationLegacy(nbhs,curcord,False,False)
                 wall = wall + 1
                 waxpos = waxpos + xpos
                 waxneg = waxneg + xneg
@@ -70,8 +70,8 @@ def generateReportConnectivity(globaldata):
             #Outer Points
             if(flag==2):
                 nbhs = core.convertIndexToPoints(core.getNeighbours(idx,globaldata),globaldata)
-                curcord = core.getPointxy(idx,globaldata)
-                xpos,xneg,_,_,_ = core.deltaNeighbourCalculation(nbhs,curcord,False,False)
+                curcord = core.getPointXY(idx,globaldata)
+                xpos,xneg,_,_,_ = core.deltaNeighbourCalculationLegacy(nbhs,curcord,False,False)
                 outer = outer + 1
                 ouxpos = ouxpos + xpos
                 ouxneg = ouxneg + xneg
@@ -118,7 +118,7 @@ def generateReportConditionValue(globaldata,threshold):
     for idx,_ in enumerate(globaldata):
         if(idx>1):
             flag = core.getFlag(idx,globaldata)
-            result = core.getConditionNumber(idx,globaldata)
+            result = core.getConditionNumberLegacy(idx,globaldata)
             if(math.isnan(result["xpos"]) or math.isnan(result["xneg"]) or math.isnan(result["ypos"]) or math.isnan(result["yneg"])):
                 totnan[flag] = totnan[flag] + 1
                 continue

@@ -48,12 +48,9 @@ def main():
         globaldata.insert(0,"start")
     
     pseudoPts = core.inflatedWallPolygon(globaldata,float(configData["normalWall"]["inflatedPolygonDistance"]), configData)
-    log.info("Found " + str(len(pseudoPts)) + " pseudo points")
+    log.info("Found {} pseudo points".format(len(pseudoPts)))
 
     globaldata = core.rotateNormals(pseudoPts, globaldata, configData)
-
-    for _,idx in enumerate(pseudoPts):
-        core.checkConditionNumberLogger(idx,globaldata,float(configData["normalWall"]["conditionValueThreshold"]), configData)
 
     globaldata.pop(0)
 

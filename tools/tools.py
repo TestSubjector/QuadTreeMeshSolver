@@ -1,8 +1,6 @@
 import argparse
-import connectivity
 from shapely.geometry import MultiPoint
 from shapely.ops import triangulate
-import balance
 import logging
 log = logging.getLogger(__name__)
 log.addHandler(logging.StreamHandler())
@@ -27,9 +25,6 @@ def main():
         file1 = open(args.input, "r")
         data = file1.read()
         globaldata = ["start"]
-        # splitdata = StringIO(data)
-        # print(splitdata)
-        # globaldata = np.loadtxt(splitdata)
         splitdata = data.split("\n")
         splitdata = splitdata[:-1]
 
@@ -45,6 +40,7 @@ def main():
         globaldata = core.cleanNeighbours(globaldata)
         wallpoints = core.getWallPointArray(globaldata)
         wallpointsData = core.generateWallPolygons(wallpoints)
+        wallpointsall = list(map(int, core.flattenList(core.getWallPointArrayIndex(globaldata))))
         loaded = True
     
     except:
@@ -74,7 +70,6 @@ def main():
         print("Type 'full' to perform one full refinement")
         print("Type 'fullno' to perform one full refinement (excluding outer)")
         print("Type 'customrefine' to perform custom refinement")
-        print("Type 'clean' to cleanse the soul of adapted.txt")
         print("Type 'old' to convert preprocessorfile to old format")
         print("Type 'bad2' to print all points with 2 in it's split connectivity")
         print("Type 'bad1' to print all points with 1 in it's split connectivity")
@@ -94,36 +89,33 @@ def main():
             core.hills_manager()
         elif ptidx == "wcc":
             core.clearScreen()
-            globaldata = connectivity.connectivityCheck(globaldata, True, False)
+            globaldata,_ = core.connectivityCheck(globaldata, wallpointsall, conf)
             core.wallConnectivityCheck(globaldata)
         elif ptidx == "wcc!":
             core.clearScreen()
-            globaldata = connectivity.connectivityCheck(globaldata, True, False)
+            globaldata,_ = core.connectivityCheck(globaldata, wallpointsall, conf)
             core.wallConnectivityCheckNearest(globaldata)
         elif ptidx == "wcc!!":
             core.clearScreen()
-            globaldata = connectivity.connectivityCheck(globaldata, True, False)
+            globaldata,_ = core.connectivityCheck(globaldata, wallpointsall, conf)
             core.wallConnectivityCheckSensor(globaldata)    
         elif ptidx == "wcc!!!":
             core.clearScreen()
-            globaldata = connectivity.connectivityCheck(globaldata, True, False)
+            globaldata,_ = core.connectivityCheck(globaldata, wallpointsall, conf)
             core.sparseNullifier(globaldata)  
         elif ptidx == "wcc!!!!":
             core.clearScreen()
-            globaldata = connectivity.connectivityCheck(globaldata, True, False)
+            globaldata,_ = core.connectivityCheck(globaldata, wallpointsall, conf)
             core.wallConnectivityCheck(globaldata, verbose=True)
         elif ptidx == "icc":
             core.clearScreen()
-            core.interiorConnectivityCheck(globaldata)
+            core.interiorConnectivityCheck(globaldata, offset=len(wallpointsall))
         elif ptidx == "cache":
             core.clearScreen()
             core.pushCache(globaldata)
         elif ptidx == "integrity":
             core.clearScreen()
             core.verifyIntegrity()
-        elif ptidx == "clean":
-            core.clearScreen()
-            core.cleanAdapted()
         elif ptidx == "full":
             core.clearScreen()
             core.fullRefine(globaldata)
@@ -138,11 +130,11 @@ def main():
             core.oldMode(globaldata)
         elif ptidx == "bad2":
             core.clearScreen()
-            globaldata = connectivity.connectivityCheck(globaldata, True, True)
+            globaldata,_ = core.connectivityCheck(globaldata, None, conf)
             core.printBadness(2,globaldata)    
         elif ptidx == "bad1":
             core.clearScreen()
-            globaldata = connectivity.connectivityCheck(globaldata, True, True)
+            globaldata,_ = core.connectivityCheck(globaldata, None, conf)
             core.printBadness(1,globaldata)   
         elif ptidx == "split":
             core.clearScreen()
@@ -153,6 +145,8 @@ def main():
         elif ptidx == "plot":
             core.clearScreen()
             core.plotManager(globaldata, wallpoints)
+        elif ptidx == "clear":
+            core.clearScreen()
         isPointIndex = False
         try:
             ptidx = int(ptidx)
@@ -163,7 +157,7 @@ def main():
         if isPointIndex == True:
             core.clearScreen()
             print("Point Index:",ptidx)
-            print("Point Co ordinate:",core.getPointxy(ptidx,globaldata))
+            print("Point Co ordinate:",core.getPointXY(ptidx,globaldata))
             flag = core.getFlag(ptidx,globaldata)
             flag = int(flag)
             if flag == 0:
@@ -178,40 +172,37 @@ def main():
             print("Neighbour Array")
             print(nbhs)
             if(flag==0):
-                print(core.getConditionNumberNormal(ptidx,globaldata, conf))
-                xpos = core.getDWallXPosPoints(ptidx,globaldata, conf)
-                xneg = core.getDWallXNegPoints(ptidx,globaldata, conf)
+                print(core.getConditionNumberNew(ptidx,globaldata, conf))
+                xpos = core.getXPosPoints(ptidx,globaldata, conf)
+                xneg = core.getXNegPoints(ptidx,globaldata, conf)
                 print("xpos",len(xpos),"xneg",len(xneg))
             else:
-                print(core.getConditionNumber(ptidx,globaldata, conf))
-                xpos = core.getDXPosPoints(ptidx,globaldata)
-                xneg = core.getDXNegPoints(ptidx,globaldata)
-                ypos = core.getDYPosPoints(ptidx,globaldata)
-                yneg = core.getDYNegPoints(ptidx,globaldata)
+                print(core.getConditionNumberNew(ptidx,globaldata, conf))
+                xpos = core.getXPosPoints(ptidx,globaldata, conf)
+                xneg = core.getXNegPoints(ptidx,globaldata, conf)
+                ypos = core.getYPosPoints(ptidx,globaldata, conf)
+                yneg = core.getYNegPoints(ptidx,globaldata, conf)
                 print("xpos",len(xpos),"xneg",len(xneg),"ypos",len(ypos),"yneg",len(yneg))
 
             print("Select Point Repair Option")
-            print("(1) Find Point Perpendicular to nearest wall segment")
-            print("(2) Exit")
-            print("(3) Exit without saving any changes")
-            print("(4) Go Back")
-            print("(5) Find nearest distance to wall points")
-            print("(6) Print Detailed Connectivity")
+            print("(1) Exit")
+            print("(2) Exit without saving any changes")
+            print("(3) Go Back")
+            print("(4) Find nearest distance to wall points")
+            print("(5) Print Detailed Connectivity")
             whatkind = int(input("What option do you want to select? "))
             if whatkind == 1:
-                print(core.getPerpendicularPoint(ptidx,globaldata))
-            elif whatkind == 2:
                 core.clearScreen()
                 break
-            elif whatkind == 3:
+            elif whatkind == 2:
                 exit()
-            elif whatkind == 4:
+            elif whatkind == 3:
                 core.clearScreen()
-            elif whatkind == 5:
+            elif whatkind == 4:
                 core.clearScreen()
                 px, py = core.getPoint(ptidx, globaldata)
                 print("Nearest Distance: {}".format(min(core.wallDistance((px, py), wallpointsData))))
-            elif whatkind == 6:
+            elif whatkind == 5:
                 core.clearScreen()
                 print("xpos connectivity: {}, no. of xpos: {}".format(core.convertPointsToIndex(xpos, globaldata), len(xpos)))
                 print("xneg connectivity: {}, no. of xneg: {}".format(core.convertPointsToIndex(xneg, globaldata), len(xneg)))

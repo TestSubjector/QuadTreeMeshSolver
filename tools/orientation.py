@@ -47,11 +47,11 @@ def main():
         print("Orientation: Anti Clockwise")
 
     if args.fix:
-        fix = core.str_to_bool(args.fix)
+        fix = core.ConvertStringToBool(args.fix)
 
     inplace = False
     if args.inplace:
-        inplace = core.str_to_bool(args.inplace)
+        inplace = core.ConvertStringToBool(args.inplace)
 
     if fix == True and clockwise == True:
         if not inplace:

@@ -33,27 +33,27 @@ def main():
 
     diagnose = False
     if args.diagnose:
-        diagnose = core.str_to_bool(args.diagnose)
+        diagnose = core.ConvertStringToBool(args.diagnose)
 
     normalApproach = False
     if args.normal:
-        normalApproach = core.str_to_bool(args.normal)
+        normalApproach = core.ConvertStringToBool(args.normal)
 
     cache = True
     if args.cache:
-        cache = core.str_to_bool(args.cache)
+        cache = core.ConvertStringToBool(args.cache)
 
     forcemidpointspline = False
     if args.forcemidpointspline:
-        forcemidpointspline = core.str_to_bool(args.forcemidpointspline)
+        forcemidpointspline = core.ConvertStringToBool(args.forcemidpointspline)
 
     quadrantcheck = True
     if args.checkquadrant:
-        quadrantcheck = core.str_to_bool(args.checkquadrant)
+        quadrantcheck = core.ConvertStringToBool(args.checkquadrant)
 
     pseudocheck = False
     if args.pseudocheck:
-        pseudocheck = core.str_to_bool(args.pseudocheck)
+        pseudocheck = core.ConvertStringToBool(args.pseudocheck)
 
     log.info("Loading Data")
     log.debug("Arguments")
