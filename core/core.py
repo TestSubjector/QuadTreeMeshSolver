@@ -1276,8 +1276,8 @@ def getNormals(idx, globaldata):
     return nx,ny
 
 def setNormals(idx, globaldata, normals):
-    globaldata[idx][11] = normals[0]
-    globaldata[idx][12] = normals[1]
+    globaldata[idx][11] = normals[0] # nx
+    globaldata[idx][12] = normals[1] # ny
     return globaldata
 
 def calculateNormalConditionValues(idx,globaldata,nxavg,nyavg, configData):
@@ -2826,4 +2826,4 @@ def hills_manager():
     adapted_file.seek(0)
     for line in adapted_lines:
         adapted_file.write(line)
-    adapted_file.close()   
+    adapted_file.close()
