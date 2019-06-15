@@ -73,21 +73,25 @@ def main():
                         maxdist = core.distance(wallptx, wallpty, toplx, leftsidey)
                         globaldata[idx][1] = toplx
                         globaldata[idx][2] = leftsidey
+                        globaldata = core.setNormals(idx, globaldata, (nx, ny))
                 if rightsidey <= toply and rightsidey >= bottomry:
                     if maxdist < core.distance(wallptx, wallpty, bottomrx, rightsidey):
                         maxdist = core.distance(wallptx, wallpty, bottomrx, rightsidey)
                         globaldata[idx][1] = bottomrx
                         globaldata[idx][2] = rightsidey
+                        globaldata = core.setNormals(idx, globaldata, (nx, ny))
                 if uppersidex <= bottomrx and uppersidex >= toplx:
                     if maxdist < core.distance(wallptx, wallpty, toplx, leftsidey):
                         maxdist = core.distance(wallptx, wallpty, toplx, leftsidey)
                         globaldata[idx][1] = uppersidex
                         globaldata[idx][2] = toply
+                        globaldata = core.setNormals(idx, globaldata, (nx, ny))
                 if lowersidex <= bottomrx and lowersidex >= toplx:
                     if maxdist < core.distance(wallptx, wallpty, lowersidex, bottomry):
                         maxdist = core.distance(wallptx, wallpty, lowersidex, bottomry)
                         globaldata[idx][1] = lowersidex
                         globaldata[idx][2] = bottomry
+                        globaldata = core.setNormals(idx, globaldata, (nx, ny))
             elif shiftFlag == 1:
                 mindist = 1000.0
                 if leftsidey <= toply and leftsidey >= bottomry:
@@ -96,21 +100,25 @@ def main():
                         mindist = core.distance(wallptx, wallpty, toplx, leftsidey)
                         globaldata[idx][1] = toplx
                         globaldata[idx][2] = leftsidey
+                        globaldata = core.setNormals(idx, globaldata, (nx, ny))
                 if rightsidey <= toply and rightsidey >= bottomry:
                     if mindist > core.distance(wallptx, wallpty, bottomrx, rightsidey):
                         mindist = core.distance(wallptx, wallpty, bottomrx, rightsidey)
                         globaldata[idx][1] = bottomrx
                         globaldata[idx][2] = rightsidey
+                        globaldata = core.setNormals(idx, globaldata, (nx, ny))
                 if uppersidex <= bottomrx and uppersidex >= toplx:
                     if mindist > core.distance(wallptx, wallpty, toplx, leftsidey):
                         mindist = core.distance(wallptx, wallpty, toplx, leftsidey)
                         globaldata[idx][1] = uppersidex
                         globaldata[idx][2] = toply
+                        globaldata = core.setNormals(idx, globaldata, (nx, ny))
                 if lowersidex <= bottomrx and lowersidex >= toplx:
                     if mindist > core.distance(wallptx, wallpty, lowersidex, bottomry):
                         mindist = core.distance(wallptx, wallpty, lowersidex, bottomry)
                         globaldata[idx][1] = lowersidex
                         globaldata[idx][2] = bottomry
+                        globaldata = core.setNormals(idx, globaldata, (nx, ny))
                 # print(idx)
                 # break
             # else:
