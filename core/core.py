@@ -1270,10 +1270,15 @@ def updateNormals(idx,globaldata,nx,ny):
     globaldata[idx][12] = ny
     return globaldata
 
-def getNormals(idx,globaldata):
+def getNormals(idx, globaldata):
     nx = globaldata[idx][11]
     ny = globaldata[idx][12]
     return nx,ny
+
+def setNormals(idx, globaldata, normals):
+    globaldata[idx][11] = normals[0]
+    globaldata[idx][12] = normals[1]
+    return globaldata
 
 def calculateNormalConditionValues(idx,globaldata,nxavg,nyavg, configData):
     nbhs = convertIndexToPoints(getNeighbours(idx,globaldata),globaldata)
@@ -1682,7 +1687,7 @@ def inflatedWallPolygon(globaldata, dist, configData):
                             pseudopts.append(idx)
     return pseudopts
 
-def setNormals(pseudopts,globaldata, configData):
+def rotateNormals(pseudopts,globaldata, configData):
     log.info("Calculating Nearest Neighbours")
     wallptData = getWallPointArray(globaldata)
     wallptDataOr = wallptData
