@@ -27,7 +27,7 @@ def main():
     wallpoints = core.getWallPointArrayIndex(globaldata)
     wallpoints = core.flattenList(wallpoints)
     # wallpoints = core.convertToShapely(wallpoints)
-
+    shiftFlag = int(configData["shift"]["shiftFlag"])
     # Get interiorpts list
     interiorpts = core.getInteriorPointArrayIndex(globaldata)
     # print(interiorpts)
@@ -38,30 +38,84 @@ def main():
             # print(idx)
             toplx,toply,bottomrx,bottomry = core.getBoundingPointsOfQuadrant(idx, globaldata)
             nbhcords = core.getNeighbours(idx,globaldata)
+
+            mainptx, mainpty = core.getPoint(idx,globaldata)
+            bestwallpt = 0
+            mindist = 1000.0
+            # Get all neighbouring
             for itm in nbhcords:
                 if core.getFlag(itm,globaldata) == 0:
-                # Calculate normal for that wall point
-                    nx, ny = core.normalCalculation(itm, globaldata, True, configData)
-                    slope = ny/nx
                     wallptx, wallpty = core.getPoint(itm, globaldata)
-                    leftsidey = slope * (toplx - wallptx) + wallpty
-                    rightsidey = slope * (bottomrx - wallptx) + wallpty
-                        # Check if the quadrant and normal intersect
-                    if leftsidey <= toply and leftsidey >= bottomry:
-                        # If yes, change x, y of interior point to lie on the normal
+                    if mindist > core.distance(mainptx, mainpty, wallptx, wallpty):
+                        mindist = core.distance(mainptx, mainpty, wallptx, wallpty)
+                        bestwallpt = itm
+
+            # Safety Case
+            if bestwallpt == 0:
+                continue
+            else:
+                itm = bestwallpt
+
+            # Calculate normal for that wall point
+            nx, ny = core.normalCalculation(itm, globaldata, True, configData)
+            slope = ny/nx
+            wallptx, wallpty = core.getPoint(itm, globaldata)
+            leftsidey = slope * (toplx - wallptx) + wallpty
+            rightsidey = slope * (bottomrx - wallptx) + wallpty
+            lowersidex = (bottomry - wallpty) / slope + wallptx
+            uppersidex = (toply - wallpty) / slope + wallptx
+            # Check if the quadrant and normal intersect
+            if shiftFlag == 0:
+                maxdist = 0.0
+                if leftsidey <= toply and leftsidey >= bottomry:
+                    # If yes, change x, y of interior point to lie on the normal
+                    if maxdist < core.distance(wallptx, wallpty, toplx, leftsidey):
+                        maxdist = core.distance(wallptx, wallpty, toplx, leftsidey)
                         globaldata[idx][1] = toplx
                         globaldata[idx][2] = leftsidey
-                        # print(idx)
-                        break
-                    elif rightsidey <= toply and rightsidey >= bottomry:
+                if rightsidey <= toply and rightsidey >= bottomry:
+                    if maxdist < core.distance(wallptx, wallpty, bottomrx, rightsidey):
+                        maxdist = core.distance(wallptx, wallpty, bottomrx, rightsidey)
                         globaldata[idx][1] = bottomrx
                         globaldata[idx][2] = rightsidey
-                        # print(idx)
-                        break
-                    else:
-                        continue
-
-                    # print(nx, ny)
+                if uppersidex <= bottomrx and uppersidex >= toplx:
+                    if maxdist < core.distance(wallptx, wallpty, toplx, leftsidey):
+                        maxdist = core.distance(wallptx, wallpty, toplx, leftsidey)
+                        globaldata[idx][1] = uppersidex
+                        globaldata[idx][2] = toply
+                if lowersidex <= bottomrx and lowersidex >= toplx:
+                    if maxdist < core.distance(wallptx, wallpty, lowersidex, bottomry):
+                        maxdist = core.distance(wallptx, wallpty, lowersidex, bottomry)
+                        globaldata[idx][1] = lowersidex
+                        globaldata[idx][2] = bottomry
+            elif shiftFlag == 1:
+                mindist = 1000.0
+                if leftsidey <= toply and leftsidey >= bottomry:
+                    # If yes, change x, y of interior point to lie on the normal
+                    if mindist > core.distance(wallptx, wallpty, toplx, leftsidey):
+                        mindist = core.distance(wallptx, wallpty, toplx, leftsidey)
+                        globaldata[idx][1] = toplx
+                        globaldata[idx][2] = leftsidey
+                if rightsidey <= toply and rightsidey >= bottomry:
+                    if mindist > core.distance(wallptx, wallpty, bottomrx, rightsidey):
+                        mindist = core.distance(wallptx, wallpty, bottomrx, rightsidey)
+                        globaldata[idx][1] = bottomrx
+                        globaldata[idx][2] = rightsidey
+                if uppersidex <= bottomrx and uppersidex >= toplx:
+                    if mindist > core.distance(wallptx, wallpty, toplx, leftsidey):
+                        mindist = core.distance(wallptx, wallpty, toplx, leftsidey)
+                        globaldata[idx][1] = uppersidex
+                        globaldata[idx][2] = toply
+                if lowersidex <= bottomrx and lowersidex >= toplx:
+                    if mindist > core.distance(wallptx, wallpty, lowersidex, bottomry):
+                        mindist = core.distance(wallptx, wallpty, lowersidex, bottomry)
+                        globaldata[idx][1] = lowersidex
+                        globaldata[idx][2] = bottomry
+                # print(idx)
+                # break
+            # else:
+                # continue
+                # print(nx, ny)
     globaldata.pop(0)
     core.setKeyVal("globaldata",globaldata)
     log.info("Writing file to disk")

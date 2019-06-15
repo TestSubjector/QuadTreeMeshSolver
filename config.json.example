@@ -1,3 +1,4 @@
+
 {
     "adapter": {
         "minWallAdaptDepth": 16
@@ -41,6 +42,9 @@
         "conditionValueThreshold": 15,
         "maxPoints": 2
     },
+    "shift":{
+        "shiftFlag": 1
+        },
     "triangulate": {
         "general": {
             "aggressiveMaxNeighbours": 2,
