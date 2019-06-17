@@ -86,6 +86,9 @@ def convertIndexToPoints(indexarray, globaldata):
         ptlist.append((str(ptx) + "," + str(pty)))
     return ptlist
 
+def actuallyZero(a):
+    return math.isclose(a, 0, abs_tol=1E-16)
+
 def deltaX(xcord, orgxcord):
     return float(orgxcord - xcord)
 
@@ -94,7 +97,7 @@ def deltaY(ycord, orgycord):
 
 def normalCalculation(index, globaldata, wallpoint, configData):
     if getFlag(index, globaldata) == 1:
-        nx, ny = getNormals(index, globaldata)
+        nx, ny = getNormals(index, globaldata, configData)
         return nx, ny
     else:
         nx = 0
@@ -148,6 +151,8 @@ def deltaCalculationDSNormals(
         itemy = float(item.split(",")[1])
         deltas = (tx * (itemx - xcord)) + (ty * (itemy - ycord))
         deltan = (nx * (itemx - xcord)) + (ny * (itemy - ycord))
+        if actuallyZero(deltas):
+            deltas = 0
         if deltas <= 0:
             if giveposdelta:
                 output.append(item)
@@ -175,6 +180,8 @@ def deltaCalculationDNNormals(
         itemx = float(item.split(",")[0])
         itemy = float(item.split(",")[1])
         deltas = (nx * (itemx - xcord)) + (ny * (itemy - ycord))
+        if actuallyZero(deltas):
+            deltas = 0
         if deltas <= 0:
             if giveposdelta:
                 output.append(item)
@@ -1022,9 +1029,15 @@ def updateNormals(idx,globaldata,nx,ny):
     globaldata[idx][12] = ny
     return globaldata
 
-def getNormals(idx, globaldata):
-    nx = globaldata[idx][11]
-    ny = globaldata[idx][12]
+def getNormals(idx, globaldata, configData):
+    flag = getFlag(idx, globaldata)
+    if flag == 1:
+        nx = globaldata[idx][11]
+        ny = globaldata[idx][12]
+    elif flag == 0:
+        nx, ny = normalCalculation(idx, globaldata, True, configData)
+    else:
+        nx,ny = normalCalculation(idx, globaldata, False, configData)
     return nx,ny
 
 def setNormals(idx, globaldata, normals):
@@ -1048,7 +1061,7 @@ def calculateNormalConditionValues(idx,globaldata,nxavg,nyavg, configData):
     return result
 
 def isConditionBad(idx, globaldata, configData):
-    nx,ny = getNormals(idx,globaldata)
+    nx,ny = getNormals(idx,globaldata, configData)
     condResult = calculateNormalConditionValues(idx,globaldata,nx,ny, configData)
     dSPosNbhs,dSNegNbhs,dNPosNbhs,dNNegNbhs = condResult["spos"], condResult["sneg"], condResult["npos"], condResult["nneg"]
     dSPosCondition,dSNegCondition,dNPosCondition,dNNegCondition = condResult["sposCond"], condResult["snegCond"], condResult["nposCond"], condResult["nnegCond"]
@@ -1059,7 +1072,7 @@ def isConditionBad(idx, globaldata, configData):
         return False
 
 def isConditionNan(idx, globaldata, configData):
-    nx,ny = getNormals(idx,globaldata)
+    nx,ny = getNormals(idx,globaldata, configData)
     condResult = calculateNormalConditionValues(idx,globaldata,nx,ny, configData)
     dSPosNbhs,dSNegNbhs,dNPosNbhs,dNNegNbhs = condResult["spos"], condResult["sneg"], condResult["npos"], condResult["nneg"]
     dSPosCondition,dSNegCondition,dNPosCondition,dNNegCondition = condResult["sposCond"], condResult["snegCond"], condResult["nposCond"], condResult["nnegCond"]
@@ -1070,7 +1083,7 @@ def isConditionNan(idx, globaldata, configData):
         return False
 
 def isConditionInf(idx, globaldata, configData):
-    nx,ny = getNormals(idx,globaldata)
+    nx,ny = getNormals(idx,globaldata, configData)
     condResult = calculateNormalConditionValues(idx,globaldata,nx,ny, configData)
     dSPosNbhs,dSNegNbhs,dNPosNbhs,dNNegNbhs = condResult["spos"], condResult["sneg"], condResult["npos"], condResult["nneg"]
     dSPosCondition,dSNegCondition,dNPosCondition,dNNegCondition = condResult["sposCond"], condResult["snegCond"], condResult["nposCond"], condResult["nnegCond"]

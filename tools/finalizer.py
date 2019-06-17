@@ -1,8 +1,6 @@
 import argparse
-import connectivity
 from shapely.geometry import MultiPoint
 from shapely.ops import triangulate
-import balance
 import logging
 log = logging.getLogger(__name__)
 log.addHandler(logging.StreamHandler())

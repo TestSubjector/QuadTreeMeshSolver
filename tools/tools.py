@@ -175,6 +175,8 @@ def main():
                 print(core.getConditionNumberNew(ptidx,globaldata, conf))
                 xpos = core.getXPosPoints(ptidx,globaldata, conf)
                 xneg = core.getXNegPoints(ptidx,globaldata, conf)
+                ypos = core.getYPosPoints(ptidx,globaldata, conf)
+                yneg = core.getYNegPoints(ptidx,globaldata, conf)
                 print("xpos",len(xpos),"xneg",len(xneg))
             else:
                 print(core.getConditionNumberNew(ptidx,globaldata, conf))
@@ -183,7 +185,8 @@ def main():
                 ypos = core.getYPosPoints(ptidx,globaldata, conf)
                 yneg = core.getYNegPoints(ptidx,globaldata, conf)
                 print("xpos",len(xpos),"xneg",len(xneg),"ypos",len(ypos),"yneg",len(yneg))
-
+            nx, ny = core.getNormals(ptidx, globaldata, conf)
+            print("nx = {} ny = {}".format(nx, ny))
             print("Select Point Repair Option")
             print("(1) Exit")
             print("(2) Exit without saving any changes")
