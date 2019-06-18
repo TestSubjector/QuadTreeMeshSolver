@@ -2132,8 +2132,8 @@ def interiorConnectivityCheck(globaldata, offset=0):
     badPtsAll = list(map(str, badPtsAll))
     print("****************************")
     print("Bad Points (NaN) Detected: {}".format("Everything Good" if len(badPtsNan) == 0 else " ".join(badPtsNan)))
-    print("Bad Points (Inf) Detected: {}".format("Everything Good" if len(badPtsNan) == 0 else " ".join(badPtsInf)))
-    print("Bad Points (Conn) Detected: {}".format("Everything Good" if len(badPtsNan) == 0 else " ".join(badPtsAll)))
+    print("Bad Points (Inf) Detected: {}".format("Everything Good" if len(badPtsInf) == 0 else " ".join(badPtsInf)))
+    print("Bad Points (Conn) Detected: {}".format("Everything Good" if len(badPtsAll) == 0 else " ".join(badPtsAll)))
     print("****************************")
 
 def sparseNullifier(globaldata):
