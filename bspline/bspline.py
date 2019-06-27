@@ -138,7 +138,7 @@ def main():
                 if data[0] == 0:
                     newpts = core.generateBSplineBetween(bsplineArray[data[2]],data[1],data[0],POINT_CONTROL)
                 else:
-                    newpts = core.generateBSplineBetween(bsplineArray[data[2]],data[1],data[0],POINT_CONTROL)
+                    newpts = core.generateBSplineBetween(bsplineArray[data[2]],data[0],data[1],POINT_CONTROL)
                     switch = False
             if quadrantcheck:
                 newpts = core.getPointsOnlyInQuadrant(newpts, badpts[idx], globaldata)
