@@ -82,25 +82,29 @@ def triangleBalance2(globaldata, wallpoints, configData, badPoints):
             if flag == 0:
                 if xposf == 1:
                     nbhs = core.convertIndexToPoints(core.getNeighbours(idx,globaldata),globaldata)
-                    if idx not in core.getWallEndPoints(globaldata):
+                    # if idx not in core.getWallEndPoints(globaldata):
+                    if True:
                         nbhs = nbhs + core.getLeftandRightPoint(idx, globaldata)
                     nbhs = list(set(nbhs))
                     globaldata = fixWallXPosLeftRight(idx,globaldata,nbhs,AGGRESSIVE_MAX_NEIGHBOURS,WALL_THRESHOLD,True,wallpoints, configData)
                 elif xposf == 2:
                     nbhs = core.convertIndexToPoints(core.getNeighbours(idx,globaldata),globaldata)
-                    if idx not in core.getWallEndPoints(globaldata):
+                    # if idx not in core.getWallEndPoints(globaldata):
+                    if True:
                         nbhs = nbhs + core.getLeftandRightPoint(idx, globaldata)
                     nbhs = list(set(nbhs))
                     globaldata = fixWallXPosLeftRight(idx,globaldata,nbhs,NORMAL_MAX_NEIGHBOURS,WALL_THRESHOLD,False,wallpoints, configData)
                 if xnegf == 1:
                     nbhs = core.convertIndexToPoints(core.getNeighbours(idx,globaldata),globaldata)
-                    if idx not in core.getWallEndPoints(globaldata):
+                    # if idx not in core.getWallEndPoints(globaldata):
+                    if True:
                         nbhs = nbhs + core.getLeftandRightPoint(idx, globaldata)
                     nbhs = list(set(nbhs))
                     globaldata = fixWallXNegLeftRight(idx,globaldata,nbhs,AGGRESSIVE_MAX_NEIGHBOURS,WALL_THRESHOLD,True,wallpoints, configData)
                 elif xnegf == 2:
                     nbhs = core.convertIndexToPoints(core.getNeighbours(idx,globaldata),globaldata)
-                    if idx not in core.getWallEndPoints(globaldata):
+                    # if idx not in core.getWallEndPoints(globaldata):
+                    if True:
                         nbhs = nbhs + core.getLeftandRightPoint(idx, globaldata)
                     nbhs = list(set(nbhs))
                     globaldata = fixWallXNegLeftRight(idx,globaldata,nbhs,NORMAL_MAX_NEIGHBOURS,WALL_THRESHOLD,False,wallpoints, configData)
@@ -117,13 +121,15 @@ def triangleBalance3(globaldata, wallpoints, configData, badPoints):
             if flag == 0:
                 if xposf == 1 or xposf == 2:
                     nbhs = core.convertIndexToPoints(core.getNeighbours(idx,globaldata),globaldata)
-                    if idx not in core.getWallEndPoints(globaldata):
+                    # if idx not in core.getWallEndPoints(globaldata):
+                    if True:
                         nbhs = nbhs + core.getLeftandRightPoint(idx, globaldata)
                     nbhs = list(set(nbhs))
                     globaldata = fixWallXPosGeneral(idx,globaldata,nbhs,AGGRESSIVE_MAX_NEIGHBOURS,WALL_THRESHOLD,True,wallpoints, configData)
                 if xnegf == 1 or xnegf == 2:
                     nbhs = core.convertIndexToPoints(core.getNeighbours(idx,globaldata),globaldata)
-                    if idx not in core.getWallEndPoints(globaldata):
+                    # if idx not in core.getWallEndPoints(globaldata):
+                    if True:
                         nbhs = nbhs + core.getLeftandRightPoint(idx, globaldata)
                     nbhs = list(set(nbhs))
                     globaldata = fixWallXNegGeneral(idx,globaldata,nbhs,AGGRESSIVE_MAX_NEIGHBOURS,WALL_THRESHOLD,True,wallpoints, configData)

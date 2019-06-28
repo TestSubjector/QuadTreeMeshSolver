@@ -9,6 +9,9 @@ import itertools
 from tqdm import tqdm
 import sys
 import os
+import logging
+log = logging.getLogger(__name__)
+log.addHandler(logging.StreamHandler())
 
 sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), os.pardir))
 from core import core
@@ -20,7 +23,7 @@ def main():
     parser.add_argument("-a", "--adapt", const=str, nargs="?")
     args = parser.parse_args()
 
-    print("Loading Data")
+    log.info("Loading Data")
 
     file1 = open(args.input or "preprocessorfile_rechecker.txt", "r")
     data = file1.read()
@@ -62,7 +65,7 @@ def main():
     # pseudopts.extend(createEdgeCircle(globaldata_main,edgePts,configData["global"]["nonAdaptEdgePointRadius"],generalpts))
 
     # print("Freeze Points",len(pseudopts))
-    print("Processed Pre-Processor File")
+    log.info("Processed Pre-Processor File")
     # print(len(pseudopts))
     # print(pseudopts)
 
@@ -72,10 +75,10 @@ def main():
     data2 = data2.split("\n")
     data2 = data2[:-1]
     if len(data2) + 1 != len(globaldata):
-        print("Sensor File Length is not equal to Preprocessor File Length")
+        log.error("Sensor File Length is not equal to Preprocessor File Length")
         exit()
 
-    print("Reading Adaptation File")
+    log.info("Reading Adaptation File")
 
     for idx2, itm2 in enumerate(tqdm(data2)):
         adaptpoint = itm2.split(" ")
@@ -100,9 +103,9 @@ def main():
                 ycord = globaldata[int(adaptpoint[0])][2]
                 derefine.append([xcord, ycord])
 
-    print(len(adaptdata))
-    print(len(adaptwall))
-    print(len(derefine))
+    log.info("Interior Points being adapted: {}".format(len(adaptdata)))
+    log.info("Wall Points being adapted: {}".format(len(adaptwall)))
+    log.info("Points being derefined: {}".format(len(derefine)))
 
     # perPndList = []
 
@@ -177,7 +180,7 @@ def main():
     # additionPts = list(itertools.chain.from_iterable(additionPts))
     # core.save_obj(writingDict,"wall")
 
-    print("Writing adapted text")
+    log.info("Writing adapted text")
 
     with open("adapted.txt", "a+") as text_file:
         text_file.writelines("3000 3000\n")
@@ -189,14 +192,47 @@ def main():
         for item1 in adaptdata:
             text_file.writelines(["%s " % item for item in item1])
             text_file.writelines("\n")
+        for item1 in adaptwall:
+            text_file.writelines(["%s " % item for item in item1])
+            text_file.writelines("\n")
         text_file.writelines("1000 1000\n")
         # text_file.writelines("2000 2000\n")
         # for item1 in additionPts:
         #     text_file.writelines(["%s " % item for item in item1])
         #     text_file.writelines("\n")
         # text_file.writelines("1000 1000\n")
-    print("Done")
+    log.info("Done")
 
 
+    
 if __name__ == "__main__":
+    import logging
+    import os
+    import json
+    import logging.config
+    import sys
+    sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), os.pardir))
+    from core import core
+
+    default_path='logging.json'
+    path = default_path
+    level = core.getConfig()["global"]["logger"]["level"]
+
+    if level == "DEBUG":
+        level = logging.DEBUG
+    elif level == "INFO":
+        level = logging.INFO
+    elif level == "WARNING":
+        level = logging.WARNING
+    elif level == "ERROR":
+        level = logging.ERROR
+    else:
+        level = logging.WARNING
+
+    if os.path.exists(path):
+        with open(path, 'rt') as f:
+            config = json.load(f)
+        logging.config.dictConfig(config)
+    else:
+        logging.basicConfig(level=level,filename=core.getConfig()["global"]["logger"]["logPath"],format="%(asctime)s %(name)s %(levelname)s: %(message)s", datefmt="%m/%d/%Y %I:%M:%S %p")
     main()

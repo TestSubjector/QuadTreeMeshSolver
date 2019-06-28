@@ -57,16 +57,12 @@ def main():
         algo2 = algo[1]
         algo3 = algo[2]
 
-    # Removes Traces of Wall Points from the last wallpoint neighbours
-
-    lastWallPoints = core.getWallEndPoints(globaldata)
-    globaldata = core.cleanWallPointsSelectivity(globaldata, lastWallPoints)
-
     log.info("Generating Wall Polygons for Aerochecks")
     wallpts = core.generateWallPolygons(wallpts)
     log.info("Detected " + str(len(wallpts)) + " geometry(s).")
     log.info("Wall Polygon Generation Complete")
     print("Deleting Unneeded Wall Points (Except Left and Right Points)")
+
     globaldata = core.cleanWallPoints(globaldata)
     badPoints = []
 

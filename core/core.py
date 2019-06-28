@@ -756,8 +756,7 @@ def cleanWallPoints(globaldata):
                 nbhcords = list(map(int, nbhcords))
                 finalcords = wallRemovedNeighbours(nbhcords,wallpointsflat)
                 leftright = list(map(int,leftright))
-                if idx not in getWallEndPoints(globaldata):
-                    finalcords = finalcords + leftright
+                finalcords = finalcords + leftright
                 globaldata = replaceNeighbours(idx,finalcords,globaldata)
     return globaldata
 
