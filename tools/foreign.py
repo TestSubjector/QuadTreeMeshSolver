@@ -44,7 +44,7 @@ def main():
                 prevWall = False
         inputArray.append(cord)
     
-    geometry_name = input("Please enter the name of the geometry: ")
+    geometry_name = input("Please enter the name of the geometry: ").replace(" ", "_")
     yn = input("Do you want to save it in grids? (Y/n): ").lower()
     if yn == "y":
         grid_folder = "grids/{}".format(geometry_name)
@@ -55,8 +55,9 @@ def main():
                 log.warning("Did not save grid!")
                 exit()
         os.mkdir(grid_folder)
+        geometry_name = geometry_name.replace("_", "-")
         for idx, itm in enumerate(wallptsArray):
-            with open(os.path.join(grid_folder, "{}_{}".format(geometry_name, str(idx + 1))), "w+") as the_file:
+            with open(os.path.join(grid_folder, "{}-{}".format(geometry_name, str(idx + 1))), "w+") as the_file:
                 for idx, corditm in enumerate(itm):
                     if idx == len(itm) - 1:
                         the_file.write("{}\t{}".format(corditm[0], corditm[1]))
