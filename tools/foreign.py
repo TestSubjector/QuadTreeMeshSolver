@@ -56,14 +56,17 @@ def main():
                 exit()
         os.mkdir(grid_folder)
         geometry_name = geometry_name.replace("_", "-")
+        gridsBaseName = []
         for idx, itm in enumerate(wallptsArray):
-            with open(os.path.join(grid_folder, "{}-{}".format(geometry_name, str(idx + 1))), "w+") as the_file:
+            wallGridPath = os.path.join(grid_folder, "{}{}".format("grid", str(idx + 1)))
+            gridsBaseName.append(os.path.basename(wallGridPath))
+            with open(wallGridPath, "w+") as the_file:
                 for idx, corditm in enumerate(itm):
                     if idx == len(itm) - 1:
                         the_file.write("{}\t{}".format(corditm[0], corditm[1]))
                     else:
                         the_file.write("{}\t{}\n".format(corditm[0], corditm[1]))
-        with open(os.path.join(grid_folder, "{}_{}".format(geometry_name, "_".join(map(str,range(1, len(wallptsArray) + 1))))), "w+") as the_file:
+        with open(os.path.join(grid_folder, "{}".format("_".join(gridsBaseName))), "w+") as the_file:
             for idx, corditm in enumerate(inputArray):
                 if idx == len(inputArray) - 1:
                     the_file.write("{}\t{}".format(corditm[0], corditm[1]))

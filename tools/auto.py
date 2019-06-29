@@ -20,7 +20,11 @@ def main():
 		log.error("Invalid Choice")
 		exit()
 
+	shape_file = False
 	file_list = os.listdir(path="grids/{}".format(folder))
+	for itm in file_list:
+		if itm.startswith("shape_"):
+			shape_file = True
 	file_list.sort(key = lambda x : len(x))
 
 	if len(file_list) == 2:
@@ -60,9 +64,11 @@ def main():
 		core.save_obj(configData, "config", indent=4)
 		log.info("Configuration File Updated")
 
-	else: 
-		
-		file_order = file_list[-2].split("_")
+	else:
+		if shape_file: 
+			file_order = file_list[-2].split("_")
+		else:
+			file_order = file_list[-1].split("_")
 		prefile = open("preprocessing.sh.example", "r")
 		lines = prefile.readlines()
 
@@ -79,7 +85,7 @@ def main():
 			elif line == "        # Indexing\n":
 				lines[lines.index(line) + 1] = "        python3 ./generator/generate.py -n ./files/f$value/neighbour.txt -w" + seg + "\n"
 			elif line == "        # Neighbour Generation\n":
-				lines[lines.index(line) + 1] = "       ./quadtree/main ./grids/" + folder + "/" + file_list[-2] + " ./adapted.txt ./shape_generated.txt\n"
+				lines[lines.index(line) + 1] = "       ./quadtree/main ./grids/" + folder + "/" + "{}".format(file_list[-2] if shape_file else file_list[-1]) + " ./adapted.txt ./shape_generated.txt\n"
 
 		new_file = open("preprocessing.sh", "w")
 		for line in lines: 
