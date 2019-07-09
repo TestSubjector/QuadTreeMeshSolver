@@ -2135,7 +2135,7 @@ def interiorConnectivityCheck(globaldata, offset=0):
     print("Bad Points (Conn) Detected: {} ({})".format("Everything Good" if len(badPtsAll) == 0 else " ".join(badPtsAll), len(badPtsAll)))
     print("****************************")
 
-def sparseNullifier(globaldata):
+def sparseNullifier(globaldata, flagCheck=0):
     madechanges = False
     sensorBox = []
     conf = getConfig()
@@ -2146,20 +2146,28 @@ def sparseNullifier(globaldata):
                 xpos,xneg,_,_ = getFlags(idx,globaldata)
                 if xpos == 1:
                     getXposPoints = getXPosPoints(idx,globaldata, conf)
+                    got = False
                     for itm in getXposPoints:
                         index = getIndexFromPoint(itm,globaldata)
                         flag = getFlag(index,globaldata)
-                        if flag == 0:
+                        if flag == flagCheck:
                             madechanges = True
                             sensorBox.append(index)
+                            got = True
+                    if not got:
+                        print("Couldn't find point for {}".format(idx))
                 if xneg == 1:
                     getXnegPoints = getXNegPoints(idx,globaldata, conf)
+                    got = False
                     for itm in getXnegPoints:
                         index = getIndexFromPoint(itm,globaldata)
                         flag = getFlag(index,globaldata)
-                        if flag == 0:
+                        if flag == flagCheck:
                             madechanges = True
                             sensorBox.append(index)
+                            got = True
+                    if not got:
+                        print("Couldn't find point for {}".format(idx))
     if madechanges == True:
         with open("sensor_flag.dat", "w") as text_file:
             for idx,itm in enumerate(globaldata):

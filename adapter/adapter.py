@@ -98,14 +98,17 @@ def main():
                         adaptwall.append([xcord, ycord])
                     else:
                         adaptdata.append([xcord, ycord])
-        elif int(adaptpoint[1]) == 2:
+        elif int(adaptpoint[1]) == 2 and configData["adapter"]["derefine"]:
                 xcord = globaldata[int(adaptpoint[0])][1]
                 ycord = globaldata[int(adaptpoint[0])][2]
                 derefine.append([xcord, ycord])
 
     log.info("Interior Points being adapted: {}".format(len(adaptdata)))
     log.info("Wall Points being adapted: {}".format(len(adaptwall)))
-    log.info("Points being derefined: {}".format(len(derefine)))
+    if configData["adapter"]["derefine"]:
+        log.info("Points being derefined: {}".format(len(derefine)))
+    else:
+        log.warn("Derefined has been disabled")
 
     # perPndList = []
 

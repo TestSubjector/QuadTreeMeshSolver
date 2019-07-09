@@ -67,8 +67,8 @@ void main_tree(int initial_coord_length, coords_t *coords_list, coords_t *adapte
         }
     }
 
-    quadtree_valleywalk(tree->root, descent_valley, ascent);
-    quadtree_hillwalk(tree->root, descent_hill, ascent);
+    // quadtree_valleywalk(tree->root, descent_valley, ascent);
+    // quadtree_hillwalk(tree->root, descent_hill, ascent);
 
     // free(leaf_array);
     // leaf_array = malloc(sizeof(quadtree_node_t) * MAX);

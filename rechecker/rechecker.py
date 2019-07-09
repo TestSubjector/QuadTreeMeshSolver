@@ -50,6 +50,7 @@ def main():
     configData = core.getConfig()
 
     THRESHOLD = int(configData["rechecker"]["conditionValueThreshold"])
+    MAX_POINTS = -configData["rechecker"]["maxPoints"]
 
     badList = core.checkConditionNumberBad(globaldata, THRESHOLD, configData)
     log.info("Problematic Points to be fixed: {}".format(len(badList)))
@@ -59,13 +60,13 @@ def main():
     #         checkConditionNumberWall(idx, globaldata, 30)
 
     for idx in badList:
-        globaldata = core.fixXPosMain(idx, globaldata, THRESHOLD, wallpoints, -1, configData)
+        globaldata = core.fixXPosMain(idx, globaldata, THRESHOLD, wallpoints, MAX_POINTS, configData)
     for idx in badList:
-        globaldata = core.fixXNegMain(idx, globaldata, THRESHOLD, wallpoints, -1, configData)
+        globaldata = core.fixXNegMain(idx, globaldata, THRESHOLD, wallpoints, MAX_POINTS, configData)
     for idx in badList:
-        globaldata = core.fixYPosMain(idx, globaldata, THRESHOLD, wallpoints, -1, configData)
+        globaldata = core.fixYPosMain(idx, globaldata, THRESHOLD, wallpoints, MAX_POINTS, configData)
     for idx in badList:
-        globaldata = core.fixYNegMain(idx, globaldata, THRESHOLD, wallpoints, -1, configData)
+        globaldata = core.fixYNegMain(idx, globaldata, THRESHOLD, wallpoints, MAX_POINTS, configData)
 
     badList = core.checkConditionNumberSelectively(globaldata, THRESHOLD, badList, configData)
 

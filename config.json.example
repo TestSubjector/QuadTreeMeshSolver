@@ -1,7 +1,8 @@
 
 {
     "adapter": {
-        "minWallAdaptDepth": 16
+        "minWallAdaptDepth": 16,
+        "derefine": false
     },
     "bspline": {
         "pointControl": 200,

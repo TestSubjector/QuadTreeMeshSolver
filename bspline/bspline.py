@@ -136,7 +136,8 @@ def main():
             else:
                 switch = True
                 if data[0] == 0:
-                    newpts = core.generateBSplineBetween(bsplineArray[data[2]],data[1],data[0],POINT_CONTROL)
+                    newpts = core.generateBSplineBetween(bsplineArray[data[2]],data[0],data[1],POINT_CONTROL)
+                    switch = False
                 else:
                     newpts = core.generateBSplineBetween(bsplineArray[data[2]],data[0],data[1],POINT_CONTROL)
                     switch = False

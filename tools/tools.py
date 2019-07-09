@@ -62,8 +62,9 @@ def main():
         print("Type 'wcc' to run Wall Connectivity Check on all Wall Points.")
         print("Type 'wcc!' to run Wall Connectivity Check on all Wall Points and return nearest point.")
         print("Type 'wcc!!' to run Wall Connectivity Check on all Wall Points and generate a corresponding sensor file.")
-        print("Type 'wcc!!!' to run Wall Connectivity Check on all Wall Points and try fixing sparsity.")
-        print("Type 'wcc!!!!' to run Wall Connectivity Check on all Wall Points and just print them.")
+        print("Type 'wcc!!!' to run Wall Connectivity Check on all Wall Points and try fixing sparsity. (Wall Mode)")
+        print("Type 'wcc!!!!' to run Wall Connectivity Check on all Wall Points and try fixing sparsity. (Interior Mode)")
+        print("Type 'wcc!!!!!' to run Wall Connectivity Check on all Wall Points and just print them.")
         print("Type 'icc' to run Interior Connectivity Check on all Interior Points.")
         print("Type 'cache' to push the file you read into cache.")
         print("Type 'integrity' to check wall.json integrity")
@@ -102,8 +103,12 @@ def main():
         elif ptidx == "wcc!!!":
             core.clearScreen()
             globaldata,_ = core.connectivityCheck(globaldata, wallpointsall, conf)
-            core.sparseNullifier(globaldata)  
+            core.sparseNullifier(globaldata, flagCheck=0)
         elif ptidx == "wcc!!!!":
+            core.clearScreen()
+            globaldata,_ = core.connectivityCheck(globaldata, wallpointsall, conf)
+            core.sparseNullifier(globaldata, flagCheck=1)  
+        elif ptidx == "wcc!!!!!":
             core.clearScreen()
             globaldata,_ = core.connectivityCheck(globaldata, wallpointsall, conf)
             core.wallConnectivityCheck(globaldata, verbose=True)
