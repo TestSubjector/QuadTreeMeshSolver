@@ -7,6 +7,7 @@ log = logging.getLogger(__name__)
 log.addHandler(logging.StreamHandler())
 from tqdm import tqdm
 import sys, os
+import numpy as np
 
 sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), os.pardir))
 from core import core
@@ -61,39 +62,40 @@ def main():
     wallpts = core.generateWallPolygons(wallpts)
     log.info("Detected " + str(len(wallpts)) + " geometry(s).")
     log.info("Wall Polygon Generation Complete")
-    print("Deleting Unneeded Wall Points (Except Left and Right Points)")
+    log.info("Deleting Unneeded Wall Points (Except Left and Right Points)")
 
     globaldata = core.cleanWallPoints(globaldata)
     badPoints = []
 
-    if algo1 == True:
-        log.info("Triangulating")
-        interiorpts = []
-        interiorpts.extend(range(1, len(globaldata)))
-        interiorpts = core.convertPointToShapelyPoint(core.convertIndexToPoints(interiorpts,globaldata))
-        interiorpts = MultiPoint(interiorpts)
-        interiortriangles = triangulate(interiorpts)
-        log.info("Generated " + str(len(interiortriangles)) + " triangle(s).")
-        polydata = balance.getPolygon(interiortriangles)
-        log.info("Running Connectivity Check")
+    with np.errstate(divide='ignore', invalid='ignore'):
+        if algo1 == True:
+            log.info("Triangulating")
+            interiorpts = []
+            interiorpts.extend(range(1, len(globaldata)))
+            interiorpts = core.convertPointToShapelyPoint(core.convertIndexToPoints(interiorpts,globaldata))
+            interiorpts = MultiPoint(interiorpts)
+            interiortriangles = triangulate(interiorpts)
+            log.info("Generated " + str(len(interiortriangles)) + " triangle(s).")
+            polydata = balance.getPolygon(interiortriangles)
+            log.info("Running Connectivity Check")
+            globaldata,badPoints = core.connectivityCheck(globaldata, badPoints, configData)
+            log.info("Connectivity Check Done")
+            log.info("Running Triangulation Balancing using Nischay's Triangle Neighbours")
+            globaldata = balance.triangleBalance(globaldata, polydata, wallpts, configData, badPoints)
+            log.info("Triangle Balancing Done")
+        if algo2 == True:
+            log.info("Running Connectivity Check")
+            globaldata,badPoints = core.connectivityCheck(globaldata, badPoints, configData)
+            log.info("Connectivity Recheck Done")
+            log.info("Running Triangulation Balancing using Kumar's Neighbours (Left and Right Mode)")
+            globaldata = balance.triangleBalance2(globaldata, wallpts, configData, badPoints)
+        if algo3 == True:
+            log.info("Running Connectivity Check")
+            globaldata,badPoints = core.connectivityCheck(globaldata, badPoints, configData)
+            log.info("Running Triangulation Balancing using Kumar's Neighbours (General)")
+            globaldata = balance.triangleBalance3(globaldata, wallpts, configData, badPoints)
+        log.info("Running Connectivity Recheck")
         globaldata,badPoints = core.connectivityCheck(globaldata, badPoints, configData)
-        log.info("Connectivity Check Done")
-        log.info("Running Triangulation Balancing using Nischay's Triangle Neighbours")
-        globaldata = balance.triangleBalance(globaldata, polydata, wallpts, configData, badPoints)
-        log.info("Triangle Balancing Done")
-    if algo2 == True:
-        log.info("Running Connectivity Check")
-        globaldata,badPoints = core.connectivityCheck(globaldata, badPoints, configData)
-        log.info("Connectivity Recheck Done")
-        log.info("Running Triangulation Balancing using Kumar's Neighbours (Left and Right Mode)")
-        globaldata = balance.triangleBalance2(globaldata, wallpts, configData, badPoints)
-    if algo3 == True:
-        log.info("Running Connectivity Check")
-        globaldata,badPoints = core.connectivityCheck(globaldata, badPoints, configData)
-        log.info("Running Triangulation Balancing using Kumar's Neighbours (General)")
-        globaldata = balance.triangleBalance3(globaldata, wallpts, configData, badPoints)
-    log.info("Running Connectivity Recheck")
-    globaldata,badPoints = core.connectivityCheck(globaldata, badPoints, configData)
     log.warning("Total Number of Points unable to be fixed: {}".format(len(badPoints)))
     # log.info("Writing Deletion Points")
     # problempts = findDeletionPoints(globaldata)

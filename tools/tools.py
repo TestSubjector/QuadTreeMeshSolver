@@ -259,6 +259,7 @@ if __name__ == "__main__":
     import json
     import logging.config
     import sys
+    import numpy as np
     sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), os.pardir))
     from core import core
     
@@ -284,4 +285,5 @@ if __name__ == "__main__":
         logging.config.dictConfig(config)
     else:
         logging.basicConfig(level=level,filename=core.getConfig()["global"]["logger"]["logPath"],format="%(asctime)s %(name)s %(levelname)s: %(message)s", datefmt="%m/%d/%Y %I:%M:%S %p")
-    main()
+    with np.errstate(divide='ignore', invalid='ignore'):
+        main()

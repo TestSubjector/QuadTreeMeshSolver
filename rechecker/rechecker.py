@@ -3,8 +3,8 @@ import copy
 import logging
 log = logging.getLogger(__name__)
 log.addHandler(logging.StreamHandler())
-import sys
-import os
+import sys, os
+import numpy as np
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), os.pardir))
 from core import core
@@ -52,23 +52,29 @@ def main():
     THRESHOLD = int(configData["rechecker"]["conditionValueThreshold"])
     MAX_POINTS = -configData["rechecker"]["maxPoints"]
 
-    badList = core.checkConditionNumberBad(globaldata, THRESHOLD, configData)
+    log.info("Checking Points")
+    with np.errstate(divide='ignore', invalid='ignore'):
+        badList = core.checkConditionNumberBad(globaldata, THRESHOLD, configData)
     log.info("Problematic Points to be fixed: {}".format(len(badList)))
 
     # for idx, itm in enumerate(globaldata):
     #     if idx > 0 and getFlag(idx, globaldata) == 0:
     #         checkConditionNumberWall(idx, globaldata, 30)
 
-    for idx in badList:
-        globaldata = core.fixXPosMain(idx, globaldata, THRESHOLD, wallpoints, MAX_POINTS, configData)
-    for idx in badList:
-        globaldata = core.fixXNegMain(idx, globaldata, THRESHOLD, wallpoints, MAX_POINTS, configData)
-    for idx in badList:
-        globaldata = core.fixYPosMain(idx, globaldata, THRESHOLD, wallpoints, MAX_POINTS, configData)
-    for idx in badList:
-        globaldata = core.fixYNegMain(idx, globaldata, THRESHOLD, wallpoints, MAX_POINTS, configData)
+    log.info("Fixing Points")
+    with np.errstate(divide='ignore', invalid='ignore'):
+        for idx in badList:
+            globaldata = core.fixXPosMain(idx, globaldata, THRESHOLD, wallpoints, MAX_POINTS, configData)
+        for idx in badList:
+            globaldata = core.fixXNegMain(idx, globaldata, THRESHOLD, wallpoints, MAX_POINTS, configData)
+        for idx in badList:
+            globaldata = core.fixYPosMain(idx, globaldata, THRESHOLD, wallpoints, MAX_POINTS, configData)
+        for idx in badList:
+            globaldata = core.fixYNegMain(idx, globaldata, THRESHOLD, wallpoints, MAX_POINTS, configData)
 
-    badList = core.checkConditionNumberSelectively(globaldata, THRESHOLD, badList, configData)
+    log.info("Rechecking Points after fixing")
+    with np.errstate(divide='ignore', invalid='ignore'):
+        badList = core.checkConditionNumberSelectively(globaldata, THRESHOLD, badList, configData)
 
     if len(badList) == 0:
         log.info("All problematic points have been fixed")

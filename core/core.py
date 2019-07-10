@@ -1412,87 +1412,99 @@ def rotateNormals(pseudopts,globaldata, configData):
     wallptDataOr = wallptData
     wallptData = flattenList(wallptData)
     wallptDataOr = convertToShapely(wallptDataOr)
+    fixedPts = 0
 
     pseudoptDict = {}
+    with np.errstate(divide='ignore', invalid='ignore'):
+        for _,idx in enumerate(tqdm(pseudopts)):
+            ptList = findNearestNeighbourWallPoints(idx,globaldata,wallptData,wallptDataOr)
+            ptListIndex = convertPointsToIndex(ptList,globaldata)
+            pseudoptDict[idx] = ptListIndex
 
-    for idx2,idx in enumerate(tqdm(pseudopts)):
-        ptList = findNearestNeighbourWallPoints(idx,globaldata,wallptData,wallptDataOr)
-        ptListIndex = convertPointsToIndex(ptList,globaldata)
-        pseudoptDict[idx] = ptListIndex
+        log.info("Fixing {} points".format(len(pseudopts)))
+        log.info("Average Normal Method")
 
-    log.info("Average Normal Method")
+        for idx in pseudopts[:]:
+            ptListIndex = pseudoptDict[idx]
+            nxavg,nyavg = 0,0
+            for itm in ptListIndex:
+                nx,ny = normalCalculation(itm,globaldata,True, configData)
+                nxavg = nxavg + nx
+                nyavg = nyavg + ny
+            nxavg = nxavg / 2
+            nyavg = nyavg / 2
 
-    for idx in pseudopts[:]:
-        ptListIndex = pseudoptDict[idx]
-        nxavg,nyavg = 0,0
-        for itm in ptListIndex:
-            nx,ny = normalCalculation(itm,globaldata,True, configData)
-            nxavg = nxavg + nx
-            nyavg = nyavg + ny
-        nxavg = nxavg / 2
-        nyavg = nyavg / 2
+            condResult = calculateNormalConditionValues(idx,globaldata,nxavg,nyavg,configData)
 
-        condResult = calculateNormalConditionValues(idx,globaldata,nxavg,nyavg,configData)
+            dSPosNbhs,dSNegNbhs,dNPosNbhs,dNNegNbhs = condResult["spos"], condResult["sneg"], condResult["npos"], condResult["nneg"]
+            dSPosCondition,dSNegCondition,dNPosCondition,dNNegCondition = condResult["sposCond"], condResult["snegCond"], condResult["nposCond"], condResult["nnegCond"]
 
-        dSPosNbhs,dSNegNbhs,dNPosNbhs,dNNegNbhs = condResult["spos"], condResult["sneg"], condResult["npos"], condResult["nneg"]
-        dSPosCondition,dSNegCondition,dNPosCondition,dNNegCondition = condResult["sposCond"], condResult["snegCond"], condResult["nposCond"], condResult["nnegCond"]
+            log.debug(idx,len(dSPosNbhs),dSPosCondition,len(dSNegNbhs),dSNegCondition,len(dNPosNbhs),dNPosCondition,len(dNNegNbhs),dNNegCondition)
 
-        print(idx,len(dSPosNbhs),dSPosCondition,len(dSNegNbhs),dSNegCondition,len(dNPosNbhs),dNPosCondition,len(dNNegNbhs),dNNegCondition)
+            maxCond = max(dSPosCondition,dSNegCondition,dNPosCondition,dNNegCondition)
+            if maxCond > float(configData["normalWall"]["conditionValueThreshold"]) or math.isnan(dSPosCondition) or math.isnan(dSNegCondition) or math.isnan(dNPosCondition) or math.isnan(dNNegCondition):
+                None
+            else:
+                fixedPts += 1
+                globaldata = updateNormals(idx,globaldata,nxavg,nyavg)
+                pseudopts.remove(idx)
 
-        maxCond = max(dSPosCondition,dSNegCondition,dNPosCondition,dNNegCondition)
-        if maxCond > float(configData["normalWall"]["conditionValueThreshold"]) or math.isnan(dSPosCondition) or math.isnan(dSNegCondition) or math.isnan(dNPosCondition) or math.isnan(dNNegCondition):
-            None
-        else:
-            globaldata = updateNormals(idx,globaldata,nxavg,nyavg)
-            pseudopts.remove(idx)
+        log.info("Left Normal Method")
 
-    log.info("Left Normal Method")
+        for idx in pseudopts[:]:
+            ptListIndex = pseudoptDict[idx]
+            nxavg,nyavg = normalCalculation(ptListIndex[0],globaldata,True, configData)
 
-    for idx in pseudopts[:]:
-        ptListIndex = pseudoptDict[idx]
-        nxavg,nyavg = normalCalculation(ptListIndex[0],globaldata,True, configData)
+            condResult = calculateNormalConditionValues(idx,globaldata,nxavg,nyavg, configData)
 
-        condResult = calculateNormalConditionValues(idx,globaldata,nxavg,nyavg, configData)
+            dSPosNbhs,dSNegNbhs,dNPosNbhs,dNNegNbhs = condResult["spos"], condResult["sneg"], condResult["npos"], condResult["nneg"]
+            dSPosCondition,dSNegCondition,dNPosCondition,dNNegCondition = condResult["sposCond"], condResult["snegCond"], condResult["nposCond"], condResult["nnegCond"]
 
-        dSPosNbhs,dSNegNbhs,dNPosNbhs,dNNegNbhs = condResult["spos"], condResult["sneg"], condResult["npos"], condResult["nneg"]
-        dSPosCondition,dSNegCondition,dNPosCondition,dNNegCondition = condResult["sposCond"], condResult["snegCond"], condResult["nposCond"], condResult["nnegCond"]
+            log.debug(idx,len(dSPosNbhs),dSPosCondition,len(dSNegNbhs),dSNegCondition,len(dNPosNbhs),dNPosCondition,len(dNNegNbhs),dNNegCondition)
 
-        print(idx,len(dSPosNbhs),dSPosCondition,len(dSNegNbhs),dSNegCondition,len(dNPosNbhs),dNPosCondition,len(dNNegNbhs),dNNegCondition)
+            maxCond = max(dSPosCondition,dSNegCondition,dNPosCondition,dNNegCondition)
+            if maxCond > float(configData["normalWall"]["conditionValueThreshold"]) or math.isnan(dSPosCondition) or math.isnan(dSNegCondition) or math.isnan(dNPosCondition) or math.isnan(dNNegCondition):
+                None
+            else:
+                fixedPts += 1
+                globaldata = updateNormals(idx,globaldata,nxavg,nyavg)
+                pseudopts.remove(idx)
 
-        maxCond = max(dSPosCondition,dSNegCondition,dNPosCondition,dNNegCondition)
-        if maxCond > float(configData["normalWall"]["conditionValueThreshold"]) or math.isnan(dSPosCondition) or math.isnan(dSNegCondition) or math.isnan(dNPosCondition) or math.isnan(dNNegCondition):
-            None
-        else:
-            globaldata = updateNormals(idx,globaldata,nxavg,nyavg)
-            pseudopts.remove(idx)
+        log.info("Right Normal Method")
 
-    log.info("Right Normal Method")
+        for idx in pseudopts[:]:
+            ptListIndex = pseudoptDict[idx]
+            nxavg,nyavg = normalCalculation(ptListIndex[1],globaldata,True, configData)
 
-    for idx in pseudopts[:]:
-        ptListIndex = pseudoptDict[idx]
-        nxavg,nyavg = normalCalculation(ptListIndex[1],globaldata,True, configData)
+            condResult = calculateNormalConditionValues(idx,globaldata,nxavg,nyavg, configData)
 
-        condResult = calculateNormalConditionValues(idx,globaldata,nxavg,nyavg, configData)
+            dSPosNbhs,dSNegNbhs,dNPosNbhs,dNNegNbhs = condResult["spos"], condResult["sneg"], condResult["npos"], condResult["nneg"]
+            dSPosCondition,dSNegCondition,dNPosCondition,dNNegCondition = condResult["sposCond"], condResult["snegCond"], condResult["nposCond"], condResult["nnegCond"]
 
-        dSPosNbhs,dSNegNbhs,dNPosNbhs,dNNegNbhs = condResult["spos"], condResult["sneg"], condResult["npos"], condResult["nneg"]
-        dSPosCondition,dSNegCondition,dNPosCondition,dNNegCondition = condResult["sposCond"], condResult["snegCond"], condResult["nposCond"], condResult["nnegCond"]
+            log.debug(idx,len(dSPosNbhs),dSPosCondition,len(dSNegNbhs),dSNegCondition,len(dNPosNbhs),dNPosCondition,len(dNNegNbhs),dNNegCondition)
 
-        print(idx,len(dSPosNbhs),dSPosCondition,len(dSNegNbhs),dSNegCondition,len(dNPosNbhs),dNPosCondition,len(dNNegNbhs),dNNegCondition)
+            maxCond = max(dSPosCondition,dSNegCondition,dNPosCondition,dNNegCondition)
+            if maxCond > float(configData["normalWall"]["conditionValueThreshold"]) or math.isnan(dSPosCondition) or math.isnan(dSNegCondition) or math.isnan(dNPosCondition) or math.isnan(dNNegCondition):
+                None
+            else:
+                fixedPts += 1
+                globaldata = updateNormals(idx,globaldata,nxavg,nyavg)
+                pseudopts.remove(idx)
 
-        maxCond = max(dSPosCondition,dSNegCondition,dNPosCondition,dNNegCondition)
-        if maxCond > float(configData["normalWall"]["conditionValueThreshold"]) or math.isnan(dSPosCondition) or math.isnan(dSNegCondition) or math.isnan(dNPosCondition) or math.isnan(dNNegCondition):
-            None
-        else:
-            globaldata = updateNormals(idx,globaldata,nxavg,nyavg)
-            pseudopts.remove(idx)
+        log.info("Total Number of Points fixed: {}".format(fixedPts))
+        fixedPts = 0
 
-    print(len(pseudopts))
+    if len(pseudopts) != 0:
+        log.info("Total Number of Points left unfixed: {}".format(len(pseudopts)))
+
+    else:
+        log.info("All Points Fixed")
 
     return globaldata
 
 def checkConditionNumberBad(globaldata, threshold, configData):
     badList = []
-    for index,itm in enumerate(globaldata):
+    for index,itm in enumerate(tqdm(globaldata)):
         if index > 0 and getFlag(index, globaldata) == 1:
             xpos = conditionNumberOfXPos(index, globaldata, configData)
             xneg = conditionNumberOfXNeg(index, globaldata, configData)
@@ -1513,23 +1525,13 @@ def checkConditionNumberBad(globaldata, threshold, configData):
                 or yneg > threshold
                 or math.isnan(yneg)
             ):
-                print(
-                    index,
-                    len(dSPointXPos),
-                    xpos,
-                    len(dSPointXNeg),
-                    xneg,
-                    len(dSPointYPos),
-                    ypos,
-                    len(dSPointYNeg),
-                    yneg,
-                )
+                log.debug("{} {} {} {} {} {} {} {} {}".format(index, len(dSPointXPos), xpos, len(dSPointXNeg), xneg, len(dSPointYPos), ypos, len(dSPointYNeg), yneg))
                 badList.append(index)
     return badList
 
 def checkConditionNumberSelectively(globaldata, threshold, badList, configData):
     badList = []
-    for index in badList:
+    for index in tqdm(badList):
         if getFlag(index, globaldata) == 1:
             xpos = conditionNumberOfXPos(index, globaldata, configData)
             xneg = conditionNumberOfXNeg(index, globaldata, configData)
@@ -1550,17 +1552,7 @@ def checkConditionNumberSelectively(globaldata, threshold, badList, configData):
                 or yneg > threshold
                 or math.isnan(yneg)
             ):
-                print(
-                    index,
-                    len(dSPointXPos),
-                    xpos,
-                    len(dSPointXNeg),
-                    xneg,
-                    len(dSPointYPos),
-                    ypos,
-                    len(dSPointYNeg),
-                    yneg,
-                )
+                log.debug("{} {} {} {} {} {} {} {} {}".format(index, len(dSPointXPos), xpos, len(dSPointXNeg), xneg, len(dSPointYPos), ypos, len(dSPointYNeg), yneg))
                 badList.append(index)
     return badList
 
