@@ -68,6 +68,7 @@ def main():
         print("Type 'icc' to run Interior Connectivity Check on all Interior Points.")
         print("Type 'cache' to push the file you read into cache.")
         print("Type 'integrity' to check wall.json integrity")
+        print("Type 'integrity!' to check wall.json integrity and fix it")
         print("Type 'full' to perform one full refinement")
         print("Type 'fullno' to perform one full refinement (excluding outer)")
         print("Type 'customrefine' to perform custom refinement")
@@ -121,6 +122,9 @@ def main():
         elif ptidx == "integrity":
             core.clearScreen()
             core.verifyIntegrity()
+        elif ptidx == "integrity!":
+            core.clearScreen()
+            core.fixWallIntegrity()
         elif ptidx == "full":
             core.clearScreen()
             core.fullRefine(globaldata)
@@ -230,6 +234,7 @@ def main():
     else:
         while True:
             print("Type 'integrity' to check wall.json integrity")
+            print("Type 'integrity!' to check wall.json integrity and fix it")
             print("Type 'config' to start Config Manager")
             print("Type 'hills' to start Hills and Valleys Manager")
             print("Type 'exit' to exit")
@@ -239,6 +244,11 @@ def main():
             if ptidx == "integrity":
                 core.clearScreen()
                 core.verifyIntegrity()
+
+            elif ptidx == "integrity!":
+                core.clearScreen()
+                core.fixWallIntegrity()
+
             
             elif ptidx == "config":
                 core.clearScreen()

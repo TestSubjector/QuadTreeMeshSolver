@@ -11,6 +11,7 @@ from collections import Counter
 from time import sleep
 from scipy.interpolate import splprep, splev
 from scipy import spatial
+import copy
 
 def appendNeighbours(index, globaldata, newpts):
     pt = getIndexFromPoint(newpts, globaldata)
@@ -1706,7 +1707,6 @@ def findGeneralBoxAdaptPoints(globaldata, configData):
     adaptPoints = []
     for idx,_ in enumerate(globaldata):
         if idx > 0:
-            flag = getFlag(idx,globaldata)
             ptx,pty = getPoint(idx,globaldata)
             pt = (ptx,pty)
             pt = shapely.geometry.Point(pt)
@@ -1723,7 +1723,7 @@ def verifyIntegrity():
     loadWall = dict(load_obj("wall"))
     with open("adapted.txt","r") as fileman:
         data = fileman.read()
-    matchdata = re.findall("(?<=2000 2000)([\S\s]*?)(?=1000 1000)",str(data))
+    matchdata = re.findall(r"(?<=2000 2000)([\S\s]*?)(?=1000 1000)",str(data))
     pointsToCheck = []
     for itm in matchdata:
         itmsplit = itm.split("\n")
@@ -1736,8 +1736,8 @@ def verifyIntegrity():
     pointsToCheck = list(set(pointsToCheck))
     finCount = len(pointsToCheck)
     if itCount != finCount:
-        print("Warning repeated elements detected in adapted file")
-        print([k for k,v in Counter(pointsToCheckOld).items() if v>1])
+        log.warn("Warning repeated elements detected in adapted file")
+        log.warn([k for k,v in Counter(pointsToCheckOld).items() if v>1])
     pointsToCheck = [tuple(float(y) for y in s.split(" ")) for s in pointsToCheck]
 
     allItems = loadWall.values()
@@ -1747,15 +1747,61 @@ def verifyIntegrity():
     try:
         notPresent = set(pointsToCheck) - set(allItems)
         if len(notPresent) > 0:
-            print("Not Present in Adapted File")
-            print(list(notPresent))
+            log.error("Not Present in Adapted File")
+            log.error(list(notPresent))
         notPresent = set(allItems) - set(pointsToCheck)
         if len(notPresent) > 0:
-            print("Not Present in Wall File")
-            print(list(notPresent))
+            log.error("Not Present in Wall File")
+            log.error(list(notPresent))
     except TypeError:
-        print("Either adapted.txt or wall.json is invalid")
-    # (?<=2000 2000)([\S\s]*?)(?=1000 1000)
+        log.error("Either adapted.txt or wall.json is invalid")
+
+def fixWallIntegrity():
+    loadWall = dict(load_obj("wall"))
+    with open("adapted.txt","r") as fileman:
+        data = fileman.read()
+    matchdata = re.findall(r"(?<=2000 2000)([\S\s]*?)(?=1000 1000)",str(data))
+    pointsToCheck = []
+    for itm in matchdata:
+        itmsplit = itm.split("\n")
+        itmsplit.pop(0)
+        itmsplit.pop(-1)
+        itmsplit = [s.strip() for s in itmsplit]
+        pointsToCheck = pointsToCheck + itmsplit
+    pointsToCheckOld = pointsToCheck
+    itCount = len(pointsToCheck)
+    pointsToCheck = list(set(pointsToCheck))
+    finCount = len(pointsToCheck)
+    if itCount != finCount:
+        log.warn("Warning repeated elements detected in adapted file")
+        log.warn([k for k,v in Counter(pointsToCheckOld).items() if v>1])
+    pointsToCheck = [tuple(float(y) for y in s.split(" ")) for s in pointsToCheck]
+
+    allItems = loadWall.values()
+    allItems = list(itertools.chain(*allItems))
+    allItems = [tuple(s) for s in allItems]
+    # print(allItems)
+    try:
+        notPresent = set(pointsToCheck) - set(allItems)
+        if len(notPresent) > 0:
+            log.error("Not Present in Adapted File")
+            log.error(list(notPresent))
+            log.error("Cannot fix")
+        notPresent = set(allItems) - set(pointsToCheck)
+        if len(notPresent) > 0:
+            log.info("Attempting to fix it")
+            for itm in loadWall.keys():
+                fresh = set(tuple(x) for x in loadWall[itm])
+                fresh = list(fresh - notPresent)
+                loadWall[itm] = fresh
+            finalWall = copy.deepcopy(loadWall)
+            for itm in loadWall.keys():
+                if len(finalWall[itm]) == 0:
+                    del finalWall[itm]
+            save_obj(finalWall, "wall")
+            log.info("Wall.json has been fixed")
+    except TypeError:
+        log.error("Either adapted.txt or wall.json is invalid")
 
 def fullRefine(globaldata):
     with open("adapted.txt", "a+") as text_file:
