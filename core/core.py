@@ -1,7 +1,7 @@
 import numpy as np
 import os, errno, multiprocessing, math, logging, itertools, json, time, re, shutil, csv, redis, uuid
 import shapely.geometry
-from shapely.ops import linemerge, unary_union, polygonize
+from shapely.ops import linemerge, unary_union, polygonize, split
 import shapely
 log = logging.getLogger(__name__)
 log.addHandler(logging.StreamHandler())
@@ -11,6 +11,7 @@ from collections import Counter
 from time import sleep
 from scipy.interpolate import splprep, splev
 from scipy import spatial
+import hashlib
 import copy
 
 def appendNeighbours(index, globaldata, newpts):
@@ -96,6 +97,10 @@ def deltaX(xcord, orgxcord):
 def deltaY(ycord, orgycord):
     return float(orgycord - ycord)
 
+def getHash(value):
+    value = str(value)
+    return hashlib.sha256(value.encode()).hexdigest()
+
 def normalCalculation(index, globaldata, wallpoint, configData):
     if getFlag(index, globaldata) == 1:
         nx, ny = getNormals(index, globaldata, configData)
@@ -132,9 +137,34 @@ def normalCalculation(index, globaldata, wallpoint, configData):
             if direction == "cw":
                 nx = (-nx) / det
             elif direction == "ccw":
-                nx = nx / det
+                nx =  - nx / det
         ny = ny / det
         return nx, ny
+
+def normalCalculationWithPoints(leftpt, midpt, rightpt, direction):
+    nx = 0
+    ny = 0
+    cordx = midpt[0]
+    cordy = midpt[1]
+    leftpointx = leftpt[0]
+    leftpointy = leftpt[1]
+    rightpointx = rightpt[0]
+    rightpointy = rightpt[1]
+
+    nx1 = cordy - leftpointy
+    nx2 = rightpointy - cordy
+    ny1 = cordx - leftpointx
+    ny2 = rightpointx - cordx
+
+    nx = (nx1 + nx2) / 2
+    ny = (ny1 + ny2) / 2
+    det = math.sqrt((nx * nx) + (ny * ny))
+    if direction == "cw":
+        nx = (-nx) / det
+    elif direction == "ccw":
+        nx =  - nx / det
+    ny = ny / det
+    return nx, ny
 
 def deltaCalculationDSNormals(
     index, currentneighbours, nx, ny, giveposdelta, globaldata
@@ -151,7 +181,7 @@ def deltaCalculationDSNormals(
         itemx = float(item.split(",")[0])
         itemy = float(item.split(",")[1])
         deltas = (tx * (itemx - xcord)) + (ty * (itemy - ycord))
-        deltan = (nx * (itemx - xcord)) + (ny * (itemy - ycord))
+        # deltan = (nx * (itemx - xcord)) + (ny * (itemy - ycord))
         if actuallyZero(deltas):
             deltas = 0
         if deltas <= 0:
@@ -172,8 +202,6 @@ def deltaCalculationDNNormals(
     deltaspos, deltasneg, deltaszero = 0, 0, 0
     nx = float(nx)
     ny = float(ny)
-    tx = float(ny)
-    ty = -float(nx)
     xcord = float(globaldata[index][1])
     ycord = float(globaldata[index][2])
     output = []
@@ -566,7 +594,6 @@ def isNonAeroDynamic(index, cordpt, globaldata, wallData):
     cordptx = float(cordpt.split(",")[0])
     cordpty = float(cordpt.split(",")[1])
     line = shapely.geometry.LineString([[main_pointx, main_pointy], [cordptx, cordpty]])
-    responselist = []
 
     if len(wallData) == 0:
         return False
@@ -632,7 +659,23 @@ def isNonAeroDynamicBetter(index, cordpt, globaldata, wallpoints):
         if i == 1:
             responselist.append(False)
         else:
-            return True
+            responselist.append(True)
+    if True in responselist:
+        return True
+    else:
+        return False
+
+def isNonAeroDynamicEvenBetter(index, cordpt, globaldata, wallpoints):
+    main_pointx,main_pointy = getPoint(index, globaldata)
+    cordptx = float(cordpt.split(",")[0])
+    cordpty = float(cordpt.split(",")[1])
+    line = shapely.geometry.LineString([[main_pointx, main_pointy], [cordptx, cordpty]])
+    responselist = []
+    for item in wallpoints:
+        if item.intersects(line):
+            responselist.append(False)
+        else:
+            responselist.append(True)
     if True in responselist:
         return True
     else:
@@ -749,7 +792,7 @@ def replaceNeighbours(index,nbhs,globaldata):
 def cleanWallPoints(globaldata):
     wallpoints = getWallPointArrayIndex(globaldata)
     wallpointsflat = [item for sublist in wallpoints for item in sublist]
-    for idx,itm in enumerate(tqdm(globaldata)):
+    for idx,_ in enumerate(tqdm(globaldata)):
         if(idx > 0):
             if(getFlag(idx,globaldata) == 0):
                 nbhcords =  getNeighbours(idx,globaldata)
@@ -767,7 +810,6 @@ def cleanWallPointsSelectivity(globaldata,points):
     for idx in points:
         if(getFlag(idx,globaldata) == 0):
             nbhcords =  getNeighbours(idx,globaldata)
-            leftright = getLeftandRightPointIndex(idx,globaldata)
             nbhcords = list(map(int, nbhcords))
             finalcords = wallRemovedNeighbours(nbhcords,wallpointsflat)
             finalcords = list(set(finalcords))
@@ -802,11 +844,20 @@ def containsWallPoints(globaldata, idx, wallpts):
     else:
         return True
 
+def getPseudoPoints(globaldata):
+    wallpts = flattenList(getWallPointArrayIndex(globaldata))
+    pseudoPts = []
+    for idx, _ in enumerate(tqdm(globaldata)):
+        if idx > 0:
+            flag = getFlag(idx, globaldata)
+            if flag == 1:
+                if containsWallPoints(globaldata, idx, wallpts):
+                    pseudoPts.append(idx)
+    return pseudoPts
+
 def checkPoints(globaldata, selectbspline, normal, configData, pseudocheck, shapelyWallData):
     wallptData = getWallPointArray(globaldata)
-    wallptDataOr = wallptData
     wallptData = flattenList(wallptData)
-    ptsToBeAdded = int(configData["bspline"]["pointControl"])
     ptListArray = []
     perpendicularListArray = []
     maxDepth = -999
@@ -828,7 +879,7 @@ def checkPoints(globaldata, selectbspline, normal, configData, pseudocheck, shap
                     else:
                         if(result):
                             ptList = findNearestNeighbourWallPoints(idx,globaldata,wallptData,shapelyWallData)
-                            perpendicularPt = getPerpendicularPoint(idx,globaldata,normal, shapelyWallData, ptList)
+                            perpendicularPt = getPerpendicularPoint(idx,globaldata,normal, wallptData, ptList)
                             if (perpendicularPt) not in perpendicularListArray:
                                 ptListArray.append(ptList)
                                 perpendicularListArray.append((perpendicularPt))
@@ -841,7 +892,7 @@ def checkPoints(globaldata, selectbspline, normal, configData, pseudocheck, shap
                                     dist = min(wallDistance((px, py), shapelyWallData))
                                     if dist <= float(configData['bspline']['pseudoDist']):
                                         ptList = findNearestNeighbourWallPoints(idx,globaldata,wallptData,shapelyWallData)
-                                        perpendicularPt = getPerpendicularPoint(idx,globaldata,normal, shapelyWallData, ptList)
+                                        perpendicularPt = getPerpendicularPoint(idx,globaldata,normal, wallptData, ptList)
                                         if (perpendicularPt) not in perpendicularListArray:
                                             ptListArray.append(ptList)
                                             perpendicularListArray.append((perpendicularPt))
@@ -850,7 +901,7 @@ def checkPoints(globaldata, selectbspline, normal, configData, pseudocheck, shap
         selectbspline = list(map(int, selectbspline))
         for idx,itm in enumerate(tqdm(selectbspline)):
             ptList = findNearestNeighbourWallPoints(itm, globaldata, wallptData, shapelyWallData)
-            perpendicularPt = getPerpendicularPoint(itm, globaldata, normal, shapelyWallData, ptList)
+            perpendicularPt = getPerpendicularPoint(itm, globaldata, normal, wallptData, ptList)
             if (perpendicularPt) not in perpendicularListArray:
                 ptListArray.append(ptList)
                 perpendicularListArray.append((perpendicularPt))
@@ -861,9 +912,9 @@ def checkPoints(globaldata, selectbspline, normal, configData, pseudocheck, shap
 def findNearestNeighbourWallPoints(idx, globaldata, wallptData, shapelyWallData):
     ptx,pty = getPoint(idx,globaldata)
     leastdt,leastidx = 1000,-9999
-    better = getNearestWallPoint((ptx, pty), wallptData, limit=10)
+    better = getNearestWallPoint((ptx, pty), wallptData, limit=2)
     for itm in better:
-        if not isNonAeroDynamicBetter(idx,itm,globaldata,shapelyWallData):
+        if not isNonAeroDynamicEvenBetter(idx,itm,globaldata,shapelyWallData):
             itmx = float(itm.split(",")[0])
             itmy = float(itm.split(",")[1])
             ptDist = math.sqrt((deltaX(itmx,ptx) ** 2) + (deltaY(itmy,pty) ** 2))
@@ -879,7 +930,7 @@ def findNearestNeighbourWallPoints(idx, globaldata, wallptData, shapelyWallData)
     leastptx,leastpty = getPoint(leastidx,globaldata)
     currangle = 1000
     for itm in ptsToCheck:
-        if not isNonAeroDynamicBetter(idx,itm,globaldata,shapelyWallData):
+        if not isNonAeroDynamicEvenBetter(idx,itm,globaldata,shapelyWallData):
             itmx = float(itm.split(",")[0])
             itmy = float(itm.split(",")[1])
             ptDist = math.sqrt((deltaX(itmx,ptx) ** 2) + (deltaY(itmy,pty) ** 2))
@@ -907,7 +958,7 @@ def findNearestNeighbourWallPointsManual(pt,globaldata,wallptData,wallptDataOr):
             leastdt = ptDist
             leastidx = getIndexFromPoint(itm,globaldata)
     ptsToCheck = convertIndexToPoints(getLeftandRightPointIndex(leastidx,globaldata),globaldata)
-    leastdt2,leastidx2 = 1000,1000
+    leastidx2 = 1000
     leastptx,leastpty = getPoint(leastidx,globaldata)
     currangle = 1000
     for itm in ptsToCheck:
@@ -942,10 +993,7 @@ def undelimitXY(a):
         finallist.append(cord)
     return finallist
 
-def getPerpendicularPoint(idx, globaldata, normal, shapelyWallData, pts):
-    wallptData = getWallPointArray(globaldata)
-    wallptDataOr = wallptData
-    wallptData = flattenList(wallptData)
+def getPerpendicularPoint(idx, globaldata, normal, wallptData, pts):
     mainpt = getPointXY(idx,globaldata)
     mainptx = float(mainpt.split(",")[0])
     mainpty = float(mainpt.split(",")[1])
@@ -983,6 +1031,17 @@ def perpendicularPt(x1,x2,x3,y1,y2,y3):
     x4 = x3 - k * (y2-y1)
     y4 = y3 + k * (x2-x1)
     return x4,y4
+
+def normalPt(x1, x2, x3, y1, y2, y3):
+    A = (x1, y1)
+    B = (x2, y2)
+    C = (x3, 100)
+    D = (x3, -100)
+    line1 = shapely.geometry.LineString([A, B])
+    line2 = shapely.geometry.LineString([C, D])
+    int_pt = line1.intersection(line2)
+    if int_pt:
+        return int_pt.x, int_pt.y
 
 def midPt(x1,x2,y1,y2):
     x3 = (x1+x2)/2
@@ -1032,8 +1091,8 @@ def updateNormals(idx,globaldata,nx,ny):
 def getNormals(idx, globaldata, configData):
     flag = getFlag(idx, globaldata)
     if flag == 1:
-        nx = globaldata[idx][11]
-        ny = globaldata[idx][12]
+        nx = float(globaldata[idx][11])
+        ny = float(globaldata[idx][12])
     elif flag == 0:
         nx, ny = normalCalculation(idx, globaldata, True, configData)
     else:
@@ -1063,7 +1122,6 @@ def calculateNormalConditionValues(idx,globaldata,nxavg,nyavg, configData):
 def isConditionBad(idx, globaldata, configData):
     nx,ny = getNormals(idx,globaldata, configData)
     condResult = calculateNormalConditionValues(idx,globaldata,nx,ny, configData)
-    dSPosNbhs,dSNegNbhs,dNPosNbhs,dNNegNbhs = condResult["spos"], condResult["sneg"], condResult["npos"], condResult["nneg"]
     dSPosCondition,dSNegCondition,dNPosCondition,dNNegCondition = condResult["sposCond"], condResult["snegCond"], condResult["nposCond"], condResult["nnegCond"]
     maxCond = max(dSPosCondition,dSNegCondition,dNPosCondition,dNNegCondition)
     if maxCond > float(configData["bspline"]["threshold"]) or math.isnan(dSPosCondition) or math.isnan(dSNegCondition) or math.isnan(dNPosCondition) or math.isnan(dNNegCondition):
@@ -1074,9 +1132,7 @@ def isConditionBad(idx, globaldata, configData):
 def isConditionNan(idx, globaldata, configData):
     nx,ny = getNormals(idx,globaldata, configData)
     condResult = calculateNormalConditionValues(idx,globaldata,nx,ny, configData)
-    dSPosNbhs,dSNegNbhs,dNPosNbhs,dNNegNbhs = condResult["spos"], condResult["sneg"], condResult["npos"], condResult["nneg"]
     dSPosCondition,dSNegCondition,dNPosCondition,dNNegCondition = condResult["sposCond"], condResult["snegCond"], condResult["nposCond"], condResult["nnegCond"]
-    maxCond = max(dSPosCondition,dSNegCondition,dNPosCondition,dNNegCondition)
     if math.isnan(dSPosCondition) or math.isnan(dSNegCondition) or math.isnan(dNPosCondition) or math.isnan(dNNegCondition):
         return True
     else:
@@ -1085,9 +1141,7 @@ def isConditionNan(idx, globaldata, configData):
 def isConditionInf(idx, globaldata, configData):
     nx,ny = getNormals(idx,globaldata, configData)
     condResult = calculateNormalConditionValues(idx,globaldata,nx,ny, configData)
-    dSPosNbhs,dSNegNbhs,dNPosNbhs,dNNegNbhs = condResult["spos"], condResult["sneg"], condResult["npos"], condResult["nneg"]
     dSPosCondition,dSNegCondition,dNPosCondition,dNNegCondition = condResult["sposCond"], condResult["snegCond"], condResult["nposCond"], condResult["nnegCond"]
-    maxCond = max(dSPosCondition,dSNegCondition,dNPosCondition,dNNegCondition)
     if math.isinf(dSPosCondition) or math.isinf(dSNegCondition) or math.isinf(dNPosCondition) or math.isinf(dNNegCondition):
         return True
     else:
@@ -1267,7 +1321,7 @@ def doesItIntersect(idx, quadrant, globaldata, wallpoints):
 
 def getWallGeometry(walldata, globaldata, itm):
     itmx, itmy = getPoint(itm, globaldata)
-    for idx,itm in enumerate(walldata):
+    for _,itm in enumerate(walldata):
         if [itmx, itmy] in itm:
             return itm
 
@@ -1302,7 +1356,6 @@ def nonAdaptWallPolygon(globaldata, wallpoints, dist, interiorpts, configData):
         newWallpt = tuple(newWallpt.tolist())
         inflatedWall.append(newWallpt)
     wallptsData = convertPointToShapelyPoint(wallpoints)
-    wallpointGeo = shapely.geometry.Polygon(wallptsData)
     lastpt = wallptsData[0]
     newpt = (lastpt[0] + dist, lastpt[1])
     inflatedWall.pop(0)
@@ -1407,7 +1460,7 @@ def inflatedWallPolygon(globaldata, dist, configData):
                             pseudopts.append(idx)
     return pseudopts
 
-def rotateNormals(pseudopts,globaldata, configData):
+def rotateNormalsLegacy(pseudopts,globaldata, configData, dryRun):
     log.info("Calculating Nearest Neighbours")
     wallptData = getWallPointArray(globaldata)
     wallptDataOr = wallptData
@@ -1447,7 +1500,8 @@ def rotateNormals(pseudopts,globaldata, configData):
                 None
             else:
                 fixedPts += 1
-                globaldata = updateNormals(idx,globaldata,nxavg,nyavg)
+                if not dryRun:
+                    globaldata = updateNormals(idx,globaldata,nxavg,nyavg)
                 pseudopts.remove(idx)
 
         log.info("Left Normal Method")
@@ -1468,7 +1522,8 @@ def rotateNormals(pseudopts,globaldata, configData):
                 None
             else:
                 fixedPts += 1
-                globaldata = updateNormals(idx,globaldata,nxavg,nyavg)
+                if not dryRun:
+                    globaldata = updateNormals(idx,globaldata,nxavg,nyavg)
                 pseudopts.remove(idx)
 
         log.info("Right Normal Method")
@@ -1489,7 +1544,8 @@ def rotateNormals(pseudopts,globaldata, configData):
                 None
             else:
                 fixedPts += 1
-                globaldata = updateNormals(idx,globaldata,nxavg,nyavg)
+                if not dryRun:
+                    globaldata = updateNormals(idx,globaldata,nxavg,nyavg)
                 pseudopts.remove(idx)
 
         log.info("Total Number of Points fixed: {}".format(fixedPts))
@@ -1503,9 +1559,68 @@ def rotateNormals(pseudopts,globaldata, configData):
 
     return globaldata
 
+def rotateNormals(pseudopts,globaldata, configData, dryRun):
+    log.info("Calculating Nearest Neighbours")
+    wallptData = getWallPointArray(globaldata)
+    wallptData2 = copy.deepcopy(wallptData)
+    wallptDataOr = copy.deepcopy(wallptData)
+    wallptData = flattenList(wallptData)
+    wallptDataOr = convertToShapely(wallptDataOr)
+    wallptIndex = getWallPointArrayIndex(globaldata)
+    bsplineArray = []
+    
+    for itm in wallptData2:
+        bsplineData = np.array(undelimitXY(itm))
+        bsplineArray.append(bsplineData)
+
+    pseudoptDict = {}
+    pseudoptDictData = {}
+    with np.errstate(divide='ignore', invalid='ignore'):
+        for _,idx in enumerate(tqdm(pseudopts)):
+            ptList = findNearestNeighbourWallPoints(idx,globaldata,wallptData,wallptDataOr)
+            perpendicularPt = getPerpendicularPoint(idx, globaldata, True, wallptData, ptList)
+            ptListIndex = convertPointsToIndex(ptList,globaldata)
+            pseudoptDict[idx] = ptListIndex
+            pseudoptDictData[idx] = feederData(ptListIndex, wallptIndex)
+            pseudoptDictData[idx].append(perpendicularPt)
+    
+    log.info("Calculating Normals")
+    for itm in pseudoptDict.keys():
+        ptsBtw = [pseudoptDictData[itm][0], pseudoptDictData[itm][1]]
+        ptsBtw.sort()
+        if ptsBtw[0] == 0 and ptsBtw[1] != 1:
+            ptsBtw[0], ptsBtw[1] = ptsBtw[1], ptsBtw[0]
+        if configData["bspline"]["polygon"]:
+            ptsToCheck = [pseudoptDictData[itm][5]]
+        else:
+            ptsToCheck = generateBSplineBetween(bsplineArray[pseudoptDictData[itm][2]], ptsBtw[0], ptsBtw[1], num_points = configData["bspline"]["pointControl"])
+        finalPt = findNearestPoint(pseudoptDictData[itm][5], ptsToCheck)
+        leftpt = bsplineArray[pseudoptDictData[itm][2]][ptsBtw[0]]
+        rightpt = bsplineArray[pseudoptDictData[itm][2]][ptsBtw[1]]
+        orientation = orientationCord(leftpt, finalPt, rightpt)
+        nx, ny = normalCalculationWithPoints(leftpt, finalPt, rightpt, orientation)
+        globaldata = updateNormals(itm, globaldata, nx, ny)
+    return globaldata
+
+def orientationCord(xy1, xy2, xy3):
+    return orientationCordSplit(xy1[0], xy1[1], xy2[0], xy2[1], xy3[0], xy3[1])
+
+def orientationCordSplit(x1, y1, x2, y2, x3, y3):
+    crossProduct = (x2 - x1) * (y3 - y2) - (x3 - x2) * (y2 - y1)
+    if crossProduct > 0:
+        return "ccw"
+    else:
+        return "cw"
+
+def orientationReverse(xy1, xymid, xy2, orient):
+    if orientationCord(xy1, xymid, xy2) != orient:
+        return True
+    else:
+        return False
+
 def checkConditionNumberBad(globaldata, threshold, configData):
     badList = []
-    for index,itm in enumerate(tqdm(globaldata)):
+    for index,_ in enumerate(tqdm(globaldata)):
         if index > 0 and getFlag(index, globaldata) == 1:
             xpos = conditionNumberOfXPos(index, globaldata, configData)
             xneg = conditionNumberOfXNeg(index, globaldata, configData)
@@ -1650,7 +1765,6 @@ def findHeadOfWall(wallpoints):
         currpt = 0
         for pt in wallptset:
             ptx = float(pt.split(",")[0])
-            pty = float(pt.split(",")[1])
             if minx > ptx:
                 minx = ptx
                 currpt = pt
@@ -1659,7 +1773,7 @@ def findHeadOfWall(wallpoints):
 
 def returnPointDist(globaldata):
     stats = {"interior":0,"outer":0,"wall":0}
-    for idx,itm in enumerate(globaldata):
+    for idx,_ in enumerate(globaldata):
         if idx > 0:
             flag = getFlag(idx,globaldata)
             if flag == 1:
@@ -1687,7 +1801,6 @@ def findBoxAdaptPoints(globaldata,wallpoints, configData):
     adaptPoints = []
     for idx,_ in enumerate(globaldata):
         if idx > 0:
-            flag = getFlag(idx,globaldata)
             ptx,pty = getPoint(idx,globaldata)
             pt = (ptx,pty)
             pt = shapely.geometry.Point(pt)
@@ -2106,40 +2219,35 @@ def getNearestProblemPoint(idx,globaldata, conf):
     xneg = getXNegPoints(idx,globaldata, conf)
     leftright = getLeftandRightPoint(idx,globaldata)
     mainptx,mainpty = getPoint(idx,globaldata)
-    mainpt = (mainptx,mainpty)
     currang = 0
     currpt = 0
     if len(xpos) == 1:
         leftright.remove(xpos[0])
         wallx = float(leftright[0].split(",")[0])
         wally = float(leftright[0].split(",")[1])
-        wallpt = (wallx,wally)
         for itm in xneg:
             itmx = float(itm.split(",")[0])
             itmy = float(itm.split(",")[1])
-            itmpt = (itmx,itmy)
             try:
                 angitm = angle(wallx,wally,mainptx,mainpty,itmx,itmy)
             except:
                 print(wallx,wally,mainptx,mainpty,itmx,itmy)
             if currang < angitm:
-                curang = angitm
+                currang = angitm
                 currpt = itm
     if len(xneg) == 1:
         leftright.remove(xneg[0])
         wallx = float(leftright[0].split(",")[0])
         wally = float(leftright[0].split(",")[1])
-        wallpt = (wallx,wally)
         for itm in xpos:
             itmx = float(itm.split(",")[0])
             itmy = float(itm.split(",")[1])
-            itmpt = (itmx,itmy)
             try:
                 angitm = angle(wallx,wally,mainptx,mainpty,itmx,itmy)
             except:
                 print(wallx,wally,mainptx,mainpty,itmx,itmy)
             if currang < angitm:
-                curang = angitm
+                currang = angitm
                 currpt = itm
     return currpt
 
@@ -2392,7 +2500,6 @@ def generateBSplinePoints(cv,update):
 def generateBSplineBetween(cv,index1,index2, num_points = 20):
     cv = np.concatenate((cv, [cv[0]]), axis = 0)
     if index2 == 0:
-        None
         index2 = len(cv) - 1
     if(index1 > len(cv) or index2 > len(cv)):
         exit("ERROR: Index not in range")
@@ -2403,6 +2510,17 @@ def generateBSplineBetween(cv,index1,index2, num_points = 20):
     new_points.pop(0)
     new_points.pop(-1)
     return new_points
+
+def generateBSplineBetweenBetter(cv,index1,index2, num_points = 20):
+    hashCheck = "{}:{}:{}:{}".format(cv[index1], cv[index2], len(cv), num_points)
+    hashCheck = getHash(hashCheck)
+    bsplinePts = getKeyVal(hashCheck)
+    if bsplinePts == None:
+        bsplinePts = generateBSplineBetween(cv, index1, index2, num_points)
+        setKeyVal(hashCheck, bsplinePts, ex=5)
+        return bsplinePts
+    else:
+        return bsplinePts
 
 def getPointsOnlyInQuadrant(ptslist, idx, globaldata):
     goodpoints = []
@@ -2452,12 +2570,12 @@ def getConfig():
 
 conn = redis.Redis(getConfig()["global"]["redis"]["host"],getConfig()["global"]["redis"]["port"],getConfig()["global"]["redis"]["db"],getConfig()["global"]["redis"]["password"])
 
-def setKeyVal(keyitm,keyval):
+def setKeyVal(keyitm, keyval, ex=86400, px=None):
     PREFIX = getConfig()["global"]["redis"]["prefix"]
     if PREFIX == "NONE":
         setPrefix()
     PREFIX = getConfig()["global"]["redis"]["prefix"]
-    conn.set(PREFIX + "_" + str(keyitm),json.dumps({keyitm: keyval}))
+    conn.set(PREFIX + "_" + str(keyitm),json.dumps({keyitm: keyval}), ex=ex, px=px)
     return True
 
 def getKeyVal(keyitm):
@@ -2474,15 +2592,14 @@ def getKeyVal(keyitm):
 def setPrefix():
     PREFIX = getConfig()["global"]["redis"]["prefix"]
     if PREFIX == "NONE":
-        conn = redis.Redis(getConfig()["global"]["redis"]["host"],getConfig()["global"]["redis"]["port"],getConfig()["global"]["redis"]["db"],getConfig()["global"]["redis"]["password"])
         PREFIX = str(uuid.uuid4()).replace("-","")
         data = dict(load_obj("config"))
         data["global"]["redis"]["prefix"] = PREFIX
         save_obj(data,"config")
 
-def save_obj(obj, name, indent=None):
-    with open(name + '.json', 'w') as f:
-        json.dump(obj, f, indent=indent)
+def save_obj(obj, name, indent=4):
+    with open(name + '.json', 'w', encoding='utf-8') as f:
+        json.dump(obj, f, ensure_ascii=False, indent=indent)
 
 def load_obj(name):
     with open(name + '.json', 'r') as f:
@@ -2595,18 +2712,17 @@ def connectivityCheck(globaldata, badPoints, configData):
                         badPointsNew.append(idx)
                     globaldata = setFlagsFromList(idx,globaldata,result)
     else:
-        for _,idx in enumerate(tqdm(badPoints)):
-            if(idx >0):
-                if(getFlag(idx,globaldata) == 0 or getFlag(idx,globaldata) == 2):
-                    result = connectivityCheckWallandOuterPoint(idx,globaldata, configData)
-                    if 1 in result or 2 in result:
-                        badPointsNew.append(idx)
-                    globaldata = setFlagsFromList(idx,globaldata,result)
-                else:
-                    result = connectivityCheckInteriorPoint(idx,globaldata, configData)
-                    if 1 in result or 2 in result:
-                        badPointsNew.append(idx)
-                    globaldata = setFlagsFromList(idx,globaldata,result)
+        for idx in tqdm(badPoints):
+            if(getFlag(idx,globaldata) == 0 or getFlag(idx,globaldata) == 2):
+                result = connectivityCheckWallandOuterPoint(idx,globaldata, configData)
+                if 1 in result or 2 in result:
+                    badPointsNew.append(idx)
+                globaldata = setFlagsFromList(idx,globaldata,result)
+            else:
+                result = connectivityCheckInteriorPoint(idx,globaldata, configData)
+                if 1 in result or 2 in result:
+                    badPointsNew.append(idx)
+                globaldata = setFlagsFromList(idx,globaldata,result)
     return globaldata,badPointsNew
 
 
@@ -2678,7 +2794,7 @@ def connectivityCheckInteriorPoint(index, globaldata, configData):
 
 def findDeletionPoints(globaldata):
     deletionpts = []
-    for idx,itm in enumerate(globaldata):
+    for idx,_ in enumerate(globaldata):
         if idx > 0 and int(getFlag(idx,globaldata)) == 1:
             xpos,xneg,ypos,yneg = getFlags(idx,globaldata)
             if(xpos == 1 or xneg == 1 or ypos == 1 or yneg == 1):
@@ -2686,7 +2802,7 @@ def findDeletionPoints(globaldata):
     return deletionpts
 
 def writeNormalsToText(globaldata, configData):
-    for idx,itm in enumerate(globaldata):
+    for idx,_ in enumerate(globaldata):
         if idx > 0:
             flag = getFlag(idx,globaldata)
             if(flag == 0):
@@ -2696,13 +2812,11 @@ def writeNormalsToText(globaldata, configData):
                     text_file.writelines(str(x) + " " + str(y) + " " + str(nx) + " " + str(ny))
                     text_file.writelines("\n")
 
-
 ## To Plot
 # plot 'file.dat' using 1:2:3:4 with vectors head filled lt 2
 
-
 def writeConditionValuesForWall(globaldata, configData):
-    for idx,itm in enumerate(globaldata):
+    for idx,_ in enumerate(globaldata):
         if idx > 0:
             flag = getFlag(idx,globaldata)
             if(flag == 0):

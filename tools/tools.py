@@ -8,6 +8,7 @@ from tqdm import tqdm
 import numpy as np
 import sys
 import os
+import temp
 
 sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), os.pardir))
 from core import core
@@ -80,6 +81,8 @@ def main():
         print("Type 'plot' to start Plot Manager")
         print("Type 'config' to start Config Manager")
         print("Type 'hills' to start Hills and Valleys Manager")
+        print("Type 'normals' to write normals to 'file.dat'")
+        print("Type 'normals!' to write normals (including custom) to 'file.dat'")
         
         ptidx = input("Which point do you want to fix? ").lower()
 
@@ -154,6 +157,12 @@ def main():
         elif ptidx == "plot":
             core.clearScreen()
             core.plotManager(globaldata, wallpoints)
+        elif ptidx == "normals":
+            temp.writeNormalsToText(globaldata, conf)
+            core.clearScreen()
+        elif ptidx == "normals!":
+            temp.writeNormalsAllCustom(globaldata, conf)
+            core.clearScreen()
         elif ptidx == "clear":
             core.clearScreen()
         isPointIndex = False

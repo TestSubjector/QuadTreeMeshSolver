@@ -17,6 +17,10 @@ def main():
     # Command Line Arguments
     parser = argparse.ArgumentParser()
     parser.add_argument("-i", "--input", const=str, nargs="?")
+    parser.add_argument("-n", "--normal", nargs="+")
+    parser.add_argument("-c", "--cache", nargs="?")
+    parser.add_argument("-d", "--dry-run", nargs="?")
+    parser.add_argument("-l", "--legacy", nargs="?")
     args = parser.parse_args()
 
     log.info("Loading Data")
@@ -27,9 +31,26 @@ def main():
 
     configData = core.getConfig()
 
-    if globaldata == None:
+    cache = True
+    if args.cache:
+        cache = core.ConvertStringToBool(args.cache)
 
-        file1 = open(args.input or "preprocessorfile_normal.txt", "r")
+    legacy = configData["normalWall"]["legacyMode"]
+    if args.legacy:
+        legacy = core.ConvertStringToBool(args.legacy)
+
+    dryRun = False
+    if args.dry_run:
+        dryRun = core.ConvertStringToBool(args.dry_run)
+
+    pseudoPts = []
+    if args.normal:
+        log.info("Info: Custom Points to be checked are enforced")
+        pseudoPts = tuple(map(int, args.normal))
+
+    if globaldata == None or cache == False:
+
+        file1 = open(args.input, "r")
         data = file1.read()
         globaldata = ["start"]
         splitdata = data.split("\n")
@@ -47,10 +68,19 @@ def main():
     else:
         globaldata.insert(0,"start")
     
-    pseudoPts = core.inflatedWallPolygon(globaldata,float(configData["normalWall"]["inflatedPolygonDistance"]), configData)
-    log.info("Found {} pseudo points".format(len(pseudoPts)))
+    if legacy:
+        log.info("Using Legacy Normal Rotation Method")
+        if len(pseudoPts) == 0:
+            pseudoPts = core.inflatedWallPolygon(globaldata,float(configData["normalWall"]["inflatedPolygonDistance"]), configData)
+        log.info("Found {} pseudo points".format(len(pseudoPts)))
+        globaldata = core.rotateNormalsLegacy(pseudoPts, globaldata, configData, dryRun)
 
-    globaldata = core.rotateNormals(pseudoPts, globaldata, configData)
+    else:
+        log.info("Using Normal Rotation Method")
+        if len(pseudoPts) == 0:
+            pseudoPts = core.getPseudoPoints(globaldata)
+        log.info("Found {} pseudo points".format(len(pseudoPts)))
+        globaldata = core.rotateNormals(pseudoPts, globaldata, configData, dryRun)
 
     globaldata.pop(0)
 

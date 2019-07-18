@@ -25,15 +25,15 @@ def main():
     parser.add_argument("-q", "--checkquadrant", nargs="?")
     parser.add_argument("-c", "--cache", nargs="?")
     parser.add_argument("-s", "--pseudocheck", nargs="?")
-    parser.add_argument("-d", "--diagnose", nargs="?")
+    parser.add_argument("-d", "--dry-run", nargs="?")
     args = parser.parse_args()
     np.seterr(divide='ignore')
 
     configData = core.getConfig()
 
-    diagnose = False
-    if args.diagnose:
-        diagnose = core.ConvertStringToBool(args.diagnose)
+    dryRun = False
+    if args.dry_run:
+        dryRun = core.ConvertStringToBool(args.dry_run)
 
     normalApproach = False
     if args.normal:
@@ -72,12 +72,15 @@ def main():
             log.warn("Warning: Normal BSpline has been disabled")
         normalApproach = False
 
-    if diagnose:
-        log.info("Info: Diagnose has been enabled. No point will actually be saved.")
+    if dryRun:
+        log.info("Info: Dry Run has been enabled. No point will actually be saved.")
 
     if pseudocheck:
         log.info("Info: Pseudo Points are being checked and fixed.")
         log.info("Pseudo Distance is set to {}" .format(configData['bspline']['pseudoDist']))
+
+    if configData["bspline"]["polygon"] == True:
+        log.info("Info: Polygon Mode has been enabled. Bspline will be disabled.")
 
     if cache:
         globaldata = core.getKeyVal("globaldata")
@@ -132,7 +135,11 @@ def main():
         switch = False
         if configData["bspline"]["polygon"] == False:
             if configData["global"]["wallPointOrientation"] == "ccw":
-                newpts = core.generateBSplineBetween(bsplineArray[data[2]],data[0],data[1],POINT_CONTROL)
+                if data[0] == 1 and data[1] == 0:
+                    newpts = core.generateBSplineBetween(bsplineArray[data[2]],data[1],data[0],POINT_CONTROL)
+                    switch = True
+                else:
+                    newpts = core.generateBSplineBetween(bsplineArray[data[2]],data[0],data[1],POINT_CONTROL)
             else:
                 switch = True
                 if data[1] == 0 and data[0] == 1:
@@ -164,6 +171,33 @@ def main():
                 exit()
         else:
             newpts = list(perpendicularpts[idx])
+            if configData["global"]["wallPointOrientation"] == "ccw":
+                if data[0] == 1 and data[1] == 0:
+                    switch = True
+                else:
+                    switch = False
+            else:
+                switch = True
+                if data[1] == 0 and data[0] == 1:
+                    switch = True
+                elif data[1] == 0 and data[0] != 1:
+                    switch = False
+                elif data[0] == 0 and data[1] != 1:
+                    switch = True
+                else:
+                    switch = False
+            if quadrantcheck:
+                newpts = core.getPointsOnlyInQuadrant([newpts], badpts[idx], globaldata)
+                if len(newpts) == 0:
+                    if not pseudocheck:
+                        log.error("Error: Quadrant Check failed. No point exist.")
+                        log.error("Problem point is {}".format(badpts[idx]))
+                        continue
+                    else: 
+                        log.warn("Warn: Quadrant Check failed. No point exists. Ignored since Pseudo Check is enabled.")
+                        continue
+                newpts = list(newpts[0])
+            print(newpts)
         if switch:
             wallPtLocation = data[4]
         else:
@@ -175,7 +209,7 @@ def main():
         except KeyError:
             writingDict[wallPtLocation] = [newpts]
         additionPts.append(newpts)
-    if not diagnose:
+    if not dryRun:
         with open("adapted.txt", "a+") as text_file:
             text_file.writelines("1000 1000\n2000 2000\n")
             for item1 in additionPts:
