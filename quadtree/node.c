@@ -3110,3 +3110,59 @@ void hill_derefinement(quadtree_node_t *hill_node, int flag)
         parent_node->se = NULL;
     }
 }
+
+void non_leaf_neighbours(quadtree_node_t *node)
+{
+    char *filename = "neighbour.txt";
+    quadtree_node_t *temp;
+
+    // For NW
+    temp = node->nw;
+    while (!quadtree_node_isleaf(temp) || !quadtree_node_isempty(node))
+    {
+        temp = temp->se;
+    }
+    write_quadtree_node_to_file(temp, filename);
+
+    // For NE
+    temp = node->ne;
+    while (!quadtree_node_isleaf(temp) || !quadtree_node_isempty(node))
+    {
+        temp = temp->sw;
+    }
+    write_quadtree_node_to_file(temp, filename);
+
+    // For SW
+    temp = node->sw;
+    while (!quadtree_node_isleaf(temp) || !quadtree_node_isempty(node))
+    {
+        temp = temp->ne;
+    }
+    write_quadtree_node_to_file(temp, filename);
+
+    // For SE
+    temp = node->se;
+    while (!quadtree_node_isleaf(temp) || !quadtree_node_isempty(node))
+    {
+        temp = temp->nw;
+    }
+    write_quadtree_node_to_file(temp, filename);
+    // neighbourset(1, filename, root->point->x, root->point->y);
+}
+
+void write_quadtree_node_to_file(quadtree_node_t *node, char *filename)
+{
+    if (quadtree_node_isleaf(node))
+    {
+        neighbourset(1, filename, node->point->x, node->point->y);
+    }
+    else if ((quadtree_node_isempty(node)))
+    {
+        double xcord = (node->bounds->nw->x + node->bounds->se->x) / 2;
+        double ycord = (node->bounds->nw->y + node->bounds->se->y) / 2;
+        if (pnpoly(shape_line_count, shape_list, xcord, ycord))
+        {
+            neighbourset(1, filename, xcord, ycord);
+        }
+    }
+}

@@ -232,6 +232,8 @@ void quadtree_hillwalk(quadtree_node_t *root, void (*descent_hill)(quadtree_node
                              void (*ascent)(quadtree_node_t *node));
 void descent_hill(quadtree_node_t *node);
 void hill_derefinement(quadtree_node_t *hill_node, int flag);
+void non_leaf_neighbours(quadtree_node_t *node);
+void write_quadtree_node_to_file(quadtree_node_t *node, char *filename);
 
 int hills_and_valleys_block_flag;
 

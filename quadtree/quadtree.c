@@ -429,6 +429,32 @@ void descent_node(quadtree_node_t *node)
         // printf("\n %lf %lf has neighbours\t", node->point->x, node->point->y);
         find_neighbourset(common_treeroute(tree->root, node), node);
     }
+    else if (quadtree_node_ispointer(node) && node->height > 1)
+    {
+        double xcord = (node->bounds->nw->x + node->bounds->se->x) / 2;
+        double ycord = (node->bounds->nw->y + node->bounds->se->y) / 2;
+        main_coord.x = xcord;
+        main_coord.y = ycord;
+        if (pnpoly(shape_line_count, shape_list, xcord, ycord))
+        {
+            if (newneighboursetfile == 1)
+            {
+                neighbouroutput(0, filename, xcord, ycord, node->height, node->direction);
+                newneighboursetfile = 0;
+            }
+            else
+            {
+                neighbouroutput(1, filename, xcord, ycord, node->height, node->direction);
+            }
+            extraoutput(1, filename,
+                        node->bounds->nw->x, node->bounds->nw->y,
+                        node->bounds->se->x, node->bounds->se->y);
+            // printf("\n %lf %lf has neighbours\t", xcord, ycord);
+            find_neighbourset(common_treeroute(tree->root, node), node);
+        }
+        non_leaf_neighbours(node);
+    }
+
 }
 
 void quadtree_walk(quadtree_node_t *root,
