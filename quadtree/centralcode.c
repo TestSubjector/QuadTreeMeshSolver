@@ -187,6 +187,11 @@ void main_tree(int initial_coord_length, coords_t *coords_list, coords_t *adapte
                     // printf("\n %.17g, %.17g", adapted_list[j].x, adapted_list[j].y);
                     continue;
                 }
+                else if(quadtree_node_ispointer(refined_node))
+                {
+                    // Point to be adapted is not a leaf
+                    continue;
+                }
                 else
                 {
                     // printf("\n %d", j);
