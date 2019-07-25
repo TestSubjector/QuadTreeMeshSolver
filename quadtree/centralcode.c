@@ -19,6 +19,7 @@ int wallpoint_insert_flag = 0;
 int hills_and_valleys_block_flag = 0;
 int insertion_success;
 int foreign_flag = 1;
+int only_leaf_flag = 0;
 
 void main_tree(int initial_coord_length, coords_t *coords_list, coords_t *adapted_list, coords_t *shape_list, quadtree_node_t *leaf_array)
 {

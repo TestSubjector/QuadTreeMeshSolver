@@ -429,7 +429,7 @@ void descent_node(quadtree_node_t *node)
         // printf("\n %lf %lf has neighbours\t", node->point->x, node->point->y);
         find_neighbourset(common_treeroute(tree->root, node), node);
     }
-    else if (quadtree_node_ispointer(node) && node->height > 1)
+    else if (quadtree_node_ispointer(node) && node->height > 1 && only_leaf_flag == 0)
     {
         double xcord = (node->bounds->nw->x + node->bounds->se->x) / 2;
         double ycord = (node->bounds->nw->y + node->bounds->se->y) / 2;
