@@ -3118,7 +3118,7 @@ void non_leaf_neighbours(quadtree_node_t *node)
 
     // For NW
     temp = node->nw;
-    while (!quadtree_node_isleaf(temp) || !quadtree_node_isempty(node))
+    while (!quadtree_node_isleaf(temp) && !quadtree_node_isempty(temp))
     {
         temp = temp->se;
     }
@@ -3126,7 +3126,7 @@ void non_leaf_neighbours(quadtree_node_t *node)
 
     // For NE
     temp = node->ne;
-    while (!quadtree_node_isleaf(temp) || !quadtree_node_isempty(node))
+    while (!quadtree_node_isleaf(temp) && !quadtree_node_isempty(temp))
     {
         temp = temp->sw;
     }
@@ -3134,7 +3134,7 @@ void non_leaf_neighbours(quadtree_node_t *node)
 
     // For SW
     temp = node->sw;
-    while (!quadtree_node_isleaf(temp) || !quadtree_node_isempty(node))
+    while (!quadtree_node_isleaf(temp) && !quadtree_node_isempty(temp))
     {
         temp = temp->ne;
     }
@@ -3142,7 +3142,7 @@ void non_leaf_neighbours(quadtree_node_t *node)
 
     // For SE
     temp = node->se;
-    while (!quadtree_node_isleaf(temp) || !quadtree_node_isempty(node))
+    while (!quadtree_node_isleaf(temp) && !quadtree_node_isempty(temp))
     {
         temp = temp->nw;
     }

@@ -72,11 +72,13 @@ removal_points.txt
 sensor_flag.dat
 adapted.txt
 neighbour.txt
+neighbour_backup.txt
 Pipfile.lock
 shape_generated.txt
 History.txt
 history.txt
 output.txt
+output_backup.txt
 pseudopoints.txt
 config.json
 outer.txt
