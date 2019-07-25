@@ -67,9 +67,11 @@ void main_tree(int initial_coord_length, coords_t *coords_list, coords_t *adapte
         }
     }
 
-    quadtree_valleywalk(tree->root, descent_valley, ascent);
-    quadtree_hillwalk(tree->root, descent_hill, ascent);
-
+    if(hills_and_valleys_block_flag == 0)
+    {
+        quadtree_valleywalk(tree->root, descent_valley, ascent);
+        quadtree_hillwalk(tree->root, descent_hill, ascent);
+    }
     // free(leaf_array);
     // leaf_array = malloc(sizeof(quadtree_node_t) * MAX);
     // leaf_iter = 0;
@@ -271,6 +273,8 @@ int main(int argc, char *argv[])
 
     char *shape_filename = argv[3];
     shape_line_count = fileinput(shape_list, shape_filename);
+
+    // hills_and_valleys_block_flag = (int) argv[4];
 
     // printf("\n %d", adapted_line_count);
 
