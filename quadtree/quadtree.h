@@ -239,4 +239,7 @@ void non_leaf_neighbours(quadtree_node_t *node);
 void write_quadtree_node_to_file(quadtree_node_t *node, char *filename);
 
 int only_leaf_flag;
+
+int non_leaf_immediate_neighbours_check(quadtree_node_t *node);
+
 #endif

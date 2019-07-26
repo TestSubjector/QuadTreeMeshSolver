@@ -438,9 +438,10 @@ void descent_node(quadtree_node_t *node)
     {
         double xcord = (node->bounds->nw->x + node->bounds->se->x) / 2;
         double ycord = (node->bounds->nw->y + node->bounds->se->y) / 2;
-        main_coord.x = xcord;
-        main_coord.y = ycord;
-        if (pnpoly(shape_line_count, shape_list, xcord, ycord))
+        int flag = 0;
+        flag = non_leaf_immediate_neighbours_check(node);
+
+        if (pnpoly(shape_line_count, shape_list, xcord, ycord) && flag == 0)
         {
             if (newneighboursetfile == 1)
             {
@@ -455,8 +456,8 @@ void descent_node(quadtree_node_t *node)
                         node->bounds->nw->x, node->bounds->nw->y,
                         node->bounds->se->x, node->bounds->se->y);
             // printf("\n %lf %lf has neighbours\t", xcord, ycord);
+            non_leaf_neighbours(node);
         }
-        non_leaf_neighbours(node);
     }
 
 }

@@ -3166,3 +3166,63 @@ void write_quadtree_node_to_file(quadtree_node_t *node, char *filename)
         }
     }
 }
+
+int non_leaf_immediate_neighbours_check(quadtree_node_t *node)
+{
+    quadtree_node_t *temp;
+    double xcord = 0.0;
+    double ycord = 0.0;
+    // For NW
+    temp = node->nw;
+    while (!quadtree_node_isleaf(temp) && !quadtree_node_isempty(temp))
+    {
+        temp = temp->se;
+    }
+    xcord = (temp->bounds->nw->x + temp->bounds->se->x) / 2;
+    ycord = (temp->bounds->nw->y + temp->bounds->se->y) / 2;
+    if (!pnpoly(shape_line_count, shape_list, xcord, ycord))
+    {
+        return 1;
+    }
+
+    // For NE
+    temp = node->ne;
+    while (!quadtree_node_isleaf(temp) && !quadtree_node_isempty(temp))
+    {
+        temp = temp->sw;
+    }
+    xcord = (temp->bounds->nw->x + temp->bounds->se->x) / 2;
+    ycord = (temp->bounds->nw->y + temp->bounds->se->y) / 2;
+    if (!pnpoly(shape_line_count, shape_list, xcord, ycord))
+    {
+        return 1;
+    }
+
+    // For SW
+    temp = node->sw;
+    while (!quadtree_node_isleaf(temp) && !quadtree_node_isempty(temp))
+    {
+        temp = temp->ne;
+    }
+    xcord = (temp->bounds->nw->x + temp->bounds->se->x) / 2;
+    ycord = (temp->bounds->nw->y + temp->bounds->se->y) / 2;
+    if (!pnpoly(shape_line_count, shape_list, xcord, ycord))
+    {
+        return 1;
+    }
+
+    // For SE
+    temp = node->se;
+    while (!quadtree_node_isleaf(temp) && !quadtree_node_isempty(temp))
+    {
+        temp = temp->nw;
+    }
+    xcord = (temp->bounds->nw->x + temp->bounds->se->x) / 2;
+    ycord = (temp->bounds->nw->y + temp->bounds->se->y) / 2;
+    if (!pnpoly(shape_line_count, shape_list, xcord, ycord))
+    {
+        return 1;
+    }
+
+    return 0;
+}
