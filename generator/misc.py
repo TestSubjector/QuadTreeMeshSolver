@@ -28,7 +28,7 @@ def cleanNeighbours(globaldata):  # Verified
     log.info("Beginning Duplicate Neighbour Detection")
     for i in range(len(globaldata)):
         try:
-            noneighours = int(globaldata[i][19])  # Number of neighbours
+            noneighours = int(globaldata[i][20])  # Number of neighbours
         except IndexError:
             log.warn("No neighbours found for index " + str(i))
             noneighbours = 0
@@ -45,7 +45,7 @@ def cleanNeighbours(globaldata):  # Verified
                 result.append(str(item))
         cordneighbours = result
         noneighours = len(cordneighbours)
-        globaldata[i] = globaldata[i][:19] + [noneighours] + list(cordneighbours)
+        globaldata[i] = globaldata[i][:20] + [noneighours] + list(cordneighbours)
     log.info("Duplicate Neighbours Removed")
     return globaldata
 
@@ -59,10 +59,10 @@ def getIndexOf(pointxy, hashtable):
 def getNeighbours(indexval, list):
     val = []
     pointdata = list[indexval]
-    numbneigh = int(pointdata[19])
+    numbneigh = int(pointdata[20])
     try:
         for i in range(numbneigh):
-            val = val + [str(pointdata[i + 20])]
+            val = val + [str(pointdata[i + 21])]
     except Exception:
         pass
     return val
@@ -233,12 +233,12 @@ def euclideanDistance(a, b):
     return (float(math.sqrt(((bx - ax) ** 2) + ((by - ay) ** 2))), a)
 
 def appendNeighbours(neighbours, index, globaldata):
-    nbhcount = int(globaldata[index][19])
+    nbhcount = int(globaldata[index][20])
     nbhs = globaldata[index][-nbhcount:]
     nbhs = nbhs + neighbours
     nbhcount = nbhcount + len(neighbours)
-    globaldata[index][19] = nbhcount
-    globaldata[index] = globaldata[index][:20] + nbhs
+    globaldata[index][20] = nbhcount
+    globaldata[index] = globaldata[index][:21] + nbhs
     return globaldata
 
 def cleanWallPoints(neighbours, wallpoint):

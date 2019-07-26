@@ -211,6 +211,7 @@ def main():
             print("(3) Go Back")
             print("(4) Find nearest distance to wall points")
             print("(5) Print Detailed Connectivity")
+            print("(6) Adapt the point")
             whatkind = int(input("What option do you want to select? "))
             if whatkind == 1:
                 core.clearScreen()
@@ -229,6 +230,9 @@ def main():
                 print("xneg connectivity: {}, no. of xneg: {}".format(core.convertPointsToIndex(xneg, globaldata), len(xneg)))
                 print("ypos connectivity: {}, no. of ypos: {}".format(core.convertPointsToIndex(ypos, globaldata), len(ypos)))
                 print("yneg connectivity: {}, no. of yneg: {}".format(core.convertPointsToIndex(yneg, globaldata), len(yneg)))
+            elif whatkind == 6:
+                core.clearScreen()
+                core.adaptPoint(ptidx, globaldata)
             else:
                 core.clearScreen()
                 break

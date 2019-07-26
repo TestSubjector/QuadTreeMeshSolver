@@ -22,6 +22,7 @@
         },
         "nonAdaptEdgePointRadius": [],
         "nonAdaptRegion": 0,
+        "pointPreserve": true,
         "redis": {
             "db": 0,
             "host": "localhost",
