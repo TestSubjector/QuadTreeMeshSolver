@@ -215,7 +215,7 @@ int south_ancestor(int patharray[41], int path_size);
 
 int wallpoint_insert_flag;
 
-void extraoutput(int append, char *filename, double nw_bound_xcord, double nw_bound_ycord, double se_bound_xcord, double se_bound_ycord);
+void extraoutput(int append, char *filename, double nw_bound_xcord, double nw_bound_ycord, double se_bound_xcord, double se_bound_ycord, double flag);
 
 coords_t *derefined_list;
 void derefine_fromlist(coords_t *derefined_list, int derefine_counter);

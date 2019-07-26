@@ -409,7 +409,7 @@ void descent_node(quadtree_node_t *node)
             }
             extraoutput(1, filename,
                         node->bounds->nw->x, node->bounds->nw->y,
-                        node->bounds->se->x, node->bounds->se->y);
+                        node->bounds->se->x, node->bounds->se->y, 0);
             // printf("\n %lf %lf has neighbours\t", xcord, ycord);
             find_neighbourset(common_treeroute(tree->root, node), node);
         }
@@ -430,7 +430,7 @@ void descent_node(quadtree_node_t *node)
         }
         extraoutput(1, filename,
                     node->bounds->nw->x, node->bounds->nw->y,
-                    node->bounds->se->x, node->bounds->se->y);
+                    node->bounds->se->x, node->bounds->se->y, 0);
         // printf("\n %lf %lf has neighbours\t", node->point->x, node->point->y);
         find_neighbourset(common_treeroute(tree->root, node), node);
     }
@@ -454,7 +454,7 @@ void descent_node(quadtree_node_t *node)
             }
             extraoutput(1, filename,
                         node->bounds->nw->x, node->bounds->nw->y,
-                        node->bounds->se->x, node->bounds->se->y);
+                        node->bounds->se->x, node->bounds->se->y, 1);
             // printf("\n %lf %lf has neighbours\t", xcord, ycord);
             non_leaf_neighbours(node);
         }

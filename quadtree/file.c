@@ -139,7 +139,7 @@ void neighbouroutput(int append, char *filename, double xcord, double ycord, int
     FILE *fp = NULL;
     if (append == 1)
     {
-        fp = fopen(filename, "a+"); 
+        fp = fopen(filename, "a+");
     }
     else
     {
@@ -191,19 +191,21 @@ void neighbouroutput(int append, char *filename, double xcord, double ycord, int
 
 // For on-demand additions to the output files
 void extraoutput(int append, char *filename,
-                    double nw_bound_xcord, double nw_bound_ycord, 
-                    double se_bound_xcord, double se_bound_ycord
+                    double nw_bound_xcord, double nw_bound_ycord,
+                    double se_bound_xcord, double se_bound_ycord, double flag
                 )
 {
     char nw_xcordstr[20];
     char nw_ycordstr[20];
     char se_xcordstr[20];
     char se_ycordstr[20];
-    
+    char flagstr[20];
+
     gcvt(nw_bound_xcord, 18, nw_xcordstr);
     gcvt(nw_bound_ycord, 18, nw_ycordstr);
     gcvt(se_bound_xcord, 18, se_xcordstr);
     gcvt(se_bound_ycord, 18, se_ycordstr);
+    gcvt(flag, 18, flagstr);
 
     FILE *fp = NULL;
     if (append == 1)
@@ -223,7 +225,9 @@ void extraoutput(int append, char *filename,
     fputs("\t", fp);
     fputs(se_ycordstr, fp);
     fputs("\t", fp);
-    
+    fputs(flagstr, fp);
+    fputs("\t", fp);
+
     fclose(fp);
 }
 
