@@ -48,8 +48,11 @@ def main():
     log.info("Running Non Aero Checks")
     globaldata = core.checkAeroGlobal2(globaldata,wallpointsData,wallcount)
 
-    log.info("Generating triangle data")
+    log.info("Generating Polyfile data")
     core.generateOutput(globaldata, wallpoints, wallpointsData)
+
+    log.info("Synchronizing Neighbours")
+    globaldata = core.neighbourSynchronize(globaldata)
 
     globaldata.pop(0)
 

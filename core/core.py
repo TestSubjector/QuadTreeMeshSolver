@@ -19,8 +19,21 @@ def appendNeighbours(index, globaldata, newpts):
     nbhs = getNeighbours(index, globaldata)
     nbhs = nbhs + [pt]
     nbhs = list(set(nbhs))
-    globaldata[int(index)][20:] = nbhs
-    globaldata[int(index)][19] = len(nbhs)
+    globaldata[int(index)][21:] = nbhs
+    globaldata[int(index)][20] = len(nbhs)
+    return globaldata
+
+def appendNeighboursIndex(index, globaldata, pt):
+    nbhs = getNeighbours(index, globaldata)
+    nbhs = nbhs + [pt]
+    nbhs = list(set(nbhs))
+    globaldata[int(index)][21:] = nbhs
+    globaldata[int(index)][20] = len(nbhs)
+    return globaldata
+
+def addPointToSetNeighbours(idx, globaldata, nbhs):
+    for itm in nbhs:
+        globaldata = appendNeighboursIndex(itm, globaldata, idx)
     return globaldata
 
 def getFlag(indexval, list):
@@ -44,7 +57,7 @@ def getFlags(index,globaldata):
 def getNeighbours(index, globaldata):
     index = int(index)
     ptdata = globaldata[index]
-    ptdata = list(map(int, list(ptdata[20:])))
+    ptdata = list(map(int, list(ptdata[21:])))
     return ptdata
 
 def getIndexFromPoint(pt, globaldata):
@@ -324,7 +337,7 @@ def cleanNeighbours(globaldata):
     for i in range(len(globaldata)):
         if i == 0:
             continue
-        noneighours = int(globaldata[i][19])
+        noneighours = int(globaldata[i][20])
         cordneighbours = globaldata[i][-noneighours:]
         result = []
         for item in cordneighbours:
@@ -338,7 +351,7 @@ def cleanNeighbours(globaldata):
         cordneighbours = result
 
         noneighours = len(cordneighbours)
-        globaldata[i] = globaldata[i][:19] + [noneighours] + list(cordneighbours)
+        globaldata[i] = globaldata[i][:20] + [noneighours] + list(cordneighbours)
     log.info("Duplicate Neighbours Removed")
     return globaldata
 
@@ -783,7 +796,7 @@ def getPointExcludeOuter(index, globaldata):
 
 def replaceNeighbours(index,nbhs,globaldata):
     data = globaldata[index]
-    data = data[:19]
+    data = data[:20]
     data.append(len(nbhs))
     data = data + nbhs
     globaldata[index] = data
@@ -1703,8 +1716,8 @@ def getConditionNumberNew(index,globaldata, conf):
 
 def fillNeighboursIndex(index,globaldata,nbhs):
     nbhs = list(set(nbhs))
-    globaldata[int(index)][20:] = nbhs
-    globaldata[int(index)][19] = len(nbhs)
+    globaldata[int(index)][21:] = nbhs
+    globaldata[int(index)][20] = len(nbhs)
     return globaldata
 
 def checkAeroGlobal2(globaldata,wallpointsData,wallcount):
@@ -2148,6 +2161,19 @@ def generateOutput(globaldata, wallPointArray, wallShapely):
             avgpt = list(avgpt.coords)[0]
             the_file.write("{} {} {}\n".format(holeidx, avgpt[0], avgpt[1]))
 
+def neighbourSynchronize(globaldata):
+    for idx, _ in enumerate(tqdm(globaldata)):
+        if idx > 0:
+            if not isLeafPoint(idx, globaldata):
+                nbhs = getNeighbours(idx, globaldata)
+                globaldata = addPointToSetNeighbours(idx, globaldata, nbhs)
+    return globaldata
+
+def isLeafPoint(idx, globaldata):
+    if int(globaldata[idx][19]) == 0:
+        return True
+    else:
+        return False
 
 def random_points_within(poly, num_points):
     min_x, min_y, max_x, max_y = poly.bounds
@@ -2693,6 +2719,12 @@ def hills_manager():
     for line in adapted_lines:
         adapted_file.write(line)
     adapted_file.close()
+
+def adaptPoint(idx, globaldata):
+    with open("adapted.txt", "a+") as the_file:
+        px, py = getPoint(idx, globaldata)
+        the_file.write("1000 1000\n{} {} \n1000 1000\n".format(px, py))
+        print("Point added to Adaption History")
 
 def connectivityCheck(globaldata, badPoints, configData):
     badPointsNew = []
