@@ -60,6 +60,10 @@ def getNeighbours(index, globaldata):
     ptdata = list(map(int, list(ptdata[21:])))
     return ptdata
 
+def getNeighbourCount(index, globaldata):
+    index = int(index)
+    return int(globaldata[index][20])
+
 def getIndexFromPoint(pt, globaldata):
     ptx = float(pt.split(",")[0])
     pty = float(pt.split(",")[1])
@@ -2861,3 +2865,12 @@ def writeConditionValuesForWall(globaldata, configData):
                     with open("condition.dat", "a") as text_file:
                         text_file.writelines(str(x) + " " + str(y) + " " + str(xposcount) + " " + str(xpos) + " " + str(xnegcount) + " " + str(xneg))
                         text_file.writelines("\n")
+
+def maxNeighbours(globaldata):
+    maxnbh = 0
+    for idx in trange(0, len(globaldata)):
+        if idx > 0:
+            nbhs = getNeighbourCount(idx, globaldata)
+            if nbhs > maxnbh:
+                maxnbh = nbhs
+    print("Maximum Connectivity Points is: {}".format(maxnbh))

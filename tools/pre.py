@@ -52,7 +52,7 @@ def main():
     core.generateOutput(globaldata, wallpoints, wallpointsData)
 
     log.info("Synchronizing Neighbours")
-    globaldata = core.neighbourSynchronize(globaldata)
+    #globaldata = core.neighbourSynchronize(globaldata)
 
     globaldata.pop(0)
 

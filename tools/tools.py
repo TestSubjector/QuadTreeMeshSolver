@@ -83,6 +83,7 @@ def main():
         print("Type 'hills' to start Hills and Valleys Manager")
         print("Type 'normals' to write normals to 'file.dat'")
         print("Type 'normals!' to write normals (including custom) to 'file.dat'")
+        print("Type 'maxnbhs' to output the maximum number of neighbours in the file.")
         
         ptidx = input("Which point do you want to fix? ").lower()
 
@@ -163,6 +164,9 @@ def main():
         elif ptidx == "normals!":
             temp.writeNormalsAllCustom(globaldata, conf)
             core.clearScreen()
+        elif ptidx == "maxnbhs":
+            core.clearScreen()
+            core.maxNeighbours(globaldata)
         elif ptidx == "clear":
             core.clearScreen()
         isPointIndex = False
