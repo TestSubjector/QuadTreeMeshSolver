@@ -439,7 +439,7 @@ void descent_node(quadtree_node_t *node)
         double xcord = (node->bounds->nw->x + node->bounds->se->x) / 2;
         double ycord = (node->bounds->nw->y + node->bounds->se->y) / 2;
         int flag = 0;
-        // flag = non_leaf_immediate_neighbours_check(node);
+        flag = non_leaf_immediate_neighbours_check(node);
 
         if (pnpoly(shape_line_count, shape_list, xcord, ycord) && flag == 0)
         {
