@@ -38,7 +38,6 @@ def cleanNeighbours(globaldata):  # Verified
             print(globaldata[i])
             log.warn("No neighbours found for index " + str(i))
         cordneighbours = [str(float(j.split(",")[0])) + "," + str(float(j.split(",")[1])) for j in cordneighbours]
-        
         result = []
         for item in cordneighbours:
             if str(item) not in result:

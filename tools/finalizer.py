@@ -48,8 +48,8 @@ def main():
             stuff.append(itm[11])
             stuff.append(itm[12])
             stuff.append(itm[13])
-            stuff.append(itm[19])
-            stuff.extend(itm[20:])
+            stuff.append(itm[20])
+            stuff.extend(itm[21:])
             the_file.write("{}\n".format(" ".join(stuff)))
     print("Done")
 
