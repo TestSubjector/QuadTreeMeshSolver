@@ -100,7 +100,7 @@ void main_tree(int initial_coord_length, coords_t *coords_list, coords_t *adapte
     // Adaptation section
     if(adapted_line_count != 0)
     {
-        int derefine_counter;
+        int derefine_counter = 0;
         quadtree_node_t *refined_node = NULL;
 
         for(j = 0; j < adapted_line_count; j++)
@@ -110,7 +110,7 @@ void main_tree(int initial_coord_length, coords_t *coords_list, coords_t *adapte
             {
                 printf("\n Stop Hill & Valleys Usage");
                 hills_and_valleys_block_flag = 1;
-                wallpoint_insert_flag == 3;
+                // wallpoint_insert_flag == 3;
                 continue;
             }
 
@@ -118,7 +118,7 @@ void main_tree(int initial_coord_length, coords_t *coords_list, coords_t *adapte
             {
                 printf("\n Restart Hill & Valleys Usage");
                 hills_and_valleys_block_flag = 0;
-                wallpoint_insert_flag == 3;
+                // wallpoint_insert_flag == 3;
                 continue;
             }
 
@@ -205,10 +205,6 @@ void main_tree(int initial_coord_length, coords_t *coords_list, coords_t *adapte
                 if (insertion_success == 0) // Out of bounds
                 {
                     printf("\n Warning: On line %d points %lf & %lf are out of bounds or were not created during adaptation stage", i + 1, adapted_list[j].x, adapted_list[j].y);
-                }
-                else
-                {
-                    char *quickfilename = "output.txt";
                 }
             }
             else if(wallpoint_insert_flag == 2)

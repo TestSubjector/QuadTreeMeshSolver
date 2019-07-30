@@ -100,7 +100,7 @@ void quadtree_leafnodes(quadtree_node_t *root, quadtree_node_t *leaf_array)
     }
 }
 
-static int node_contains_patharray(quadtree_node_t *outer, double x, double y)
+int node_contains_patharray(quadtree_node_t *outer, double x, double y)
 {
     return outer->bounds != NULL && outer->bounds->nw->x <= x &&
            outer->bounds->nw->y >= y && outer->bounds->se->x >= x &&
@@ -108,7 +108,7 @@ static int node_contains_patharray(quadtree_node_t *outer, double x, double y)
 }
 
 /* Inititator function for to bring descent and check for memory problems */
-static quadtree_point_t *find_patharray(quadtree_node_t *node, double x, double y)
+quadtree_point_t *find_patharray(quadtree_node_t *node, double x, double y)
 {
     if (!node)
     {
@@ -123,7 +123,7 @@ static quadtree_point_t *find_patharray(quadtree_node_t *node, double x, double 
 }
 
 // TODO - Remove this redundant fuction by an argument
-static quadtree_point_t *find_patharray_diagonal(quadtree_node_t *node, double x, double y)
+quadtree_point_t *find_patharray_diagonal(quadtree_node_t *node, double x, double y)
 {
     if (!node)
     {
@@ -138,7 +138,7 @@ static quadtree_point_t *find_patharray_diagonal(quadtree_node_t *node, double x
 }
 
 /* Stores the descent path from root node to leaf whose neighbours we need to find */
-static quadtree_node_t *get_quadrant_patharray(quadtree_node_t *root, double x, double y)
+quadtree_node_t *get_quadrant_patharray(quadtree_node_t *root, double x, double y)
 {
     if (node_contains_patharray(root->nw, x, y))
     {
@@ -173,7 +173,7 @@ static quadtree_node_t *get_quadrant_patharray(quadtree_node_t *root, double x, 
 }
 
 /* This function is for the diagonal neighbour findings. TODO - Make the path_array an argument, rather than two different functions */
-static quadtree_node_t *get_quadrant_patharray_diagonal(quadtree_node_t *root, double x, double y)
+quadtree_node_t *get_quadrant_patharray_diagonal(quadtree_node_t *root, double x, double y)
 {
     if (node_contains_patharray(root->nw, x, y))
     {
@@ -335,8 +335,8 @@ void find_neighbours(quadtree_t *tree, int patharray[41], quadtree_node_t *leaf_
     // printf("\n Start");
 
     int path_size = patharray[40]; // Specifies the height from the root to the leaf
-    int i = 0;                     // Loop iterator
-    int pathstep = -1;             // The check for common ancestor
+    // int i = 0;                     // Loop iterator
+    // int pathstep = -1;             // The check for common ancestor
     int direction = 0;             // Input to followup function specifying direction of neighbour
     int ancestor_pos = -1;         // Specifies the position of common ancestor
 
@@ -1223,8 +1223,8 @@ void balance_neighbours(quadtree_t *tree, int patharray[41], int ancestor_pos, i
 void find_neighbourset(int patharray[41], quadtree_node_t *node)
 {
     int path_size = patharray[40];
-    int i = 0;
-    int pathstep = -1;
+    // int i = 0;
+    // int pathstep = -1;
     int direction = 0;
     int ancestor_pos = -1;
 
@@ -1302,7 +1302,7 @@ void balance_neighboursset(int patharray[41], int ancestor_pos, int direction)
     // printf("\n Start 1");
     quadtree_node_t *node = tree->root;
     int path_step = 0;
-    int i = 0;
+    // int i = 0;
     char *filename = "neighbour.txt";
 
     // printf("\n The patharray is %d and neighbour pos is %d", patharray[40], ancestor_pos);
@@ -2164,21 +2164,21 @@ void valley_refinement(quadtree_node_t *valley_node, int flag)
 {
     common_treeroute(tree->root, valley_node);
     int path_size = patharray[40];
-    double xcord = (valley_node->bounds->nw->x + valley_node->bounds->se->x) / 2;
-    double ycord = (valley_node->bounds->nw->y + valley_node->bounds->se->y) / 2;
+    // double xcord = (valley_node->bounds->nw->x + valley_node->bounds->se->x) / 2;
+    // double ycord = (valley_node->bounds->nw->y + valley_node->bounds->se->y) / 2;
 
     int k = 0;
     int pathstep = -1;
-    int direction = 0;
+    // int direction = 0;
     int ancestor_pos = -1;
     int north = 0;
     int east = 0;
     int south = 0;
     int west = 0;
-    int north_check = 0;
-    int south_check = 0;
-    int east_check = 0;
-    int west_check = 0;
+    // int north_check = 0;
+    // int south_check = 0;
+    // int east_check = 0;
+    // int west_check = 0;
     quadtree_node_t *north_node = NULL;
     quadtree_node_t *east_node = NULL;
     quadtree_node_t *south_node = NULL;
@@ -2650,21 +2650,21 @@ void hill_derefinement(quadtree_node_t *hill_node, int flag)
 
     common_treeroute(tree->root, hill_node);
     int path_size = patharray[40];
-    double xcord = (hill_node->bounds->nw->x + hill_node->bounds->se->x) / 2;
-    double ycord = (hill_node->bounds->nw->y + hill_node->bounds->se->y) / 2;
+    // double xcord = (hill_node->bounds->nw->x + hill_node->bounds->se->x) / 2;
+    // double ycord = (hill_node->bounds->nw->y + hill_node->bounds->se->y) / 2;
 
     int k = 0;
     int pathstep = -1;
-    int direction = 0;
+    // int direction = 0;
     int ancestor_pos = -1;
     int north = 1;
     int east = 1;
     int south = 1;
     int west = 1;
-    int north_check = 0;
-    int south_check = 0;
-    int east_check = 0;
-    int west_check = 0;
+    // int north_check = 0;
+    // int south_check = 0;
+    // int east_check = 0;
+    // int west_check = 0;
     quadtree_node_t *north_node = NULL;
     quadtree_node_t *east_node = NULL;
     quadtree_node_t *south_node = NULL;

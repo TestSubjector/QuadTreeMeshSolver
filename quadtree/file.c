@@ -42,8 +42,8 @@ int adaptation_fileinput(coords_t *adapted_list, char *adapted_filename)
     char *adapted_line = NULL;
     size_t adapted_n = 0;
     int local_line_count = 0;
-    double xi = 0;
-    double yi = 0;
+    // double xi = 0;
+    // double yi = 0;
 
     FILE *adapted_coordFile = fopen(adapted_filename, "r");
 
@@ -251,9 +251,9 @@ void neighbourset(int append, char *filename, double xcord, double ycord)
     }
     if (pnpoly(shape_line_count, shape_list, xcord, ycord))
     {
-        coords_t neighbour_point;
-        neighbour_point.x = xcord;
-        neighbour_point.y = ycord;
+        // coords_t neighbour_point;
+        // neighbour_point.x = xcord;
+        // neighbour_point.y = ycord;
 
         neighbour_counter++;
         if (fp != NULL)

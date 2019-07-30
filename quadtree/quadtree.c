@@ -11,26 +11,26 @@ coords_t main_coord;
 int checker = 0;
 
 // Declarations
-static int split_leafnode_(quadtree_t *tree, quadtree_node_t *node);
-static int node_contains_(quadtree_node_t *outer, quadtree_point_t *it);
-static quadtree_node_t *get_quadrant_(quadtree_node_t *root, quadtree_point_t *point);
+int split_leafnode_(quadtree_t *tree, quadtree_node_t *node);
+int node_contains_(quadtree_node_t *outer, quadtree_point_t *it);
+quadtree_node_t *get_quadrant_(quadtree_node_t *root, quadtree_point_t *point);
 
 /* Static Definitions */
 // This function return 1 if the specified point lies in the quadrant, else returns 0
-static int node_contains_(quadtree_node_t *outer, quadtree_point_t *it)
+int node_contains_(quadtree_node_t *outer, quadtree_point_t *it)
 {
     return outer->bounds != NULL && outer->bounds->nw->x <= it->x &&
            outer->bounds->nw->y >= it->y && outer->bounds->se->x >= it->x &&
            outer->bounds->se->y <= it->y;
 }
 
-static void reset_node_(quadtree_t *tree, quadtree_node_t *node)
+void reset_node_(quadtree_t *tree, quadtree_node_t *node)
 {
     quadtree_node_reset(node);
 }
 
 // Decide which children to traverse into
-static quadtree_node_t *get_quadrant_(quadtree_node_t *root, quadtree_point_t *point)
+quadtree_node_t *get_quadrant_(quadtree_node_t *root, quadtree_point_t *point)
 {
     if (node_contains_(root->nw, point))
     {
@@ -51,7 +51,7 @@ static quadtree_node_t *get_quadrant_(quadtree_node_t *root, quadtree_point_t *p
     return NULL;
 }
 
-static int split_leafnode_(quadtree_t *tree, quadtree_node_t *node)
+int split_leafnode_(quadtree_t *tree, quadtree_node_t *node)
 {
     // Remove input point from node, create 4 children for it and set bounds for all of them
     // Then lastly insert the old input point into one of the children
@@ -95,7 +95,7 @@ static int split_leafnode_(quadtree_t *tree, quadtree_node_t *node)
     return insert_(tree, node, old);
 }
 
-static quadtree_node_t *find_(quadtree_node_t *node, double x, double y)
+quadtree_node_t *find_(quadtree_node_t *node, double x, double y)
 {
     if (!node)
     {
@@ -148,7 +148,7 @@ static quadtree_node_t *find_(quadtree_node_t *node, double x, double y)
     return NULL;
 }
 
-static quadtree_node_t *parent_find_(quadtree_node_t *node, double x, double y, quadtree_node_t *parent_node)
+quadtree_node_t *parent_find_(quadtree_node_t *node, double x, double y, quadtree_node_t *parent_node)
 {
     if (!node)
     {
@@ -383,15 +383,7 @@ void descent_node(quadtree_node_t *node)
         double ycord = (node->bounds->nw->y + node->bounds->se->y) / 2;
         main_coord.x = xcord;
         main_coord.y = ycord;
-        // The commented out code below is to check for specific points
-        // if(xcord == 8.75 && ycord == 8.75)
-        // {
-        //   checker = 1;
-        // }
-        // else
-        // {
-        //   checker = 0;
-        // }
+
         if (checker == 1)
         {
             printf("\n ABC");

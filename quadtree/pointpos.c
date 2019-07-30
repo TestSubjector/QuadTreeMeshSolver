@@ -23,7 +23,7 @@ int fourth_poly = 0;
 int pnpoly(int nvert, coords_t *shape_list, double testx, double testy)
 {
     int i, j, c = 1;
-    
+
     // The leaf under observation stores one of the input points, so no blanking. Goes through all input points
     for (i = 0; i < nvert; i++)
     {
@@ -52,8 +52,8 @@ int pnpoly(int nvert, coords_t *shape_list, double testx, double testy)
         if (((shape_list[i].y > testy) != (shape_list[j].y > testy)) &&
             (testx < (shape_list[j].x - shape_list[i].x) * (testy - shape_list[i].y) / (shape_list[j].y - shape_list[i].y) + shape_list[i].x))
             c = !c;
-        // else if(fabs(((coords_list[j].y - coords_list[i].y) * testx - (coords_list[j].x - coords_list[i].x)* testy + 
-        //     (coords_list[j].x * coords_list[i].y - coords_list[j].y * coords_list[i].x)) / 
+        // else if(fabs(((coords_list[j].y - coords_list[i].y) * testx - (coords_list[j].x - coords_list[i].x)* testy +
+        //     (coords_list[j].x * coords_list[i].y - coords_list[j].y * coords_list[i].x)) /
         //      sqrt(pow(coords_list[j].y -coords_list[i].y, 2) + pow(coords_list[j].x - coords_list[i].x, 2))) < FLT_EPSILON)
         // {
         //     // printf("\n Removing cursed points");
@@ -105,46 +105,20 @@ int doIntersect(coords_t p1, coords_t q1, coords_t p2, coords_t q2)
     if (o1 != o2 && o3 != o4)
         return 1;
 
-    // Special Cases
-    // p1, q1 and p2 are colinear and p2 lies on segment p1q1
-    // if (o1 == 0 && onSegment(p1, p2, q1)) return 1;
-
-    // p1, q1 and q2 are colinear and q2 lies on segment p1q1
-    // if (o2 == 0 && onSegment(p1, q2, q1)) return 1;
-
-    // p2, q2 and p1 are colinear and p1 lies on segment p2q2
-    // if (o3 == 0 && onSegment(p2, p1, q2)) return 1;
-
-    // p2, q2 and q1 are colinear and q1 lies on segment p2q2
-    // if (o4 == 0 && onSegment(p2, q1, q2)) return 1;
-
     return 0; // Doesn't fall in any of the above cases
 }
 
 int notaero_blank(int nvert, coords_t *polygon_list, coords_t main_point, coords_t neighbour_point)
 {
-    int i, j, k, l;
-    // printf(" \n It's running atleast");
-    
-    int checker = 0;
-    // if(fabs(main_point.x - 0.999298096) < 0.00001 && fabs(main_point.y + 0.000457763672) < 0.00001  && neighbour_point.x == 0.9991382 && neighbour_point.y == 0.00012220342)
-    // {
-    //     checker = 1;
-    //     printf("\n Found Point Problem");
-    // }
+    int i, j, k;
 
-    // Point on boundary, therefore not blankable point
     for (i = 0; i < nvert - 1; i++)
     {
-        if ((main_point.x == polygon_list[i].x && main_point.y == polygon_list[i].y ||
-             neighbour_point.x == polygon_list[i + 1].x && neighbour_point.y == polygon_list[i + 1].y ||
-             main_point.x == polygon_list[i + 1].x && main_point.y == polygon_list[i + 1].y ||
-             neighbour_point.x == polygon_list[i].x && neighbour_point.y == polygon_list[i].y))
-        {   
-            // if(checker == 1)
-            // {
-            //     printf("\n In this test case");
-            // }
+        if ((main_point.x == polygon_list[i].x && main_point.y == polygon_list[i].y) ||
+             (neighbour_point.x == polygon_list[i + 1].x && neighbour_point.y == polygon_list[i + 1].y) ||
+             (main_point.x == polygon_list[i + 1].x && main_point.y == polygon_list[i + 1].y) ||
+             (neighbour_point.x == polygon_list[i].x && neighbour_point.y == polygon_list[i].y))
+        {
             for (j = 0; j < nvert; j++)
             {
                 if (main_point.x == polygon_list[j].x && main_point.y == polygon_list[j].y)
@@ -168,7 +142,7 @@ int notaero_blank(int nvert, coords_t *polygon_list, coords_t main_point, coords
                 }
                 else
                 {
-                    
+
                     return pnpoly(shape_line_count, shape_list, (main_coord.x + neighbour_point.x) / 2, (main_coord.y + neighbour_point.y) / 2);
                 }
             }

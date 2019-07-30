@@ -1,4 +1,4 @@
-CC=gcc -std=c18 -ggdb -O2 -Werror=implicit-function-declaration -Wl,-z,now -fstack-protector
+CC=gcc -std=c18 -ggdb -O2 -Werror=implicit-function-declaration -Wl,-z,now -fstack-protector -Wall
 
 main:	bounds.o centralcode.o file.o node.o treepoint.o pointpos.o quadtree.o quadtree_neighbourset.o
 		cc -o main bounds.o centralcode.o file.o node.o treepoint.o pointpos.o quadtree.o quadtree_neighbourset.o -lm
