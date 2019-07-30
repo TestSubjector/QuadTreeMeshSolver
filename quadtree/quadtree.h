@@ -242,4 +242,9 @@ int only_leaf_flag;
 
 int non_leaf_immediate_neighbours_check(quadtree_node_t *node);
 
+extern coords_t *non_leaf_blank_list;
+extern int non_leaf_blank_line_count;
+
+int non_leaf_blank(int lines, coords_t *non_leaf_blank_list, double testx, double testy);
+
 #endif

@@ -251,10 +251,6 @@ void neighbourset(int append, char *filename, double xcord, double ycord)
     }
     if (pnpoly(shape_line_count, shape_list, xcord, ycord))
     {
-        // coords_t neighbour_point;
-        // neighbour_point.x = xcord;
-        // neighbour_point.y = ycord;
-
         neighbour_counter++;
         if (fp != NULL)
         {

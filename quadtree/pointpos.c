@@ -63,6 +63,20 @@ int pnpoly(int nvert, coords_t *shape_list, double testx, double testy)
     return c;
 }
 
+int non_leaf_blank(int lines, coords_t *non_leaf_blank_list, double testx, double testy)
+{
+    int i, return_value = 1;
+    for(i = 0; i < lines; i++)
+    {
+        if(non_leaf_blank_list[i].y == testy && non_leaf_blank_list[i].x == testx)
+        {
+            printf("\n Blanking Non_Leaf Point %lf %lf", testx, testy);
+            return_value = 0;
+        }
+    }
+    return return_value;
+}
+
 // For blanking of non-aerodynamic points
 int onSegment(coords_t p, coords_t q, coords_t r)
 {

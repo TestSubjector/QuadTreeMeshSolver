@@ -431,9 +431,10 @@ void descent_node(quadtree_node_t *node)
         double xcord = (node->bounds->nw->x + node->bounds->se->x) / 2;
         double ycord = (node->bounds->nw->y + node->bounds->se->y) / 2;
         int flag = 0;
-        flag = non_leaf_immediate_neighbours_check(node);
+        // flag = non_leaf_immediate_neighbours_check(node);
 
-        if (pnpoly(shape_line_count, shape_list, xcord, ycord) && flag == 0)
+        if (pnpoly(shape_line_count, shape_list, xcord, ycord) && flag == 0 &&
+            non_leaf_blank(non_leaf_blank_line_count, non_leaf_blank_list, xcord, ycord))
         {
             if (newneighboursetfile == 1)
             {
@@ -563,17 +564,6 @@ void descent_valley(quadtree_node_t *node)
 {
     if ((quadtree_node_isempty(node)) || (quadtree_node_isleaf(node)))
     {
-        // double xcord = (node->bounds->nw->x + node->bounds->se->x) / 2;
-        // double ycord = (node->bounds->nw->y + node->bounds->se->y) / 2;
-        // if(xcord == 0.966796875 && (ycord == -0.029296875 || ycord == 0.029296875))
-        // {
-        //   checker = 2;
-        //   printf("\n Yabba Dabba");
-        // }
-        // else
-        // {
-        //   checker = 0;
-        // }
         valley_refinement(node, 1);
     }
 }

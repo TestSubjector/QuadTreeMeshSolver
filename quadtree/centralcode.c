@@ -9,11 +9,13 @@ coords_t *coords_list;  // Stores all the input points
 coords_t *adapted_list; // Stores all the adapted points
 coords_t *shape_list;
 coords_t *derefined_list; // Stores segments of points to be derefined
+coords_t *non_leaf_blank_list; // Store non=leaf points to be blanked
 
 int leaf_iter = 0;
 int line_count = 0;
 int adapted_line_count = 0;
 int shape_line_count = 0;
+int non_leaf_blank_line_count = 0;
 int height_of_tree = 0;
 int wallpoint_insert_flag = 0;
 int hills_and_valleys_block_flag = 0;
@@ -276,9 +278,15 @@ int main(int argc, char *argv[])
     char *shape_filename = argv[3];
     shape_line_count = fileinput(shape_list, shape_filename);
 
-    // hills_and_valleys_block_flag = (int) argv[4];
+    non_leaf_blank_list = malloc(sizeof(coords_t) * MAX);
+    if (coords_list == NULL)
+    {
+        printf("\n ERROR : Memory allocation to non_leaf_blank_list was unsuccessful");
+        exit(0);
+    }
 
-    // printf("\n %d", adapted_line_count);
+    char *non_leaf_blank_filename = argv[4];
+    non_leaf_blank_line_count = fileinput(non_leaf_blank_list, non_leaf_blank_filename);
 
     main_tree(line_count, coords_list, adapted_list, shape_list, leaf_array);
 
