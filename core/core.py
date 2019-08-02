@@ -158,7 +158,7 @@ def normalCalculation(index, globaldata, wallpoint, configData):
         ny = ny / det
         return nx, ny
 
-def normalCalculationWithPoints(leftpt, midpt, rightpt, direction):
+def normalCalculationWithPoints(leftpt, midpt, rightpt, direction, pseudoWall = False):
     nx = 0
     ny = 0
     cordx = midpt[0]
@@ -180,7 +180,11 @@ def normalCalculationWithPoints(leftpt, midpt, rightpt, direction):
         nx = (-nx) / det
     elif direction == "ccw":
         nx =  - nx / det
-    ny = ny / det
+    if pseudoWall:
+        nx = - nx
+        ny = -ny / det
+    else:
+        ny = ny / det
     return nx, ny
 
 def deltaCalculationDSNormals(
@@ -872,7 +876,7 @@ def getPseudoPoints(globaldata):
                     pseudoPts.append(idx)
     return pseudoPts
 
-def checkPoints(globaldata, selectbspline, normal, configData, pseudocheck, shapelyWallData):
+def checkPoints(globaldata, selectbspline, normal, configData, pseudocheck, shapelyWallData, overrideNL = False):
     wallptData = getWallPointArray(globaldata)
     wallptData = flattenList(wallptData)
     ptListArray = []
@@ -898,9 +902,17 @@ def checkPoints(globaldata, selectbspline, normal, configData, pseudocheck, shap
                             ptList = findNearestNeighbourWallPoints(idx,globaldata,wallptData,shapelyWallData)
                             perpendicularPt = getPerpendicularPoint(idx,globaldata,normal, wallptData, ptList)
                             if (perpendicularPt) not in perpendicularListArray:
-                                ptListArray.append(ptList)
-                                perpendicularListArray.append((perpendicularPt))
-                                badpts.append(idx)
+                                if isLeafPoint(idx, globaldata):
+                                    ptListArray.append(ptList)
+                                    perpendicularListArray.append((perpendicularPt))
+                                    badpts.append(idx)
+                                else:
+                                    if overrideNL:
+                                        ptListArray.append(ptList)
+                                        perpendicularListArray.append((perpendicularPt))
+                                        badpts.append(idx)
+                                    else:
+                                        log.warn("Point {} is a non leaf point with bad connectivity and cannot be fixed.".format(idx))
                         else:
                             if pseudocheck:
                                 px, py = getPoint(idx, globaldata)
@@ -911,18 +923,37 @@ def checkPoints(globaldata, selectbspline, normal, configData, pseudocheck, shap
                                         ptList = findNearestNeighbourWallPoints(idx,globaldata,wallptData,shapelyWallData)
                                         perpendicularPt = getPerpendicularPoint(idx,globaldata,normal, wallptData, ptList)
                                         if (perpendicularPt) not in perpendicularListArray:
-                                            ptListArray.append(ptList)
-                                            perpendicularListArray.append((perpendicularPt))
-                                            badpts.append(idx)
+                                            if isLeafPoint(idx, globaldata):
+                                                ptListArray.append(ptList)
+                                                perpendicularListArray.append((perpendicularPt))
+                                                badpts.append(idx)
+                                            else:
+                                                if overrideNL:
+                                                    ptListArray.append(ptList)
+                                                    perpendicularListArray.append((perpendicularPt))
+                                                    badpts.append(idx)
+                                                else:
+                                                    log.warn("Point {} is a non leaf point with bad connectivity and cannot be fixed.".format(idx))
     else:
         selectbspline = list(map(int, selectbspline))
         for idx,itm in enumerate(tqdm(selectbspline)):
-            ptList = findNearestNeighbourWallPoints(itm, globaldata, wallptData, shapelyWallData)
-            perpendicularPt = getPerpendicularPoint(itm, globaldata, normal, wallptData, ptList)
-            if (perpendicularPt) not in perpendicularListArray:
-                ptListArray.append(ptList)
-                perpendicularListArray.append((perpendicularPt))
-                badpts.append(itm)
+            if isLeafPoint(itm, globaldata):
+                ptList = findNearestNeighbourWallPoints(itm, globaldata, wallptData, shapelyWallData)
+                perpendicularPt = getPerpendicularPoint(itm, globaldata, normal, wallptData, ptList)
+                if (perpendicularPt) not in perpendicularListArray:
+                    ptListArray.append(ptList)
+                    perpendicularListArray.append((perpendicularPt))
+                    badpts.append(itm)
+            else:
+                if overrideNL:
+                    ptList = findNearestNeighbourWallPoints(itm, globaldata, wallptData, shapelyWallData)
+                    perpendicularPt = getPerpendicularPoint(itm, globaldata, normal, wallptData, ptList)
+                    if (perpendicularPt) not in perpendicularListArray:
+                        ptListArray.append(ptList)
+                        perpendicularListArray.append((perpendicularPt))
+                        badpts.append(itm)
+                else:
+                    log.warn("Point {} provided is a non leaf point and cannot be fixed".format(idx))
 
     return ptListArray, perpendicularListArray, badpts
 
@@ -1615,7 +1646,7 @@ def rotateNormals(pseudopts,globaldata, configData, dryRun):
         leftpt = bsplineArray[pseudoptDictData[itm][2]][ptsBtw[0]]
         rightpt = bsplineArray[pseudoptDictData[itm][2]][ptsBtw[1]]
         orientation = orientationCord(leftpt, finalPt, rightpt)
-        nx, ny = normalCalculationWithPoints(leftpt, finalPt, rightpt, orientation)
+        nx, ny = normalCalculationWithPoints(leftpt, finalPt, rightpt, orientation, pseudoWall = True)
         globaldata = updateNormals(itm, globaldata, nx, ny)
     return globaldata
 
@@ -2729,6 +2760,12 @@ def adaptPoint(idx, globaldata):
         px, py = getPoint(idx, globaldata)
         the_file.write("1000 1000\n{} {} \n1000 1000\n".format(px, py))
         print("Point added to Adaption History")
+
+def blankPoint(idx, globaldata):
+    with open("blank.txt", "a+") as the_file:
+        px, py = getPoint(idx, globaldata)
+        the_file.write("{} {} \n".format(px, py))
+        print("Point added to Blank List")
 
 def connectivityCheck(globaldata, badPoints, configData):
     badPointsNew = []

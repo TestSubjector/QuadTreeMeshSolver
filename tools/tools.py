@@ -208,6 +208,8 @@ def main():
                 yneg = core.getYNegPoints(ptidx,globaldata, conf)
                 print("xpos",len(xpos),"xneg",len(xneg),"ypos",len(ypos),"yneg",len(yneg))
             nx, ny = core.getNormals(ptidx, globaldata, conf)
+            leaf = core.isLeafPoint(ptidx, globaldata)
+            print("Leaf Point: {}".format(leaf))
             print("nx = {} ny = {}".format(nx, ny))
             print("Select Point Repair Option")
             print("(1) Exit")
@@ -216,6 +218,7 @@ def main():
             print("(4) Find nearest distance to wall points")
             print("(5) Print Detailed Connectivity")
             print("(6) Adapt the point")
+            print("(7) Blank the point")
             whatkind = int(input("What option do you want to select? "))
             if whatkind == 1:
                 core.clearScreen()
@@ -237,6 +240,9 @@ def main():
             elif whatkind == 6:
                 core.clearScreen()
                 core.adaptPoint(ptidx, globaldata)
+            elif whatkind == 7:
+                core.clearScreen()
+                core.blankPoint(ptidx, globaldata)
             else:
                 core.clearScreen()
                 break

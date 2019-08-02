@@ -26,6 +26,7 @@ def main():
     parser.add_argument("-c", "--cache", nargs="?")
     parser.add_argument("-s", "--pseudocheck", nargs="?")
     parser.add_argument("-d", "--dry-run", nargs="?")
+    parser.add_argument("-f", "--force-non-leaf", nargs="?")
     args = parser.parse_args()
     np.seterr(divide='ignore')
 
@@ -55,6 +56,10 @@ def main():
     if args.pseudocheck:
         pseudocheck = core.ConvertStringToBool(args.pseudocheck)
 
+    overrideNL = False
+    if args.force_non_leaf:
+        overrideNL = core.ConvertStringToBool(args.force_non_leaf)
+
     log.info("Loading Data")
     log.debug("Arguments")
     log.debug(args)
@@ -81,6 +86,9 @@ def main():
 
     if configData["bspline"]["polygon"] == True:
         log.info("Info: Polygon Mode has been enabled. Bspline will be disabled.")
+
+    if overrideNL:
+        log.warn("Warning: Non Leaf Points are forced to bspline. Point cannot be removed.")
 
     if cache:
         globaldata = core.getKeyVal("globaldata")
@@ -127,7 +135,7 @@ def main():
     log.info("Caching Wall Geometries")
     shapelyWallData = core.convertToShapely(wallPts)
     log.info("Searching for bad points")
-    problempts,perpendicularpts, badpts = core.checkPoints(globaldata, args.bspline, normalApproach, configData, pseudocheck, shapelyWallData)
+    problempts,perpendicularpts, badpts = core.checkPoints(globaldata, args.bspline, normalApproach, configData, pseudocheck, shapelyWallData, overrideNL = overrideNL)
     log.info("Bsplining {} points".format(len(problempts)))
     log.info("Starting BSpline")
     for idx,itm in enumerate(tqdm(problempts)): 

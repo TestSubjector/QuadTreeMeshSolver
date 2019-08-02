@@ -60,7 +60,8 @@ then
     cp -rf ./files/f$3/preprocessorfile.txt ./backup_files/$GEOMETRY/$2/preprocessorfile.txt
     cp -rf ./files/f$3/preprocessorfile.poly ./backup_files/$GEOMETRY/$2/preprocessorfile.poly
     cp -rf ./files/f$3/adapted.txt ./backup_files/$GEOMETRY/$2/adapted.txt
-    cp -rf ./files/f$3/wall.json ./backup_files/$GEOMETRY/$2/wall.json
+    cp -rf ./files/f$3/blank.txt ./backup_files/$GEOMETRY/$2/blank.txt | echo "No Blank"
+    cp -rf ./files/f$3/wall.json ./backup_files/$GEOMETRY/$2/wall.json | echo "No Wall"
 else
     for value in {1..5}
     do
@@ -68,12 +69,13 @@ else
         echo $value Iteration
 
         cp -rf ./adapted.txt ./files/f$value/adapted.txt | touch adapted.txt && echo "Creating Adaption File"
+        cp -rf ./blank.txt ./files/f$value/blank.txt | touch blank.txt && echo "Creating Blank File"
 
         # Shape Generation
         python3 shapemod/shape.py -w ./grids/airfoil_flap_dense/airfoil ./grids/airfoil_flap_dense/flap
         
         # Neighbour Generation
-        ./quadtree/main ./grids/airfoil_coarse_320/airfoil320 ./adapted.txt ./shape_generated.txt
+        ./quadtree/main ./grids/airfoil_coarse_320/airfoil320 ./adapted.txt ./shape_generated.txt ./blank.txt
         cp -rlf ./neighbour.txt ./files/f$value/neighbour.txt
         rm ./neighbour.txt
 

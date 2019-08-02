@@ -9,7 +9,7 @@ def writeNormalsToText(globaldata, configData):
         for idx,_ in enumerate(globaldata):
             if idx > 0:
                 flag = core.getFlag(idx,globaldata)
-                if(flag == 0):
+                if(flag == 0 or flag == 2):
                     x,y = core.getPoint(idx,globaldata)
                     nx,ny = core.normalCalculation(idx,globaldata,True, configData)
                     text_file.write("{} {} {} {}\n".format(x, y, nx, ny))
