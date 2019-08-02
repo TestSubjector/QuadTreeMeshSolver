@@ -35,7 +35,8 @@
     },
     "normalWall": {
         "conditionValueThreshold": 15,
-        "inflatedPolygonDistance": 0.001
+        "inflatedPolygonDistance": 0.001,
+	"legacyMode": true
     },
     "preChecker": {
         "distanceLimiter": 0.0001
