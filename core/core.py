@@ -709,6 +709,12 @@ def wallDistance(cordpt, wallpoints):
         distance.append(point.distance(item))
     return distance
 
+def getWallPointIndex(pt, globaldata, wallpointsArray):
+    for idx, itm in enumerate(wallpointsArray):
+        for itm2 in itm:
+            if pt == itm2:
+                return idx
+
 def getNearestWallPoint(cordpt, wallpoints, limit=5):
     result = sorted(wallpoints, key=lambda pt: distancePoint(tuple(map(float, pt.split(","))), cordpt))
     return result[:limit]
@@ -877,8 +883,8 @@ def getPseudoPoints(globaldata):
     return pseudoPts
 
 def checkPoints(globaldata, selectbspline, normal, configData, pseudocheck, shapelyWallData, overrideNL = False):
-    wallptData = getWallPointArray(globaldata)
-    wallptData = flattenList(wallptData)
+    wallptDataArray = getWallPointArray(globaldata)
+    wallptData = flattenList(wallptDataArray)
     ptListArray = []
     perpendicularListArray = []
     maxDepth = -999
@@ -899,7 +905,7 @@ def checkPoints(globaldata, selectbspline, normal, configData, pseudocheck, shap
                         log.warn("Warning: Point Index {} has a NaN. Manual Intervention is required to fix it.".format(idx))
                     else:
                         if(result):
-                            ptList = findNearestNeighbourWallPoints(idx,globaldata,wallptData,shapelyWallData)
+                            ptList = findNearestNeighbourWallPoints(idx,globaldata,wallptDataArray, wallptData,shapelyWallData)
                             perpendicularPt = getPerpendicularPoint(idx,globaldata,normal, wallptData, ptList)
                             if (perpendicularPt) not in perpendicularListArray:
                                 if isLeafPoint(idx, globaldata):
@@ -920,7 +926,7 @@ def checkPoints(globaldata, selectbspline, normal, configData, pseudocheck, shap
                                 if depth <= maxDepth - 3:
                                     dist = min(wallDistance((px, py), shapelyWallData))
                                     if dist <= float(configData['bspline']['pseudoDist']):
-                                        ptList = findNearestNeighbourWallPoints(idx,globaldata,wallptData,shapelyWallData)
+                                        ptList = findNearestNeighbourWallPoints(idx,globaldata,wallptDataArray, wallptData,shapelyWallData)
                                         perpendicularPt = getPerpendicularPoint(idx,globaldata,normal, wallptData, ptList)
                                         if (perpendicularPt) not in perpendicularListArray:
                                             if isLeafPoint(idx, globaldata):
@@ -938,7 +944,7 @@ def checkPoints(globaldata, selectbspline, normal, configData, pseudocheck, shap
         selectbspline = list(map(int, selectbspline))
         for idx,itm in enumerate(tqdm(selectbspline)):
             if isLeafPoint(itm, globaldata):
-                ptList = findNearestNeighbourWallPoints(itm, globaldata, wallptData, shapelyWallData)
+                ptList = findNearestNeighbourWallPoints(itm, globaldata, wallptDataArray, wallptData, shapelyWallData)
                 perpendicularPt = getPerpendicularPoint(itm, globaldata, normal, wallptData, ptList)
                 if (perpendicularPt) not in perpendicularListArray:
                     ptListArray.append(ptList)
@@ -946,7 +952,7 @@ def checkPoints(globaldata, selectbspline, normal, configData, pseudocheck, shap
                     badpts.append(itm)
             else:
                 if overrideNL:
-                    ptList = findNearestNeighbourWallPoints(itm, globaldata, wallptData, shapelyWallData)
+                    ptList = findNearestNeighbourWallPoints(itm, globaldata, wallptDataArray, wallptData, shapelyWallData)
                     perpendicularPt = getPerpendicularPoint(itm, globaldata, normal, wallptData, ptList)
                     if (perpendicularPt) not in perpendicularListArray:
                         ptListArray.append(ptList)
@@ -957,12 +963,13 @@ def checkPoints(globaldata, selectbspline, normal, configData, pseudocheck, shap
 
     return ptListArray, perpendicularListArray, badpts
 
-def findNearestNeighbourWallPoints(idx, globaldata, wallptData, shapelyWallData):
+def findNearestNeighbourWallPoints(idx, globaldata, wallptDataArray, wallptData, shapelyWallData):
     ptx,pty = getPoint(idx,globaldata)
     leastdt,leastidx = 1000,-9999
     better = getNearestWallPoint((ptx, pty), wallptData, limit=2)
+    wallptidx = getWallPointIndex(better[0], globaldata, wallptDataArray)
     for itm in better:
-        if not isNonAeroDynamicEvenBetter(idx,itm,globaldata,shapelyWallData):
+        if not isNonAeroDynamicEvenBetter(idx,itm,globaldata,[shapelyWallData[wallptidx]]):
             itmx = float(itm.split(",")[0])
             itmy = float(itm.split(",")[1])
             ptDist = math.sqrt((deltaX(itmx,ptx) ** 2) + (deltaY(itmy,pty) ** 2))
@@ -970,7 +977,7 @@ def findNearestNeighbourWallPoints(idx, globaldata, wallptData, shapelyWallData)
                 leastdt = ptDist
                 leastidx = getIndexFromPoint(itm,globaldata)
     if leastidx == -9999:
-        log.error("Failed to find nearest wallpoint")
+        log.error("Failed to find nearest wallpoint for point {}".format(idx))
         exit()
     ptsToCheck = convertIndexToPoints(getLeftandRightPointIndex(leastidx,globaldata),globaldata)
 
@@ -978,7 +985,7 @@ def findNearestNeighbourWallPoints(idx, globaldata, wallptData, shapelyWallData)
     leastptx,leastpty = getPoint(leastidx,globaldata)
     currangle = 1000
     for itm in ptsToCheck:
-        if not isNonAeroDynamicEvenBetter(idx,itm,globaldata,shapelyWallData):
+        if not isNonAeroDynamicEvenBetter(idx,itm,globaldata,[shapelyWallData[wallptidx]]):
             itmx = float(itm.split(",")[0])
             itmy = float(itm.split(",")[1])
             ptDist = math.sqrt((deltaX(itmx,ptx) ** 2) + (deltaY(itmy,pty) ** 2))
@@ -1515,11 +1522,10 @@ def rotateNormalsLegacy(pseudopts,globaldata, configData, dryRun):
     wallptData = flattenList(wallptData)
     wallptDataOr = convertToShapely(wallptDataOr)
     fixedPts = 0
-
     pseudoptDict = {}
     with np.errstate(divide='ignore', invalid='ignore'):
         for _,idx in enumerate(tqdm(pseudopts)):
-            ptList = findNearestNeighbourWallPoints(idx,globaldata,wallptData,wallptDataOr)
+            ptList = findNearestNeighbourWallPoints(idx,globaldata,wallptDataOr, wallptData,wallptDataOr)
             ptListIndex = convertPointsToIndex(ptList,globaldata)
             pseudoptDict[idx] = ptListIndex
 
@@ -1625,7 +1631,7 @@ def rotateNormals(pseudopts,globaldata, configData, dryRun):
     pseudoptDictData = {}
     with np.errstate(divide='ignore', invalid='ignore'):
         for _,idx in enumerate(tqdm(pseudopts)):
-            ptList = findNearestNeighbourWallPoints(idx,globaldata,wallptData,wallptDataOr)
+            ptList = findNearestNeighbourWallPoints(idx,globaldata,wallptData2, wallptData,wallptDataOr)
             perpendicularPt = getPerpendicularPoint(idx, globaldata, True, wallptData, ptList)
             ptListIndex = convertPointsToIndex(ptList,globaldata)
             pseudoptDict[idx] = ptListIndex
