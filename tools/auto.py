@@ -46,7 +46,7 @@ def main():
             elif line == "        # Indexing\n":
                 lines[lines.index(line) + 1] = "        python3 ./generator/generate.py -n ./files/f$value/neighbour.txt -w" + " ./grids/" + folder + "/" + file + "\n"
             elif line == "        # Neighbour Generation\n":
-                lines[lines.index(line) + 1] = "       ./quadtree/main ./grids/" + folder + "/" + file_list[0] + " ./adapted.txt ./shape_generated.txt\n"
+                lines[lines.index(line) + 1] = "       ./quadtree/main ./grids/" + folder + "/" + file_list[0] + " ./adapted.txt ./shape_generated.txt ./blank.txt\n"
 
         new_file = open("preprocessing.sh", "w")
         for line in lines: 

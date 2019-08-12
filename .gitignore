@@ -21,6 +21,7 @@ wallpts.txt
 *.ipynb
 preprocessing.txt
 preprocessing.sh
+!preprocessing.sh.example
 blank.txt
 # C extensions
 *.so
