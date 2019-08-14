@@ -691,16 +691,11 @@ def isNonAeroDynamicEvenBetter(index, cordpt, globaldata, wallpoints):
     cordptx = float(cordpt.split(",")[0])
     cordpty = float(cordpt.split(",")[1])
     line = shapely.geometry.LineString([[main_pointx, main_pointy], [cordptx, cordpty]])
-    responselist = []
     for item in wallpoints:
-        if item.intersects(line):
-            responselist.append(False)
+        if item.crosses(line):
+            return True
         else:
-            responselist.append(True)
-    if True in responselist:
-        return True
-    else:
-        return False
+            return False
 
 def wallDistance(cordpt, wallpoints):
     point = shapely.geometry.Point((cordpt[0], cordpt[1]))
@@ -966,10 +961,10 @@ def checkPoints(globaldata, selectbspline, normal, configData, pseudocheck, shap
 def findNearestNeighbourWallPoints(idx, globaldata, wallptDataArray, wallptData, shapelyWallData):
     ptx,pty = getPoint(idx,globaldata)
     leastdt,leastidx = 1000,-9999
-    better = getNearestWallPoint((ptx, pty), wallptData, limit=2)
+    better = getNearestWallPoint((ptx, pty), wallptData, limit=5)
     wallptidx = getWallPointIndex(better[0], globaldata, wallptDataArray)
     for itm in better:
-        if not isNonAeroDynamicEvenBetter(idx,itm,globaldata,[shapelyWallData[wallptidx]]):
+        if not isNonAeroDynamicEvenBetter(idx, itm, globaldata, [shapelyWallData[wallptidx]]):
             itmx = float(itm.split(",")[0])
             itmy = float(itm.split(",")[1])
             ptDist = math.sqrt((deltaX(itmx,ptx) ** 2) + (deltaY(itmy,pty) ** 2))
@@ -980,7 +975,6 @@ def findNearestNeighbourWallPoints(idx, globaldata, wallptDataArray, wallptData,
         log.error("Failed to find nearest wallpoint for point {}".format(idx))
         exit()
     ptsToCheck = convertIndexToPoints(getLeftandRightPointIndex(leastidx,globaldata),globaldata)
-
     leastidx2 = -9999
     leastptx,leastpty = getPoint(leastidx,globaldata)
     currangle = 1000
@@ -2342,10 +2336,29 @@ def interiorConnectivityCheck(globaldata, offset=0):
     badPtsNan = list(map(str, badPtsNan))
     badPtsInf = list(map(str, badPtsInf))
     badPtsAll = list(map(str, badPtsAll))
+    badPtsNanNL = []
+    badPtsInfNL = []
+    badPtsAllNL = []
+    for itm in badPtsNan:
+        if not isLeafPoint(int(itm), globaldata):
+            badPtsNanNL.append(itm)
+    badPtsNan = list(set(badPtsNan) - set(badPtsNanNL))
+    for itm in badPtsInf:
+        if not isLeafPoint(int(itm), globaldata):
+            badPtsInfNL.append(itm)
+    badPtsInf = list(set(badPtsInf) - set(badPtsInfNL))
+    for itm in badPtsAll:
+        if not isLeafPoint(int(itm), globaldata):
+            badPtsAllNL.append(itm)
+    badPtsAll = list(set(badPtsAll) - set(badPtsAllNL))
+    
     print("****************************")
     print("Bad Points (NaN) Detected: {} ({})".format("Everything Good" if len(badPtsNan) == 0 else " ".join(badPtsNan), len(badPtsNan)))
+    print("Bad Points (NaN) Detected (NL): {} ({})".format("Everything Good" if len(badPtsNanNL) == 0 else " ".join(badPtsNanNL), len(badPtsNanNL)))
     print("Bad Points (Inf) Detected: {} ({})".format("Everything Good" if len(badPtsInf) == 0 else " ".join(badPtsInf), len(badPtsInf)))
+    print("Bad Points (Inf) Detected (NL): {} ({})".format("Everything Good" if len(badPtsInfNL) == 0 else " ".join(badPtsInfNL), len(badPtsInfNL)))
     print("Bad Points (Conn) Detected: {} ({})".format("Everything Good" if len(badPtsAll) == 0 else " ".join(badPtsAll), len(badPtsAll)))
+    print("Bad Points (Conn) Detected (NL): {} ({})".format("Everything Good" if len(badPtsAllNL) == 0 else " ".join(badPtsAllNL), len(badPtsAllNL)))
     print("****************************")
 
 def sparseNullifier(globaldata, flagCheck=0):
