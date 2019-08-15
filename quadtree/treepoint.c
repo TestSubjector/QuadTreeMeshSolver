@@ -26,16 +26,33 @@ void centroidify(quadtree_node_t *node, coords_t *shape_list)
 void derefine_fromlist(coords_t *derefined_list, int derefine_counter)
 {
     int child_counter;
+    double xcord;
+    double ycord;
     quadtree_node_t *parent_node;
     for(int i = 0; i < derefine_counter; i++)
     {
         child_counter = 0;
+
         if(derefined_list[i].x != 10000 && derefined_list[i].y != 10000)
         {
             parent_node = quadtree_parent_search(derefined_list[i].x, derefined_list[i].y);
             if(parent_node == NULL)
             {
-                printf("\n Warning: Problems in parent node finding");
+                if(only_leaf_flag == 0)
+                {
+                    continue;
+                }
+                else
+                {
+                    printf("\n Warning: Problems in parent node finding");
+                }
+            }
+
+            xcord = (parent_node->bounds->nw->x + parent_node->bounds->se->x) / 2;
+            ycord = (parent_node->bounds->nw->y + parent_node->bounds->se->y) / 2;
+            if (xcord == derefined_list[i].x && ycord == derefined_list[i].y)
+            {
+                continue;
             }
 
             if (quadtree_node_isempty(parent_node->nw))
@@ -224,7 +241,7 @@ int west_ancestor(int patharray[41], int path_size)
             exit(2);
         }
     }
-    return ancestor_pos;    
+    return ancestor_pos;
 }
 
 int north_ancestor(int patharray[41], int path_size)
@@ -263,7 +280,7 @@ int north_ancestor(int patharray[41], int path_size)
             exit(2);
         }
     }
-    return ancestor_pos;    
+    return ancestor_pos;
 }
 
 int south_ancestor(int patharray[41], int path_size)
@@ -304,5 +321,5 @@ int south_ancestor(int patharray[41], int path_size)
             // exit(1);
         }
     }
-    return ancestor_pos;    
+    return ancestor_pos;
 }
