@@ -15,6 +15,7 @@ import hashlib
 import copy
 import dask
 from dask.distributed import Client, LocalCluster
+from numba import guvectorize, jit
 
 def appendNeighbours(index, globaldata, newpts):
     pt = getIndexFromPoint(newpts, globaldata)
@@ -107,12 +108,15 @@ def convertIndexToPoints(indexarray, globaldata):
         ptlist.append((str(ptx) + "," + str(pty)))
     return ptlist
 
+# @jit(nopython=True)
 def actuallyZero(a):
     return math.isclose(a, 0, abs_tol=1E-16)
 
+@jit(nopython=True)
 def deltaX(xcord, orgxcord):
     return float(orgxcord - xcord)
 
+@jit(nopython=True)
 def deltaY(ycord, orgycord):
     return float(orgycord - ycord)
 
@@ -520,7 +524,6 @@ def getConditionNumberWithInput(index, globaldata, nbh, configData):
     deltaSumS = 0
     deltaSumN = 0
     deltaSumSN = 0
-    data = []
     for nbhitem in nbh:
         nbhitemX = float(nbhitem.split(",")[0])
         nbhitemY = float(nbhitem.split(",")[1])
@@ -534,14 +537,8 @@ def getConditionNumberWithInput(index, globaldata, nbh, configData):
         deltaSumS = deltaSumS + w * (deltaS) ** 2
         deltaSumN = deltaSumN + w * (deltaN) ** 2
         deltaSumSN = deltaSumSN + w * (deltaS) * (deltaN)
-    data.append(deltaSumS)
-    data.append(deltaSumSN)
-    data.append(deltaSumSN)
-    data.append(deltaSumN)
-    random = np.array(data)
-    shape = (2, 2)
-    random = random.reshape(shape)
-    s = np.linalg.svd(random, full_matrices=False, compute_uv=False)
+    random = np.array([[deltaSumS, deltaSumSN], [deltaSumSN, deltaSumN]], dtype=np.float64)
+    s = performSVD(random)
     s = max(s) / min(s)
     return s
 
@@ -555,7 +552,6 @@ def getConditionNumberWithInputAndNormals(index, globaldata, nbh, nx, ny, config
     deltaSumS = 0
     deltaSumN = 0
     deltaSumSN = 0
-    data = []
     for nbhitem in nbh:
         nbhitemX = float(nbhitem.split(",")[0])
         nbhitemY = float(nbhitem.split(",")[1])
@@ -569,16 +565,17 @@ def getConditionNumberWithInputAndNormals(index, globaldata, nbh, nx, ny, config
         deltaSumS = deltaSumS + w * (deltaS) ** 2
         deltaSumN = deltaSumN + w * (deltaN) ** 2
         deltaSumSN = deltaSumSN + w * (deltaS) * (deltaN)
-    data.append(deltaSumS)
-    data.append(deltaSumSN)
-    data.append(deltaSumSN)
-    data.append(deltaSumN)
-    random = np.array(data)
-    shape = (2, 2)
-    random = random.reshape(shape)
-    s = np.linalg.svd(random, full_matrices=False, compute_uv=False)
+    random = np.array([[deltaSumS, deltaSumSN], [deltaSumSN, deltaSumN]], dtype=np.float64)
+    s = np.zeros(2)
+    performSVD(random, s)
     s = max(s) / min(s)
     return s
+
+@guvectorize('void(float64[:, :], float64[:])', "(m, n)->(n)")
+def performSVD(data, s):
+    _,p,_ = np.linalg.svd(data)
+    for i in range(len(p)):
+        s[i] = p[i]
 
 def conditionNumberOfXPos(index, globaldata, configData):
     nbhs = convertIndexToPoints(getNeighbours(index, globaldata), globaldata)
