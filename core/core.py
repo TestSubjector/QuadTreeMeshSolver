@@ -13,6 +13,8 @@ from scipy.interpolate import splprep, splev
 from scipy import spatial
 import hashlib
 import copy
+import dask
+from dask.distributed import Client, LocalCluster
 
 def appendNeighbours(index, globaldata, newpts):
     pt = getIndexFromPoint(newpts, globaldata)
@@ -383,7 +385,7 @@ def fixXPosMain(index, globaldata, threshold, wallpoints, control, configData):
         if len(totalnbhs) > 0:
             conditionSet = []
             for ptcheck in totalnbhs:
-                if not isNonAeroDynamic(index,ptcheck,globaldata,wallpoints):
+                if not isNonAeroDynamicEvenBetter(index,ptcheck,globaldata,wallpoints):
                     checkset = [ptcheck] + numberofxpos
                     newcheck = getConditionNumberWithInput(
                         index, globaldata, checkset, configData
@@ -392,7 +394,7 @@ def fixXPosMain(index, globaldata, threshold, wallpoints, control, configData):
                         conditionSet.append([ptcheck, newcheck])
             if len(conditionSet) > 0:
                 conditionSet.sort(key=lambda x: x[1])
-                if not isNonAeroDynamic(index,conditionSet[0][0],globaldata,wallpoints):
+                if not isNonAeroDynamicEvenBetter(index,conditionSet[0][0],globaldata,wallpoints):
                     globaldata = appendNeighbours(index, globaldata, conditionSet[0][0])
                     fixXPosMain(index, globaldata, threshold, wallpoints, control, configData)
             else:
@@ -419,7 +421,7 @@ def fixXNegMain(index, globaldata, threshold, wallpoints, control, configData):
         if len(totalnbhs) > 0:
             conditionSet = []
             for ptcheck in totalnbhs:
-                if not isNonAeroDynamic(index,ptcheck,globaldata,wallpoints):
+                if not isNonAeroDynamicEvenBetter(index,ptcheck,globaldata,wallpoints):
                     checkset = [ptcheck] + numberofxpos
                     newcheck = getConditionNumberWithInput(
                         index, globaldata, checkset, configData
@@ -428,7 +430,7 @@ def fixXNegMain(index, globaldata, threshold, wallpoints, control, configData):
                         conditionSet.append([ptcheck, newcheck])
             if len(conditionSet) > 0:
                 conditionSet.sort(key=lambda x: x[1])
-                if not isNonAeroDynamic(index,conditionSet[0][0],globaldata,wallpoints):
+                if not isNonAeroDynamicEvenBetter(index,conditionSet[0][0],globaldata,wallpoints):
                     globaldata = appendNeighbours(index, globaldata, conditionSet[0][0])
                     fixXNegMain(index, globaldata, threshold, wallpoints, control, configData)
             else:
@@ -455,7 +457,7 @@ def fixYPosMain(index, globaldata, threshold, wallpoints, control, configData):
         if len(totalnbhs) > 0:
             conditionSet = []
             for ptcheck in totalnbhs:
-                if not isNonAeroDynamic(index,ptcheck,globaldata,wallpoints):
+                if not isNonAeroDynamicEvenBetter(index,ptcheck,globaldata,wallpoints):
                     checkset = [ptcheck] + numberofxpos
                     newcheck = getConditionNumberWithInput(
                         index, globaldata, checkset, configData
@@ -464,7 +466,7 @@ def fixYPosMain(index, globaldata, threshold, wallpoints, control, configData):
                         conditionSet.append([ptcheck, newcheck])
             if len(conditionSet) > 0:
                 conditionSet.sort(key=lambda x: x[1])
-                if not isNonAeroDynamic(index,conditionSet[0][0],globaldata,wallpoints):
+                if not isNonAeroDynamicEvenBetter(index,conditionSet[0][0],globaldata,wallpoints):
                     globaldata = appendNeighbours(index, globaldata, conditionSet[0][0])
                     fixYPosMain(index, globaldata, threshold, wallpoints, control, configData)
             else:
@@ -491,7 +493,7 @@ def fixYNegMain(index, globaldata, threshold, wallpoints, control, configData):
         if len(totalnbhs) > 0:
             conditionSet = []
             for ptcheck in totalnbhs:
-                if not isNonAeroDynamic(index,ptcheck,globaldata,wallpoints):
+                if not isNonAeroDynamicEvenBetter(index,ptcheck,globaldata,wallpoints):
                     checkset = [ptcheck] + numberofxpos
                     newcheck = getConditionNumberWithInput(
                         index, globaldata, checkset, configData
@@ -500,7 +502,7 @@ def fixYNegMain(index, globaldata, threshold, wallpoints, control, configData):
                         conditionSet.append([ptcheck, newcheck])
             if len(conditionSet) > 0:
                 conditionSet.sort(key=lambda x: x[1])
-                if not isNonAeroDynamic(index,conditionSet[0][0],globaldata,wallpoints):
+                if not isNonAeroDynamicEvenBetter(index,conditionSet[0][0],globaldata,wallpoints):
                     globaldata = appendNeighbours(index, globaldata, conditionSet[0][0])
                     fixYNegMain(index, globaldata, threshold, wallpoints, control, configData)
             else:
@@ -894,12 +896,11 @@ def checkPoints(globaldata, selectbspline, normal, configData, pseudocheck, shap
                     if configData['bspline']['wallGuard']:
                         if containsWallPoints(globaldata, idx, wallptData):
                             continue
-                    result = isConditionBad(idx,globaldata, configData)
-                    nancheck = isConditionNan(idx, globaldata, configData)
-                    if nancheck:
+                    result = whatIsCondition(idx, globaldata, configData)
+                    if result == 1:
                         log.warn("Warning: Point Index {} has a NaN. Manual Intervention is required to fix it.".format(idx))
                     else:
-                        if(result):
+                        if(result == 0):
                             ptList = findNearestNeighbourWallPoints(idx,globaldata,wallptDataArray, wallptData,shapelyWallData)
                             perpendicularPt = getPerpendicularPoint(idx,globaldata,normal, wallptData, ptList)
                             if (perpendicularPt) not in perpendicularListArray:
@@ -1167,6 +1168,20 @@ def calculateNormalConditionValues(idx,globaldata,nxavg,nyavg, configData):
 
     result = {"spos":dSPosNbhs,"sposCond":dSPosCondition,"sneg":dSNegNbhs,"snegCond":dSNegCondition,"npos":dNPosNbhs,"nposCond":dNPosCondition,"nneg":dNNegNbhs,"nnegCond":dNNegCondition}
     return result
+
+def whatIsCondition(idx, globaldata, configData):
+    nx,ny = getNormals(idx,globaldata, configData)
+    condResult = calculateNormalConditionValues(idx,globaldata,nx,ny, configData)
+    dSPosCondition,dSNegCondition,dNPosCondition,dNNegCondition = condResult["sposCond"], condResult["snegCond"], condResult["nposCond"], condResult["nnegCond"]
+    maxCond = max(dSPosCondition,dSNegCondition,dNPosCondition,dNNegCondition)
+    if maxCond > float(configData["bspline"]["threshold"]):
+        return 0
+    elif math.isnan(dSPosCondition) or math.isnan(dSNegCondition) or math.isnan(dNPosCondition) or math.isnan(dNNegCondition):
+        return 1
+    elif math.isinf(dSPosCondition) or math.isinf(dSNegCondition) or math.isinf(dNPosCondition) or math.isinf(dNNegCondition):
+        return 2
+    else:
+        return 3
 
 def isConditionBad(idx, globaldata, configData):
     nx,ny = getNormals(idx,globaldata, configData)
@@ -1737,7 +1752,7 @@ def generateWallPolygons(wallpoints):
 def getAeroPointsFromSet(index,cordlist,globaldata,wallpoints):
     finallist = []
     for itm in cordlist:
-        if isNonAeroDynamic(index,itm,globaldata,wallpoints) == False:
+        if isNonAeroDynamicEvenBetter(index,itm,globaldata,wallpoints) == False:
             finallist.append(itm)
     return finallist
 
@@ -1795,7 +1810,7 @@ def checkAeroGlobal(chunk, globaldata, wallpointsData, wallcount, configData):
                     nonaeronbhs = []
                     for itm in nbhs:
                         cord = getPointXY(itm,globaldata)
-                        if isNonAeroDynamic(idx,cord,globaldata,wallpointsData):
+                        if isNonAeroDynamicEvenBetter(idx,cord,globaldata,wallpointsData):
                             nonaeronbhs.append(itm)
                     finalnbhs = list(set(nbhs) - set(nonaeronbhs))
                     if(len(nbhs) != len(finalnbhs)):
@@ -2312,18 +2327,47 @@ def getNearestProblemPoint(idx,globaldata, conf):
                 currpt = itm
     return currpt
 
-def interiorConnectivityCheck(globaldata, offset=0):
+def daskInteriorConnectivityCheck(globaldata, offset=0):
     conf = getConfig()
+    coresavail = multiprocessing.cpu_count()
+    MAX_CORES = int(conf["generator"]["maxCoresForReplacement"])
+    chunksize = math.ceil(len(globaldata)/min(MAX_CORES,2))
+    # cluster = LocalCluster(n_workers=1, threads_per_worker=min(MAX_CORES,coresavail))
+    # with Client(cluster, asynchronous=True, processes=True) as client:
+    results = []
+    a = time.time()
+    for start in range(0, len(globaldata), chunksize):
+        print("asdf")
+        result = dask.delayed(daskInteriorConnectivityCheckWorker)(start, start + chunksize, globaldata, conf)
+        # result = dask.delayed(daskInteriorConnectivityCheckWorker2)(start, start + chunksize)
+        results.append(result)
+        print("yes")
+    print("Computing")
+    results = dask.compute(*results)
+    print(results)
+    b = time.time()
+    print(b - a)
+    exit()
+
+def daskInteriorConnectivityCheckWorker2(start, stop):
+    return {0:start, 1:stop}
+
+def daskInteriorConnectivityCheckWorker(start, stop, globaldata, conf):
     badPtsNan = []
     badPtsInf = []
     badPtsAll = []
-    for _,itm in enumerate(tqdm(globaldata[offset:])):
+    badPtsNanNL = []
+    badPtsInfNL = []
+    badPtsAllNL = []
+    if stop > len(globaldata):
+        stop = len(globaldata)
+    for itm in globaldata[start:stop]:
         try:
             idx = int(itm[0])
         except:
             idx = 0
         if idx > 0:
-            flag = getFlag(idx,globaldata)
+            flag = getFlag(idx, globaldata)
             if flag == 1:
                 # checkConditionNumber(idx,globaldata,int(getConfig()["bspline"]["threshold"]))
                 if isConditionNan(idx,globaldata, conf):
@@ -2336,9 +2380,48 @@ def interiorConnectivityCheck(globaldata, offset=0):
     badPtsNan = list(map(str, badPtsNan))
     badPtsInf = list(map(str, badPtsInf))
     badPtsAll = list(map(str, badPtsAll))
+    for itm in badPtsNan:
+        if not isLeafPoint(int(itm), globaldata):
+            badPtsNanNL.append(itm)
+    badPtsNan = list(set(badPtsNan) - set(badPtsNanNL))
+    for itm in badPtsInf:
+        if not isLeafPoint(int(itm), globaldata):
+            badPtsInfNL.append(itm)
+    badPtsInf = list(set(badPtsInf) - set(badPtsInfNL))
+    for itm in badPtsAll:
+        if not isLeafPoint(int(itm), globaldata):
+            badPtsAllNL.append(itm)
+    badPtsAll = list(set(badPtsAll) - set(badPtsAllNL))
+    return {0:badPtsNan, 1:badPtsNanNL, 2:badPtsInf, 3:badPtsInfNL, 4:badPtsAll, 5:badPtsAllNL}
+
+def interiorConnectivityCheck(globaldata, offset=0):
+    conf = getConfig()
+    badPtsNan = []
+    badPtsInf = []
+    badPtsAll = []
     badPtsNanNL = []
     badPtsInfNL = []
     badPtsAllNL = []
+    for _,itm in enumerate(tqdm(globaldata[offset:])):
+        try:
+            idx = int(itm[0])
+        except:
+            idx = 0
+        if idx > 0:
+            flag = getFlag(idx,globaldata)
+            if flag == 1:
+                # checkConditionNumber(idx,globaldata,int(getConfig()["bspline"]["threshold"]))
+                condition = whatIsCondition(idx, globaldata, conf)
+                if condition == 1:
+                    badPtsNan.append(idx)
+                if condition == 2:
+                    badPtsInf.append(idx)
+                if condition == 0:
+                    badPtsAll.append(idx)
+    badPtsAll = list(set(badPtsAll) - set(badPtsInf) - set(badPtsNan))
+    badPtsNan = list(map(str, badPtsNan))
+    badPtsInf = list(map(str, badPtsInf))
+    badPtsAll = list(map(str, badPtsAll))
     for itm in badPtsNan:
         if not isLeafPoint(int(itm), globaldata):
             badPtsNanNL.append(itm)
