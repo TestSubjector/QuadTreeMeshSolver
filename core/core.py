@@ -538,7 +538,8 @@ def getConditionNumberWithInput(index, globaldata, nbh, configData):
         deltaSumN = deltaSumN + w * (deltaN) ** 2
         deltaSumSN = deltaSumSN + w * (deltaS) * (deltaN)
     random = np.array([[deltaSumS, deltaSumSN], [deltaSumSN, deltaSumN]], dtype=np.float64)
-    s = performSVD(random)
+    s = np.zeros(2)
+    performSVD(random, s)
     s = max(s) / min(s)
     return s
 
@@ -766,6 +767,17 @@ def getInteriorPointArrayIndex(globaldata):
 
 def flattenList(ptdata):
     return list(itertools.chain.from_iterable(ptdata))
+
+def addLeftRightPoints(globaldata):
+    for idx, _ in enumerate(globaldata):
+        if idx > 0:
+            if getFlag(idx, globaldata) == 0:
+                nbhs = getLeftandRightPointIndex(idx, globaldata)
+                globaldata = addPointToSetNeighbours(idx, globaldata, nbhs)
+            else:
+                print(idx)
+                break
+    return globaldata
 
 def getLeftandRightPoint(index,globaldata):
     index = int(index)

@@ -8,6 +8,7 @@ import errno
 import multiprocessing
 from multiprocessing.pool import ThreadPool
 import time
+import copy
 
 import logging
 log = logging.getLogger(__name__)
@@ -70,11 +71,11 @@ def getFlag(indexval, list):
     return list[indexval][5]
 
 def updateLeft(indexval, list, leftpoint):
-    list[indexval][3] = leftpoint
+    list[indexval][3] = "{},{}".format(leftpoint[0], leftpoint[1])
     return list
 
 def updateRight(indexval, list, rightpoint):
-    list[indexval][4] = rightpoint
+    list[indexval][4] = "{},{}".format(rightpoint[0], rightpoint[1])
     return list
 
 def updateFlag(indexval, list, newflag):
@@ -105,13 +106,13 @@ def getBiggestXBiggestY(list):
     currIdx = 0
     for item in list:
         if (
-            isPositive(float(item.split(",")[0])) == True
-            and isPositive(float(item.split(",")[1])) == True
+            isPositive(item[0]) == True
+            and isPositive(item[1]) == True
         ):
             newlist.append(item)
     for itm in newlist:
-        itmx = float(itm.split(",")[0])
-        itmy = float(itm.split(",")[1])
+        itmx = itm[0]
+        itmy = itm[1]
         itmx = itmx * itmx
         itmy = itmy * itmy
         itmdist = (itmx + itmy) ** 0.5
@@ -126,13 +127,13 @@ def getSmallestXBiggestY(list):
     currIdx = 0
     for item in list:
         if (
-            isPositive(float(item.split(",")[0])) == False
-            and isPositive(float(item.split(",")[1])) == True
+            isPositive(item[0]) == False
+            and isPositive(item[1]) == True
         ):
             newlist.append(item)
     for itm in newlist:
-        itmx = float(itm.split(",")[0])
-        itmy = float(itm.split(",")[1])
+        itmx = itm[0]
+        itmy = itm[1]
         itmx = itmx * itmx
         itmy = itmy * itmy
         itmdist = (itmx + itmy) ** 0.5
@@ -147,13 +148,13 @@ def getBiggestXSmallestY(list):
     currIdx = 0
     for item in list:
         if (
-            isPositive(float(item.split(",")[0])) == True
-            and isPositive(float(item.split(",")[1])) == False
+            isPositive(item[0]) == True
+            and isPositive(item[1]) == False
         ):
             newlist.append(item)
     for itm in newlist:
-        itmx = float(itm.split(",")[0])
-        itmy = float(itm.split(",")[1])
+        itmx = itm[0]
+        itmy = itm[1]
         itmx = itmx * itmx
         itmy = itmy * itmy
         itmdist = (itmx + itmy) ** 0.5
@@ -168,13 +169,13 @@ def getSmallestXSmallestY(list):
     currIdx = 0
     for item in list:
         if (
-            isPositive(float(item.split(",")[0])) == False
-            and isPositive(float(item.split(",")[1])) == False
+            isPositive(item[0]) == False
+            and isPositive(item[1]) == False
         ):
             newlist.append(item)
     for itm in newlist:
-        itmx = float(itm.split(",")[0])
-        itmy = float(itm.split(",")[1])
+        itmx = itm[0]
+        itmy = itm[1]
         itmx = itmx * itmx
         itmy = itmy * itmy
         itmdist = (itmx + itmy) ** 0.5
@@ -185,8 +186,8 @@ def getSmallestXSmallestY(list):
 
 def getNeighboursDirectional(direction, maincord, list):
     finallist = []
-    xcord = float(maincord.split(",")[0])
-    ycord = float(maincord.split(",")[1])
+    xcord = maincord[0]
+    ycord = maincord[1]
     if direction == 1:
         # All points towards left of X
         finallist = [x for x in list if float(x.split(",")[0]) <= xcord]
@@ -255,7 +256,7 @@ def generateReplacement(hashtable, globaldata):
     results = []
     chunksize = math.ceil(len(globaldata)/min(MAX_CORES,coresavail))
     globalchunks = list(chunks(globaldata,chunksize))
-    hashtable = {k:v for v,k in enumerate(hashtable)}
+    hashtable = {"{},{}".format(k[0], k[1]): v + 1 for v,k in enumerate(hashtable)}
     globalchunks = list(chunks(globaldata, chunksize))
     for itm in globalchunks:
         results.append(pool.apply_async(replacer, args=(hashtable, itm)))
@@ -275,12 +276,11 @@ def generateReplacement(hashtable, globaldata):
 def replacer(hashtable, globaldata):
     for index, individualitem in enumerate(globaldata):
         for index2, morestuff in enumerate(individualitem):
-            try:
-                b = hashtable[morestuff]
-            except KeyError:
-                "Do nothing"
-            else:
+            b = hashtable.get(morestuff, None)
+            if b is not None:
                 globaldata[index][index2] = b
+            else:
+                "Do Nothing"
     return globaldata
 
 def isNonAeroDynamic(index, cordpt, globaldata, wallpoints):
@@ -351,4 +351,5 @@ def getFarthestPoint(listpts):
         if dist > currentdist:
             currentdist = dist
             currentpt = itm
+    currentpt = (float(currentpt.split(",")[0]), float(currentpt.split(",")[1]))
     return currentpt

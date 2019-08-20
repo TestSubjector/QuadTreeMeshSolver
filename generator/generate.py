@@ -35,7 +35,7 @@ def main():
 
     wallarg = args.wall
     wallpoints = []
-    hashtable = ["start"]
+    hashtable = {}
     globaldata = []
 
     log.info("Found " + str(len(wallarg)) + " wall geometry files.")
@@ -73,16 +73,12 @@ def main():
                             geometrydata.insert(insertionidx,dataInsert)
         hashtable, wallpointsdata, globaldata = load.loadWall(geometrydata,hashtable,globaldata,idx + 1)
         wallpoints.append(wallpointsdata)
-
     log.info("Loading Interior and Outer Points")
     hashtable, globaldata = load.loadInterior(data, hashtable, globaldata, len(hashtable))
     globaldata = misc.cleanNeighbours(globaldata)
     hashtable, globaldata = boundary.detectOuter(hashtable, globaldata)
-
-    globaldata = misc.cleanNeighbours(globaldata)
     globaldata = misc.generateReplacement(hashtable, globaldata)
-
-    core.setKeyVal("globaldata",globaldata)
+    core.setKeyVal("globaldata", globaldata)
 
     with open("preprocessorfile.txt", "w") as text_file:
         for item1 in globaldata:
