@@ -2878,6 +2878,17 @@ def blankPoint(idx, globaldata):
         the_file.write("{} {} \n".format(px, py))
         print("Point added to Blank List")
 
+def blankMultiple(globaldata, conf):
+    points = input("Enter points delimited with space to blank: ")
+    points = map(int, points.split(" "))
+    with open("blank.txt", "a+") as the_file:
+        for idx in points:
+            px, py = getPoint(idx, globaldata)
+            the_file.write("{} {} \n".format(px, py))
+    print("Point added to Blank List")
+    time.sleep(2)
+    clearScreen()
+
 def connectivityCheck(globaldata, badPoints, configData):
     badPointsNew = []
     if badPoints == None:

@@ -77,6 +77,7 @@ def main():
         print("Type 'bad2' to print all points with 2 in it's split connectivity")
         print("Type 'bad1' to print all points with 1 in it's split connectivity")
         print("Type 'split' to output the different type of points in a file")
+        print("Type 'blank' to blank multiple non leaf points")
         print("Type 'config' to start Config Manager")
         print("Type 'plot' to start Plot Manager")
         print("Type 'config' to start Config Manager")
@@ -155,6 +156,9 @@ def main():
         elif ptidx == "config":
             core.clearScreen()
             core.configManager() 
+        elif ptidx == "blank":
+            core.clearScreen()
+            core.blankMultiple(globaldata, conf)
         elif ptidx == "plot":
             core.clearScreen()
             core.plotManager(globaldata, wallpoints)
