@@ -35,6 +35,7 @@ void main_tree(int initial_coord_length, coords_t *coords_list, coords_t *adapte
     int i = 0; // The iteration variable for this function
     int j = 0;
 
+    printf("\n Conducting Point Insertion");
     for (i = 0; i < initial_coord_length; i++) // Inserting points into the tree one-by-one
     {
         insertion_success = quadtree_insert(tree, coords_list[i].x, coords_list[i].y);
@@ -51,6 +52,7 @@ void main_tree(int initial_coord_length, coords_t *coords_list, coords_t *adapte
 
     if(foreign_flag != 0)
     {
+        printf("\n Centroidifying | Foreign Flag !0 ");
         centroidify(tree->root, shape_list);
     }
 
@@ -72,6 +74,7 @@ void main_tree(int initial_coord_length, coords_t *coords_list, coords_t *adapte
 
     if(hills_and_valleys_block_flag == 0)
     {
+        printf("\n Hills & Valleys | Hill & Valleys Flag !0 ");
         quadtree_valleywalk(tree->root, descent_valley, ascent);
         quadtree_hillwalk(tree->root, descent_hill, ascent);
     }
@@ -96,12 +99,14 @@ void main_tree(int initial_coord_length, coords_t *coords_list, coords_t *adapte
     // quadtree_refinementwalk(tree->root, descent_refinement, ascent);
     // quadtree_refinementwalk(tree->root, descent_refinement, ascent);
 
-    quadtree_walk(tree->root, descent, ascent);
+    printf("\n Output.txt Creation | Currently Commented Out");
+    // quadtree_walk(tree->root, descent, ascent);
     printf("\nMax Depth of tree is %d", maxDepth(tree->root));
 
     // Adaptation section
     if(adapted_line_count != 0)
     {
+        printf("\n Inside the Adaptation Section");
         int derefine_counter = 0;
         quadtree_node_t *refined_node = NULL;
 
@@ -217,7 +222,7 @@ void main_tree(int initial_coord_length, coords_t *coords_list, coords_t *adapte
             }
         }
 
-        printf("\nNeighbour file creation operations have started.");
+        printf("\nNeighbour file creation operations have started [In adaptation Branch].");
 
         newoutputfile = 1;  // Clean file and write new generated files
         newneighboursetfile = 1; // Write the fresh-er version of neighbours
@@ -229,7 +234,7 @@ void main_tree(int initial_coord_length, coords_t *coords_list, coords_t *adapte
     }
     else
     {
-        printf("\nNeighbour file creation operations have started for base.");
+        printf("\nNeighbour file creation operations have started for base [In non-adaptation Branch].");
         quadtree_neighbourset(tree->root);
         // To get number of neighbours of last point
         neighbouroutput(1, "neighbour.txt", 1000, 1000, 1000, 1000);
