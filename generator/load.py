@@ -10,15 +10,15 @@ log.addHandler(logging.StreamHandler())
 def loadWall(geometrydata,hashtable,globaldata,idf):
     log.info("Beginning Wall Point Processing")
     wallpoint = []
-
-    index = len(hashtable)
+    index = len(hashtable) + 1
     startpt = index
     lastpt = len(globaldata) + len(geometrydata)
     for i in range(len(geometrydata)):
         xcord = float(geometrydata[i].split()[0])
         ycord = float(geometrydata[i].split()[1])
 
-        hashtable.append(str(xcord) + "," + str(ycord))
+        cords = (xcord, ycord)
+        hashtable[cords] = index
         wallpoint.append(str(xcord) + "," + str(ycord))  # Storing Wallpoints
 
         walldata = []
@@ -95,67 +95,49 @@ def loadInterior(data, hashtable, globaldata, index):
         cleandata.pop(2)
         cleandata.pop(2)
         cleandata.pop(2)
-        cord = (
-            str(float(cleandata[1].split(",")[0]))
-            + ","
-            + str(float(cleandata[1].split(",")[1]))
-        )
+        cord = (float(cleandata[1].split(",")[0]), float(cleandata[1].split(",")[1]))
         try:
             if i != len(data) - 1:
-                val = hashtable.index(cord)
-                cleandata.pop(0)  # Pop index
-                cleandata.pop(-1)  # Pop blank space
-                cleandata.pop(-2)  # Pop number of neighbours
-                cleandata.pop(0)  # Pop blank space
-                cleandata.insert(0, str(int(cleandata[len(cleandata) - 1]) + 2))
-                cleandata.insert(0, leafcond)
-                cleandata.insert(0, bottomcordy)
-                cleandata.insert(0, bottomcordx)
-                cleandata.insert(0, topcordy)
-                cleandata.insert(0, topcordx)
-                cleandata.insert(0, direction)
-                cleandata.insert(0, depth)
-                cleandata.pop(-1)
-                cleandata.append(
-                    str(float(hashtable[int(globaldata[val - 1][3])].split(",")[0]))
-                    + ","
-                    + str(float(hashtable[int(globaldata[val - 1][3])].split(",")[1]))
-                )
-                cleandata.append(
-                    str(float(hashtable[int(globaldata[val - 1][4])].split(",")[0]))
-                    + ","
-                    + str(float(hashtable[int(globaldata[val - 1][4])].split(",")[1]))
-                )
-                globaldata[val - 1] = globaldata[val - 1] + cleandata
+                val = hashtable.get(cord, None)
+                if val is not None:
+                    cleandata.pop(0)  # Pop index
+                    cleandata.pop(-1)  # Pop blank space
+                    cleandata.pop(-2)  # Pop number of neighbours
+                    cleandata.pop(0)  # Pop blank space
+                    cleandata.insert(0, str(int(cleandata[len(cleandata) - 1])))
+                    cleandata.insert(0, leafcond)
+                    cleandata.insert(0, bottomcordy)
+                    cleandata.insert(0, bottomcordx)
+                    cleandata.insert(0, topcordy)
+                    cleandata.insert(0, topcordx)
+                    cleandata.insert(0, direction)
+                    cleandata.insert(0, depth)
+                    cleandata.pop(-1)
+                    globaldata[val - 1] = globaldata[val - 1] + cleandata
+                else:
+                    raise KeyError
             else:
-                val = hashtable.index(cord)
-                cleandata.pop(0)
-                cleandata.pop(-2)
-                cleandata.pop(0)
-                cleandata.insert(0, str(int(cleandata[len(cleandata) - 1]) + 2))
-                cleandata.insert(0, leafcond)
-                cleandata.insert(0, bottomcordy)
-                cleandata.insert(0, bottomcordx)
-                cleandata.insert(0, topcordy)
-                cleandata.insert(0, topcordx)
-                cleandata.insert(0, direction)
-                cleandata.insert(0, depth)
-                cleandata.pop(-1)
-                cleandata.append(
-                    str(float(hashtable[int(globaldata[val - 1][3])].split(",")[0]))
-                    + ","
-                    + str(float(hashtable[int(globaldata[val - 1][3])].split(",")[1]))
-                )
-                cleandata.append(
-                    str(float(hashtable[int(globaldata[val - 1][4])].split(",")[0]))
-                    + ","
-                    + str(float(hashtable[int(globaldata[val - 1][4])].split(",")[1]))
-                )
-                globaldata[val - 1] = globaldata[val - 1] + cleandata
-        except:
+                val = hashtable.get(cord, None)
+                if val is not None:
+                    cleandata.pop(0)
+                    cleandata.pop(-2)
+                    cleandata.pop(0)
+                    cleandata.insert(0, str(int(cleandata[len(cleandata) - 1])))
+                    cleandata.insert(0, leafcond)
+                    cleandata.insert(0, bottomcordy)
+                    cleandata.insert(0, bottomcordx)
+                    cleandata.insert(0, topcordy)
+                    cleandata.insert(0, topcordx)
+                    cleandata.insert(0, direction)
+                    cleandata.insert(0, depth)
+                    cleandata.pop(-1)
+                    globaldata[val - 1] = globaldata[val - 1] + cleandata
+                else:
+                    raise KeyError
+        except KeyError:
             if len(cleandata) > 4:
                 if i != len(data) - 1:
-                    hashtable.append(cord)
+                    hashtable[cord] = index + 1
                     cleandata.pop(0)
                     cleandata.pop(-1)
                     cleandata.pop(-2)
@@ -179,13 +161,13 @@ def loadInterior(data, hashtable, globaldata, index):
                     cleandata.insert(0, 1)
                     cleandata.insert(0, 0)
                     cleandata.insert(0, 0)
-                    cleandata.insert(0, cord.split(",")[1])
-                    cleandata.insert(0, cord.split(",")[0])
-                    cleandata.insert(0, index)
+                    cleandata.insert(0, cord[1])
+                    cleandata.insert(0, cord[0])
+                    cleandata.insert(0, index + 1)
                     index += 1
                     globaldata.append(cleandata)
                 else:
-                    hashtable.append(cord)
+                    hashtable[cord] = index + 1
                     cleandata.pop(0)
                     cleandata.pop(-2)
                     cleandata.pop(0)
@@ -208,9 +190,9 @@ def loadInterior(data, hashtable, globaldata, index):
                     cleandata.insert(0, 1)
                     cleandata.insert(0, 0)
                     cleandata.insert(0, 0)
-                    cleandata.insert(0, cord.split(",")[1])
-                    cleandata.insert(0, cord.split(",")[0])
-                    cleandata.insert(0, index)
+                    cleandata.insert(0, cord[1])
+                    cleandata.insert(0, cord[0])
+                    cleandata.insert(0, index + 1)
                     index += 1
                     globaldata.append(cleandata)
             else:

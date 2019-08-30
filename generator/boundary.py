@@ -3,11 +3,11 @@ from misc import *
 
 def detectOuter(hashtable, globaldata):
     print("Beginning Left and Right Detection of Outer Points")
-    biggestxy = getBiggestXBiggestY(hashtable[1:])
-    smallestxy = getSmallestXSmallestY(hashtable[1:])
-    smallestxbiggesty = getSmallestXBiggestY(hashtable[1:])
-    biggestxsmallesty = getBiggestXSmallestY(hashtable[1:])
-    startindex = hashtable.index(biggestxy) - 1
+    biggestxy = getBiggestXBiggestY(list(hashtable.keys()))
+    smallestxy = getSmallestXSmallestY(list(hashtable.keys()))
+    smallestxbiggesty = getSmallestXBiggestY(list(hashtable.keys()))
+    biggestxsmallesty = getBiggestXSmallestY(list(hashtable.keys()))
+    startindex = hashtable.get(biggestxy) - 1
     currentstatus = 1
     currentcord = biggestxy
     previouscord = biggestxy
@@ -15,19 +15,17 @@ def detectOuter(hashtable, globaldata):
     count = 0
     while True:
         count += 1
-        currentneighbours = getNeighbours(hashtable.index(currentcord) - 1, globaldata)
+        currentneighbours = getNeighbours(hashtable.get(currentcord) - 1, globaldata)
+        # print(currentneighbours)
         if currentstatus == 1:
             currentneighbours = getNeighboursDirectional(
                 1, currentcord, currentneighbours
             )
-            try:
-                leftcord = getFarthestPoint(currentneighbours)
-            except Exception:
-                None
+            leftcord = getFarthestPoint(currentneighbours)
             if currentcord == smallestxbiggesty:
                 currentstatus += 1
                 # Switch Direction to bottom
-            startindex = hashtable.index(currentcord) - 1
+            startindex = hashtable.get(currentcord) - 1
         elif currentstatus == 2:
             currentneighbours = getNeighboursDirectional(
                 2, currentcord, currentneighbours
@@ -39,7 +37,7 @@ def detectOuter(hashtable, globaldata):
             if currentcord == smallestxy:
                 currentstatus += 1
                 # Switch Direction to bottom
-            startindex = hashtable.index(currentcord) - 1
+            startindex = hashtable.get(currentcord) - 1
         elif currentstatus == 3:
             currentneighbours = getNeighboursDirectional(
                 3, currentcord, currentneighbours
@@ -51,7 +49,7 @@ def detectOuter(hashtable, globaldata):
             if currentcord == biggestxsmallesty:
                 currentstatus += 1
                 # Switch Direction to bottom
-            startindex = hashtable.index(currentcord) - 1
+            startindex = hashtable.get(currentcord) - 1
         elif currentstatus == 4:
             currentneighbours = getNeighboursDirectional(
                 4, currentcord, currentneighbours
@@ -62,10 +60,10 @@ def detectOuter(hashtable, globaldata):
                 None
             if currentcord == biggestxy:
                 globaldata = updateRight(
-                    hashtable.index(biggestxy) - 1, globaldata, previouscord
+                    hashtable.get(biggestxy) - 1, globaldata, previouscord
                 )
                 break
-            startindex = hashtable.index(currentcord) - 1
+            startindex = hashtable.get(currentcord) - 1
         globaldata = updateRight(startindex, globaldata, previouscord)
         globaldata = updateFlag(startindex, globaldata, 2)
         globaldata = updateLeft(startindex, globaldata, leftcord)

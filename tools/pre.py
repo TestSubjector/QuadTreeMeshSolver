@@ -39,6 +39,7 @@ def main():
     else:
         globaldata.insert(0,"start")
 
+    globaldata = core.addLeftRightPoints(globaldata)
     globaldata = core.cleanNeighbours(globaldata)
     wallpoints = core.getWallPointArray(globaldata)
     wallcount = str(wallpoints)
@@ -46,7 +47,7 @@ def main():
     wallpointsData = core.generateWallPolygons(wallpoints)
 
     log.info("Running Non Aero Checks")
-    globaldata = core.checkAeroGlobal2(globaldata,wallpointsData,wallcount)
+    globaldata = core.checkAeroGlobal2(globaldata, wallpointsData, wallcount)
 
     log.info("Generating Polyfile data")
     core.generateOutput(globaldata, wallpoints, wallpointsData)
