@@ -157,6 +157,7 @@ void main_tree(int initial_coord_length, coords_t *coords_list, coords_t *adapte
                     quadtree_valleywalk(tree->root, descent_valley, ascent);
                     quadtree_hillwalk(tree->root, descent_hill, ascent);
                 }
+                free(leaf_array);
                 continue;
             }
 
@@ -227,14 +228,15 @@ void main_tree(int initial_coord_length, coords_t *coords_list, coords_t *adapte
         newoutputfile = 1;  // Clean file and write new generated files
         newneighboursetfile = 1; // Write the fresh-er version of neighbours
         serial_number = 1;
-        quadtree_walk(tree->root, descent, ascent);
+        printf("\n Output.txt Creation | Currently Commented Out");
+        // quadtree_walk(tree->root, descent, ascent);
         quadtree_neighbourset(tree->root);
         // To get number of neighbours of last point
         neighbouroutput(1, "neighbour.txt", 1000, 1000, 1000, 1000);
     }
     else
     {
-        printf("\nNeighbour file creation operations have started for base [In non-adaptation Branch].");
+        printf("\nNeighbour file creation operations have started.[In non-adaptation Branch].");
         quadtree_neighbourset(tree->root);
         // To get number of neighbours of last point
         neighbouroutput(1, "neighbour.txt", 1000, 1000, 1000, 1000);
@@ -268,6 +270,7 @@ int main(int argc, char *argv[])
         exit(0);
     }
 
+    printf("\n Reading main file");
     char *filename = argv[1];                      // This will be the file from which the input is taken
     line_count = fileinput(coords_list, filename); // Receives total number of input points
 
@@ -277,9 +280,12 @@ int main(int argc, char *argv[])
         printf("\n ERROR : Memory allocation to adapted_list was unsuccessful");
         exit(0);
     }
+
+    printf("\n Reading adapted file");
     char *adapted_filename = argv[2];
     adapted_line_count = adaptation_fileinput(adapted_list, adapted_filename);
 
+    printf("\n Reading shape file");
     char *shape_filename = argv[3];
     shape_line_count = fileinput(shape_list, shape_filename);
 
@@ -290,6 +296,7 @@ int main(int argc, char *argv[])
         exit(0);
     }
 
+    printf("\n Reading non_leaf blanking file");
     char *non_leaf_blank_filename = argv[4];
     non_leaf_blank_line_count = fileinput(non_leaf_blank_list, non_leaf_blank_filename);
 

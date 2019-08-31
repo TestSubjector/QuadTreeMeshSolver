@@ -14,7 +14,7 @@ int fileinput(coords_t *coords_list, char *filename)
     int local_line_count = 0;
 
     FILE *coordFile = fopen(filename, "r");
-
+    printf("\n Reading file");
     // Take x & y input from each line and store in coords_list
     while (getline(&line, &n, coordFile) != -1 && local_line_count < MAX)
     {
@@ -32,6 +32,7 @@ int fileinput(coords_t *coords_list, char *filename)
         printf("\n ERROR - Input file stream didn't close properly");
         exit(1);
     }
+    printf("\n File has been read");
     free(line);
     return local_line_count;
     // Returns total number of input points
