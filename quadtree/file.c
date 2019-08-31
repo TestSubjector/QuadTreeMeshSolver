@@ -16,10 +16,15 @@ int fileinput(coords_t *coords_list, char *filename)
     FILE *coordFile = fopen(filename, "r");
     printf("\n Reading file");
     // Take x & y input from each line and store in coords_list
-    while (getline(&line, &n, coordFile) != -1 && local_line_count < MAX)
+    int items;
+    do
     {
-        int items = sscanf(line, "%lf %lf", &coords_list[local_line_count].x,
+        items = fscanf(coordFile, "%lf %lf", &coords_list[local_line_count].x,
                            &coords_list[local_line_count].y);
+        if (items == EOF)
+        {
+            break;
+        }
         if (items != 2)
         {
             printf("\n ERROR : Input file does not have correct coordinate format");
@@ -27,7 +32,8 @@ int fileinput(coords_t *coords_list, char *filename)
         }
         local_line_count++;
     }
-    if(fclose(coordFile) != 0)
+    while(items != EOF);
+    if (fclose(coordFile) != 0)
     {
         printf("\n ERROR - Input file stream didn't close properly");
         exit(1);
@@ -55,10 +61,15 @@ int adaptation_fileinput(coords_t *adapted_list, char *adapted_filename)
     //     local_line_count++;
     // }
 
-    while (getline(&adapted_line, &adapted_n, adapted_coordFile) != -1 && local_line_count < MAX)
+    int items;
+    do
     {
-        int items = sscanf(adapted_line, "%lf %lf", &adapted_list[local_line_count].x,
+        int items = fscanf(adapted_coordFile, "%lf %lf", &adapted_list[local_line_count].x,
                            &adapted_list[local_line_count].y);
+        if (items == EOF)
+        {
+            break;
+        }
         if (items != 2)
         {
             printf("\n ERROR : Adapted file does not have correct coordinate format");
@@ -67,6 +78,7 @@ int adaptation_fileinput(coords_t *adapted_list, char *adapted_filename)
         // printf("\n %lf, %lf", adapted_list[local_line_count].x, adapted_list[local_line_count].y);
         local_line_count++;
     }
+    while(items != EOF);
 
     fclose(adapted_coordFile);
     if(local_line_count == 0)
