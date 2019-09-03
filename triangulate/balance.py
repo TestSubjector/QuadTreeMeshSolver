@@ -74,12 +74,14 @@ def triangleBalance2(globaldata, wallpoints, configData, badPoints):
     WALL_THRESHOLD = int(configData["triangulate"]["leftright"]["wallThreshold"])
     AGGRESSIVE_MAX_NEIGHBOURS = -int(configData["triangulate"]["leftright"]["aggressiveMaxNeighbours"])
     NORMAL_MAX_NEIGHBOURS = -int(configData["triangulate"]["leftright"]["normalMaxNeighbours"])
+    previousType = 0
     for _,idx in enumerate(tqdm(badPoints)):
         if idx > 0:
             flag = int(core.getFlag(idx,globaldata))
-            xposf,xnegf,yposf,ynegf = core.getFlags(idx,globaldata)
+            xposf,xnegf,_,_ = core.getFlags(idx,globaldata)
             ## Wall Points
             if flag == 0:
+                previousType = 0
                 if xposf == 1:
                     nbhs = core.convertIndexToPoints(core.getNeighbours(idx,globaldata),globaldata)
                     # if idx not in core.getWallEndPoints(globaldata):
@@ -108,17 +110,21 @@ def triangleBalance2(globaldata, wallpoints, configData, badPoints):
                         nbhs = nbhs + core.getLeftandRightPoint(idx, globaldata)
                     nbhs = list(set(nbhs))
                     globaldata = fixWallXNegLeftRight(idx,globaldata,nbhs,NORMAL_MAX_NEIGHBOURS,WALL_THRESHOLD,False,wallpoints, configData)
+            elif previousType == 0:
+                break
     return globaldata
 
 def triangleBalance3(globaldata, wallpoints, configData, badPoints):
     WALL_THRESHOLD = int(configData["triangulate"]["leftright"]["wallThreshold"])
     AGGRESSIVE_MAX_NEIGHBOURS = -int(configData["triangulate"]["leftright"]["aggressiveMaxNeighbours"])
+    previousType = 0
     for _,idx in enumerate(tqdm(badPoints)):
         if idx > 0:
             flag = int(core.getFlag(idx,globaldata))
-            xposf,xnegf,yposf,ynegf = core.getFlags(idx,globaldata)
+            xposf,xnegf,_,_ = core.getFlags(idx,globaldata)
             ## Wall Points
             if flag == 0:
+                previousType = 0
                 if xposf == 1 or xposf == 2:
                     nbhs = core.convertIndexToPoints(core.getNeighbours(idx,globaldata),globaldata)
                     # if idx not in core.getWallEndPoints(globaldata):
@@ -133,6 +139,8 @@ def triangleBalance3(globaldata, wallpoints, configData, badPoints):
                         nbhs = nbhs + core.getLeftandRightPoint(idx, globaldata)
                     nbhs = list(set(nbhs))
                     globaldata = fixWallXNegGeneral(idx,globaldata,nbhs,AGGRESSIVE_MAX_NEIGHBOURS,WALL_THRESHOLD,True,wallpoints, configData)
+            elif previousType == 0:
+                    break
     return globaldata
 
 def convertTupleToCord(tupledata):

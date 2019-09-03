@@ -2889,31 +2889,35 @@ def blankMultiple(globaldata, conf):
     time.sleep(2)
     clearScreen()
 
-def connectivityCheck(globaldata, badPoints, configData):
+def connectivityCheck(globaldata, badPoints, configData, quick=False):
     badPointsNew = []
     if badPoints == None:
         badPoints = []
     if len(badPoints) == 0:
         for idx in trange(len(globaldata)):
-            if(idx >0):
-                if(getFlag(idx,globaldata) == 0 or getFlag(idx,globaldata) == 2):
+            if(idx > 0):
+                if getFlag(idx,globaldata) == 0 or getFlag(idx,globaldata) == 2:
                     result = connectivityCheckWallandOuterPoint(idx,globaldata, configData)
                     if 1 in result or 2 in result:
                         badPointsNew.append(idx)
                     globaldata = setFlagsFromList(idx,globaldata,result)
                 else:
+                    if quick == True:
+                        break
                     result = connectivityCheckInteriorPoint(idx,globaldata, configData)
                     if 1 in result or 2 in result:
                         badPointsNew.append(idx)
                     globaldata = setFlagsFromList(idx,globaldata,result)
     else:
         for idx in tqdm(badPoints):
-            if(getFlag(idx,globaldata) == 0 or getFlag(idx,globaldata) == 2):
+            if getFlag(idx,globaldata) == 0 or getFlag(idx,globaldata) == 2:
                 result = connectivityCheckWallandOuterPoint(idx,globaldata, configData)
                 if 1 in result or 2 in result:
                     badPointsNew.append(idx)
                 globaldata = setFlagsFromList(idx,globaldata,result)
             else:
+                if quick == True:
+                    break
                 result = connectivityCheckInteriorPoint(idx,globaldata, configData)
                 if 1 in result or 2 in result:
                     badPointsNew.append(idx)

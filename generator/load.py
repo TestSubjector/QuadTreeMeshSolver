@@ -14,65 +14,68 @@ def loadWall(geometrydata,hashtable,globaldata,idf):
     startpt = index
     lastpt = len(globaldata) + len(geometrydata)
     for i in range(len(geometrydata)):
-        xcord = float(geometrydata[i].split()[0])
-        ycord = float(geometrydata[i].split()[1])
+        try:
+            xcord = float(geometrydata[i].split()[0])
+            ycord = float(geometrydata[i].split()[1])
 
-        cords = (xcord, ycord)
-        hashtable[cords] = index
-        wallpoint.append(str(xcord) + "," + str(ycord))  # Storing Wallpoints
+            cords = (xcord, ycord)
+            hashtable[cords] = index
+            wallpoint.append(str(xcord) + "," + str(ycord))  # Storing Wallpoints
 
-        walldata = []
-        # First Point
-        if index == startpt:
-            walldata.append(index)
-            walldata.insert(1, xcord)
-            walldata.insert(2, ycord)
-            walldata.insert(3, lastpt)
-            walldata.insert(4, index + 1)
-            walldata.insert(5, 0)
-            walldata.insert(6, idf)
-            walldata.insert(7, 0)
-            walldata.insert(8, 0)
-            walldata.insert(9, 0)
-            walldata.insert(10, 0)
-            walldata.insert(11, 0)
-            walldata.insert(12, 1)
-            globaldata.append(walldata)
-            index += 1
-        # Last Point
-        elif index == lastpt:
-            walldata.append(index)
-            walldata.insert(1, xcord)
-            walldata.insert(2, ycord)
-            walldata.insert(3, startpt + len(geometrydata) - 2)
-            walldata.insert(4, startpt)
-            walldata.insert(5, 0)
-            walldata.insert(6, idf)
-            walldata.insert(7, 0)
-            walldata.insert(8, 0)
-            walldata.insert(9, 0)
-            walldata.insert(10, 0)
-            walldata.insert(11, 0)
-            walldata.insert(12, 1)
-            globaldata.append(walldata)
-            index += 1
-        # Other Points
-        else:
-            walldata.append(index)
-            walldata.insert(1, xcord)
-            walldata.insert(2, ycord)
-            walldata.insert(3, index - 1)
-            walldata.insert(4, index + 1)
-            walldata.insert(5, 0)
-            walldata.insert(6, idf)
-            walldata.insert(7, 0)
-            walldata.insert(8, 0)
-            walldata.insert(9, 0)
-            walldata.insert(10, 0)
-            walldata.insert(11, 0)
-            walldata.insert(12, 1)
-            globaldata.append(walldata)
-            index += 1
+            walldata = []
+            # First Point
+            if index == startpt:
+                walldata.append(index)
+                walldata.insert(1, xcord)
+                walldata.insert(2, ycord)
+                walldata.insert(3, lastpt)
+                walldata.insert(4, index + 1)
+                walldata.insert(5, 0)
+                walldata.insert(6, idf)
+                walldata.insert(7, 0)
+                walldata.insert(8, 0)
+                walldata.insert(9, 0)
+                walldata.insert(10, 0)
+                walldata.insert(11, 0)
+                walldata.insert(12, 1)
+                globaldata.append(walldata)
+                index += 1
+            # Last Point
+            elif index == lastpt:
+                walldata.append(index)
+                walldata.insert(1, xcord)
+                walldata.insert(2, ycord)
+                walldata.insert(3, startpt + len(geometrydata) - 2)
+                walldata.insert(4, startpt)
+                walldata.insert(5, 0)
+                walldata.insert(6, idf)
+                walldata.insert(7, 0)
+                walldata.insert(8, 0)
+                walldata.insert(9, 0)
+                walldata.insert(10, 0)
+                walldata.insert(11, 0)
+                walldata.insert(12, 1)
+                globaldata.append(walldata)
+                index += 1
+            # Other Points
+            else:
+                walldata.append(index)
+                walldata.insert(1, xcord)
+                walldata.insert(2, ycord)
+                walldata.insert(3, index - 1)
+                walldata.insert(4, index + 1)
+                walldata.insert(5, 0)
+                walldata.insert(6, idf)
+                walldata.insert(7, 0)
+                walldata.insert(8, 0)
+                walldata.insert(9, 0)
+                walldata.insert(10, 0)
+                walldata.insert(11, 0)
+                walldata.insert(12, 1)
+                globaldata.append(walldata)
+                index += 1
+        except:
+            pass
     log.info("Wall Point Processed")
     return hashtable, wallpoint, globaldata
 
@@ -224,7 +227,10 @@ def wallFloat(walldata):
     result = []
     for itm in walldata:
         itmdata = itm.split("\t")
-        result.append([float(itmdata[0]), float(itmdata[1])])
+        try:
+            result.append([float(itmdata[0]), float(itmdata[1])])
+        except:
+            pass
     return result
 
 
