@@ -151,13 +151,11 @@ void main_tree(int initial_coord_length, coords_t *coords_list, coords_t *adapte
                         i -= 400;
                     }
                 }
-
                 if(hills_and_valleys_block_flag == 0)
                 {
                     quadtree_valleywalk(tree->root, descent_valley, ascent);
                     quadtree_hillwalk(tree->root, descent_hill, ascent);
                 }
-                free(leaf_array);
                 continue;
             }
 
