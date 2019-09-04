@@ -156,15 +156,15 @@ void quadtree_refinementwalk(quadtree_node_t *root,
 
 void descent_refinement(quadtree_node_t *node);
 
-void find_neighbourset(int patharray[41], quadtree_node_t *node);
+void find_neighbourset(int patharray[41], quadtree_node_t *node, FILE *fp);
 
-void balance_neighboursset(int patharray[41], int ancestor_pos, int direction);
+void balance_neighboursset(int patharray[41], int ancestor_pos, int direction, FILE *fp);
 
 // File reading for neighbourset
 
 void neighbouroutput(FILE *fp, double xcord, double ycord, int node_height, int direction);
 
-void neighbourset(int append, char *filename, double xcord, double ycord);
+void neighbourset(FILE *fp, double xcord, double ycord);
 
 // To prevent a point stating itself as a neighbour
 
@@ -179,13 +179,13 @@ int adapt(quadtree_t *tree, quadtree_node_t *node, double x, double y);
 
 extern int checker;
 
-void eastern_diagonal_neighbourset(quadtree_node_t *node, int mainnode_direction);
+void eastern_diagonal_neighbourset(quadtree_node_t *node, int mainnode_direction, FILE *fp);
 
-void western_diagonal_neighbourset(quadtree_node_t *node, int mainnode_direction);
+void western_diagonal_neighbourset(quadtree_node_t *node, int mainnode_direction, FILE *fp);
 
-void northern_diagonal_neighbourset(quadtree_node_t *root, int mainnode_direction);
+void northern_diagonal_neighbourset(quadtree_node_t *root, int mainnode_direction, FILE *fp);
 
-void southern_diagonal_neighbourset(quadtree_node_t *node, int mainnode_direction);
+void southern_diagonal_neighbourset(quadtree_node_t *node, int mainnode_direction, FILE *fp);
 
 extern coords_t *adapted_list;
 extern int adapted_line_count;
@@ -235,8 +235,8 @@ void hill_derefinement(quadtree_node_t *hill_node, int flag);
 
 int hills_and_valleys_block_flag;
 
-void non_leaf_neighbours(quadtree_node_t *node);
-void write_quadtree_node_to_file(quadtree_node_t *node, char *filename);
+void non_leaf_neighbours(quadtree_node_t *node, FILE *fp);
+void write_quadtree_node_to_file(quadtree_node_t *node, FILE *fp);
 
 int only_leaf_flag;
 

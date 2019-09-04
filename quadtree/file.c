@@ -241,7 +241,7 @@ void extraoutput(FILE *fp, double nw_bound_xcord, double nw_bound_ycord, double 
     // fclose(fp);
 }
 
-void neighbourset(int append, char *filename, double xcord, double ycord)
+void neighbourset(FILE *fp, double xcord, double ycord)
 {
     // The if condition checks for blanking points
     char xcordstr[25];
@@ -250,7 +250,7 @@ void neighbourset(int append, char *filename, double xcord, double ycord)
     gcvt(ycord, 24, ycordstr);
     // double_to_char(xcord,xcordstr);
     // double_to_char(ycord,ycordstr);
-    fp = fopen(filename, "w");
+    // FILE *fp = fopen(filename, "w");
     if (fp == NULL)
     {
         printf("\n ERROR : File creation of neighbourset data was unsuccessful");
@@ -267,14 +267,14 @@ void neighbourset(int append, char *filename, double xcord, double ycord)
             fputs("\t", fp);
         }
     }
-    fclose(fp);
+    // fclose(fp);
 }
 
-void write_quadtree_node_to_file(quadtree_node_t *node, char *filename)
+void write_quadtree_node_to_file(quadtree_node_t *node, FILE *fp)
 {
     if (quadtree_node_isleaf(node))
     {
-        neighbourset(1, filename, node->point->x, node->point->y);
+        neighbourset(fp, node->point->x, node->point->y);
     }
     else if ((quadtree_node_isempty(node)))
     {
@@ -282,7 +282,7 @@ void write_quadtree_node_to_file(quadtree_node_t *node, char *filename)
         double ycord = (node->bounds->nw->y + node->bounds->se->y) / 2;
         if (pnpoly(shape_line_count, shape_list, xcord, ycord))
         {
-            neighbourset(1, filename, xcord, ycord);
+            neighbourset(fp, xcord, ycord);
         }
     }
 }
