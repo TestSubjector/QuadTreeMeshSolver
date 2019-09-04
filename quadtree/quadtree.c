@@ -349,34 +349,34 @@ void descent_leaf(quadtree_node_t *node, quadtree_node_t *leaf_array)
 }
 
 // Finding all the leaves one by one for neighbour set
-void quadtree_neighbourwalk(quadtree_node_t *root, void (*descent_node)(quadtree_node_t *node),
-                            void (*ascent)(quadtree_node_t *node))
+void quadtree_neighbourwalk(quadtree_node_t *root, void (*descent_node)(quadtree_node_t *node, FILE *fp),
+                            void (*ascent)(quadtree_node_t *node), FILE *fp)
 {
-    (*descent_node)(root);
+    (*descent_node)(root, fp);
     if (root->nw != NULL)
     {
-        quadtree_neighbourwalk(root->nw, descent_node, ascent);
+        quadtree_neighbourwalk(root->nw, descent_node, ascent, fp);
     }
     if (root->ne != NULL)
     {
-        quadtree_neighbourwalk(root->ne, descent_node, ascent);
+        quadtree_neighbourwalk(root->ne, descent_node, ascent, fp);
     }
     if (root->sw != NULL)
     {
-        quadtree_neighbourwalk(root->sw, descent_node, ascent);
+        quadtree_neighbourwalk(root->sw, descent_node, ascent, fp);
     }
     if (root->se != NULL)
     {
-        quadtree_neighbourwalk(root->se, descent_node, ascent);
+        quadtree_neighbourwalk(root->se, descent_node, ascent, fp);
     }
     (*ascent)(root);
 }
 
 // The completing funtion for 'quadtree_neighbourwalk'
 // It will fed all the nodes present in the tree and find neighbourset for the leaves
-void descent_node(quadtree_node_t *node)
+void descent_node(quadtree_node_t *node, FILE *fp)
 {
-    char *filename = "neighbour.txt";
+    // char *filename = "neighbour.txt";
     if (quadtree_node_isempty(node)) // For empty leaf
     {
         double xcord = (node->bounds->nw->x + node->bounds->se->x) / 2;
@@ -390,17 +390,8 @@ void descent_node(quadtree_node_t *node)
         }
         if (pnpoly(shape_line_count, shape_list, xcord, ycord))
         {
-            if (newneighboursetfile == 1)
-            {
-                neighbouroutput(0, filename, xcord, ycord, node->height, node->direction);
-                newneighboursetfile = 0;
-            }
-            else
-            {
-                neighbouroutput(1, filename, xcord, ycord, node->height, node->direction);
-            }
-            extraoutput(1, filename,
-                        node->bounds->nw->x, node->bounds->nw->y,
+            neighbouroutput(fp, xcord, ycord, node->height, node->direction);
+            extraoutput(fp, node->bounds->nw->x, node->bounds->nw->y,
                         node->bounds->se->x, node->bounds->se->y, 0);
             // printf("\n %lf %lf has neighbours\t", xcord, ycord);
             find_neighbourset(common_treeroute(tree->root, node), node);
@@ -411,17 +402,9 @@ void descent_node(quadtree_node_t *node)
         checker = 0;
         main_coord.x = node->point->x;
         main_coord.y = node->point->y;
-        if (newneighboursetfile == 1)
-        {
-            neighbouroutput(0, filename, node->point->x, node->point->y, node->height, node->direction);
-            newneighboursetfile = 0;
-        }
-        else
-        {
-            neighbouroutput(1, filename, node->point->x, node->point->y, node->height, node->direction);
-        }
-        extraoutput(1, filename,
-                    node->bounds->nw->x, node->bounds->nw->y,
+
+        neighbouroutput(fp, node->point->x, node->point->y, node->height, node->direction);
+        extraoutput(fp, node->bounds->nw->x, node->bounds->nw->y,
                     node->bounds->se->x, node->bounds->se->y, 0);
         // printf("\n %lf %lf has neighbours\t", node->point->x, node->point->y);
         find_neighbourset(common_treeroute(tree->root, node), node);
@@ -436,17 +419,9 @@ void descent_node(quadtree_node_t *node)
         if (pnpoly(shape_line_count, shape_list, xcord, ycord) && flag == 0 &&
             non_leaf_blank(non_leaf_blank_line_count, non_leaf_blank_list, xcord, ycord))
         {
-            if (newneighboursetfile == 1)
-            {
-                neighbouroutput(0, filename, xcord, ycord, node->height, node->direction);
-                newneighboursetfile = 0;
-            }
-            else
-            {
-                neighbouroutput(1, filename, xcord, ycord, node->height, node->direction);
-            }
-            extraoutput(1, filename,
-                        node->bounds->nw->x, node->bounds->nw->y,
+
+            neighbouroutput(fp, xcord, ycord, node->height, node->direction);
+            extraoutput(fp, node->bounds->nw->x, node->bounds->nw->y,
                         node->bounds->se->x, node->bounds->se->y, 1);
             // printf("\n %lf %lf has neighbours\t", xcord, ycord);
             non_leaf_neighbours(node);

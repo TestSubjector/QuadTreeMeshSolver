@@ -3150,23 +3150,6 @@ void non_leaf_neighbours(quadtree_node_t *node)
     // neighbourset(1, filename, root->point->x, root->point->y);
 }
 
-void write_quadtree_node_to_file(quadtree_node_t *node, char *filename)
-{
-    if (quadtree_node_isleaf(node))
-    {
-        neighbourset(1, filename, node->point->x, node->point->y);
-    }
-    else if ((quadtree_node_isempty(node)))
-    {
-        double xcord = (node->bounds->nw->x + node->bounds->se->x) / 2;
-        double ycord = (node->bounds->nw->y + node->bounds->se->y) / 2;
-        if (pnpoly(shape_line_count, shape_list, xcord, ycord))
-        {
-            neighbourset(1, filename, xcord, ycord);
-        }
-    }
-}
-
 int non_leaf_immediate_neighbours_check(quadtree_node_t *node)
 {
     quadtree_node_t *temp;

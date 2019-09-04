@@ -135,7 +135,7 @@ void fileoutput(int append, char *filename, double xcord, double ycord)
 }
 
 // File output function to calculate valid neighbours for points
-void neighbouroutput(int append, char *filename, double xcord, double ycord, int node_height, int direction)
+void neighbouroutput(FILE *fp, double xcord, double ycord, int node_height, int direction)
 {
     char xcordstr[25];
     char ycordstr[25];
@@ -149,15 +149,15 @@ void neighbouroutput(int append, char *filename, double xcord, double ycord, int
     gcvt(direction, 2, directionstr);
     gcvt(serial_number, 10, serialnumstr);
 
-    FILE *fp = NULL;
-    if (append == 1)
-    {
-        fp = fopen(filename, "a+");
-    }
-    else
-    {
-        fp = fopen(filename, "w"); // Replace the old file with a blank line
-    }
+    // FILE *fp = NULL;
+    // if (append == 1)
+    // {
+    //     fp = fopen(filename, "a+");
+    // }
+    // else
+    // {
+    //      // Replace the old file with a blank line
+    // }
 
     if (fp == NULL)
     {
@@ -198,15 +198,12 @@ void neighbouroutput(int append, char *filename, double xcord, double ycord, int
 
         serial_number++; // Increment the S.No for new point
     }
-    fclose(fp);
+    // fclose(fp);
 }
 
 
 // For on-demand additions to the output files
-void extraoutput(int append, char *filename,
-                    double nw_bound_xcord, double nw_bound_ycord,
-                    double se_bound_xcord, double se_bound_ycord, double flag
-                )
+void extraoutput(FILE *fp, double nw_bound_xcord, double nw_bound_ycord, double se_bound_xcord, double se_bound_ycord, double flag)
 {
     char nw_xcordstr[20];
     char nw_ycordstr[20];
@@ -220,15 +217,15 @@ void extraoutput(int append, char *filename,
     gcvt(se_bound_ycord, 18, se_ycordstr);
     gcvt(flag, 18, flagstr);
 
-    FILE *fp = NULL;
-    if (append == 1)
-    {
-        fp = fopen(filename, "a+");
-    }
-    else
-    {
-        printf("\n Warning: File Type: Problem with developing file format for additional parameters");
-    }
+
+    // if (append == 1)
+    // {
+    //     fp = fopen(filename, "a+");
+    // }
+    // else
+    // {
+    //     printf("\n Warning: File Type: Problem with developing file format for additional parameters");
+    // }
 
     fputs(nw_xcordstr, fp);
     fputs("\t", fp);
@@ -241,7 +238,7 @@ void extraoutput(int append, char *filename,
     fputs(flagstr, fp);
     fputs("\t", fp);
 
-    fclose(fp);
+    // fclose(fp);
 }
 
 void neighbourset(int append, char *filename, double xcord, double ycord)
@@ -253,14 +250,11 @@ void neighbourset(int append, char *filename, double xcord, double ycord)
     gcvt(ycord, 24, ycordstr);
     // double_to_char(xcord,xcordstr);
     // double_to_char(ycord,ycordstr);
-    FILE *fp = NULL;
-    if (append == 1)
+    fp = fopen(filename, "w");
+    if (fp == NULL)
     {
-        fp = fopen(filename, "a+");
-    }
-    else
-    {
-        fp = fopen(filename, "w");
+        printf("\n ERROR : File creation of neighbourset data was unsuccessful");
+        exit(1);
     }
     if (pnpoly(shape_line_count, shape_list, xcord, ycord))
     {
@@ -274,4 +268,21 @@ void neighbourset(int append, char *filename, double xcord, double ycord)
         }
     }
     fclose(fp);
+}
+
+void write_quadtree_node_to_file(quadtree_node_t *node, char *filename)
+{
+    if (quadtree_node_isleaf(node))
+    {
+        neighbourset(1, filename, node->point->x, node->point->y);
+    }
+    else if ((quadtree_node_isempty(node)))
+    {
+        double xcord = (node->bounds->nw->x + node->bounds->se->x) / 2;
+        double ycord = (node->bounds->nw->y + node->bounds->se->y) / 2;
+        if (pnpoly(shape_line_count, shape_list, xcord, ycord))
+        {
+            neighbourset(1, filename, xcord, ycord);
+        }
+    }
 }

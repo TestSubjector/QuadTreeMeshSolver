@@ -143,10 +143,10 @@ extern int shape_line_count;
 void quadtree_neighbourset(quadtree_node_t *root);
 
 void quadtree_neighbourwalk(quadtree_node_t *root,
-                            void (*descent_node)(quadtree_node_t *node),
-                            void (*ascent)(quadtree_node_t *node));
+                            void (*descent_node)(quadtree_node_t *node, FILE *fp),
+                            void (*ascent)(quadtree_node_t *node), FILE *fp);
 
-void descent_node(quadtree_node_t *node);
+void descent_node(quadtree_node_t *node, FILE *fp);
 
 extern quadtree_t *tree;
 
@@ -162,7 +162,7 @@ void balance_neighboursset(int patharray[41], int ancestor_pos, int direction);
 
 // File reading for neighbourset
 
-void neighbouroutput(int append, char *filename, double xcord, double ycord, int node_height, int direction);
+void neighbouroutput(FILE *fp, double xcord, double ycord, int node_height, int direction);
 
 void neighbourset(int append, char *filename, double xcord, double ycord);
 
@@ -215,7 +215,7 @@ int south_ancestor(int patharray[41], int path_size);
 
 int wallpoint_insert_flag;
 
-void extraoutput(int append, char *filename, double nw_bound_xcord, double nw_bound_ycord, double se_bound_xcord, double se_bound_ycord, double flag);
+void extraoutput(FILE *fp, double nw_bound_xcord, double nw_bound_ycord, double se_bound_xcord, double se_bound_ycord, double flag);
 
 coords_t *derefined_list;
 void derefine_fromlist(coords_t *derefined_list, int derefine_counter);
