@@ -88,7 +88,7 @@ outer.txt
 plots/
 quadtree/neighbour.txt
 quadtree/output.text
-
+*.txt
 # sphinx build folder
 _build
 
