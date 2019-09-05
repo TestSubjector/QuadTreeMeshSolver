@@ -239,8 +239,8 @@ void neighbourset(FILE *fp, double xcord, double ycord)
         printf("\n ERROR : File creation of neighbourset data was unsuccessful");
         exit(1);
     }
-    if (pnpoly(shape_line_count, shape_list, xcord, ycord))
-    {
+    // if (pnpoly(shape_line_count, shape_list, xcord, ycord))
+    // {
         neighbour_counter++;
         if (fp != NULL)
         {
@@ -250,7 +250,7 @@ void neighbourset(FILE *fp, double xcord, double ycord)
             // fputs(ycordstr, fp);
             // fputs("\t", fp);
         }
-    }
+    // }
     // fclose(fp);
 }
 
