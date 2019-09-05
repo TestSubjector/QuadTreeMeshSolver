@@ -173,7 +173,7 @@ void neighbouroutput(FILE *fp, double xcord, double ycord, int node_height, int 
         }
         neighbour_counter = 0;
 
-        fprintf(fp, "\t\n%d\t%.17g\t%.17g\t%d\t%d\t",serial_number,xcord,ycord,node_height,direction);
+        fprintf(fp, "\t\n%d\t%.17g,%.17g\t%d\t%d\t",serial_number,xcord,ycord,node_height,direction);
 
         // fputs("\t\n", fp);
         // fputs(serialnumstr, fp);

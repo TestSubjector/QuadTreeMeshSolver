@@ -37,13 +37,13 @@ int pnpoly(int nvert, coords_t *shape_list, double testx, double testy)
         }
     }
 
-    for (i = 0; i < adapted_line_count; i++)
-    {
-        if (adapted_list[i].y == testy && adapted_list[i].x == testx)
-        {
-            return c;
-        }
-    }
+    // for (i = 0; i < adapted_line_count; i++)
+    // {
+    //     if (adapted_list[i].y == testy && adapted_list[i].x == testx)
+    //     {
+    //         return c;
+    //     }
+    // }
 
     for (i = 0, j = nvert - 1; i < nvert; j = i++) // We start from j = nvert-1 to cover the last edge
     {
