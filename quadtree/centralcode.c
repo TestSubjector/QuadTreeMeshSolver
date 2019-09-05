@@ -220,7 +220,7 @@ void main_tree(int initial_coord_length, coords_t *coords_list, coords_t *adapte
                 derefine_counter++;
             }
         }
-
+        printf("\nBlank flags are being placed everywhere");
         printf("\nBlank flags are being placed everywhere");
         quadtree_blankwalk(tree->root, descent_blank, ascent);
         printf("\nNeighbour file creation operations have started [In adaptation Branch].");
@@ -236,6 +236,7 @@ void main_tree(int initial_coord_length, coords_t *coords_list, coords_t *adapte
     }
     else
     {
+        printf("\nBlank flags are being placed everywhere");
         printf("\nBlank flags are being placed everywhere");
         quadtree_blankwalk(tree->root, descent_blank, ascent);
         printf("\nNeighbour file creation operations have started.[In non-adaptation Branch].");

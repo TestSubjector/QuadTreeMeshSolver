@@ -244,7 +244,7 @@ void neighbourset(FILE *fp, double xcord, double ycord)
         neighbour_counter++;
         if (fp != NULL)
         {
-            fprintf(fp, "%.17g\t%.17g\t", xcord, ycord);
+            fprintf(fp, "%.17g,%.17g\t", xcord, ycord);
             // fputs(xcordstr, fp);
             // fputs(",", fp);
             // fputs(ycordstr, fp);
