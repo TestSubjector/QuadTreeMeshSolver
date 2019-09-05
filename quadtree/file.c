@@ -137,27 +137,17 @@ void fileoutput(int append, char *filename, double xcord, double ycord)
 // File output function to calculate valid neighbours for points
 void neighbouroutput(FILE *fp, double xcord, double ycord, int node_height, int direction)
 {
-    char xcordstr[25];
-    char ycordstr[25];
-    char heightstr[25];
-    char directionstr[25];
-    char serialnumstr[25];
-    char neighbourcountstr[25];
-    gcvt(xcord, 24, xcordstr);
-    gcvt(ycord, 24, ycordstr);
-    gcvt(node_height,2, heightstr);
-    gcvt(direction, 2, directionstr);
-    gcvt(serial_number, 10, serialnumstr);
-
-    // FILE *fp = NULL;
-    // if (append == 1)
-    // {
-    //     fp = fopen(filename, "a+");
-    // }
-    // else
-    // {
-    //      // Replace the old file with a blank line
-    // }
+    // char xcordstr[25];
+    // char ycordstr[25];
+    // char heightstr[25];
+    // char directionstr[25];
+    // char serialnumstr[25];
+    // char neighbourcountstr[25];
+    // gcvt(xcord, 24, xcordstr);
+    // gcvt(ycord, 24, ycordstr);
+    // gcvt(node_height,2, heightstr);
+    // gcvt(direction, 2, directionstr);
+    // gcvt(serial_number, 10, serialnumstr);
 
     if (fp == NULL)
     {
@@ -169,32 +159,33 @@ void neighbouroutput(FILE *fp, double xcord, double ycord, int node_height, int 
     {
         // Do nothing
         // printf("Last point counted");
-        gcvt(neighbour_counter, 10, neighbourcountstr);
-        fputs("\t", fp);
-        fputs(neighbourcountstr, fp);
+        fprintf(fp, "\t%d", neighbour_counter);
     }
     // Checks for blanking points i.e points inside the input polygon
     else
     {
         if (neighbour_counter != 0)
         {
-            gcvt(neighbour_counter, 10, neighbourcountstr);
-            fputs("\t", fp);
-            fputs(neighbourcountstr, fp);
+            fprintf(fp, "\t%d", neighbour_counter);
+            // gcvt(neighbour_counter, 10, neighbourcountstr);
+            // fputs("\t", fp);
+            // fputs(neighbourcountstr, fp);
         }
         neighbour_counter = 0;
 
-        fputs("\t\n", fp);
-        fputs(serialnumstr, fp);
-        fputs("\t", fp);
-        fputs(xcordstr, fp);
-        fputs(",", fp);
-        fputs(ycordstr, fp);
-        fputs("\t", fp);
-        fputs(heightstr, fp);
-        fputs("\t", fp);
-        fputs(directionstr, fp);
-        fputs("\t", fp);
+        fprintf(fp, "\t\n%d\t%.17g\t%.17g\t%d\t%d\t",serial_number,xcord,ycord,node_height,direction);
+
+        // fputs("\t\n", fp);
+        // fputs(serialnumstr, fp);
+        // fputs("\t", fp);
+        // fputs(xcordstr, fp);
+        // fputs(",", fp);
+        // fputs(ycordstr, fp);
+        // fputs("\t", fp);
+        // fputs(heightstr, fp);
+        // fputs("\t", fp);
+        // fputs(directionstr, fp);
+        // fputs("\t", fp);
 
         serial_number++; // Increment the S.No for new point
     }
@@ -205,38 +196,30 @@ void neighbouroutput(FILE *fp, double xcord, double ycord, int node_height, int 
 // For on-demand additions to the output files
 void extraoutput(FILE *fp, double nw_bound_xcord, double nw_bound_ycord, double se_bound_xcord, double se_bound_ycord, double flag)
 {
-    char nw_xcordstr[20];
-    char nw_ycordstr[20];
-    char se_xcordstr[20];
-    char se_ycordstr[20];
-    char flagstr[20];
+    // char nw_xcordstr[20];
+    // char nw_ycordstr[20];
+    // char se_xcordstr[20];
+    // char se_ycordstr[20];
+    // char flagstr[20];
 
-    gcvt(nw_bound_xcord, 18, nw_xcordstr);
-    gcvt(nw_bound_ycord, 18, nw_ycordstr);
-    gcvt(se_bound_xcord, 18, se_xcordstr);
-    gcvt(se_bound_ycord, 18, se_ycordstr);
-    gcvt(flag, 18, flagstr);
+    // gcvt(nw_bound_xcord, 18, nw_xcordstr);
+    // gcvt(nw_bound_ycord, 18, nw_ycordstr);
+    // gcvt(se_bound_xcord, 18, se_xcordstr);
+    // gcvt(se_bound_ycord, 18, se_ycordstr);
+    // gcvt(flag, 18, flagstr);
 
 
-    // if (append == 1)
-    // {
-    //     fp = fopen(filename, "a+");
-    // }
-    // else
-    // {
-    //     printf("\n Warning: File Type: Problem with developing file format for additional parameters");
-    // }
-
-    fputs(nw_xcordstr, fp);
-    fputs("\t", fp);
-    fputs(nw_ycordstr, fp);
-    fputs("\t", fp);
-    fputs(se_xcordstr, fp);
-    fputs("\t", fp);
-    fputs(se_ycordstr, fp);
-    fputs("\t", fp);
-    fputs(flagstr, fp);
-    fputs("\t", fp);
+    fprintf(fp, "%.17g\t%.17g\t%.17g\t%.17g\t%.17g\t", nw_bound_xcord, nw_bound_ycord, se_bound_xcord, se_bound_ycord, flag);
+    // fputs(nw_xcordstr, fp);
+    // fputs("\t", fp);
+    // fputs(nw_ycordstr, fp);
+    // fputs("\t", fp);
+    // fputs(se_xcordstr, fp);
+    // fputs("\t", fp);
+    // fputs(se_ycordstr, fp);
+    // fputs("\t", fp);
+    // fputs(flagstr, fp);
+    // fputs("\t", fp);
 
     // fclose(fp);
 }
@@ -244,10 +227,10 @@ void extraoutput(FILE *fp, double nw_bound_xcord, double nw_bound_ycord, double 
 void neighbourset(FILE *fp, double xcord, double ycord)
 {
     // The if condition checks for blanking points
-    char xcordstr[25];
-    char ycordstr[25];
-    gcvt(xcord, 24, xcordstr);
-    gcvt(ycord, 24, ycordstr);
+    // char xcordstr[25];
+    // char ycordstr[25];
+    // gcvt(xcord, 24, xcordstr);
+    // gcvt(ycord, 24, ycordstr);
     // double_to_char(xcord,xcordstr);
     // double_to_char(ycord,ycordstr);
     // FILE *fp = fopen(filename, "w");
@@ -261,10 +244,11 @@ void neighbourset(FILE *fp, double xcord, double ycord)
         neighbour_counter++;
         if (fp != NULL)
         {
-            fputs(xcordstr, fp);
-            fputs(",", fp);
-            fputs(ycordstr, fp);
-            fputs("\t", fp);
+            fprintf(fp, "%.17g\t%.17g\t", xcord, ycord);
+            // fputs(xcordstr, fp);
+            // fputs(",", fp);
+            // fputs(ycordstr, fp);
+            // fputs("\t", fp);
         }
     }
     // fclose(fp);
