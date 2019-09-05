@@ -377,7 +377,7 @@ void quadtree_neighbourwalk(quadtree_node_t *root, void (*descent_node)(quadtree
 void descent_node(quadtree_node_t *node, FILE *fp)
 {
     // char *filename = "neighbour.txt";
-    if (quadtree_node_isempty(node)) // For empty leaf
+    if (quadtree_node_isempty(node) && (node->blank == 0)) // For empty leaf
     {
         double xcord = (node->bounds->nw->x + node->bounds->se->x) / 2;
         double ycord = (node->bounds->nw->y + node->bounds->se->y) / 2;
@@ -388,14 +388,11 @@ void descent_node(quadtree_node_t *node, FILE *fp)
         {
             printf("\n ABC");
         }
-        if (pnpoly(shape_line_count, shape_list, xcord, ycord))
-        {
-            neighbouroutput(fp, xcord, ycord, node->height, node->direction);
-            extraoutput(fp, node->bounds->nw->x, node->bounds->nw->y,
-                        node->bounds->se->x, node->bounds->se->y, 0);
-            // printf("\n %lf %lf has neighbours\t", xcord, ycord);
-            find_neighbourset(common_treeroute(tree->root, node), node, fp);
-        }
+        neighbouroutput(fp, xcord, ycord, node->height, node->direction);
+        extraoutput(fp, node->bounds->nw->x, node->bounds->nw->y,
+                    node->bounds->se->x, node->bounds->se->y, 0);
+        // printf("\n %lf %lf has neighbours\t", xcord, ycord);
+        find_neighbourset(common_treeroute(tree->root, node), node, fp);
     }
     else if (quadtree_node_isleaf(node)) // For filled leaf
     {
@@ -415,7 +412,7 @@ void descent_node(quadtree_node_t *node, FILE *fp)
         double ycord = (node->bounds->nw->y + node->bounds->se->y) / 2;
         int flag = 0;
         // flag = non_leaf_immediate_neighbours_check(node);
-
+        // Note - The blank function does not check blank for non_leaf points
         if (pnpoly(shape_line_count, shape_list, xcord, ycord) && flag == 0 &&
             non_leaf_blank(non_leaf_blank_line_count, non_leaf_blank_list, xcord, ycord))
         {
@@ -616,8 +613,44 @@ void quadtree_hillwalk(quadtree_node_t *root, void (*descent_hill)(quadtree_node
 
 void descent_hill(quadtree_node_t *node)
 {
-    if ((quadtree_node_isempty(node)))
+    if (quadtree_node_isempty(node))
     {
         hill_derefinement(node, 1);
+    }
+}
+
+void quadtree_blankwalk(quadtree_node_t *root, void (*descent_blank)(quadtree_node_t *node),
+                       void (*ascent)(quadtree_node_t *node))
+{
+    if (root->nw != NULL)
+    {
+        quadtree_blankwalk(root->nw, descent_blank, ascent);
+    }
+    if (root->ne != NULL)
+    {
+        quadtree_blankwalk(root->ne, descent_blank, ascent);
+    }
+    if (root->sw != NULL)
+    {
+        quadtree_blankwalk(root->sw, descent_blank, ascent);
+    }
+    if (root->se != NULL)
+    {
+        quadtree_blankwalk(root->se, descent_blank, ascent);
+    }
+    (*descent_blank)(root);
+    (*ascent)(root);
+}
+
+void descent_blank(quadtree_node_t *node)
+{
+    if (quadtree_node_isempty(node))
+    {
+        double xcord = (node->bounds->nw->x + node->bounds->se->x) / 2;
+        double ycord = (node->bounds->nw->y + node->bounds->se->y) / 2;
+        if (!pnpoly(shape_line_count, shape_list, xcord, ycord))
+        {
+            node->blank = 1;
+        }
     }
 }

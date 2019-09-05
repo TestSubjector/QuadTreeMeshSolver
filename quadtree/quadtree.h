@@ -47,6 +47,7 @@ typedef struct quadtree_node
     quadtree_point_t *point;
     int height;
     int direction;
+    int blank;
 } quadtree_node_t;
 
 quadtree_node_t *quadtree_node_new();
@@ -246,5 +247,10 @@ extern coords_t *non_leaf_blank_list;
 extern int non_leaf_blank_line_count;
 
 int non_leaf_blank(int lines, coords_t *non_leaf_blank_list, double testx, double testy);
+
+void quadtree_blankwalk(quadtree_node_t *root, void (*descent_blank)(quadtree_node_t *node),
+                       void (*ascent)(quadtree_node_t *node));
+
+void descent_blank(quadtree_node_t *node);
 
 #endif

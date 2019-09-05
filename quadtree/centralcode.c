@@ -221,6 +221,8 @@ void main_tree(int initial_coord_length, coords_t *coords_list, coords_t *adapte
             }
         }
 
+        printf("\nBlank flags are being placed everywhere");
+        quadtree_blankwalk(tree->root, descent_blank, ascent);
         printf("\nNeighbour file creation operations have started [In adaptation Branch].");
 
         newoutputfile = 1;  // Clean file and write new generated files
@@ -234,6 +236,8 @@ void main_tree(int initial_coord_length, coords_t *coords_list, coords_t *adapte
     }
     else
     {
+        printf("\nBlank flags are being placed everywhere");
+        quadtree_blankwalk(tree->root, descent_blank, ascent);
         printf("\nNeighbour file creation operations have started.[In non-adaptation Branch].");
         quadtree_neighbourset(tree->root);
         // To get number of neighbours of last point

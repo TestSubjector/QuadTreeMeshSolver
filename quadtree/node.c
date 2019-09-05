@@ -43,6 +43,7 @@ quadtree_node_t *quadtree_node_new()
     node->bounds = NULL;
     node->height = 1;
     node->direction = 0;
+    node->blank = 0;
     return node;
 }
 
@@ -84,20 +85,20 @@ void quadtree_leafnodes(quadtree_node_t *root, quadtree_node_t *leaf_array)
     /* Get all leaf nodes */
     quadtree_leafwalk(root, descent_leaf, ascent, leaf_array);
     /* Print all the leaf nodes at this point */
-    int i = 0;
-    for (i = 0; i < leaf_iter; i++)
-    {
-        quadtree_node_t *node = &leaf_array[i];
-        if (quadtree_node_isempty(node))
-        {
+    // int i = 0;
+    // for (i = 0; i < leaf_iter; i++)
+    // {
+        // quadtree_node_t *node = &leaf_array[i];
+        // if (quadtree_node_isempty(node))
+        // {
             // printf("\n %f %f", (node->bounds->nw->x + node->bounds->se->x) / 2,
             //         (node->bounds->nw->y + node->bounds->se->y) / 2);
-        }
-        else if (quadtree_node_isleaf(node))
-        {
+        // }
+        // else if (quadtree_node_isleaf(node))
+        // {
             // printf("\n%f %f", node->point->x, node->point->y);
-        }
-    }
+        // }
+    // }
 }
 
 int node_contains_patharray(quadtree_node_t *outer, double x, double y)
