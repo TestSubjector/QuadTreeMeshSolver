@@ -232,7 +232,9 @@ void main_tree(int initial_coord_length, coords_t *coords_list, coords_t *adapte
         // quadtree_walk(tree->root, descent, ascent);
         quadtree_neighbourset(tree->root);
         // To get number of neighbours of last point
-        // neighbouroutput(1, "neighbour.txt", 1000, 1000, 1000, 1000);
+        FILE *fp = fopen("neighbour.txt", "a+");
+        neighbouroutput(fp, 1000, 1000, 1000, 1000);
+        fclose(fp);
     }
     else
     {
@@ -242,7 +244,9 @@ void main_tree(int initial_coord_length, coords_t *coords_list, coords_t *adapte
         printf("\nNeighbour file creation operations have started.[In non-adaptation Branch].");
         quadtree_neighbourset(tree->root);
         // To get number of neighbours of last point
-        // neighbouroutput(1, "neighbour.txt", 1000, 1000, 1000, 1000);
+        FILE *fp = fopen("neighbour.txt", "a+");
+        neighbouroutput(fp, 1000, 1000, 1000, 1000);
+        fclose(fp);
     }
 
     height_of_tree = maxDepth(tree->root);
