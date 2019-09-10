@@ -25,6 +25,7 @@ def main():
     configData = core.getConfig()
 
     globaldata = core.getKeyVal("globaldata")
+    hashtable = {}
 
     if globaldata == None:
 
@@ -41,12 +42,14 @@ def main():
             itm = itm.split(" ")
             itm.pop(-1)
             entry = itm
+            hashtable["{},{}".format(entry[1], entry[2])] = int(entry[0])
             globaldata.append(entry)
 
     else:
         globaldata.insert(0,"start")
+        hashtable = core.generateHashtable(globaldata)
 
-    globaldata = core.cleanNeighbours(globaldata)
+    # globaldata = core.cleanNeighbours(globaldata)
 
     wallpts = core.getWallPointArray(globaldata)
 
@@ -88,21 +91,21 @@ def main():
             globaldata,badPoints = core.connectivityCheck(globaldata, badPoints, configData, quick=True)
             log.info("Connectivity Recheck Done")
             log.info("Running Triangulation Balancing using Kumar's Neighbours (Left and Right Mode)")
-            globaldata = balance.triangleBalance2(globaldata, wallpts, configData, badPoints)
+            globaldata = balance.triangleBalance2(globaldata, wallpts, configData, badPoints, hashtable)
         if algo3 == True:
             log.info("Running Connectivity Check")
             globaldata,badPoints = core.connectivityCheck(globaldata, badPoints, configData, quick=True)
             log.info("Running Triangulation Balancing using Kumar's Neighbours (General)")
-            globaldata = balance.triangleBalance3(globaldata, wallpts, configData, badPoints)
+            globaldata = balance.triangleBalance3(globaldata, wallpts, configData, badPoints, hashtable)
         log.info("Running Connectivity Recheck")
         globaldata,badPoints = core.connectivityCheck(globaldata, badPoints, configData, quick=True)
     log.warning("Total Number of Points unable to be fixed: {}".format(len(badPoints)))
     # log.info("Writing Deletion Points")
     # problempts = findDeletionPoints(globaldata)
     
-    globaldata = core.cleanNeighbours(globaldata)
+    # globaldata = core.cleanNeighbours(globaldata)
 
-    core.writeConditionValuesForWall(globaldata, configData)
+    # core.writeConditionValuesForWall(globaldata, configData)
 
     globaldata.pop(0)
 

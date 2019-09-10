@@ -19,7 +19,7 @@ def main():
 
     globaldata = core.getKeyVal("globaldata")
 
-    if globaldata != None:
+    if globaldata == None:
 
         file1 = open(args.input or "preprocessorfile.txt", "r")
         data = file1.read()

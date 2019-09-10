@@ -5,6 +5,7 @@ log = logging.getLogger(__name__)
 log.addHandler(logging.StreamHandler())
 import sys, os
 import numpy as np
+from tqdm import tqdm
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), os.pardir))
 from core import core
@@ -22,6 +23,9 @@ def main():
     globaldata = core.getKeyVal("globaldata")
     configData = core.getConfig()
 
+    hashtable = {}
+    hashtableIndices = {}
+
     if globaldata == None:
 
         file1 = open(args.input or "preprocessorfile_pointremoval.txt", "r")
@@ -33,18 +37,23 @@ def main():
         log.info("Processed Pre-Processor File")
         log.info("Converting to readable format")
 
-        for idx, itm in enumerate(splitdata):
+        for idx, itm in enumerate(tqdm(splitdata)):
             itm = itm.split(" ")
             itm.pop(-1)
             entry = itm
+            hashtable["{},{}".format(entry[1], entry[2])] = int(entry[0])
+            hashtableIndices[int(entry[0])] = (float(entry[1]), float(entry[2]))
             globaldata.append(entry)
 
     else:
         globaldata.insert(0,"start")
+        hashtable, hashtableIndices = core.generateHashtableAndIndices(globaldata)
 
-    globaldata = core.cleanNeighbours(globaldata)
+    # globaldata = core.cleanNeighbours(globaldata)
 
     wallpoints = core.getWallPointArray(globaldata)
+    boundingBox = core.getBoundingBoxes(wallpoints, configData, offset=True)
+    boundingBox = core.convertToShapelyTuple(boundingBox)
     wallpoints = core.convertToShapely(wallpoints)
 
     configData = core.getConfig()
@@ -52,9 +61,12 @@ def main():
     THRESHOLD = int(configData["rechecker"]["conditionValueThreshold"])
     MAX_POINTS = -configData["rechecker"]["maxPoints"]
 
+    log.info("Finding Pseudo Points")
+    badList = core.getPseudoPointsParallel(hashtable, configData, boundingBox)
+    badList = core.convertPointsToIndex(badList, globaldata, hashtable)
+
     log.info("Checking Points")
-    with np.errstate(divide='ignore', invalid='ignore'):
-        badList = core.checkConditionNumberBad(globaldata, THRESHOLD, configData)
+    badList = core.checkConditionNumberBad(globaldata, THRESHOLD, configData, badList, hashtableIndices)
     log.info("Problematic Points to be fixed: {}".format(len(badList)))
 
     # for idx, itm in enumerate(globaldata):
@@ -64,13 +76,13 @@ def main():
     log.info("Fixing Points")
     with np.errstate(divide='ignore', invalid='ignore'):
         for idx in badList:
-            globaldata = core.fixXPosMain(idx, globaldata, THRESHOLD, wallpoints, MAX_POINTS, configData)
+            globaldata = core.fixXPosMain(idx, globaldata, THRESHOLD, wallpoints, MAX_POINTS, configData, hashtable)
         for idx in badList:
-            globaldata = core.fixXNegMain(idx, globaldata, THRESHOLD, wallpoints, MAX_POINTS, configData)
+            globaldata = core.fixXNegMain(idx, globaldata, THRESHOLD, wallpoints, MAX_POINTS, configData, hashtable)
         for idx in badList:
-            globaldata = core.fixYPosMain(idx, globaldata, THRESHOLD, wallpoints, MAX_POINTS, configData)
+            globaldata = core.fixYPosMain(idx, globaldata, THRESHOLD, wallpoints, MAX_POINTS, configData, hashtable)
         for idx in badList:
-            globaldata = core.fixYNegMain(idx, globaldata, THRESHOLD, wallpoints, MAX_POINTS, configData)
+            globaldata = core.fixYNegMain(idx, globaldata, THRESHOLD, wallpoints, MAX_POINTS, configData, hashtable)
 
     log.info("Rechecking Points after fixing")
     with np.errstate(divide='ignore', invalid='ignore'):
@@ -87,7 +99,7 @@ def main():
     #     if(idx > 0 and getFlag(idx,globaldata) == 1):
     #         globaldata = setFlags(idx,globaldata,60)
 
-    globaldata = core.cleanNeighbours(globaldata)
+    # globaldata = core.cleanNeighbours(globaldata)
 
     globaldata.pop(0)
 

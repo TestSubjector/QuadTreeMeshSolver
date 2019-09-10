@@ -12,7 +12,7 @@ def loadWall(geometrydata,hashtable,globaldata,idf):
     wallpoint = []
     index = len(hashtable) + 1
     startpt = index
-    lastpt = len(globaldata) + len(geometrydata)
+    lastpt = len(globaldata) + len(geometrydata) - 1
     for i in range(len(geometrydata)):
         try:
             xcord = float(geometrydata[i].split()[0])
@@ -45,7 +45,7 @@ def loadWall(geometrydata,hashtable,globaldata,idf):
                 walldata.append(index)
                 walldata.insert(1, xcord)
                 walldata.insert(2, ycord)
-                walldata.insert(3, startpt + len(geometrydata) - 2)
+                walldata.insert(3, startpt + len(geometrydata) - 3)
                 walldata.insert(4, startpt)
                 walldata.insert(5, 0)
                 walldata.insert(6, idf)
@@ -84,122 +84,123 @@ def loadInterior(data, hashtable, globaldata, index):
     log.info("Beginning Interior Point and Wall Point Neighbour Processing")
     for i in trange(len(data)):
         cleandata = str(data[i]).split(" ")
-        depth = int(cleandata[2])
-        direction = int(cleandata[3])
-        topcordx = str(float(cleandata[4]))
-        topcordy = str(float(cleandata[5]))
-        bottomcordx = str(float(cleandata[6]))
-        bottomcordy = str(float(cleandata[7]))
-        leafcond = int(cleandata[8])
-        cleandata.pop(2)
-        cleandata.pop(2)
-        cleandata.pop(2)
-        cleandata.pop(2)
-        cleandata.pop(2)
-        cleandata.pop(2)
-        cleandata.pop(2)
-        cord = (float(cleandata[1].split(",")[0]), float(cleandata[1].split(",")[1]))
-        try:
-            if i != len(data) - 1:
-                val = hashtable.get(cord, None)
-                if val is not None:
-                    cleandata.pop(0)  # Pop index
-                    cleandata.pop(-1)  # Pop blank space
-                    cleandata.pop(-2)  # Pop number of neighbours
-                    cleandata.pop(0)  # Pop blank space
-                    cleandata.insert(0, str(int(cleandata[len(cleandata) - 1])))
-                    cleandata.insert(0, leafcond)
-                    cleandata.insert(0, bottomcordy)
-                    cleandata.insert(0, bottomcordx)
-                    cleandata.insert(0, topcordy)
-                    cleandata.insert(0, topcordx)
-                    cleandata.insert(0, direction)
-                    cleandata.insert(0, depth)
-                    cleandata.pop(-1)
-                    globaldata[val - 1] = globaldata[val - 1] + cleandata
-                else:
-                    raise KeyError
-            else:
-                val = hashtable.get(cord, None)
-                if val is not None:
-                    cleandata.pop(0)
-                    cleandata.pop(-2)
-                    cleandata.pop(0)
-                    cleandata.insert(0, str(int(cleandata[len(cleandata) - 1])))
-                    cleandata.insert(0, leafcond)
-                    cleandata.insert(0, bottomcordy)
-                    cleandata.insert(0, bottomcordx)
-                    cleandata.insert(0, topcordy)
-                    cleandata.insert(0, topcordx)
-                    cleandata.insert(0, direction)
-                    cleandata.insert(0, depth)
-                    cleandata.pop(-1)
-                    globaldata[val - 1] = globaldata[val - 1] + cleandata
-                else:
-                    raise KeyError
-        except KeyError:
-            if len(cleandata) > 4:
+        if len(cleandata) > 1:
+            depth = int(cleandata[2])
+            direction = int(cleandata[3])
+            topcordx = str(float(cleandata[4]))
+            topcordy = str(float(cleandata[5]))
+            bottomcordx = str(float(cleandata[6]))
+            bottomcordy = str(float(cleandata[7]))
+            leafcond = int(cleandata[8])
+            cleandata.pop(2)
+            cleandata.pop(2)
+            cleandata.pop(2)
+            cleandata.pop(2)
+            cleandata.pop(2)
+            cleandata.pop(2)
+            cleandata.pop(2)
+            cord = (float(cleandata[1].split(",")[0]), float(cleandata[1].split(",")[1]))
+            try:
                 if i != len(data) - 1:
-                    hashtable[cord] = index + 1
-                    cleandata.pop(0)
-                    cleandata.pop(-1)
-                    cleandata.pop(-2)
-                    cleandata.pop(0)
-                    cleandata.insert(0, cleandata[len(cleandata) - 1])
-                    cleandata.pop(-1)
-                    cleandata.insert(0, leafcond)
-                    cleandata.insert(0, bottomcordy)
-                    cleandata.insert(0, bottomcordx)
-                    cleandata.insert(0, topcordy)
-                    cleandata.insert(0, topcordx)
-                    cleandata.insert(0, direction)
-                    cleandata.insert(0, depth)
-                    cleandata.insert(0, 1)
-                    cleandata.insert(0, 0)
-                    cleandata.insert(0, 0)
-                    cleandata.insert(0, 0)
-                    cleandata.insert(0, 0)
-                    cleandata.insert(0, 0)
-                    cleandata.insert(0, 0)
-                    cleandata.insert(0, 1)
-                    cleandata.insert(0, 0)
-                    cleandata.insert(0, 0)
-                    cleandata.insert(0, cord[1])
-                    cleandata.insert(0, cord[0])
-                    cleandata.insert(0, index + 1)
-                    index += 1
-                    globaldata.append(cleandata)
+                    val = hashtable.get(cord, None)
+                    if val is not None:
+                        cleandata.pop(0)  # Pop index
+                        cleandata.pop(-1)  # Pop blank space
+                        cleandata.pop(-2)  # Pop number of neighbours
+                        cleandata.pop(0)  # Pop blank space
+                        cleandata.insert(0, str(int(cleandata[len(cleandata) - 1])))
+                        cleandata.insert(0, leafcond)
+                        cleandata.insert(0, bottomcordy)
+                        cleandata.insert(0, bottomcordx)
+                        cleandata.insert(0, topcordy)
+                        cleandata.insert(0, topcordx)
+                        cleandata.insert(0, direction)
+                        cleandata.insert(0, depth)
+                        cleandata.pop(-1)
+                        globaldata[val - 1] = globaldata[val - 1] + cleandata
+                    else:
+                        raise KeyError
                 else:
-                    hashtable[cord] = index + 1
-                    cleandata.pop(0)
-                    cleandata.pop(-2)
-                    cleandata.pop(0)
-                    cleandata.insert(0, cleandata[len(cleandata) - 1])
-                    cleandata.pop(-1)
-                    cleandata.insert(0, leafcond)
-                    cleandata.insert(0, bottomcordy)
-                    cleandata.insert(0, bottomcordx)
-                    cleandata.insert(0, topcordy)
-                    cleandata.insert(0, topcordx)
-                    cleandata.insert(0, direction)
-                    cleandata.insert(0, depth)
-                    cleandata.insert(0, 1)
-                    cleandata.insert(0, 0)
-                    cleandata.insert(0, 0)
-                    cleandata.insert(0, 0)
-                    cleandata.insert(0, 0)
-                    cleandata.insert(0, 0)
-                    cleandata.insert(0, 0)
-                    cleandata.insert(0, 1)
-                    cleandata.insert(0, 0)
-                    cleandata.insert(0, 0)
-                    cleandata.insert(0, cord[1])
-                    cleandata.insert(0, cord[0])
-                    cleandata.insert(0, index + 1)
-                    index += 1
-                    globaldata.append(cleandata)
-            else:
-                log.warn("Warning: QuadTree Generated a Point which cannot be parsed.")
+                    val = hashtable.get(cord, None)
+                    if val is not None:
+                        cleandata.pop(0)
+                        cleandata.pop(-2)
+                        cleandata.pop(0)
+                        cleandata.insert(0, str(int(cleandata[len(cleandata) - 1])))
+                        cleandata.insert(0, leafcond)
+                        cleandata.insert(0, bottomcordy)
+                        cleandata.insert(0, bottomcordx)
+                        cleandata.insert(0, topcordy)
+                        cleandata.insert(0, topcordx)
+                        cleandata.insert(0, direction)
+                        cleandata.insert(0, depth)
+                        cleandata.pop(-1)
+                        globaldata[val - 1] = globaldata[val - 1] + cleandata
+                    else:
+                        raise KeyError
+            except KeyError:
+                if len(cleandata) > 4:
+                    if i != len(data) - 1:
+                        hashtable[cord] = index + 1
+                        cleandata.pop(0)
+                        cleandata.pop(-1)
+                        cleandata.pop(-2)
+                        cleandata.pop(0)
+                        cleandata.insert(0, cleandata[len(cleandata) - 1])
+                        cleandata.pop(-1)
+                        cleandata.insert(0, leafcond)
+                        cleandata.insert(0, bottomcordy)
+                        cleandata.insert(0, bottomcordx)
+                        cleandata.insert(0, topcordy)
+                        cleandata.insert(0, topcordx)
+                        cleandata.insert(0, direction)
+                        cleandata.insert(0, depth)
+                        cleandata.insert(0, 1)
+                        cleandata.insert(0, 0)
+                        cleandata.insert(0, 0)
+                        cleandata.insert(0, 0)
+                        cleandata.insert(0, 0)
+                        cleandata.insert(0, 0)
+                        cleandata.insert(0, 0)
+                        cleandata.insert(0, 1)
+                        cleandata.insert(0, 0)
+                        cleandata.insert(0, 0)
+                        cleandata.insert(0, cord[1])
+                        cleandata.insert(0, cord[0])
+                        cleandata.insert(0, index + 1)
+                        index += 1
+                        globaldata.append(cleandata)
+                    else:
+                        hashtable[cord] = index + 1
+                        cleandata.pop(0)
+                        cleandata.pop(-2)
+                        cleandata.pop(0)
+                        cleandata.insert(0, cleandata[len(cleandata) - 1])
+                        cleandata.pop(-1)
+                        cleandata.insert(0, leafcond)
+                        cleandata.insert(0, bottomcordy)
+                        cleandata.insert(0, bottomcordx)
+                        cleandata.insert(0, topcordy)
+                        cleandata.insert(0, topcordx)
+                        cleandata.insert(0, direction)
+                        cleandata.insert(0, depth)
+                        cleandata.insert(0, 1)
+                        cleandata.insert(0, 0)
+                        cleandata.insert(0, 0)
+                        cleandata.insert(0, 0)
+                        cleandata.insert(0, 0)
+                        cleandata.insert(0, 0)
+                        cleandata.insert(0, 0)
+                        cleandata.insert(0, 1)
+                        cleandata.insert(0, 0)
+                        cleandata.insert(0, 0)
+                        cleandata.insert(0, cord[1])
+                        cleandata.insert(0, cord[0])
+                        cleandata.insert(0, index + 1)
+                        index += 1
+                        globaldata.append(cleandata)
+                else:
+                    log.warn("Warning: QuadTree Generated a Point which cannot be parsed.")
     log.info("Interior Point and Wall Point Neighbour Processed")
     return hashtable, globaldata
 

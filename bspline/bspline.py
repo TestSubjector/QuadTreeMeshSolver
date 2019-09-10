@@ -95,9 +95,13 @@ def main():
     else:
         globaldata = None
 
+    hashtable = {}
+
     if globaldata == None:
 
         file1 = open(args.input or "preprocessorfile_bspline.txt", "r")
+
+
         data = file1.read()
         globaldata = ["start"]
         splitdata = data.split("\n")
@@ -110,18 +114,22 @@ def main():
             itm = itm.split(" ")
             itm.pop(-1)
             entry = itm
+            hashtable["{},{}".format(entry[1], entry[2])] = int(entry[0])
             globaldata.append(entry)
 
     else:
         globaldata.insert(0,"start")
+        hashtable = core.generateHashtable(globaldata)
 
     if not forcemidpointspline:
         POINT_CONTROL = int(configData["bspline"]["pointControl"])
     else:
         POINT_CONTROL = 3
 
-    globaldata = core.cleanNeighbours(globaldata)
+    # globaldata = core.cleanNeighbours(globaldata)
     wallPts = core.getWallPointArray(globaldata)
+    boundingBox = core.getBoundingBoxes(wallPts, configData, offset=True)
+    boundingBox = core.convertToShapelyTuple(boundingBox)
 
     additionPts = []
     bsplineArray = []
@@ -135,7 +143,10 @@ def main():
     log.info("Caching Wall Geometries")
     shapelyWallData = core.convertToShapely(wallPts)
     log.info("Searching for bad points")
-    problempts,perpendicularpts, badpts = core.checkPoints(globaldata, args.bspline, normalApproach, configData, pseudocheck, shapelyWallData, overrideNL = overrideNL)
+    # badList = None
+    badList = core.getPseudoPointsParallel(hashtable, configData, boundingBox)
+    badList = core.convertPointsToIndex(badList, globaldata, hashtable)
+    problempts,perpendicularpts, badpts = core.checkPoints(globaldata, args.bspline, normalApproach, configData, pseudocheck, shapelyWallData, badList, overrideNL = overrideNL)
     log.info("Bsplining {} points".format(len(problempts)))
     log.info("Starting BSpline")
     for idx,itm in enumerate(tqdm(problempts)): 

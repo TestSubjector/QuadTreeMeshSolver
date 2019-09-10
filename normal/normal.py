@@ -71,7 +71,8 @@ def main():
     if legacy:
         log.info("Using Legacy Normal Rotation Method")
         if len(pseudoPts) == 0:
-            pseudoPts = core.inflatedWallPolygon(globaldata,float(configData["normalWall"]["inflatedPolygonDistance"]), configData)
+            None
+            # pseudoPts = core.inflatedWallPolygon(globaldata,float(configData["normalWall"]["inflatedPolygonDistance"]), configData)
         log.info("Found {} pseudo points".format(len(pseudoPts)))
         # globaldata = core.rotateNormalsLegacy(pseudoPts, globaldata, configData, dryRun)
 

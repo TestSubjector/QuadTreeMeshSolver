@@ -1,5 +1,5 @@
 import numpy as np
-import os, errno, multiprocessing, math, logging, itertools, json, time, re, shutil, csv, redis, uuid
+import os, errno, multiprocessing, math, logging, itertools, json, time, re, shutil, csv, redis, uuid, sys
 import shapely.geometry
 from shapely.ops import linemerge, unary_union, polygonize, split
 import shapely
@@ -7,18 +7,20 @@ log = logging.getLogger(__name__)
 log.addHandler(logging.StreamHandler())
 from tqdm import tqdm, trange
 from multiprocessing.pool import ThreadPool
+from multiprocessing import Manager
 from collections import Counter
 from time import sleep
 from scipy.interpolate import splprep, splev
 from scipy import spatial
 import hashlib
 import copy
-import dask
-from dask.distributed import Client, LocalCluster
 from numba import guvectorize, jit
+from scipy.spatial import ConvexHull
+from scipy.ndimage.interpolation import rotate
+import pyarrow.plasma as plasma
 
-def appendNeighbours(index, globaldata, newpts):
-    pt = getIndexFromPoint(newpts, globaldata)
+def appendNeighbours(index, globaldata, newpts, hashtable = None):
+    pt = getIndexFromPoint(newpts, globaldata, hashtable)
     nbhs = getNeighbours(index, globaldata)
     nbhs = nbhs + [pt]
     nbhs = list(set(nbhs))
@@ -67,12 +69,15 @@ def getNeighbourCount(index, globaldata):
     index = int(index)
     return int(globaldata[index][20])
 
-def getIndexFromPoint(pt, globaldata):
-    ptx = float(pt.split(",")[0])
-    pty = float(pt.split(",")[1])
-    for itm in globaldata:
-        if str(itm[1]) == str(ptx) and str(itm[2]) == str(pty):
-            return int(itm[0])
+def getIndexFromPoint(pt, globaldata, hashtable = None):
+    if hashtable is None:
+        ptx = float(pt.split(",")[0])
+        pty = float(pt.split(",")[1])
+        for itm in globaldata:
+            if str(itm[1]) == str(ptx) and str(itm[2]) == str(pty):
+                return int(itm[0])
+    else:
+        return hashtable[pt]
 
 def getIndexFromPointTuple(pt, globaldata):
     ptx = pt[0]
@@ -81,30 +86,149 @@ def getIndexFromPointTuple(pt, globaldata):
         if str(itm[1]) == str(ptx) and str(itm[2]) == str(pty):
             return int(itm[0])
 
-def convertPointsToIndex(pointarray,globaldata):
+def convertPointsToIndex(pointarray, globaldata, hashtable = None):
     ptlist = []
     for itm in pointarray:
-        idx = getIndexFromPoint(itm,globaldata)
+        idx = getIndexFromPoint(itm, globaldata, hashtable)
         ptlist.append(idx)
     return ptlist
 
-def getPoint(index, globaldata):
-    index = int(index)
-    ptdata = globaldata[index]
-    ptx = float(ptdata[1])
-    pty = float(ptdata[2])
+def getPoint(index, globaldata, hashtableindex = None):
+    if hashtableindex == None:
+        index = int(index)
+        ptdata = globaldata[index]
+        ptx = float(ptdata[1])
+        pty = float(ptdata[2])
+    else:
+        ptx = hashtableindex[index][0]
+        pty = hashtableindex[index][1]
     return ptx, pty
+
+def generateHashtable(globaldata):
+    hashtable = {}
+    for idx, _ in enumerate(globaldata):
+        if idx > 0:
+            hashtable[getPointXY(idx, globaldata)] = idx
+    return hashtable
+
+def generateHashtableIndices(globaldata):
+    hashtableIndices = {}
+    for idx, _ in enumerate(globaldata):
+        if idx > 0:
+            px, py = getPoint(idx, globaldata)
+            hashtableIndices[idx] = (px, py)
+    return hashtableIndices
+
+def generateHashtableAndIndices(globaldata):
+    hashtable = {}
+    hashtableIndices = {}
+    for idx, _ in enumerate(globaldata):
+        if idx > 0:
+            px, py = getPoint(idx, globaldata)
+            hashtable[getPointXY(idx, globaldata)] = idx
+            hashtableIndices[idx] = (px, py)
+    return hashtable, hashtableIndices
+
+def getBoundingBoxes(wallpoints, configData, offset=False):
+    boxes = []
+    for itm in wallpoints:
+        ptList = []
+        for itm2 in itm:
+            ptList.append(tuple(map(float, itm2.split(","))))
+        pts = minimumBoundingRectangle(np.array(ptList)).tolist()
+        if offset == True:
+            offsetAmount = configData["rechecker"]["offsetMultiplier"]
+            length = distancePoint(pts[0], pts[1]) * offsetAmount
+            breadth = distancePoint(pts[1], pts[2]) * offsetAmount
+
+            pts[0][0] = pts[0][0] + length
+            pts[0][1] = pts[0][1] - breadth
+            pts[1][0] = pts[1][0] - length
+            pts[1][1] = pts[1][1] - breadth
+            pts[2][0] = pts[2][0] - length
+            pts[2][1] = pts[2][1] + breadth
+            pts[3][0] = pts[3][0] + length
+            pts[3][1] = pts[3][1] + breadth
+            boxes.append(pts)
+        else:
+            boxes.append(pts)
+    return boxes
+
+def minimumBoundingRectangle(points):
+    """
+    Find the smallest bounding rectangle for a set of points.
+    Returns a set of points representing the corners of the bounding box.
+
+    :param points: an nx2 matrix of coordinates
+    :rval: an nx2 matrix of coordinates
+    """
+    pi2 = np.pi/2.
+
+    # get the convex hull for the points
+    hull_points = points[ConvexHull(points).vertices]
+
+    # calculate edge angles
+    edges = np.zeros((len(hull_points)-1, 2))
+    edges = hull_points[1:] - hull_points[:-1]
+
+    angles = np.zeros((len(edges)))
+    angles = np.arctan2(edges[:, 1], edges[:, 0])
+
+    angles = np.abs(np.mod(angles, pi2))
+    angles = np.unique(angles)
+
+    # find rotation matrices
+    # XXX both work
+    rotations = np.vstack([
+        np.cos(angles),
+        np.cos(angles-pi2),
+        np.cos(angles+pi2),
+        np.cos(angles)]).T
+#     rotations = np.vstack([
+#         np.cos(angles),
+#         -np.sin(angles),
+#         np.sin(angles),
+#         np.cos(angles)]).T
+    rotations = rotations.reshape((-1, 2, 2))
+
+    # apply rotations to the hull
+    rot_points = np.dot(rotations, hull_points.T)
+
+    # find the bounding points
+    min_x = np.nanmin(rot_points[:, 0], axis=1)
+    max_x = np.nanmax(rot_points[:, 0], axis=1)
+    min_y = np.nanmin(rot_points[:, 1], axis=1)
+    max_y = np.nanmax(rot_points[:, 1], axis=1)
+
+    # find the box with the best area
+    areas = (max_x - min_x) * (max_y - min_y)
+    best_idx = np.argmin(areas)
+
+    # return the best box
+    x1 = max_x[best_idx]
+    x2 = min_x[best_idx]
+    y1 = max_y[best_idx]
+    y2 = min_y[best_idx]
+    r = rotations[best_idx]
+
+    rval = np.zeros((4, 2))
+    rval[0] = np.dot([x1, y2], r)
+    rval[1] = np.dot([x2, y2], r)
+    rval[2] = np.dot([x2, y1], r)
+    rval[3] = np.dot([x1, y1], r)
+
+    return rval
 
 def getPointXY(index, globaldata):
     index = int(index)
     ptx, pty = getPoint(index, globaldata)
     return str(ptx) + "," + str(pty)
 
-def convertIndexToPoints(indexarray, globaldata):
+def convertIndexToPoints(indexarray, globaldata, hashtableindex = None):
     ptlist = []
     for item in indexarray:
         item = int(item)
-        ptx, pty = getPoint(item, globaldata)
+        ptx, pty = getPoint(item, globaldata, hashtableindex)
         ptlist.append((str(ptx) + "," + str(pty)))
     return ptlist
 
@@ -250,16 +374,16 @@ def deltaCalculationDNNormals(
             deltaszero = deltaszero + 1
     return deltaspos, deltasneg, deltaszero, output
 
-def getXPosPoints(index, globaldata, configData):
-    nbhs = convertIndexToPoints(getNeighbours(index, globaldata), globaldata)
+def getXPosPoints(index, globaldata, configData, hashtableindex = None):
+    nbhs = convertIndexToPoints(getNeighbours(index, globaldata), globaldata, hashtableindex)
     nx,ny = normalCalculation(index, globaldata, True, configData)
     _, _, _, mypoints = deltaCalculationDSNormals(index,
         nbhs,nx,ny, True, globaldata
     )
     return mypoints
 
-def getXNegPoints(index, globaldata, configData):
-    nbhs = convertIndexToPoints(getNeighbours(index, globaldata), globaldata)
+def getXNegPoints(index, globaldata, configData, hashtableindex = None):
+    nbhs = convertIndexToPoints(getNeighbours(index, globaldata), globaldata, hashtableindex)
     nx,ny = normalCalculation(index, globaldata, True, configData)
     _, _, _, mypoints = deltaCalculationDSNormals(index,
         nbhs,nx,ny, False, globaldata
@@ -298,16 +422,16 @@ def getXNegPointsWithInputIndices(index, globaldata, points, configData):
     )
     return mypoints
 
-def getYPosPoints(index, globaldata, configData):
-    nbhs = convertIndexToPoints(getNeighbours(index, globaldata), globaldata)
+def getYPosPoints(index, globaldata, configData, hashtableindex = None):
+    nbhs = convertIndexToPoints(getNeighbours(index, globaldata), globaldata, hashtableindex)
     nx,ny = normalCalculation(index, globaldata, True, configData)
     _, _, _, mypoints = deltaCalculationDNNormals(index,
         nbhs,nx,ny, True, globaldata
     )
     return mypoints
 
-def getYNegPoints(index, globaldata, configData):
-    nbhs = convertIndexToPoints(getNeighbours(index, globaldata), globaldata)
+def getYNegPoints(index, globaldata, configData, hashtableindex = None):
+    nbhs = convertIndexToPoints(getNeighbours(index, globaldata), globaldata, hashtableindex)
     nx,ny = normalCalculation(index, globaldata, True, configData)
     _, _, _, mypoints = deltaCalculationDNNormals(index,
         nbhs,nx,ny, False, globaldata
@@ -369,7 +493,7 @@ def cleanNeighbours(globaldata):
     log.info("Duplicate Neighbours Removed")
     return globaldata
 
-def fixXPosMain(index, globaldata, threshold, wallpoints, control, configData):
+def fixXPosMain(index, globaldata, threshold, wallpoints, control, configData, hashtable):
     if control > 0:
         return
     else:
@@ -399,13 +523,13 @@ def fixXPosMain(index, globaldata, threshold, wallpoints, control, configData):
             if len(conditionSet) > 0:
                 conditionSet.sort(key=lambda x: x[1])
                 if not isNonAeroDynamicEvenBetter(index,conditionSet[0][0],globaldata,wallpoints):
-                    globaldata = appendNeighbours(index, globaldata, conditionSet[0][0])
-                    fixXPosMain(index, globaldata, threshold, wallpoints, control, configData)
+                    globaldata = appendNeighbours(index, globaldata, conditionSet[0][0], hashtable)
+                    fixXPosMain(index, globaldata, threshold, wallpoints, control, configData, hashtable)
             else:
                 None
     return globaldata
 
-def fixXNegMain(index, globaldata, threshold, wallpoints, control, configData):
+def fixXNegMain(index, globaldata, threshold, wallpoints, control, configData, hashtable):
     if control > 0:
         return
     else:
@@ -435,13 +559,13 @@ def fixXNegMain(index, globaldata, threshold, wallpoints, control, configData):
             if len(conditionSet) > 0:
                 conditionSet.sort(key=lambda x: x[1])
                 if not isNonAeroDynamicEvenBetter(index,conditionSet[0][0],globaldata,wallpoints):
-                    globaldata = appendNeighbours(index, globaldata, conditionSet[0][0])
-                    fixXNegMain(index, globaldata, threshold, wallpoints, control, configData)
+                    globaldata = appendNeighbours(index, globaldata, conditionSet[0][0], hashtable)
+                    fixXNegMain(index, globaldata, threshold, wallpoints, control, configData, hashtable)
             else:
                 None
     return globaldata
 
-def fixYPosMain(index, globaldata, threshold, wallpoints, control, configData):
+def fixYPosMain(index, globaldata, threshold, wallpoints, control, configData, hashtable):
     if control > 0:
         return
     else:
@@ -471,13 +595,13 @@ def fixYPosMain(index, globaldata, threshold, wallpoints, control, configData):
             if len(conditionSet) > 0:
                 conditionSet.sort(key=lambda x: x[1])
                 if not isNonAeroDynamicEvenBetter(index,conditionSet[0][0],globaldata,wallpoints):
-                    globaldata = appendNeighbours(index, globaldata, conditionSet[0][0])
-                    fixYPosMain(index, globaldata, threshold, wallpoints, control, configData)
+                    globaldata = appendNeighbours(index, globaldata, conditionSet[0][0], hashtable)
+                    fixYPosMain(index, globaldata, threshold, wallpoints, control, configData, hashtable)
             else:
                 None
     return globaldata
 
-def fixYNegMain(index, globaldata, threshold, wallpoints, control, configData):
+def fixYNegMain(index, globaldata, threshold, wallpoints, control, configData, hashtable):
     if control > 0:
         return
     else:
@@ -507,8 +631,8 @@ def fixYNegMain(index, globaldata, threshold, wallpoints, control, configData):
             if len(conditionSet) > 0:
                 conditionSet.sort(key=lambda x: x[1])
                 if not isNonAeroDynamicEvenBetter(index,conditionSet[0][0],globaldata,wallpoints):
-                    globaldata = appendNeighbours(index, globaldata, conditionSet[0][0])
-                    fixYNegMain(index, globaldata, threshold, wallpoints, control, configData)
+                    globaldata = appendNeighbours(index, globaldata, conditionSet[0][0], hashtable)
+                    fixYNegMain(index, globaldata, threshold, wallpoints, control, configData, hashtable)
             else:
                 None
     return globaldata
@@ -578,32 +702,32 @@ def performSVD(data, s):
     for i in range(len(p)):
         s[i] = p[i]
 
-def conditionNumberOfXPos(index, globaldata, configData):
-    nbhs = convertIndexToPoints(getNeighbours(index, globaldata), globaldata)
+def conditionNumberOfXPos(index, globaldata, configData, hashtableindex = None):
+    nbhs = convertIndexToPoints(getNeighbours(index, globaldata), globaldata, hashtableindex)
     nx,ny = normalCalculation(index,globaldata,True, configData)
     _, _, _, mypoints = deltaCalculationDSNormals(index,
         nbhs,nx,ny, True, globaldata
     )
     return getConditionNumberWithInput(index, globaldata, mypoints, configData)
 
-def conditionNumberOfXNeg(index, globaldata, configData):
-    nbhs = convertIndexToPoints(getNeighbours(index, globaldata), globaldata)
+def conditionNumberOfXNeg(index, globaldata, configData, hashtableindex = None):
+    nbhs = convertIndexToPoints(getNeighbours(index, globaldata), globaldata, hashtableindex)
     nx,ny = normalCalculation(index,globaldata,True, configData)
     _, _, _, mypoints = deltaCalculationDSNormals(index,
         nbhs,nx,ny, False, globaldata
     )
     return getConditionNumberWithInput(index, globaldata, mypoints, configData)
 
-def conditionNumberOfYPos(index, globaldata, configData):
-    nbhs = convertIndexToPoints(getNeighbours(index, globaldata), globaldata)
+def conditionNumberOfYPos(index, globaldata, configData, hashtableindex = None):
+    nbhs = convertIndexToPoints(getNeighbours(index, globaldata), globaldata, hashtableindex)
     nx,ny = normalCalculation(index,globaldata,True, configData)
     _, _, _, mypoints = deltaCalculationDNNormals(index,
         nbhs,nx,ny, True, globaldata
     )
     return getConditionNumberWithInput(index, globaldata, mypoints, configData)
 
-def conditionNumberOfYNeg(index, globaldata, configData):
-    nbhs = convertIndexToPoints(getNeighbours(index, globaldata), globaldata)
+def conditionNumberOfYNeg(index, globaldata, configData, hashtableindex = None):
+    nbhs = convertIndexToPoints(getNeighbours(index, globaldata), globaldata, hashtableindex)
     nx,ny = normalCalculation(index,globaldata,True, configData)
     _, _, _, mypoints = deltaCalculationDNNormals(index,
         nbhs,nx,ny, False, globaldata
@@ -704,6 +828,13 @@ def wallDistance(cordpt, wallpoints):
         distance.append(point.distance(item))
     return distance
 
+def doesPointContain(cordpt, wallpoints):
+    point = shapely.geometry.Point((cordpt[0], cordpt[1]))
+    for item in wallpoints:
+        if item.contains(point):
+            return True
+    return False
+
 def getWallPointIndex(pt, globaldata, wallpointsArray):
     for idx, itm in enumerate(wallpointsArray):
         for itm2 in itm:
@@ -720,6 +851,16 @@ def convertToShapely(wallpoints):
         polygonpts = []
         for item2 in item:
             polygonpts.append([float(item2.split(",")[0]), float(item2.split(",")[1])])
+        polygontocheck = shapely.geometry.Polygon(polygonpts)
+        wallPointsShapely.append(polygontocheck)
+    return wallPointsShapely
+
+def convertToShapelyTuple(wallpoints):
+    wallPointsShapely = []
+    for item in wallpoints:
+        polygonpts = []
+        for item2 in item:
+            polygonpts.append([item2[0], item2[1]])
         polygontocheck = shapely.geometry.Polygon(polygonpts)
         wallPointsShapely.append(polygontocheck)
     return wallPointsShapely
@@ -775,7 +916,6 @@ def addLeftRightPoints(globaldata):
                 nbhs = getLeftandRightPointIndex(idx, globaldata)
                 globaldata = addPointToSetNeighbours(idx, globaldata, nbhs)
             else:
-                print(idx)
                 break
     return globaldata
 
@@ -825,9 +965,11 @@ def replaceNeighbours(index,nbhs,globaldata):
 def cleanWallPoints(globaldata):
     wallpoints = getWallPointArrayIndex(globaldata)
     wallpointsflat = [item for sublist in wallpoints for item in sublist]
+    prevFlag = 0
     for idx,_ in enumerate(tqdm(globaldata)):
         if(idx > 0):
             if(getFlag(idx,globaldata) == 0):
+                prevFlag = 0
                 nbhcords =  getNeighbours(idx,globaldata)
                 leftright = getLeftandRightPointIndex(idx,globaldata)
                 nbhcords = list(map(int, nbhcords))
@@ -835,6 +977,8 @@ def cleanWallPoints(globaldata):
                 leftright = list(map(int,leftright))
                 finalcords = finalcords + leftright
                 globaldata = replaceNeighbours(idx,finalcords,globaldata)
+            elif prevFlag == 0:
+                break
     return globaldata
 
 def cleanWallPointsSelectivity(globaldata,points):
@@ -888,7 +1032,7 @@ def getPseudoPoints(globaldata):
                     pseudoPts.append(idx)
     return pseudoPts
 
-def checkPoints(globaldata, selectbspline, normal, configData, pseudocheck, shapelyWallData, overrideNL = False):
+def checkPoints(globaldata, selectbspline, normal, configData, pseudocheck, shapelyWallData, pseudoPointList, overrideNL = False):
     wallptDataArray = getWallPointArray(globaldata)
     wallptData = flattenList(wallptDataArray)
     ptListArray = []
@@ -898,7 +1042,7 @@ def checkPoints(globaldata, selectbspline, normal, configData, pseudocheck, shap
     if pseudocheck:
         maxDepth = getMaxDepth(globaldata)
     if not selectbspline:
-        for idx,_ in enumerate(tqdm(globaldata)):
+        for _,idx in enumerate(tqdm(pseudoPointList)):
             if idx > 0:
                 flag = getFlag(idx,globaldata)
                 if flag == 1:
@@ -1690,58 +1834,129 @@ def orientationReverse(xy1, xymid, xy2, orient):
     else:
         return False
 
-def checkConditionNumberBad(globaldata, threshold, configData):
+def getPseudoPointsParallel(hashtable, configData, wallpoints):
     badList = []
-    for index,_ in enumerate(tqdm(globaldata)):
-        if index > 0 and getFlag(index, globaldata) == 1:
-            xpos = conditionNumberOfXPos(index, globaldata, configData)
-            xneg = conditionNumberOfXNeg(index, globaldata, configData)
-            ypos = conditionNumberOfYPos(index, globaldata, configData)
-            yneg = conditionNumberOfYNeg(index, globaldata, configData)
-            dSPointXPos = getXPosPoints(index, globaldata, configData)
-            dSPointXNeg = getXNegPoints(index, globaldata, configData)
-            dSPointYPos = getYPosPoints(index, globaldata, configData)
-            dSPointYNeg = getYNegPoints(index, globaldata, configData)
-            if (
-                xneg > threshold
-                or len(dSPointXNeg) < 2 or len(dSPointXPos) < 2 or len(dSPointYNeg) < 2 or len(dSPointYPos) < 2
-                or math.isnan(xneg)
-                or xpos > threshold
-                or math.isnan(xpos)
-                or ypos > threshold
-                or math.isnan(ypos)
-                or yneg > threshold
-                or math.isnan(yneg)
-            ):
-                log.debug("{} {} {} {} {} {} {} {} {}".format(index, len(dSPointXPos), xpos, len(dSPointXNeg), xneg, len(dSPointYPos), ypos, len(dSPointYNeg), yneg))
-                badList.append(index)
+    coresavail = multiprocessing.cpu_count()
+    MAX_CORES = int(configData["generator"]["maxCoresForReplacement"])
+    pool = ThreadPool(min(MAX_CORES,coresavail))
+    results = []
+    chunksize = math.ceil(len(hashtable.keys())/min(MAX_CORES, coresavail))
+    pointCheckChunks = list(chunks(list(hashtable.keys()), chunksize))
+    for pointCheckChunk in pointCheckChunks:
+        results.append(pool.apply_async(getPseudoPointsParallelKernel, args=(pointCheckChunk, wallpoints)))
+    pool.close()
+    pool.join()
+    results = [r.get() for r in results]
+    for itm in results:
+        badList = badList + itm
     return badList
+    
+def getPseudoPointsParallelKernel(points, wallpoints):
+    badList = []
+    for itm in points:
+        pt = tuple(map(float, itm.split(",")))
+        if doesPointContain(pt, wallpoints):
+            badList.append(itm)
+    return badList
+
+def generateMiniGlobaldata(badList, globaldata):
+    badListNew = []
+    for itm in badList:
+        globaldataDict = {}
+        for idx in itm:
+            globaldataDict[idx] = globaldata[idx]
+        badListNew.append(globaldataDict)
+    return badListNew
+
+def checkConditionNumberBadParallel(globaldata, threshold, configData, badListCheck, hashtableindex):
+    paAvailable = False
+    client = None
+    try:
+        None
+        client = plasma.connect("/tmp/plasma")
+        paAvailable = True
+        hashtableindex = client.put(hashtableindex)
+    except:
+        log.warning("Fallback to Non Plasma Mode")
+        pass
+
+    badList = []
+    coresavail = multiprocessing.cpu_count()
+    MAX_CORES = int(configData["generator"]["maxCoresForReplacement"])
+    pool = ThreadPool(min(MAX_CORES,coresavail))
+    results = []
+    chunksize = math.ceil(len(badListCheck)/min(2 , coresavail))
+    pointCheckChunks = list(chunks(badListCheck, chunksize))
+    globaldataChunks = generateMiniGlobaldata(pointCheckChunks, globaldata)
+    for i, pointCheckChunk in enumerate(pointCheckChunks):
+        if not paAvailable:
+            results.append(pool.apply_async(checkConditionNumberBad, args=(globaldataChunks[i], threshold, configData, pointCheckChunk, hashtableindex, False, None)))
+        else:
+            results.append(pool.apply_async(checkConditionNumberBad, args=(client.put(globaldataChunks[i]), threshold, client.put(configData), client.put(pointCheckChunk), hashtableindex, paAvailable, client)))
+    pool.close()
+    pool.join()
+    results = [r.get() for r in results]
+    for itm in results:
+        badList = badList + itm
+    return badList    
+
+def checkConditionNumberBad(globaldata, threshold, configData, badListCheck, hashtableindex, paAvailable = False, client = None):
+    if paAvailable:
+        globaldata = client.get(globaldata)
+        configData = client.get(configData)
+        badListCheck = client.get(badListCheck)
+        hashtableindex = client.get(hashtableindex)
+    with np.errstate(divide='ignore', invalid='ignore'):
+        badList = []
+        for _, index in enumerate(tqdm(badListCheck)):
+            if index > 0 and getFlag(index, globaldata) == 1:
+                xpos = conditionNumberOfXPos(index, globaldata, configData, hashtableindex)
+                xneg = conditionNumberOfXNeg(index, globaldata, configData, hashtableindex)
+                ypos = conditionNumberOfYPos(index, globaldata, configData, hashtableindex)
+                yneg = conditionNumberOfYNeg(index, globaldata, configData, hashtableindex)
+                dSPointXPos = getXPosPoints(index, globaldata, configData, hashtableindex)
+                dSPointXNeg = getXNegPoints(index, globaldata, configData, hashtableindex)
+                dSPointYPos = getYPosPoints(index, globaldata, configData, hashtableindex)
+                dSPointYNeg = getYNegPoints(index, globaldata, configData, hashtableindex)
+                if (
+                    xneg > threshold
+                    or len(dSPointXNeg) < 2 or len(dSPointXPos) < 2 or len(dSPointYNeg) < 2 or len(dSPointYPos) < 2
+                    or math.isnan(xneg)
+                    or xpos > threshold
+                    or math.isnan(xpos)
+                    or ypos > threshold
+                    or math.isnan(ypos)
+                    or yneg > threshold
+                    or math.isnan(yneg)
+                ):
+                    # log.debug("{} {} {} {} {} {} {} {} {}".format(index, len(dSPointXPos), xpos, len(dSPointXNeg), xneg, len(dSPointYPos), ypos, len(dSPointYNeg), yneg))
+                    badList.append(index)
+        return badList
 
 def checkConditionNumberSelectively(globaldata, threshold, badList, configData):
     badList = []
     for index in tqdm(badList):
-        if getFlag(index, globaldata) == 1:
-            xpos = conditionNumberOfXPos(index, globaldata, configData)
-            xneg = conditionNumberOfXNeg(index, globaldata, configData)
-            ypos = conditionNumberOfYPos(index, globaldata, configData)
-            yneg = conditionNumberOfYNeg(index, globaldata, configData)
-            dSPointXPos = getXPosPoints(index, globaldata, configData)
-            dSPointXNeg = getXNegPoints(index, globaldata, configData)
-            dSPointYPos = getYPosPoints(index, globaldata, configData)
-            dSPointYNeg = getYNegPoints(index, globaldata, configData)
-            if (
-                xneg > threshold
-                or len(dSPointXNeg) < 2 or len(dSPointXPos) < 2 or len(dSPointYNeg) < 2 or len(dSPointYPos) < 2
-                or math.isnan(xneg)
-                or xpos > threshold
-                or math.isnan(xpos)
-                or ypos > threshold
-                or math.isnan(ypos)
-                or yneg > threshold
-                or math.isnan(yneg)
-            ):
-                log.debug("{} {} {} {} {} {} {} {} {}".format(index, len(dSPointXPos), xpos, len(dSPointXNeg), xneg, len(dSPointYPos), ypos, len(dSPointYNeg), yneg))
-                badList.append(index)
+        xpos = conditionNumberOfXPos(index, globaldata, configData)
+        xneg = conditionNumberOfXNeg(index, globaldata, configData)
+        ypos = conditionNumberOfYPos(index, globaldata, configData)
+        yneg = conditionNumberOfYNeg(index, globaldata, configData)
+        dSPointXPos = getXPosPoints(index, globaldata, configData)
+        dSPointXNeg = getXNegPoints(index, globaldata, configData)
+        dSPointYPos = getYPosPoints(index, globaldata, configData)
+        dSPointYNeg = getYNegPoints(index, globaldata, configData)
+        if (
+            xneg > threshold
+            or len(dSPointXNeg) < 2 or len(dSPointXPos) < 2 or len(dSPointYNeg) < 2 or len(dSPointYPos) < 2
+            or math.isnan(xneg)
+            or xpos > threshold
+            or math.isnan(xpos)
+            or ypos > threshold
+            or math.isnan(ypos)
+            or yneg > threshold
+            or math.isnan(yneg)
+        ):
+            # log.debug("{} {} {} {} {} {} {} {} {}".format(index, len(dSPointXPos), xpos, len(dSPointXNeg), xneg, len(dSPointYPos), ypos, len(dSPointYNeg), yneg))
+            badList.append(index)
     return badList
 
 def chunks(l, n):
@@ -2009,19 +2224,52 @@ def fullRefineOuter(globaldata):
 
 def refineCustom(globaldata):
     res = input("Enter the Point Types delimited by space you want to refine: ")
+    res1 = input("Specify depth threshold (-1 if no depth requirement): ")
     if len(res) > 0:
         res = list(map(int,res.split(" ")))
+        res1 = int(res1)
+        with open("adapted.txt", "a+") as text_file:
+            for idx,_ in enumerate(globaldata):
+                if idx > 0:
+                    flag = getFlag(idx, globaldata)
+                    depth = getDepth(idx, globaldata)
+                    if depth != -1:
+                        if flag in res:
+                            ptX,ptY = getPoint(idx,globaldata)
+                            if ptX != False and ptY != False:
+                                text_file.writelines(["%s %s " % (ptX,ptY)])
+                                text_file.writelines("\n")
+                    else:
+                        if depth < res1:
+                            if flag in res:
+                                ptX,ptY = getPoint(idx,globaldata)
+                                if ptX != False and ptY != False:
+                                    text_file.writelines(["%s %s " % (ptX,ptY)])
+                                    text_file.writelines("\n")
+            text_file.writelines("1000 1000\n")
+
+def refineCustomBox(globaldata):
+    res = input("Enter the Point Types delimited by space you want to refine: ")
+    res1 = input("Enter your box dimensions in the form of x,y:x,y : ")
+    if len(res) > 0:
+        res = list(map(int,res.split(" ")))
+        res1 = res1.split(":")
+        topleft = list(map(float, (res1[0].split(","))))
+        bottomright = list(map(float, (res1[1].split(","))))
+        topright = (bottomright[0], topleft[1])
+        bottomleft = (topleft[0], bottomright[1])
+        wallpoints = [[topleft, topright, bottomright, bottomleft]]
+        wallpoints = convertToShapelyTuple(wallpoints)
         with open("adapted.txt", "a+") as text_file:
             for idx,_ in enumerate(globaldata):
                 if idx > 0:
                     flag = getFlag(idx, globaldata)
                     if flag in res:
-                        ptX,ptY = getPointExcludeOuter(idx,globaldata)
-                        if ptX != False and ptY != False:
+                        ptX,ptY = getPoint(idx,globaldata)
+                        if not doesPointContain((ptX, ptY), wallpoints):
                             text_file.writelines(["%s %s " % (ptX,ptY)])
                             text_file.writelines("\n")
             text_file.writelines("1000 1000\n")
-
 
 def oldMode(globaldata):
     globaldata.pop(0)
@@ -2495,6 +2743,41 @@ def sparseNullifier(globaldata, flagCheck=0):
                     else:
                         text_file.writelines("  " + str(idx) + "  0\n")
 
+def wallSmoother(globaldata, conf):
+    previousFlag = 0
+    flagCheck = 1
+    for idx,_ in enumerate(globaldata):
+        if idx > 0:
+            flag = getFlag(idx,globaldata)
+            if flag == 0:
+                xpos,xneg,_,_ = getFlags(idx,globaldata)
+                if xpos == 1:
+                    getXposPoints = getXPosPoints(idx,globaldata, conf)
+                    got = False
+                    for itm in getXposPoints:
+                        index = getIndexFromPoint(itm,globaldata)
+                        flag = getFlag(index,globaldata)
+                        if flag == flagCheck:
+                            got = True
+                            print(index)
+                            break
+                    if not got:
+                        print("Couldn't find point for {}".format(idx))
+                if xneg == 1:
+                    getXnegPoints = getXNegPoints(idx,globaldata, conf)
+                    got = False
+                    for itm in getXnegPoints:
+                        index = getIndexFromPoint(itm,globaldata)
+                        flag = getFlag(index,globaldata)
+                        if flag == flagCheck:
+                            got = True
+                            print(index)
+                            break
+                    if not got:
+                        print("Couldn't find point for {}".format(idx))
+            elif previousFlag == 0:
+                break
+
 def wallConnectivityCheckNearest(globaldata):
     madechanges = False
     conf = getConfig()
@@ -2743,12 +3026,19 @@ def getConfig():
 conn = redis.Redis(getConfig()["global"]["redis"]["host"],getConfig()["global"]["redis"]["port"],getConfig()["global"]["redis"]["db"],getConfig()["global"]["redis"]["password"])
 
 def setKeyVal(keyitm, keyval, ex=86400, px=None):
-    PREFIX = getConfig()["global"]["redis"]["prefix"]
-    if PREFIX == "NONE":
-        setPrefix()
-    PREFIX = getConfig()["global"]["redis"]["prefix"]
-    conn.set(PREFIX + "_" + str(keyitm),json.dumps({keyitm: keyval}), ex=ex, px=px)
-    return True
+    if sys.getsizeof(keyval) > 1.9e+9:
+        log.error("Could not store data in redis cache store")
+        return False
+    try:
+        PREFIX = getConfig()["global"]["redis"]["prefix"]
+        if PREFIX == "NONE":
+            setPrefix()
+        PREFIX = getConfig()["global"]["redis"]["prefix"]
+        conn.set(PREFIX + "_" + str(keyitm),json.dumps({keyitm: keyval}), ex=ex, px=px)
+        return True
+    except:
+        log.error("Could not store data in redis cache store")
+        return False
 
 def getKeyVal(keyitm):
     PREFIX = getConfig()["global"]["redis"]["prefix"]

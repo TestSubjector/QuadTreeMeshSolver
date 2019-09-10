@@ -66,6 +66,7 @@ def main():
         print("Type 'wcc!!!' to run Wall Connectivity Check on all Wall Points and try fixing sparsity. (Wall Mode)")
         print("Type 'wcc!!!!' to run Wall Connectivity Check on all Wall Points and try fixing sparsity. (Interior Mode)")
         print("Type 'wcc!!!!!' to run Wall Connectivity Check on all Wall Points and just print them.")
+        print("Type 'wcc!!!!!!' to run Wall Connectivity Check on all Wall Points and just print a interior point which can be bsplined.")
         print("Type 'icc' to run Interior Connectivity Check on all Interior Points.")
         print("Type 'cache' to push the file you read into cache.")
         print("Type 'integrity' to check wall.json integrity")
@@ -73,6 +74,7 @@ def main():
         print("Type 'full' to perform one full refinement")
         print("Type 'fullno' to perform one full refinement (excluding outer)")
         print("Type 'customrefine' to perform custom refinement")
+        print("Type 'customrefine!' to perform custom box refinement")
         print("Type 'old' to convert preprocessorfile to old format")
         print("Type 'bad2' to print all points with 2 in it's split connectivity")
         print("Type 'bad1' to print all points with 1 in it's split connectivity")
@@ -118,6 +120,10 @@ def main():
             core.clearScreen()
             globaldata,_ = core.connectivityCheck(globaldata, wallpointsall, conf)
             core.wallConnectivityCheck(globaldata, verbose=True)
+        elif ptidx == "wcc!!!!!!":
+            core.clearScreen()
+            globaldata,_ = core.connectivityCheck(globaldata, wallpointsall, conf)
+            core.wallSmoother(globaldata, conf)
         elif ptidx == "icc":
             core.clearScreen()
             core.interiorConnectivityCheck(globaldata, offset=len(wallpointsall))
@@ -139,6 +145,9 @@ def main():
         elif ptidx == "customrefine":
             core.clearScreen()
             core.refineCustom(globaldata)
+        elif ptidx == "customrefine!":
+            core.clearScreen()
+            core.refineCustomBox(globaldata)
         elif ptidx == "old":
             core.clearScreen()
             core.oldMode(globaldata)

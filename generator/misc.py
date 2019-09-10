@@ -9,6 +9,7 @@ import multiprocessing
 from multiprocessing.pool import ThreadPool
 import time
 import copy
+from tqdm import trange
 
 import logging
 log = logging.getLogger(__name__)
@@ -27,16 +28,17 @@ def silentRemove(filename):
 
 def cleanNeighbours(globaldata):  # Verified
     log.info("Beginning Duplicate Neighbour Detection")
-    for i in range(len(globaldata)):
+    for i in trange(len(globaldata)):
         try:
             noneighours = int(globaldata[i][20])  # Number of neighbours
         except IndexError:
             log.warn("No neighbours found for index " + str(i))
             noneighbours = 0
+        except:
+            print(globaldata[i])
         try:
             cordneighbours = globaldata[i][-noneighours:]
         except:
-            print(globaldata[i])
             log.warn("No neighbours found for index " + str(i))
         cordneighbours = [str(float(j.split(",")[0])) + "," + str(float(j.split(",")[1])) for j in cordneighbours]
         result = []
