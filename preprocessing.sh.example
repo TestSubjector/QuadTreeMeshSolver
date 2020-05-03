@@ -81,9 +81,7 @@ else
 
         # Indexing
         python3 ./generator/generate.py -n ./files/f$value/neighbour.txt -w ./grids/airfoil_flap_dense/airfoil ./grids/airfoil_flap_dense/flap
-        cp -rlf ./output.txt ./files/f$value/output.txt
         cp -rlf ./preprocessorfile.txt ./files/f$value/preprocessorfile.txt
-        rm ./output.txt
         rm ./preprocessorfile.txt
 
         # Pre Checks

@@ -43,7 +43,8 @@
     },
     "rechecker": {
         "conditionValueThreshold": 15,
-        "maxPoints": 2
+        "maxPoints": 2,
+        "offsetMultiplier": 0.0001
     },
     "shift":{
         "shiftFlag": 1
